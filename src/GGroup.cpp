@@ -469,6 +469,8 @@ void GGroup::setup_afterAdd(ByteBuffer* buffer, int beginPos)
 
 void GGroup::_bind_methods()
 {
+    ClassDB::bind_method(D_METHOD("ensureBoundsCorrect"), &GGroup::ensureBoundsCorrect);
+
     ClassDB::bind_method(D_METHOD("setLayout", "layout"), &GGroup::gd_setLayout);
     ClassDB::bind_method(D_METHOD("getLayout"), &GGroup::gd_getLayout);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "layout"), "setLayout", "getLayout");

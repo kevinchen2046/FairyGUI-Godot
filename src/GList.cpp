@@ -1209,11 +1209,15 @@ void GList::setVirtualListChangedFlag(bool layoutChanged)
 void GList::doRefreshVirtualListDeferred()
 {
     if (_deferredCallsCancelled)
-    {
-        _deferredCallsCancelled = false;
         return;
-    }
     doRefreshVirtualList();
+}
+
+void GList::_enter_tree()
+{
+    GComponent::_enter_tree();
+    if (_virtual)
+        checkVirtualList();
 }
 
 void GList::doRefreshVirtualList()
@@ -2675,6 +2679,8 @@ void GList::setup_afterAdd(ByteBuffer* buffer, int beginPos)
 
 void GList::_bind_methods()
 {
+    ClassDB::bind_method(D_METHOD("doRefreshVirtualListDeferred"), &GList::doRefreshVirtualListDeferred);
+
     ClassDB::bind_method(D_METHOD("setDefaultItem", "url"), &GList::gd_setDefaultItem);
     ClassDB::bind_method(D_METHOD("getDefaultItem"), &GList::gd_getDefaultItem);
 

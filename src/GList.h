@@ -129,6 +129,7 @@ public:
 protected:
     virtual void handleControllerChanged(GController* c) override;
     virtual void handleSizeChanged() override;
+    virtual void _enter_tree() override;
     virtual void updateBounds() override;
     virtual void setup_beforeAdd(ByteBuffer* buffer, int beginPos) override;
     virtual void setup_afterAdd(ByteBuffer* buffer, int beginPos) override;

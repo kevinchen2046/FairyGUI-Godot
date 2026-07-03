@@ -1281,6 +1281,9 @@ void GComponent::_enter_tree()
 {
     GObject::_enter_tree();
     ensureHitAreaChildAttached();
+    ensureBoundsCorrect();
+    if (_scrollPane.is_valid())
+        _scrollPane->refreshScrollBars();
 
     if (!_transitions.empty())
     {
@@ -1526,6 +1529,7 @@ void GComponent::constructFromResource(std::vector<GObject*>* objectPool, int po
     // GButton::setState etc. may change gearDisplay visibility after the first build.
     buildNativeDisplayList();
     setBoundsChangedFlag();
+    ensureBoundsCorrect();
     onConstruct();
 }
 
@@ -1612,6 +1616,8 @@ void GComponent::_bind_methods()
     ClassDB::bind_method(D_METHOD("getTransition", "name"), &GComponent::gd_getTransition);
     ClassDB::bind_method(D_METHOD("getScrollPane"), &GComponent::getScrollPane);
     ClassDB::bind_method(D_METHOD("ensureBoundsCorrect"), &GComponent::ensureBoundsCorrect);
+    ClassDB::bind_method(D_METHOD("doUpdateBounds"), &GComponent::doUpdateBounds);
+    ClassDB::bind_method(D_METHOD("buildNativeDisplayList"), &GComponent::buildNativeDisplayList);
     ClassDB::bind_method(D_METHOD("isChildInView", "child"), &GComponent::isChildInView);
     ClassDB::bind_method(D_METHOD("isAncestorOf", "obj"), &GComponent::isAncestorOf);
 }

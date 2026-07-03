@@ -330,8 +330,6 @@ static void drawRotatedAtlasRegion(CanvasItem* item, const Ref<Texture2D>& tex,
 void FUISprite::setColor(const Color& c)
 {
     _tintColor = Color(c.r, c.g, c.b, 1.0f);
-    if (!_grayed)
-        set_modulate(Color(c.r, c.g, c.b, get_modulate().a));
     queue_redraw();
 }
 
@@ -370,7 +368,6 @@ void FUISprite::setGrayed(bool value)
     else
     {
         set_material(Ref<Material>());
-        set_modulate(Color(_tintColor.r, _tintColor.g, _tintColor.b, get_modulate().a));
     }
     queue_redraw();
 }
@@ -636,7 +633,7 @@ void FUISprite::_draw()
         return;
 
     Ref<Texture2D> tex = _realTexture;
-    const Color drawModulate = _grayed ? _tintColor : get_modulate();
+    const Color drawModulate = _grayed ? _tintColor : Color(_tintColor.r, _tintColor.g, _tintColor.b, get_modulate().a);
 
     Vector2 contentSize = _contentSize.x > 0 ? _contentSize : get_rect().size;
     Rect2 texRect = get_region_rect();

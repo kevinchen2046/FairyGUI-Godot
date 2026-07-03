@@ -926,7 +926,6 @@ void ScrollPane::handleSizeChanged()
         updatePageController();
 
     syncOverlayZOrder();
-    CALL_LATER(ScrollPane, refreshScrollBars);
 }
 
 GObject* ScrollPane::hitTest(const Vector2& pt, const Camera2D* camera)
@@ -1593,6 +1592,8 @@ void ScrollPane::onTouchBegin(EventContext* context)
 {
     if (!_touchEffect)
         return;
+
+    _owner->ensureBoundsCorrect();
 
     context->captureTouch();
     InputEvent* evt = context->getInput();
