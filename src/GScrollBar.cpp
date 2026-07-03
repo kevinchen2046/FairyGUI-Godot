@@ -97,6 +97,7 @@ void GScrollBar::constructExtension(ByteBuffer* buffer)
     _grip->addEventListener(UIEventType::TouchBegin, [this](EventContext* ctx) { GScrollBar::onGripTouchBegin(ctx); });
     _grip->addEventListener(UIEventType::TouchMove, [this](EventContext* ctx) { GScrollBar::onGripTouchMove(ctx); });
     _grip->addEventListener(UIEventType::TouchEnd, [this](EventContext* ctx) { GScrollBar::onGripTouchEnd(ctx); });
+    _grip->addEventListener(UIEventType::TouchEnd, [this](EventContext* ctx) { GScrollBar::onGripTouchEnd(ctx); });
 
     this->addEventListener(UIEventType::TouchBegin, [this](EventContext* ctx) { GScrollBar::onTouchBegin(ctx); });
 
@@ -174,6 +175,7 @@ void GScrollBar::onGripTouchEnd(EventContext* context)
 {
     _gripDragging = false;
     _target->updateScrollBarVisible();
+    context->stopPropagation();
 }
 
 void GScrollBar::onArrowButton1Click(EventContext* context)

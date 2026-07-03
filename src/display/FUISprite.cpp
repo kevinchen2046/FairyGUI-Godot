@@ -685,37 +685,21 @@ void FUISprite::_draw()
             return fillAlphaToUV(_fillTexCoords[idx], texRect, texSize);
         };
 
-        const bool isRadial = (_fillMethod != FillMethod::Horizontal && _fillMethod != FillMethod::Vertical);
-        const int vertCount = (int)_fillTexCoords.size();
-        int startIdx = 0;
-        int polyCount = vertCount;
-        if (isRadial && vertCount >= 3)
+        // Radial fill uses a triangle fan from alpha-space center (0.5, 0.5); each tri: center + arc edge.
+        for (size_t i = 0; i < _fillIndices.size() / 3; i++)
         {
-            // Full wedge outline (3+ edge points): omit fan center. Tiny wedge: keep center triangle.
-            if (vertCount - 1 >= 3)
+            PackedVector2Array tri;
+            PackedVector2Array uvs;
+            tri.resize(3);
+            uvs.resize(3);
+            for (int j = 0; j < 3; j++)
             {
-                startIdx = 1;
-                polyCount = vertCount - 1;
+                const int idx = _fillIndices[i * 3 + j];
+                tri.set(j, map_vertex(idx));
+                uvs.set(j, map_uv(idx));
             }
+            draw_polygon(tri, Vector<Color>{ color, color, color }, uvs, tex);
         }
-        if (polyCount < 3)
-            return;
-
-        PackedVector2Array poly;
-        PackedVector2Array uvs;
-        poly.resize(polyCount);
-        uvs.resize(polyCount);
-        for (int i = 0; i < polyCount; i++)
-        {
-            const int srcIdx = startIdx + i;
-            poly.set(i, map_vertex(srcIdx));
-            uvs.set(i, map_uv(srcIdx));
-        }
-        Vector<Color> colors;
-        colors.resize(polyCount);
-        for (int i = 0; i < polyCount; i++)
-            colors.set(i, color);
-        draw_polygon(poly, colors, uvs, tex);
         return;
     }
 

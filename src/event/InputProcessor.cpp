@@ -367,16 +367,13 @@ void InputProcessor::onTouchMove(const Vector2& screenPos, int touchId)
                 if (!mm)
                     continue;
 
-                WeakPtr wptr(mm);
                 mm->dispatchEvent(UIEventType::TouchMove);
-                if (!(wptr == mm)) done = true;
+                if (mm == _owner)
+                    done = true;
             }
         }
         if (!done)
-        {
-            WeakPtr wptr(target);
-            target->bubbleEvent(UIEventType::TouchMove);
-        }
+            _owner->dispatchEvent(UIEventType::TouchMove);
     }
 
     _activeProcessor = nullptr;
@@ -402,7 +399,7 @@ void InputProcessor::onTouchEnd(const Vector2& screenPos, int touchId)
     if (_captureCallback)
         _captureCallback(UIEventType::TouchEnd);
 
-    bool done = false;
+    WeakPtr wptr(target);
     size_t cnt = ti->touchMonitors.size();
     if (cnt > 0)
     {
@@ -412,15 +409,17 @@ void InputProcessor::onTouchEnd(const Vector2& screenPos, int touchId)
             if (!mm)
                 continue;
 
-            WeakPtr wptr(mm);
-            mm->dispatchEvent(UIEventType::TouchEnd);
-            if (!(wptr == mm)) done = true;
+            if (mm != target
+                    && (!Object::cast_to<GComponent>(mm) || !((GComponent*)mm)->isAncestorOf(target)))
+                mm->dispatchEvent(UIEventType::TouchEnd);
         }
+        ti->touchMonitors.clear();
+        target = wptr.ptr();
     }
-    if (!done)
+    if (target)
     {
-        WeakPtr wptr(target);
         target->bubbleEvent(UIEventType::TouchEnd);
+        target = wptr.ptr();
     }
 
     handleRollOver(ti, nullptr);
