@@ -62,6 +62,9 @@ void GTextField::setOutlineColor(const Color& value)
     if (tf->outlineColor != value)
     {
         tf->outlineColor = value;
+        if (tf->outlineSize <= 0.f)
+            tf->outlineSize = 1.f;
+        tf->enableEffect(TextFormat::OUTLINE);
         applyTextFormat();
     }
 }
@@ -165,6 +168,8 @@ void GTextField::setup_beforeAdd(ByteBuffer* buffer, int beginPos)
     {
         tf->outlineColor = (Color)buffer->readColor();
         tf->outlineSize = buffer->readFloat();
+        if (tf->outlineSize <= 0.f)
+            tf->outlineSize = 1.f;
         tf->enableEffect(TextFormat::OUTLINE);
     }
 
@@ -179,6 +184,12 @@ void GTextField::setup_beforeAdd(ByteBuffer* buffer, int beginPos)
 
     if (buffer->readBool())
         _templateVars = new std::unordered_map<std::string, Variant>();
+
+    if (buffer->version >= 3)
+    {
+        buffer->readBool(); // strikethrough
+        buffer->skip(12);
+    }
 }
 
 void GTextField::setup_afterAdd(ByteBuffer* buffer, int beginPos)

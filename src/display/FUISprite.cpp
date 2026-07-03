@@ -261,13 +261,26 @@ static void draw_texture_region_with_flip(CanvasItem* item, const Ref<Texture2D>
         return;
     }
 
-    const Vector2 center = dst.get_center();
+    // FairyGUI keeps the object bounds fixed and flips around the top-left corner.
     const Vector2 scale(flipH ? -1.0f : 1.0f, flipV ? -1.0f : 1.0f);
-    item->draw_set_transform(center, 0.0f, scale);
-    item->draw_texture_rect_region(tex,
-        Rect2(-dst.size.x * 0.5f, -dst.size.y * 0.5f, dst.size.x, dst.size.y),
-        src, modulate);
+    const float localX = flipH ? -dst.size.x : 0.0f;
+    const float localY = flipV ? -dst.size.y : 0.0f;
+    item->draw_set_transform(dst.position, 0.0f, scale);
+    item->draw_texture_rect_region(tex, Rect2(localX, localY, dst.size.x, dst.size.y), src, modulate);
     item->draw_set_transform(Vector2(), 0.0f, Vector2(1.0f, 1.0f));
+}
+
+// NTexture.GetDrawRect: mirror trimmed sprite position inside the content rect when flipping.
+static Rect2 getTrimmedDrawRect(const Vector2& contentSize, const Vector2& drawOrigin,
+        const Vector2& trimOffset, const Vector2& trimSize, float sx, float sy, bool flipH, bool flipV)
+{
+    Vector2 localPos(trimOffset.x * sx, trimOffset.y * sy);
+    const Vector2 localSize(trimSize.x * sx, trimSize.y * sy);
+    if (flipH)
+        localPos.x = contentSize.x - localPos.x - localSize.x;
+    if (flipV)
+        localPos.y = contentSize.y - localPos.y - localSize.y;
+    return Rect2(drawOrigin + localPos, localSize);
 }
 
 static Rect2 getRotatedAtlasSrcRect(float ox, float oy, float ow, float oh, const Rect2& atlasRect)
@@ -720,15 +733,18 @@ void FUISprite::_draw()
         origSize = contentSize;
     const float sx = origSize.x > 0.0f ? (contentSize.x / origSize.x) : 1.0f;
     const float sy = origSize.y > 0.0f ? (contentSize.y / origSize.y) : 1.0f;
-    const bool hasTrim = (_trimOffset.length_squared() > 0.01f)
-        || (_originalContentSize.x > 0.0f && _originalContentSize.y > 0.0f
-            && (Math::abs(_originalContentSize.x - contentSize.x) > 0.5f
-                || Math::abs(_originalContentSize.y - contentSize.y) > 0.5f));
+    Vector2 trimSize = texRect.size;
+    if (_rotated)
+        trimSize = getRotatedLogicalTrimSize(texRect, _originalContentSize);
+    const bool hasAtlasTrim = _originalContentSize.x > 0.0f && _originalContentSize.y > 0.0f
+        && trimSize.x > 0.0f && trimSize.y > 0.0f
+        && (Math::abs(_originalContentSize.x - trimSize.x) > 0.5f
+            || Math::abs(_originalContentSize.y - trimSize.y) > 0.5f);
 
     // Normal sprite draw
     if (_rotated)
     {
-        Vector2 logicalTrim = getRotatedLogicalTrimSize(texRect, _originalContentSize);
+        Vector2 logicalTrim = trimSize;
         if (logicalTrim.x <= 0.0f || logicalTrim.y <= 0.0f)
             logicalTrim = texRect.size;
 
@@ -736,19 +752,15 @@ void FUISprite::_draw()
         drawRotatedAtlasRegion(this, tex, texRect, drawOrigin, contentSize,
             dstPos, logicalTrim.x, logicalTrim.y, sx, sy, drawModulate);
     }
-    else if (hasTrim)
+    else if (hasAtlasTrim)
     {
-        const Vector2 dstPos = drawOrigin + Vector2(_trimOffset.x * sx, _trimOffset.y * sy);
-        const Vector2 dstSize(texRect.size.x * sx, texRect.size.y * sy);
-        draw_texture_region_with_flip(this, tex,
-            Rect2(dstPos, dstSize),
-            texRect,
-            drawModulate, flipH, flipV);
+        const Rect2 dst = getTrimmedDrawRect(contentSize, drawOrigin, _trimOffset, trimSize, sx, sy, flipH, flipV);
+        draw_texture_region_with_flip(this, tex, dst, texRect, drawModulate, flipH, flipV);
     }
     else
     {
         draw_texture_region_with_flip(this, tex,
-            Rect2(drawOrigin.x, drawOrigin.y, contentSize.x, contentSize.y),
+            Rect2(drawOrigin, contentSize),
             texRect,
             drawModulate, flipH, flipV);
     }
@@ -829,56 +841,103 @@ void FUISprite::drawScale9(const Color& drawModulate)
     const bool flipH = is_flipped_h();
     const bool flipV = is_flipped_v();
 
-    float srcX = texRect.position.x;
-    float srcY = texRect.position.y;
+    const float srcX = texRect.position.x;
+    const float srcY = texRect.position.y;
+    const float sourceW = texRect.size.x;
+    const float sourceH = texRect.size.y;
+    const float contentW = contentSize.x;
+    const float contentH = contentSize.y;
 
-    // scale9Grid coords are always in original (unrotated) sprite space.
-    // If the atlas sprite was rotated 90° CW, texRect has swapped dimensions.
-    float origW = texRect.size.x;
-    float origH = texRect.size.y;
+    const Rect2& gridRect = _scale9Grid;
+    const float gridRight = gridRect.position.x + gridRect.size.x;
+    const float gridBottom = gridRect.position.y + gridRect.size.y;
 
-    float l = _scale9Grid.position.x;
-    float t = _scale9Grid.position.y;
-    float r = _scale9Grid.position.x + _scale9Grid.size.x;
-    float b = _scale9Grid.position.y + _scale9Grid.size.y;
-    float tw = origW;
-    float th = origH;
-    float sw = contentSize.x;
-    float sh = contentSize.y;
+    float gridX[4];
+    gridX[0] = 0.0f;
+    if (contentW >= (sourceW - gridRect.size.x))
+    {
+        gridX[1] = gridRect.position.x;
+        gridX[2] = contentW - (sourceW - gridRight);
+        gridX[3] = contentW;
+    }
+    else
+    {
+        const float tmp = gridRect.position.x / (sourceW - gridRight);
+        const float edge = contentW * tmp / (1.0f + tmp);
+        gridX[1] = edge;
+        gridX[2] = edge;
+        gridX[3] = contentW;
+    }
 
-    float marginLeft = l;
-    float marginTop = t;
-    float marginRight = tw - r;
-    float marginBottom = th - b;
-    float midW = r - l;
-    float midH = b - t;
-    float destMidW = sw - marginLeft - marginRight;
-    float destMidH = sh - marginTop - marginBottom;
+    float gridY[4];
+    gridY[0] = 0.0f;
+    if (contentH >= (sourceH - gridRect.size.y))
+    {
+        gridY[1] = gridRect.position.y;
+        gridY[2] = contentH - (sourceH - gridBottom);
+        gridY[3] = contentH;
+    }
+    else
+    {
+        const float tmp = gridRect.position.y / (sourceH - gridBottom);
+        const float edge = contentH * tmp / (1.0f + tmp);
+        gridY[1] = edge;
+        gridY[2] = edge;
+        gridY[3] = contentH;
+    }
 
-    if (destMidW < 0) destMidW = 0;
-    if (destMidH < 0) destMidH = 0;
-
-    // 9 source rects in original (unrotated) image space
-    const float origRects[9][4] = {
-        //  TL           TM            TR
-        { 0, 0, l, t }, { l, 0, midW, t }, { r, 0, marginRight, t },
-        //  ML           MM            MR
-        { 0, t, l, midH }, { l, t, midW, midH }, { r, t, marginRight, midH },
-        //  BL           BM            BR
-        { 0, b, l, marginBottom }, { l, b, midW, marginBottom }, { r, b, marginRight, marginBottom },
+    float gridTexX[4] = {
+        srcX,
+        srcX + gridRect.position.x,
+        srcX + gridRight,
+        srcX + sourceW,
+    };
+    float gridTexY[4] = {
+        srcY,
+        srcY + gridRect.position.y,
+        srcY + gridBottom,
+        srcY + sourceH,
     };
 
-    // 9 destination rects in screen space
-    const float destRects[9][4] = {
-        { 0, 0, marginLeft, marginTop },
-        { marginLeft, 0, destMidW, marginTop },
-        { marginLeft + destMidW, 0, marginRight, marginTop },
-        { 0, marginTop, marginLeft, destMidH },
-        { marginLeft, marginTop, destMidW, destMidH },
-        { marginLeft + destMidW, marginTop, marginRight, destMidH },
-        { 0, marginTop + destMidH, marginLeft, marginBottom },
-        { marginLeft, marginTop + destMidH, destMidW, marginBottom },
-        { marginLeft + destMidW, marginTop + destMidH, marginRight, marginBottom },
+    auto swapCapBandSizes = [](float grid[4]) {
+        const float cap0 = grid[1] - grid[0];
+        const float mid = grid[2] - grid[1];
+        const float cap2 = grid[3] - grid[2];
+        grid[0] = 0.0f;
+        grid[1] = cap2;
+        grid[2] = cap2 + mid;
+        grid[3] = cap2 + mid + cap0;
+    };
+    if (flipV)
+        swapCapBandSizes(gridY);
+    if (flipH)
+        swapCapBandSizes(gridX);
+
+    auto resolveScale9Patch = [&](int row, int col, int& srcRow, int& srcCol, bool& patchFlipH, bool& patchFlipV) {
+        srcRow = row;
+        srcCol = col;
+        if (flipV)
+        {
+            if (row != 1)
+                srcRow = 2 - row;
+            patchFlipV = true;
+        }
+        if (flipH)
+        {
+            if (col != 1)
+                srcCol = 2 - col;
+            patchFlipH = true;
+        }
+    };
+
+    auto drawPatch = [&](const Rect2& dst, const Rect2& src, bool patchFlipH, bool patchFlipV) {
+        if (src.size.x <= 0.0f || src.size.y <= 0.0f)
+            return;
+
+        if (patchFlipH || patchFlipV)
+            draw_texture_region_with_flip(this, tex, dst, src, drawModulate, patchFlipH, patchFlipV);
+        else
+            draw_texture_rect_region(tex, dst, src, drawModulate);
     };
 
     if (_rotated)
@@ -886,40 +945,67 @@ void FUISprite::drawScale9(const Color& drawModulate)
         Vector2 center = drawOrigin + contentSize * 0.5f;
         draw_set_transform(center, Math::deg_to_rad(-90.0f), Vector2(1, 1));
 
-        for (int i = 0; i < 9; i++)
+        for (int row = 0; row < 3; row++)
         {
-            float ox = origRects[i][0], oy = origRects[i][1];
-            float ow = origRects[i][2], oh = origRects[i][3];
-            if (ow <= 0 || oh <= 0) continue;
+            for (int col = 0; col < 3; col++)
+            {
+                int srcRow = row;
+                int srcCol = col;
+                bool patchFlipH = false;
+                bool patchFlipV = false;
+                resolveScale9Patch(row, col, srcRow, srcCol, patchFlipH, patchFlipV);
 
-            Rect2 src = getRotatedAtlasSrcRect(ox, oy, ow, oh, texRect);
+                const float sx = gridTexX[srcCol];
+                const float sy = gridTexY[srcRow];
+                const float sw = gridTexX[srcCol + 1] - sx;
+                const float sh = gridTexY[srcRow + 1] - sy;
 
-            float dx = destRects[i][0], dy = destRects[i][1];
-            float dw = destRects[i][2], dh = destRects[i][3];
-            if (dw <= 0 || dh <= 0) continue;
+                const float localOx = gridTexX[srcCol] - srcX;
+                const float localOy = gridTexY[srcRow] - srcY;
+                Rect2 src = getRotatedAtlasSrcRect(localOx, localOy, sw, sh, texRect);
 
-            Rect2 localDst(dy - center.y,
-                           center.x - dx - dw,
-                           dh, dw);
-            draw_texture_rect_region(tex, localDst, src, drawModulate);
+                const float dx = gridX[col];
+                const float dy = gridY[row];
+                const float dw = gridX[col + 1] - dx;
+                const float dh = gridY[row + 1] - dy;
+                if (dw <= 0.0f || dh <= 0.0f)
+                    continue;
+
+                Rect2 localDst(dy - center.y, center.x - dx - dw, dh, dw);
+                drawPatch(localDst, src, patchFlipH, patchFlipV);
+            }
         }
+
         draw_set_transform(Vector2(), 0, Vector2(1, 1));
         return;
     }
 
-    for (int i = 0; i < 9; i++)
+    for (int row = 0; row < 3; row++)
     {
-        float ox = origRects[i][0], oy = origRects[i][1];
-        float ow = origRects[i][2], oh = origRects[i][3];
-        if (ow <= 0 || oh <= 0) continue;
+        for (int col = 0; col < 3; col++)
+        {
+            const float dx = gridX[col];
+            const float dy = gridY[row];
+            const float dw = gridX[col + 1] - dx;
+            const float dh = gridY[row + 1] - dy;
+            if (dw <= 0.0f || dh <= 0.0f)
+                continue;
 
-        Rect2 src(srcX + ox - 0.5f, srcY + oy - 0.5f, ow + 1.0f, oh + 1.0f);
+            int srcRow = row;
+            int srcCol = col;
+            bool patchFlipH = false;
+            bool patchFlipV = false;
+            resolveScale9Patch(row, col, srcRow, srcCol, patchFlipH, patchFlipV);
 
-        Rect2 dst(drawOrigin.x + destRects[i][0], drawOrigin.y + destRects[i][1],
-                  destRects[i][2], destRects[i][3]);
-        if (dst.size.x <= 0 || dst.size.y <= 0) continue;
+            const float sx = gridTexX[srcCol];
+            const float sy = gridTexY[srcRow];
+            const float sw = gridTexX[srcCol + 1] - sx;
+            const float sh = gridTexY[srcRow + 1] - sy;
 
-        draw_texture_region_with_flip(this, tex, dst, src, drawModulate, flipH, flipV);
+            const Rect2 dst(drawOrigin.x + dx, drawOrigin.y + dy, dw, dh);
+            const Rect2 src(sx - 0.5f, sy - 0.5f, sw + 1.0f, sh + 1.0f);
+            drawPatch(dst, src, patchFlipH, patchFlipV);
+        }
     }
 }
 

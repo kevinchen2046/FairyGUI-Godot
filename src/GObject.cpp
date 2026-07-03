@@ -1228,7 +1228,12 @@ void GObject::onTouchMove(EventContext* context)
 
         if (_dragBounds != nullptr)
         {
-            Rect rect = GRoot::getInstance()->localToGlobal(*_dragBounds);
+            Rect2 boundsRect = *_dragBounds;
+            if (_parent != nullptr)
+                boundsRect = _parent->localToGlobal(boundsRect);
+            else
+                boundsRect = GRoot::getInstance()->localToGlobal(boundsRect);
+            const Rect rect(boundsRect.position.x, boundsRect.position.y, boundsRect.size.x, boundsRect.size.y);
             if (xx < rect.position.x)
                 xx = rect.position.x;
             else if (xx + sGlobalRect.size.x > rect.position.x + rect.size.x)

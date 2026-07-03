@@ -35,7 +35,7 @@ public:
 
     int effect;
     Color outlineColor;
-    int outlineSize;
+    float outlineSize;
     Color shadowColor;
     Vector2 shadowOffset;
     int shadowBlurRadius;

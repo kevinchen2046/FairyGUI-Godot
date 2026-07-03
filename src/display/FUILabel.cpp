@@ -30,20 +30,25 @@ static Vector2 fui_measure_text(const Ref<Font>& font, const String& text, int f
 }
 
 static void fui_draw_text(CanvasItem* item, const Ref<Font>& font, const Vector2& pos, const String& text,
-        int fontSize, const Color& color, bool wrap, float maxWidth, int align, bool outline, int outlineSize)
+        int fontSize, const Color& color, bool wrap, float maxWidth, int align)
 {
     if (wrap)
-    {
-        HorizontalAlignment halign = fui_text_h_align(align);
-        if (outline && outlineSize > 0)
-            item->draw_multiline_string_outline(font, pos, text, halign, maxWidth, fontSize, -1, outlineSize, color);
-        else
-            item->draw_multiline_string(font, pos, text, halign, maxWidth, fontSize, -1, color);
-    }
-    else if (outline && outlineSize > 0)
-        item->draw_string_outline(font, pos, text, HORIZONTAL_ALIGNMENT_LEFT, -1, fontSize, outlineSize, color);
+        item->draw_multiline_string(font, pos, text, fui_text_h_align(align), maxWidth, fontSize, -1, color);
     else
-        item->draw_string(font, pos, text, HORIZONTAL_ALIGNMENT_LEFT, -1, fontSize, color);
+        item->draw_string(font, pos, text, fui_text_h_align(align), -1, fontSize, color);
+}
+
+// Match FairyGUI VertexBuffer.GenerateOutline: duplicate text at cardinal/diagonal offsets.
+static void fui_draw_stroke(CanvasItem* item, const Ref<Font>& font, const Vector2& pos, const String& text,
+        int fontSize, const Color& color, bool wrap, float maxWidth, int align, float strokeWidth)
+{
+    static const Vector2 STROKE_DIRS[] = {
+        Vector2(-1, 0), Vector2(1, 0), Vector2(0, -1), Vector2(0, 1),
+        Vector2(-1, -1), Vector2(1, -1), Vector2(-1, 1), Vector2(1, 1),
+    };
+    const float w = MAX(strokeWidth, 1.f);
+    for (const Vector2& dir : STROKE_DIRS)
+        fui_draw_text(item, font, pos + dir * w, text, fontSize, color, wrap, maxWidth, align);
 }
 
 Color FUILabel::toGrayed(const Color& source)
@@ -159,9 +164,15 @@ void FUILabel::applyTextFormat()
         _fontSize = _textFormat->fontSize;
     }
 
-    if (!isBMFont() || _bmFontCanTint)
+    if (isBMFont())
     {
-        set_modulate(_grayed ? toGrayed(_textFormat->color) : _textFormat->color);
+        if (_bmFontCanTint)
+            set_modulate(_grayed ? toGrayed(_textFormat->color) : _textFormat->color);
+    }
+    else
+    {
+        // TTF/system font: keep modulate neutral so fill/outline colors are not multiplied twice.
+        set_modulate(_grayed ? Color(1, 1, 1, toGrayed(_textFormat->color).a) : Color(1, 1, 1, _textFormat->color.a));
     }
 
     updateDrawFont();
@@ -384,22 +395,22 @@ void FUILabel::_draw()
     {
         Color shadowColor = _grayed ? toGrayed(_textFormat->shadowColor) : _textFormat->shadowColor;
         Vector2 shadowPos = offset + _textFormat->shadowOffset;
-        fui_draw_text(this, font, shadowPos, godotText, fontSize, shadowColor, wrap, maxWidth, _textFormat->align, false, 0);
+        fui_draw_text(this, font, shadowPos, godotText, fontSize, shadowColor, wrap, maxWidth, _textFormat->align);
     }
 
-    if (_textFormat->hasEffect(TextFormat::OUTLINE) && _textFormat->outlineSize > 0)
+    if (_textFormat->hasEffect(TextFormat::OUTLINE) && _textFormat->outlineSize > 0.f)
     {
         Color outlineColor = _grayed ? toGrayed(_textFormat->outlineColor) : _textFormat->outlineColor;
-        fui_draw_text(this, font, offset, godotText, fontSize, outlineColor, wrap, maxWidth, _textFormat->align, true, _textFormat->outlineSize);
+        fui_draw_stroke(this, font, offset, godotText, fontSize, outlineColor, wrap, maxWidth, _textFormat->align, _textFormat->outlineSize);
     }
     else if (_textFormat->hasEffect(TextFormat::GLOW))
     {
         Color glowColor = _grayed ? toGrayed(_textFormat->glowColor) : _textFormat->glowColor;
-        fui_draw_text(this, font, offset, godotText, fontSize, glowColor, wrap, maxWidth, _textFormat->align, false, 0);
+        fui_draw_text(this, font, offset, godotText, fontSize, glowColor, wrap, maxWidth, _textFormat->align);
     }
 
     // Main text
-    fui_draw_text(this, font, offset, godotText, fontSize, textColor, wrap, maxWidth, _textFormat->align, false, 0);
+    fui_draw_text(this, font, offset, godotText, fontSize, textColor, wrap, maxWidth, _textFormat->align);
 
     // Underline
     if (_textFormat->underline)

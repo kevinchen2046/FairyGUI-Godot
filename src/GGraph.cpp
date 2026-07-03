@@ -35,13 +35,13 @@ static PackedVector2Array to_pva(const std::vector<Vector2>& v) {
 // Stores draw commands and replays them in _draw()
 
 struct Cmd {
-    enum Type { FILLED_RECT, RECT, CIRCLE, POLYGON };
+    enum Type { FILLED_RECT, RECT, CIRCLE, ELLIPSE_STROKE, POLYGON };
     Type type;
     std::vector<Vector2> pts;
     Color fillColor;
     Color borderColor;
     float borderWidth;
-    Color color; // for triangles
+    Color color; // line width for ELLIPSE_STROKE; triangle color for RECT
 };
 
 class DrawNode : public Node2D {
@@ -55,7 +55,6 @@ class DrawNode : public Node2D {
 
         void clear() {
             _cmds.clear();
-            _outlinePts.clear();
             queue_redraw();
         }
 
@@ -77,17 +76,22 @@ class DrawNode : public Node2D {
             queue_redraw();
         }
 
-        void drawCircle(const Vector2& center, float radius, float, float, bool, int, float scaleY, const Color& color) {
-            // Draw outline circle/ellipse
-            // In Godot, draw_arc draws outline
-            std::vector<Vector2> pts;
-            int segments = 64;
-            for (int i = 0; i <= segments; i++) {
-                float angle = 2.0f * (float)M_PI * i / segments;
-                pts.push_back(Vector2(center.x + radius * cos(angle), center.y + radius * sin(angle) * scaleY));
-            }
-            _outlinePts.push_back({pts, color, _lineWidth});
+        void drawEllipseStroke(const Vector2& center, float radius, float scaleY, float lineWidth, const Color& color)
+        {
+            Cmd c;
+            c.type = Cmd::ELLIPSE_STROKE;
+            c.pts = { center };
+            c.borderWidth = radius;
+            c.borderColor = Color(scaleY, scaleY, scaleY, 1);
+            c.fillColor = color;
+            c.color = Color(lineWidth, 0, 0, 1);
+            _cmds.push_back(c);
             queue_redraw();
+        }
+
+        void drawCircle(const Vector2& center, float radius, float, float, bool, int, float scaleY, const Color& color)
+        {
+            drawEllipseStroke(center, radius, scaleY, _lineWidth, color);
         }
 
         void drawSolidCircle(const Vector2& center, float radius, float, float, int, float scaleY, const Color& color) {
@@ -148,11 +152,30 @@ class DrawNode : public Node2D {
                     Vector2 center = cmd.pts[0];
                     float scaleY = cmd.borderColor.g;
                     float radius = cmd.borderWidth;
-                    if (cmd.fillColor.a > 0.0f && radius > 0.0f)
+                    if (radius > 0.0f)
                     {
                         draw_set_transform(center, 0.0f, Vector2(radius, radius * scaleY));
                         draw_circle(Vector2(), 1.0f, cmd.fillColor);
                         draw_set_transform(Vector2(), 0.0f, Vector2(1.0f, 1.0f));
+                    }
+                    break;
+                }
+                case Cmd::ELLIPSE_STROKE: {
+                    Vector2 center = cmd.pts[0];
+                    float scaleY = cmd.borderColor.g;
+                    float radius = cmd.borderWidth;
+                    const float lineWidth = cmd.color.r;
+                    if (radius > 0.0f && lineWidth > 0.0f)
+                    {
+                        const int segs = 72;
+                        PackedVector2Array pts;
+                        pts.resize(segs + 1);
+                        for (int i = 0; i <= segs; i++)
+                        {
+                            const float a = (float)Math::TAU * i / segs;
+                            pts.set(i, center + Vector2(Math::cos(a) * radius, Math::sin(a) * radius * scaleY));
+                        }
+                        draw_polyline(pts, cmd.fillColor, lineWidth, true);
                     }
                     break;
                 }
@@ -167,16 +190,10 @@ class DrawNode : public Node2D {
                     break;
                 }
             }
-            for (auto& [pts, color, width] : _outlinePts) {
-                for (size_t i = 1; i < pts.size(); i++) {
-                    draw_line(pts[i-1], pts[i], color, width);
-                }
-            }
         }
 
     private:
         std::vector<Cmd> _cmds;
-        std::vector<std::tuple<std::vector<Vector2>, Color, float>> _outlinePts;
         float _lineWidth = 1.0f;
     };
 
@@ -368,12 +385,17 @@ void GGraph::updateShape()
     }
     case 2:
     {
+        const float cx = _size.width * 0.5f;
+        const float cy = _size.height * 0.5f;
+        const float rx = _size.width * 0.5f;
+        const float scaleY = (_size.width > 0.0f) ? (_size.height / _size.width) : 1.0f;
+
         if (_lineSize > 0)
         {
             _shape->setLineWidth((float)_lineSize);
-            _shape->drawCircle(Vector2(_size.width / 2, _size.height / 2), _size.width / 2, 0, 360, false, 1, _size.height / _size.width, _lineColor);
+            _shape->drawCircle(Vector2(cx, cy), rx, 0, 360, false, 1, scaleY, _lineColor);
         }
-        _shape->drawSolidCircle(Vector2(_size.width / 2, _size.height / 2), _size.width / 2, 0, 360, 1, _size.height / _size.width, _fillColor);
+        _shape->drawSolidCircle(Vector2(cx, cy), rx, 0, 360, 1, scaleY, _fillColor);
         break;
     }
     case 3:
