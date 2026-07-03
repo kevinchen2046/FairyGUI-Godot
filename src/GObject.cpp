@@ -438,6 +438,7 @@ void GObject::setSortingOrder(int value)
         _sortingOrder = value;
         if (_parent != nullptr)
             _parent->childSortingOrderChanged(this, old, _sortingOrder);
+        handleSortingOrderChanged();
     }
 }
 
@@ -538,11 +539,7 @@ std::string GObject::getResourceURL() const
 
 Vector2 GObject::localToGlobal(const Vector2& pt)
 {
-    Vector2 pt2 = pt;
-    if (_pivot.x != 0.0f || _pivot.y != 0.0f)
-        pt2 += computeContentPivotOffset();
-    pt2 = ((CanvasItem*)_displayObject)->get_global_transform_with_canvas().xform(pt2);
-    return GRoot::getInstance()->worldToRoot(pt2);
+    return GRoot::getInstance()->worldToRoot(localPointToCanvas(pt));
 }
 
 Rect2 GObject::localToGlobal(const Rect2& rect)
@@ -555,6 +552,16 @@ Rect2 GObject::localToGlobal(const Rect2& rect)
     ret.size.x = v.x - ret.position.x;
     ret.size.y = v.y - ret.position.y;
     return ret;
+}
+
+Vector2 GObject::localPointToCanvas(const Vector2& pt) const
+{
+    Vector2 pt2 = pt;
+    if (_pivot.x != 0.0f || _pivot.y != 0.0f)
+        pt2 += computeContentPivotOffset();
+    if (_displayObject == nullptr)
+        return pt2;
+    return Object::cast_to<CanvasItem>(_displayObject)->get_global_transform_with_canvas().xform(pt2);
 }
 
 Vector2 GObject::globalToLocal(const Vector2& pt)

@@ -2,8 +2,13 @@
 #include "GRoot.h"
 #include "UIPackage.h"
 #include "UIConfig.h"
+#include "display/FUIContainer.h"
+#include "scene/main/canvas_layer.h"
 
 NS_FGUI_BEGIN
+
+static const int kWindowOverlayLayerOffset = 1;
+
 GWindow::GWindow() :
     _requestingCmd(0),
     _frame(nullptr),
@@ -14,7 +19,10 @@ GWindow::GWindow() :
     _contentArea(nullptr),
     _modal(false),
     _inited(false),
-    _loading(false)
+    _loading(false),
+    _contentCanvasLayer(nullptr),
+    _overlayCanvasLayer(nullptr),
+    _overlayContainer(nullptr)
 {
     _bringToFontOnClick = UIConfig::bringWindowToFrontOnClick;
 }
@@ -100,7 +108,114 @@ void GWindow::handleInit()
 {
     GComponent::handleInit();
 
+    // Content and popup each get their own CanvasLayer so in-window overlays are not
+    // affected by content z-order / clipping. CanvasLayers do not inherit parent transform,
+    // so syncCanvasLayerTransform() mirrors _displayObject pose onto both layers.
+    _displayObject->remove_child(_container);
+
+    _contentCanvasLayer = memnew(::CanvasLayer);
+    _contentCanvasLayer->set_follow_viewport(false);
+    _displayObject->add_child(_contentCanvasLayer);
+    _contentCanvasLayer->add_child(_container);
+
+    _overlayCanvasLayer = memnew(::CanvasLayer);
+    _overlayCanvasLayer->set_follow_viewport(false);
+    _displayObject->add_child(_overlayCanvasLayer);
+
+    _overlayContainer = memnew(FUIInnerContainer);
+    _overlayCanvasLayer->add_child(_overlayContainer);
+
     addEventListener(UIEventType::TouchBegin, [this](EventContext* ctx) { GWindow::onTouchBegin(ctx); });
+
+    syncCanvasLayer();
+    applyPivotOffset();
+}
+
+void GWindow::syncCanvasLayer()
+{
+    const int baseLayer = getSortingOrder();
+    if (_contentCanvasLayer)
+        _contentCanvasLayer->set_layer(baseLayer);
+    if (_overlayCanvasLayer)
+        _overlayCanvasLayer->set_layer(baseLayer + kWindowOverlayLayerOffset);
+}
+
+void GWindow::syncCanvasLayerTransform()
+{
+    if (!_displayObject)
+        return;
+
+    CanvasItem* ci = Object::cast_to<CanvasItem>(_displayObject);
+    if (!ci || !ci->is_inside_tree())
+        return;
+
+    const Transform2D xf = ci->get_global_transform_with_canvas();
+    if (_contentCanvasLayer)
+        _contentCanvasLayer->set_transform(xf);
+    if (_overlayCanvasLayer)
+        _overlayCanvasLayer->set_transform(xf);
+}
+
+bool GWindow::getPopupTargetRect(GObject* target, Vector2& pos, Vector2& size) const
+{
+    if (target == nullptr || !isAncestorOf(target) || _overlayContainer == nullptr)
+        return false;
+
+    CanvasItem* targetCI = Object::cast_to<CanvasItem>(target->displayObject());
+    CanvasItem* overlayCI = Object::cast_to<CanvasItem>(_overlayContainer);
+    if (targetCI != nullptr && overlayCI != nullptr
+            && targetCI->is_inside_tree() && overlayCI->is_inside_tree())
+    {
+        Transform2D overlayInv = overlayCI->get_global_transform_with_canvas().affine_inverse();
+        Vector2 canvasLT = target->localPointToCanvas(Vector2());
+        Vector2 canvasBR = target->localPointToCanvas(target->getSize());
+        pos = overlayInv.xform(canvasLT);
+        size = overlayInv.xform(canvasBR) - pos;
+        return true;
+    }
+
+    pos = Vector2();
+    for (const GObject* p = target; p != nullptr && p != this; p = p->getParent())
+        pos += p->getPosition();
+    size = target->getSize();
+    return true;
+}
+
+FUIInnerContainer* GWindow::getDisplayContainerFor(GObject* child) const
+{
+    if (child != nullptr && child->getSortingOrder() != 0 && _overlayContainer != nullptr)
+        return _overlayContainer;
+    return GComponent::getDisplayContainerFor(child);
+}
+
+void GWindow::handleSortingOrderChanged()
+{
+    syncCanvasLayer();
+}
+
+void GWindow::applyPivotOffset()
+{
+    GComponent::applyPivotOffset();
+    if (_overlayContainer && _container)
+        _overlayContainer->set_position(_container->get_position());
+    syncCanvasLayerTransform();
+}
+
+void GWindow::handlePositionChanged()
+{
+    GObject::handlePositionChanged();
+    syncCanvasLayerTransform();
+}
+
+void GWindow::handleScaleChanged()
+{
+    GObject::handleScaleChanged();
+    syncCanvasLayerTransform();
+}
+
+FUIInnerContainer* GWindow::getOverlayContainer() const
+{
+    return _overlayContainer;
 }
 
 void GWindow::setContentPane(GComponent* value)
@@ -349,6 +464,8 @@ void GWindow::_enter_tree()
         initWindow();
     else
         doShowAnimation();
+
+    syncCanvasLayerTransform();
 }
 
 void GWindow::_exit_tree()

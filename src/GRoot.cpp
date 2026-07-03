@@ -79,6 +79,7 @@ GRoot::GRoot()
       _modalWaitPane(nullptr),
       _tooltipWin(nullptr),
       _defaultTooltipWin(nullptr),
+      _contentCanvasLayer(nullptr),
       _overlayCanvasLayer(nullptr),
       _overlayContainer(nullptr),
       _hasDesignResolution(false),
@@ -179,26 +180,50 @@ void GRoot::handleInit()
 {
     GComponent::handleInit();
 
-    _overlayCanvasLayer = memnew(CanvasLayer);
-    _overlayCanvasLayer->set_layer(100);
+    _displayObject->remove_child(_container);
+
+    _contentCanvasLayer = memnew(::CanvasLayer);
+    _contentCanvasLayer->set_layer(kGRootContentCanvasLayer);
+    _contentCanvasLayer->set_follow_viewport(false);
+    _displayObject->add_child(_contentCanvasLayer);
+    _contentCanvasLayer->add_child(_container);
+
+    _overlayCanvasLayer = memnew(::CanvasLayer);
+    _overlayCanvasLayer->set_layer(kGRootOverlayCanvasLayer);
     _overlayCanvasLayer->set_follow_viewport(false);
     _displayObject->add_child(_overlayCanvasLayer);
 
     _overlayContainer = memnew(FUIInnerContainer);
     _overlayCanvasLayer->add_child(_overlayContainer);
-
-    if (CanvasItem* mainLayer = Object::cast_to<CanvasItem>(_container))
-    {
-        mainLayer->set_z_as_relative(false);
-        mainLayer->set_z_index(0);
-    }
 }
 
-FUIInnerContainer* GRoot::getDisplayContainerFor(GObject* child) const
+void GRoot::syncCanvasLayerTransform()
 {
-    if (child != nullptr && child->getSortingOrder() != 0 && _overlayContainer != nullptr)
-        return _overlayContainer;
-    return _container;
+    if (!_displayObject)
+        return;
+
+    CanvasItem* ci = Object::cast_to<CanvasItem>(_displayObject);
+    if (!ci || !ci->is_inside_tree())
+        return;
+
+    const Transform2D xf = ci->get_global_transform_with_canvas();
+    if (_contentCanvasLayer)
+        _contentCanvasLayer->set_transform(xf);
+    if (_overlayCanvasLayer)
+        _overlayCanvasLayer->set_transform(xf);
+}
+
+void GRoot::applyPivotOffset()
+{
+    GComponent::applyPivotOffset();
+    if (_overlayContainer && _container)
+        _overlayContainer->set_position(_container->get_position());
+    syncCanvasLayerTransform();
+}
+
+FUIInnerContainer* GRoot::getOverlayContainer() const
+{
+    return _overlayContainer;
 }
 
 void GRoot::showWindow(GWindow* win)
@@ -445,21 +470,35 @@ void GRoot::bringPopupToFront(GObject* popup)
     if (!popup)
         return;
 
-    static const int kOverlayBaseOrder = 50000;
-    static const int kOverlayMaxOrder = 99999;
+    GComponent* mountTo = popup->getParent();
+    if (!mountTo)
+        return;
 
-    int maxOrder = kOverlayBaseOrder - 1;
-    const int cnt = numChildren();
+    const int cnt = mountTo->numChildren();
+    int maxOrder = 0;
     for (int i = 0; i < cnt; i++)
     {
-        GObject* g = getChildAt(i);
+        GObject* g = mountTo->getChildAt(i);
         if (g != popup)
             maxOrder = std::max(maxOrder, g->getSortingOrder());
     }
 
-    const int newOrder = std::min(maxOrder + 1, kOverlayMaxOrder);
-    if (popup->getSortingOrder() < newOrder)
-        popup->setSortingOrder(newOrder);
+    if (mountTo == this)
+    {
+        static const int kOverlayBaseOrder = 50000;
+        static const int kOverlayMaxOrder = 99999;
+        maxOrder = std::max(maxOrder, kOverlayBaseOrder - 1);
+        const int newOrder = std::min(maxOrder + 1, kOverlayMaxOrder);
+        if (popup->getSortingOrder() < newOrder)
+            popup->setSortingOrder(newOrder);
+    }
+    else
+    {
+        static const int kWindowPopupMaxOrder = 9999;
+        const int newOrder = std::min(maxOrder + 1, kWindowPopupMaxOrder);
+        if (popup->getSortingOrder() < newOrder)
+            popup->setSortingOrder(newOrder);
+    }
 }
 
 void GRoot::showPopup(GObject* popup, GObject* target, PopupDirection dir)
@@ -467,8 +506,10 @@ void GRoot::showPopup(GObject* popup, GObject* target, PopupDirection dir)
     if (!popup)
         return;
 
+    GComponent* mountTo = findPopupMountScope(target);
+
     // Close other popups when showing a new one (e.g. switching ComboBox dropdowns).
-    if (popup->getParent() != this && !_popupStack.empty())
+    if (popup->getParent() != mountTo && !_popupStack.empty())
         hidePopup();
     else if (!_popupStack.empty())
         hidePopup(popup);
@@ -482,7 +523,7 @@ void GRoot::showPopup(GObject* popup, GObject* target, PopupDirection dir)
         while (p != nullptr)
         {
             inheritedOrder = std::max(inheritedOrder, p->getSortingOrder());
-            if (p->getParent() == this)
+            if (p->getParent() == mountTo)
                 break;
             p = p->getParent();
         }
@@ -491,28 +532,49 @@ void GRoot::showPopup(GObject* popup, GObject* target, PopupDirection dir)
     }
 
     static const int kPopupWindowSortingOrder = 50000;
-    if (popup->getSortingOrder() < kPopupWindowSortingOrder)
-        popup->setSortingOrder(kPopupWindowSortingOrder);
+    static const int kWindowPopupMinOrder = 1;
+    static const int kWindowPopupMaxOrder = 9999;
+    if (mountTo == this)
+    {
+        if (popup->getSortingOrder() < kPopupWindowSortingOrder)
+            popup->setSortingOrder(kPopupWindowSortingOrder);
+    }
+    else
+    {
+        if (popup->getSortingOrder() >= kPopupWindowSortingOrder)
+            popup->setSortingOrder(kWindowPopupMinOrder);
+        if (popup->getSortingOrder() < kWindowPopupMinOrder)
+            popup->setSortingOrder(kWindowPopupMinOrder);
+        if (popup->getSortingOrder() > kWindowPopupMaxOrder)
+            popup->setSortingOrder(kWindowPopupMaxOrder);
+    }
+
+    mountTo->syncOverlayLayout();
+    if (GWindow* win = dynamic_cast<GWindow*>(mountTo))
+        win->syncPopupMountLayout();
 
     popup->setVisible(true);
-    addChild(Ref<GObject>(popup));
+    mountTo->addChild(Ref<GObject>(popup));
+
+    const bool skipPosition = dynamic_cast<GWindow*>(popup) && target == nullptr && dir == PopupDirection::AUTO;
+    if (!skipPosition)
+    {
+        Vector2 pos = getPoupPosition(popup, target, dir, mountTo);
+        popup->setPosition(pos.x, pos.y);
+    }
+
     bringPopupToFront(popup);
     if (GComponent* com = dynamic_cast<GComponent*>(popup))
         com->refreshDisplayListRecursive();
-    syncNativeChildrenZOrder();
+    mountTo->syncNativeChildrenZOrder();
     adjustModalLayer();
 
-    if (dynamic_cast<GWindow*>(popup) && target == nullptr && dir == PopupDirection::AUTO)
+    if (skipPosition)
         return;
 
-    Vector2 pos = getPoupPosition(popup, target, dir);
-    popup->setPosition(pos.x, pos.y);
-
     bringPopupToFront(popup);
-    syncNativeChildrenZOrder();
-    if (GComponent* com = dynamic_cast<GComponent*>(popup))
-        com->refreshDisplayListRecursive();
-    childStateChanged(popup);
+    mountTo->syncNativeChildrenZOrder();
+    mountTo->childStateChanged(popup);
 }
 
 void GRoot::togglePopup(GObject* popup)
@@ -559,13 +621,13 @@ void GRoot::hidePopup(GObject* popup)
 
 void GRoot::closePopup(GObject* target)
 {
-    if (target && target->getParent() != nullptr)
-    {
-        if (dynamic_cast<GWindow*>(target))
-            ((GWindow*)target)->hide();
-        else
-            removeChild(target);
-    }
+    if (!target)
+        return;
+
+    if (dynamic_cast<GWindow*>(target))
+        ((GWindow*)target)->hide();
+    else if (GComponent* parent = dynamic_cast<GComponent*>(target->getParent()))
+        parent->removeChild(target);
 }
 
 void GRoot::checkPopups()
@@ -575,7 +637,7 @@ void GRoot::checkPopups()
     {
         GObject* mc = _inputProcessor->getRecentInput()->getTarget();
         bool handled = false;
-        while (mc != this && mc != nullptr)
+        while (mc != nullptr)
         {
             auto it = std::find(_popupStack.cbegin(), _popupStack.cend(), mc);
             if (it != _popupStack.cend())
@@ -589,6 +651,8 @@ void GRoot::checkPopups()
                 handled = true;
                 break;
             }
+            if (mc == this)
+                break;
             mc = mc->findParent();
         }
 
@@ -613,28 +677,43 @@ bool GRoot::hasAnyPopup()
     return !_popupStack.empty();
 }
 
-Vector2 GRoot::getPoupPosition(GObject* popup, GObject* target, PopupDirection dir)
+bool GRoot::wasPopupJustClosed(GObject* popup) const
 {
+    if (!popup)
+        return false;
+    return std::find(_justClosedPopups.cbegin(), _justClosedPopups.cend(), popup) != _justClosedPopups.cend();
+}
+
+static void getTargetRectInScope(GObject* target, GComponent* scope, Vector2& pos, Vector2& size)
+{
+    if (GWindow* win = dynamic_cast<GWindow*>(scope))
+    {
+        if (win->getPopupTargetRect(target, pos, size))
+            return;
+    }
+
+    pos = scope->globalToLocal(target->localToGlobal(Vector2()));
+    Vector2 br = scope->globalToLocal(target->localToGlobal(target->getSize()));
+    size = br - pos;
+}
+
+Vector2 GRoot::getPoupPosition(GObject* popup, GObject* target, PopupDirection dir, GComponent* scope)
+{
+    if (scope == nullptr)
+        scope = this;
+
     Vector2 pos;
     Vector2 size;
     if (target != nullptr)
-    {
-        pos = target->localToGlobal(Vector2());
-        pos = this->globalToLocal(pos);
-        size = target->localToGlobal(target->getSize());
-        size = this->globalToLocal(size);
-        size -= pos;
-    }
+        getTargetRectInScope(target, scope, pos, size);
     else
-    {
-        pos = globalToLocal(_inputProcessor->getRecentInput()->getPosition());
-    }
+        pos = scope->globalToLocal(_inputProcessor->getRecentInput()->getPosition());
     float xx, yy;
     xx = pos.x;
-    if (xx + popup->getWidth() > getWidth())
+    if (xx + popup->getWidth() > scope->getWidth())
         xx = xx + size.x - popup->getWidth();
     yy = pos.y + size.y;
-    if ((dir == PopupDirection::AUTO && yy + popup->getHeight() > getHeight()) || dir == PopupDirection::UP)
+    if ((dir == PopupDirection::AUTO && yy + popup->getHeight() > scope->getHeight()) || dir == PopupDirection::UP)
     {
         yy = pos.y - popup->getHeight() - 1;
         if (yy < 0)
@@ -801,6 +880,8 @@ void GRoot::handleSizeChanged()
 
     if (((FUIContainer*)_displayObject)->isClippingEnabled())
         ((FUIContainer*)_displayObject)->setClippingRegion(Rect(_margin.left, _margin.top, _size.width - _margin.left - _margin.right, _size.height - _margin.top - _margin.bottom));
+
+    syncCanvasLayerTransform();
 }
 
 void GRoot::_enter_tree()
@@ -818,6 +899,7 @@ void GRoot::_enter_tree()
         }
         onWindowSizeChanged();
     }
+    syncCanvasLayerTransform();
 }
 
 void GRoot::_exit_tree()
@@ -1048,6 +1130,8 @@ void GRoot::applyContentScale()
     float offsetX = (screenW - newW * scaleX) * 0.5f;
     float offsetY = (screenH - newH * scaleY) * 0.5f;
     node->set_position(Vector2(offsetX, offsetY));
+
+    syncCanvasLayerTransform();
 }
 
 void GRoot::gd_showTooltips(const String& msg) { showTooltips(msg.utf8().get_data()); }

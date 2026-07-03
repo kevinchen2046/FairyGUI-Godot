@@ -143,6 +143,8 @@ public:
     Rect2 globalToLocal(const Rect2& rect);
     Vector2 localToGlobal(const Vector2& pt);
     Rect2 localToGlobal(const Rect2& rect);
+    // Canvas/world position without converting through GRoot logical space.
+    Vector2 localPointToCanvas(const Vector2& pt) const;
     Rect2 transformRect(const Rect2& rect, GObject* targetSpace);
 
     Vector2 gd_localToGlobal(const Vector2& pt) { return localToGlobal(pt); }
@@ -212,6 +214,7 @@ protected:
     Vector2 computeDisplayScale() const;
     Vector2 displayLocalToLogical(const Vector2& displayLocal) const;
     virtual void applyPivotOffset();
+    virtual void handleSortingOrderChanged() {}
     void rebuildSkewedTransform();
     virtual void handleControllerChanged(GController* c);
     virtual void handleAlphaChanged();

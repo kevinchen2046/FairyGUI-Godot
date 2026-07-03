@@ -5,6 +5,8 @@
 // cocos2d.h removed - see godot_types.h
 #include "GComponent.h"
 
+class CanvasLayer;
+
 NS_FGUI_BEGIN
 
 class IUISource : public RefCounted
@@ -50,6 +52,10 @@ public:
     void initWindow();
     void addUISource(IUISource* uiSource);
 
+    // Popup mount rect in window logical coords (overlay-local space).
+    bool getPopupTargetRect(GObject* target, Vector2& pos, Vector2& size) const;
+    void syncPopupMountLayout() { syncCanvasLayerTransform(); }
+
     bool isBringToFrontOnClick() { return _bringToFontOnClick; }
     void setBringToFrontOnClick(bool value) { _bringToFontOnClick = value; }
 
@@ -78,8 +84,15 @@ public:
     void setDoHideAnimationCallback(const Callable& cb) { _doHideAnimationCallback = cb; }
     Callable getDoHideAnimationCallback() const { return _doHideAnimationCallback; }
 
+    virtual FUIInnerContainer* getOverlayContainer() const override;
+    virtual FUIInnerContainer* getDisplayContainerFor(GObject* child) const override;
+
 protected:
     virtual void handleInit() override;
+    virtual void applyPivotOffset() override;
+    virtual void handlePositionChanged() override;
+    virtual void handleScaleChanged() override;
+    virtual void handleSortingOrderChanged() override;
     virtual void onInit() {};
     virtual void onShown() {};
     virtual void onHide() {};
@@ -98,6 +111,8 @@ private:
     void layoutModalWaitPane();
     void onUILoadComplete();
     void _initWindow();
+    void syncCanvasLayer();
+    void syncCanvasLayerTransform();
 
     void onTouchBegin(EventContext* context);
     void onDragStart(EventContext* context);
@@ -119,6 +134,10 @@ private:
     Callable _onHideCallback;
     Callable _doShowAnimationCallback;
     Callable _doHideAnimationCallback;
+
+    ::CanvasLayer* _contentCanvasLayer;
+    ::CanvasLayer* _overlayCanvasLayer;
+    FUIInnerContainer* _overlayContainer;
 };
 
 NS_FGUI_END

@@ -198,7 +198,6 @@ void GComboBox::showDropdown()
     _dropdown->setVisible(true);
     _dropdown->setWidth(_size.width);
     _list->ensureBoundsCorrect();
-    _dropdown->refreshDisplayListRecursive();
 
     GRoot::getInstance()->togglePopup(_dropdown, this, popupDirection);
     if (_dropdown->getParent() != nullptr)
@@ -402,8 +401,8 @@ void GComboBox::setup_afterAdd(ByteBuffer* buffer, int beginPos)
 
 void GComboBox::onClickItem(EventContext* context)
 {
-    if (dynamic_cast<GRoot*>(_dropdown->getParent()))
-        ((GRoot*)_dropdown->getParent())->hidePopup(_dropdown);
+    if (_dropdown->getParent() != nullptr)
+        GRoot::getInstance()->hidePopup(_dropdown);
     _selectedIndex = INT_MIN;
     setSelectedIndex(_list->getChildIndex((GObject*)context->getData()));
 
@@ -439,7 +438,12 @@ void GComboBox::onTouchBegin(EventContext* context)
     _down = true;
 
     if (_dropdown != nullptr)
+    {
+        GRoot* root = GRoot::getInstance();
+        if (root->wasPopupJustClosed(_dropdown))
+            return;
         showDropdown();
+    }
 
     context->captureTouch();
 }

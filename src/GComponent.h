@@ -12,6 +12,8 @@
 
 NS_FGUI_BEGIN
 
+class GWindow;
+
 class GComponent : public GObject
 {
     GDCLASS(GComponent, GObject)
@@ -114,6 +116,8 @@ public:
     void ensureBoundsCorrect();
     void refreshDisplayList();
     void refreshDisplayListRecursive();
+    void syncNativeChildrenZOrder();
+    void syncOverlayLayout() { applyPivotOffset(); }
 
     virtual GObject* hitTest(const Vector2& worldPoint, const Camera2D* camera) override;
     virtual Vector2 getSnappingPosition(const Vector2& pt);
@@ -122,6 +126,13 @@ public:
     void childSortingOrderChanged(GObject* child, int oldValue, int newValue);
     void childStateChanged(GObject* child);
     void adjustRadioGroupDepth(GObject* obj, GController* c);
+
+    static GWindow* findWindowOf(const GObject* obj);
+    static GComponent* findPopupMountScope(GObject* obj);
+
+    virtual FUIInnerContainer* getOverlayContainer() const { return nullptr; }
+    FUIInnerContainer* getContentContainer() const { return _container; }
+    virtual FUIInnerContainer* getDisplayContainerFor(GObject* child) const;
 
     virtual void constructFromResource() override;
     void constructFromResource(std::vector<GObject*>* objectPool, int poolIndex);
@@ -147,11 +158,7 @@ protected:
     void setupOverflow(OverflowType overflow);
     void setupScroll(ByteBuffer* buffer);
     void updateOverflowClipRect();
-    void syncNativeChildrenZOrder();
     void refreshDisplayChildrenZOrder();
-    virtual FUIInnerContainer* getDisplayContainerFor(GObject* child) const;
-    int getDisplaySiblingIndex(GObject* child) const;
-    int getDisplaySiblingIndexDescent(GObject* child) const;
 
     std::vector<Ref<GObject>> _children;
     std::vector<Ref<GController>> _controllers;
@@ -169,6 +176,8 @@ protected:
     IHitTest* _hitArea;
 
 private:
+    int getDisplaySiblingIndex(GObject* child) const;
+    int getDisplaySiblingIndexDescent(GObject* child) const;
     int getInsertPosForSortingChild(GObject* target);
     int moveChild(GObject* child, int oldIndex, int index);
     static void ensure_display_child_added(FUIInnerContainer* container, GObject* child);

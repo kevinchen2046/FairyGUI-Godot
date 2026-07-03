@@ -75,7 +75,8 @@ public:
     void hidePopup();
     void hidePopup(GObject* popup);
     bool hasAnyPopup();
-    Vector2 getPoupPosition(GObject* popup, GObject* target, PopupDirection dir);
+    Vector2 getPoupPosition(GObject* popup, GObject* target, PopupDirection dir, GComponent* scope = nullptr);
+    bool wasPopupJustClosed(GObject* popup) const;
 
     void showTooltips(const std::string& msg);
     void gd_showTooltips(const String& msg);
@@ -98,15 +99,18 @@ public:
     void onWindowSizeChanged();
     Node* getDisplayObject() const { return _displayObject; }
 
+    virtual FUIInnerContainer* getOverlayContainer() const override;
+
 protected:
     virtual void handlePositionChanged() override;
     virtual void handleSizeChanged() override;
     virtual void handleInit() override;
-    virtual FUIInnerContainer* getDisplayContainerFor(GObject* child) const override;
+    virtual void applyPivotOffset() override;
     virtual void _enter_tree() override;
     virtual void _exit_tree() override;
 
 private:
+    void syncCanvasLayerTransform();
     bool initWithParent(Node* parent, int zOrder);
     void onInitWithParent(Node* parent, int zOrder, bool deferAdd = false);
     void createModalLayer();
@@ -146,7 +150,11 @@ private:
 
     static GRoot* _inst;
 
-    CanvasLayer* _overlayCanvasLayer;
+    static const int kGRootContentCanvasLayer = 0;
+    static const int kGRootOverlayCanvasLayer = 100;
+
+    ::CanvasLayer* _contentCanvasLayer;
+    ::CanvasLayer* _overlayCanvasLayer;
     FUIInnerContainer* _overlayContainer;
 };
 

@@ -2,6 +2,7 @@
 #include "GButton.h"
 #include "GGroup.h"
 #include "GRoot.h"
+#include "Window.h"
 #include "Relations.h"
 #include "TranslationHelper.h"
 #include "UIObjectFactory.h"
@@ -46,7 +47,40 @@ void GComponent::ensure_display_child_added(FUIInnerContainer* container, GObjec
 
 FUIInnerContainer* GComponent::getDisplayContainerFor(GObject* child) const
 {
+    if (child == nullptr || child->getSortingOrder() == 0)
+        return _container;
+
+    // Never attach in-window popup displays to GRoot overlay: stop at GWindow scope.
+    for (const GComponent* comp = this; comp != nullptr; comp = dynamic_cast<GComponent*>(comp->findParent()))
+    {
+        if (const GWindow* win = dynamic_cast<const GWindow*>(comp))
+        {
+            if (child->getSortingOrder() != 0 && win->getOverlayContainer())
+                return win->getOverlayContainer();
+            return win->getContentContainer();
+        }
+
+        if (FUIInnerContainer* overlay = comp->getOverlayContainer())
+            return overlay;
+    }
     return _container;
+}
+
+GWindow* GComponent::findWindowOf(const GObject* obj)
+{
+    for (const GObject* p = obj; p != nullptr; p = p->getParent())
+    {
+        if (GWindow* win = dynamic_cast<GWindow*>(const_cast<GObject*>(p)))
+            return win;
+    }
+    return nullptr;
+}
+
+GComponent* GComponent::findPopupMountScope(GObject* obj)
+{
+    if (GWindow* win = findWindowOf(obj))
+        return win;
+    return GRoot::getInstance();
 }
 
 int GComponent::getDisplaySiblingIndex(GObject* child) const
@@ -816,6 +850,9 @@ void GComponent::childStateChanged(GObject* child)
         }
     }
 
+    if (child->getParent() != this)
+        return;
+
     if ((child->_displayObject == nullptr) || (child == _maskOwner))
         return;
 
@@ -1206,15 +1243,21 @@ void GComponent::applyPivotOffset()
     // Match FUISprite: computeDisplayPosition() shifts the outer node by pivot when
     // !pivotAsAnchor; inner content must be shifted back so (x,y) stays top-left.
     // When pivotAsAnchor, the outer node sits on the anchor and the same offset applies.
-    if (_container)
+    Vector2 pos(-_size.width * _pivot.x, -_size.height * _pivot.y);
+    if (!_scrollPane.is_valid() && !_overflowClipContainer)
     {
-        Vector2 pos(-_size.width * _pivot.x, -_size.height * _pivot.y);
-        if (!_scrollPane.is_valid() && !_overflowClipContainer)
-        {
-            pos.x += _margin.left;
-            pos.y += _margin.top;
-        }
+        pos.x += _margin.left;
+        pos.y += _margin.top;
+    }
+
+    if (_container)
         _container->set_position(pos);
+
+    // Sync in-window overlay only (GRoot overlay lives in a separate CanvasLayer).
+    if (FUIInnerContainer* overlay = getOverlayContainer())
+    {
+        if (overlay->get_parent() == _displayObject)
+            overlay->set_position(pos);
     }
 }
 
