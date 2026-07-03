@@ -12,7 +12,7 @@ interface ChatMessage {
 
 export default class ChatScene extends DemoSceneBase {
     private _list: GList | null = null;
-    private _input: GTextField | null = null;
+    private _inputField: GTextField | null = null;
     private _messages: ChatMessage[] = [];
     private _emojiSelectUi: GComponent | null = null;
 
@@ -29,9 +29,9 @@ export default class ChatScene extends DemoSceneBase {
             this._list.setItemProvider(this._getListItemResource.bind(this));
         }
 
-        this._input = this._view.getChild("input") as GTextField | null;
-        if (this._input != null) {
-            this._input.addEventListener(
+        this._inputField = this._view.getChild("input") as GTextField | null;
+        if (this._inputField != null) {
+            this._inputField.addEventListener(
                 UIEventDispatcher.SUBMIT,
                 Callable.create(this._onSubmit.bind(this)),
             );
@@ -62,15 +62,15 @@ export default class ChatScene extends DemoSceneBase {
     }
 
     private _onClickSendBtn(): void {
-        if (this._input == null) {
+        if (this._inputField == null) {
             return;
         }
-        const msg = this._input.getText();
+        const msg = this._inputField.getText();
         if (msg.length === 0) {
             return;
         }
         this._addMsg("Unity", "r0", msg, true);
-        this._input.setText("");
+        this._inputField.setText("");
     }
 
     private _onClickEmojiBtn(): void {
@@ -82,10 +82,10 @@ export default class ChatScene extends DemoSceneBase {
 
     private _onClickEmoji(): void {
         const item = this._groot!.getTouchTarget();
-        if (item == null || this._input == null) {
+        if (item == null || this._inputField == null) {
             return;
         }
-        this._input.setText(`${this._input.getText()}[: ${item.getText()}]`);
+        this._inputField.setText(`${this._inputField.getText()}[: ${item.getText()}]`);
     }
 
     private _onSubmit(): void {

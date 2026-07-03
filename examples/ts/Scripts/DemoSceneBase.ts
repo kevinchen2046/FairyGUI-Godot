@@ -11,7 +11,7 @@ export default class DemoSceneBase extends Node {
     _ready(): void {
         this._registerDefaultFonts();
         if (GRoot.getInstance() == null) {
-            (this as Node).callDeferred("_delayedInit");
+            (this as unknown as { callDeferred(method: string): void }).callDeferred("_delayedInit");
         } else {
             this._groot = GRoot.getInstance();
             void this.ContinueInit();

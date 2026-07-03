@@ -4,7 +4,7 @@ import { CanvasItem, Node2D, SceneTree } from "godot";
 
 export default class DebugPopup extends SceneTree {
     _initialize(): void {
-        (this as SceneTree).callDeferred("_run");
+        (this as unknown as { callDeferred(method: string): void }).callDeferred("_run");
     }
 
     private _run(): void {
