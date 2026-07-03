@@ -2,6 +2,7 @@
 #include "utils/UBBParser.h"
 #include "utils/ByteBuffer.h"
 #include "utils/html/HtmlObject.h"
+#include "display/FUILabel.h"
 
 NS_FGUI_BEGIN
 GRichTextField::GRichTextField() :
@@ -135,6 +136,13 @@ Color GRichTextField::getAnchorFontColor() const
 void GRichTextField::setAnchorFontColor(const Color& value)
 {
     _richText->setAnchorFontColor(value);
+}
+
+void GRichTextField::handleGrayedChanged()
+{
+    GObject::handleGrayedChanged();
+    if (_richText)
+        _richText->applyGrayedToLabels(_finalGrayed);
 }
 
 void GRichTextField::handleSizeChanged()

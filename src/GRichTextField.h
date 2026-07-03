@@ -41,6 +41,7 @@ public:
 protected:
     virtual void handleInit() override;
     virtual void handleSizeChanged() override;
+    virtual void handleGrayedChanged() override;
 
     virtual void setTextFieldText() override;
     virtual void updateSize() override;

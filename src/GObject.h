@@ -174,6 +174,9 @@ public:
     virtual void constructFromResource();
     virtual GObject* hitTest(const Vector2& worldPoint, const Camera2D* camera);
 
+    // Re-run grayed propagation/visual refresh (public entry for parent components).
+    void refreshGrayedVisual();
+
     template <typename T>
     T* as();
 

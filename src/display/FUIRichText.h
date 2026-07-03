@@ -4,6 +4,7 @@
 #include "FairyGUIMacros.h"
 #include "TextFormat.h"
 #include "utils/html/HtmlParser.h"
+#include "scene/gui/control.h"
 
 NS_FGUI_BEGIN
 
@@ -49,6 +50,8 @@ public:
     Color getAnchorFontColor() const { return _parseOptions.linkColor; }
     void setAnchorFontColor(const Color& color);
 
+    void applyGrayedToLabels(bool grayed);
+
     static void _bind_methods();
 
 protected:
@@ -85,6 +88,8 @@ private:
     float _textRectWidth;
     int _numLines;
     std::string _text;
+
+    Control* _clipContainer;
 };
 
 NS_FGUI_END

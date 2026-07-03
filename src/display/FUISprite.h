@@ -2,6 +2,7 @@
 #define __FUISPRITE_H__
 
 #include "FairyGUIMacros.h"
+#include "scene/resources/material.h"
 #include <functional>
 
 NS_FGUI_BEGIN
@@ -73,12 +74,13 @@ protected:
 
 private:
     void applyTintColor();
+    void updateDrawMaterial();
     void setupFill();
     void drawFillHorizontal();
     void drawFillVertical();
     void drawFillRadial();
-    void drawScale9();
-    void drawTile();
+    void drawScale9(const Color& drawModulate);
+    void drawTile(const Color& drawModulate);
 
     Vector2 boundaryTexCoord(char index) const;
 
@@ -90,6 +92,7 @@ private:
     bool _grayed;
     bool _rotated;
     Color _tintColor;
+    Ref<ShaderMaterial> _drawMaterial;
 
     // Store real texture while keeping Sprite2D::texture null to suppress auto-render
     Ref<Texture2D> _realTexture;

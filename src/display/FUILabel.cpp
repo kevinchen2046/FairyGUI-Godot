@@ -230,11 +230,8 @@ bool FUILabel::setBMFontFilePath(const std::string& bmfontFilePath, float fontSi
 
 void FUILabel::setGrayed(bool value)
 {
-    if (_grayed != value)
-    {
-        _grayed = value;
-        applyTextFormat();
-    }
+    _grayed = value;
+    applyTextFormat();
 }
 
 void FUILabel::setUnderlineColor(const Color& value)
@@ -283,6 +280,16 @@ int FUILabel::getDrawFontSize() const
     return size;
 }
 
+static float fui_font_style_extra_width(const TextFormat* format, int fontSize)
+{
+    float extra = 0.0f;
+    if (format->italics)
+        extra += fontSize * Math::tan(Math::deg_to_rad(12.0f));
+    if (format->bold)
+        extra += fontSize * 0.08f;
+    return extra;
+}
+
 float FUILabel::getTextWidth() const
 {
     if (_text.empty()) return 0;
@@ -292,7 +299,9 @@ float FUILabel::getTextWidth() const
         int fontSize = getDrawFontSize();
         bool wrap = _wrapEnabled && _contentSize.x > 0;
         float maxWidth = wrap ? _contentSize.x : -1;
-        return fui_measure_text(font, GObject::toGodotStr(_text), fontSize, wrap, maxWidth, _textFormat->align).x;
+        float width = fui_measure_text(font, GObject::toGodotStr(_text), fontSize, wrap, maxWidth, _textFormat->align).x;
+        width += fui_font_style_extra_width(_textFormat, fontSize);
+        return width;
     }
     return 0;
 }
@@ -380,8 +389,8 @@ void FUILabel::_draw()
         fui_draw_text(this, font, offset, godotText, fontSize, glowColor, wrap, maxWidth, _textFormat->align, false, 0);
     }
 
-    // Main text — color comes from node modulate (see applyTextFormat).
-    fui_draw_text(this, font, offset, godotText, fontSize, Color(1, 1, 1, 1), wrap, maxWidth, _textFormat->align, false, 0);
+    // Main text
+    fui_draw_text(this, font, offset, godotText, fontSize, textColor, wrap, maxWidth, _textFormat->align, false, 0);
 
     // Underline
     if (_textFormat->underline)

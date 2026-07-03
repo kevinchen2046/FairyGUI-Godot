@@ -1,5 +1,6 @@
 #include "FUISprite.h"
 #include <cfloat>
+#include "scene/resources/shader.h"
 #include "servers/rendering_server.h"
 
 NS_FGUI_BEGIN
@@ -9,6 +10,28 @@ Ref<Texture2D> FUISprite::_empty;
 // Const for radial fill boundary coords lookup
 static const char kProgressTextureCoords = 0x4b; // {0,1} {0,0} {1,0} {1,1}
 static const int kProgressTextureCoordsCount = 4;
+
+static Ref<Shader> get_fui_sprite_shader()
+{
+    static Ref<Shader> shader;
+    if (shader.is_null())
+    {
+        shader.instantiate();
+        shader->set_code(
+            "shader_type canvas_item;\n"
+            "uniform bool u_grayed = false;\n"
+            "void fragment() {\n"
+            "    vec4 c = texture(TEXTURE, UV) * COLOR;\n"
+            "    if (u_grayed) {\n"
+            "        float g = dot(c.rgb, vec3(0.299, 0.587, 0.114));\n"
+            "        COLOR = vec4(vec3(g), c.a);\n"
+            "    } else {\n"
+            "        COLOR = c;\n"
+            "    }\n"
+            "}\n");
+    }
+    return shader;
+}
 
 static Rect2 getRotatedAtlasSrcRect(float ox, float oy, float ow, float oh, const Rect2& atlasRect);
 static Vector2 getRotatedLogicalTrimSize(const Rect2& atlasRect, const Vector2& originalSize);
@@ -32,6 +55,7 @@ FUISprite::FUISprite() :
 {
     set_centered(false); // FairyGUI uses top-left origin, NOT center origin
     item_rect_changed(); // enable NOTIFICATION_DRAW for Node2D
+    updateDrawMaterial();
 }
 
 FUISprite::~FUISprite()
@@ -229,8 +253,6 @@ void FUISprite::setFlippedV(bool v)
     queue_redraw();
 }
 
-static const Color kDrawUnitModulate(1, 1, 1, 1);
-
 static void draw_texture_region_with_flip(CanvasItem* item, const Ref<Texture2D>& tex,
         const Rect2& dst, const Rect2& src, const Color& modulate, bool flipH, bool flipV)
 {
@@ -310,25 +332,30 @@ void FUISprite::setColor(const Color& c)
 {
     _tintColor = Color(c.r, c.g, c.b, 1.0f);
     applyTintColor();
+    queue_redraw();
+}
+
+void FUISprite::updateDrawMaterial()
+{
+    if (_drawMaterial.is_null())
+    {
+        _drawMaterial.instantiate();
+        _drawMaterial->set_shader(get_fui_sprite_shader());
+    }
+    _drawMaterial->set_shader_parameter("u_grayed", _grayed);
+    set_material(_drawMaterial);
+    set_modulate(Color(1, 1, 1, 1));
 }
 
 void FUISprite::applyTintColor()
 {
-    Color c = _tintColor;
-    if (_grayed)
-    {
-        const float gray = c.r * 0.299f + c.g * 0.587f + c.b * 0.114f;
-        c = Color(gray, gray, gray, 1.0f);
-    }
-    set_modulate(c);
+    updateDrawMaterial();
 }
 
 void FUISprite::setGrayed(bool value)
 {
-    if (_grayed == value)
-        return;
     _grayed = value;
-    applyTintColor();
+    updateDrawMaterial();
     queue_redraw();
 }
 
@@ -593,6 +620,7 @@ void FUISprite::_draw()
         return;
 
     Ref<Texture2D> tex = _realTexture;
+    const Color drawModulate = _tintColor;
 
     Vector2 contentSize = _contentSize.x > 0 ? _contentSize : get_rect().size;
     Rect2 texRect = get_region_rect();
@@ -608,7 +636,7 @@ void FUISprite::_draw()
         // Fill mode: draw custom triangles
         if (_fillIndices.empty()) return;
 
-        Color color = kDrawUnitModulate;
+        Color color = drawModulate;
         std::vector<PackedVector2Array> polys;
         std::vector<Color> colors;
 
@@ -631,13 +659,13 @@ void FUISprite::_draw()
 
     if (_scale9Enabled)
     {
-        drawScale9();
+        drawScale9(drawModulate);
         return;
     }
 
     if (_scaleByTile)
     {
-        drawTile();
+        drawTile(drawModulate);
         return;
     }
 
@@ -660,7 +688,7 @@ void FUISprite::_draw()
 
         const Vector2 dstPos = drawOrigin + Vector2(_trimOffset.x * sx, _trimOffset.y * sy);
         drawRotatedAtlasRegion(this, tex, texRect, drawOrigin, contentSize,
-            dstPos, logicalTrim.x, logicalTrim.y, sx, sy, kDrawUnitModulate);
+            dstPos, logicalTrim.x, logicalTrim.y, sx, sy, drawModulate);
     }
     else if (hasTrim)
     {
@@ -669,14 +697,14 @@ void FUISprite::_draw()
         draw_texture_region_with_flip(this, tex,
             Rect2(dstPos, dstSize),
             texRect,
-            kDrawUnitModulate, flipH, flipV);
+            drawModulate, flipH, flipV);
     }
     else
     {
         draw_texture_region_with_flip(this, tex,
             Rect2(drawOrigin.x, drawOrigin.y, contentSize.x, contentSize.y),
             texRect,
-            kDrawUnitModulate, flipH, flipV);
+            drawModulate, flipH, flipV);
     }
 }
 
@@ -698,7 +726,7 @@ static void draw_tile_region(CanvasItem* item, const Ref<Texture2D>& tex,
     item->draw_set_transform(Vector2(), 0.0f, Vector2(1.0f, 1.0f));
 }
 
-void FUISprite::drawTile()
+void FUISprite::drawTile(const Color& drawModulate)
 {
     if (_realTexture.is_null())
         return;
@@ -714,7 +742,6 @@ void FUISprite::drawTile()
         return;
 
     const Vector2 topLeft = get_offset();
-    const Color drawModulate = kDrawUnitModulate;
     const bool flipH = is_flipped_h();
     const bool flipV = is_flipped_v();
     const float tw = tileSrc.size.x;
@@ -741,7 +768,7 @@ void FUISprite::drawTile()
     }
 }
 
-void FUISprite::drawScale9()
+void FUISprite::drawScale9(const Color& drawModulate)
 {
     if (_realTexture.is_null()) return;
 
@@ -828,7 +855,7 @@ void FUISprite::drawScale9()
             Rect2 localDst(dy - center.y,
                            center.x - dx - dw,
                            dh, dw);
-            draw_texture_rect_region(tex, localDst, src, kDrawUnitModulate);
+            draw_texture_rect_region(tex, localDst, src, drawModulate);
         }
         draw_set_transform(Vector2(), 0, Vector2(1, 1));
         return;
@@ -846,7 +873,7 @@ void FUISprite::drawScale9()
                   destRects[i][2], destRects[i][3]);
         if (dst.size.x <= 0 || dst.size.y <= 0) continue;
 
-        draw_texture_region_with_flip(this, tex, dst, src, kDrawUnitModulate, flipH, flipV);
+        draw_texture_region_with_flip(this, tex, dst, src, drawModulate, flipH, flipV);
     }
 }
 

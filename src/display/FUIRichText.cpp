@@ -161,6 +161,11 @@ FUIRichText::FUIRichText() :
     _numLines(0)
 {
     item_rect_changed();
+    _clipContainer = memnew(Control);
+    _clipContainer->set_name("ClipContainer");
+    _clipContainer->set_mouse_filter(Control::MOUSE_FILTER_IGNORE);
+    _clipContainer->set_clip_contents(true);
+    add_child(_clipContainer);
 }
 
 FUIRichText::~FUIRichText()
@@ -209,10 +214,13 @@ void FUIRichText::_notification(int p_what)
     }
     if (p_what == NOTIFICATION_ENTER_TREE)
     {
-        for (int i = 0; i < get_child_count(); i++)
+        if (_clipContainer)
         {
-            if (CanvasItem* ci = Object::cast_to<CanvasItem>(get_child(i)))
-                ci->queue_redraw();
+            for (int i = 0; i < _clipContainer->get_child_count(); i++)
+            {
+                if (CanvasItem* ci = Object::cast_to<CanvasItem>(_clipContainer->get_child(i)))
+                    ci->queue_redraw();
+            }
         }
         queue_redraw();
         return;
@@ -229,10 +237,12 @@ Vector2 FUIRichText::get_content_size() const
 
 const char* FUIRichText::hitTestLink(const Vector2& worldPoint)
 {
+    if (!_clipContainer)
+        return nullptr;
     Vector2 localPt = to_local(worldPoint);
-    for (int i = 0; i < get_child_count(); i++)
+    for (int i = 0; i < _clipContainer->get_child_count(); i++)
     {
-        Node* child = get_child(i);
+        Node* child = _clipContainer->get_child(i);
         HtmlElement* element = getNodeElement(child);
         if (!element || !element->link)
             continue;
@@ -243,6 +253,17 @@ const char* FUIRichText::hitTestLink(const Vector2& worldPoint)
             return element->link->text.c_str();
     }
     return nullptr;
+}
+
+void FUIRichText::applyGrayedToLabels(bool grayed)
+{
+    if (!_clipContainer)
+        return;
+    for (int i = 0; i < _clipContainer->get_child_count(); i++)
+    {
+        if (FUILabel* label = Object::cast_to<FUILabel>(_clipContainer->get_child(i)))
+            label->setGrayed(grayed);
+    }
 }
 
 void FUIRichText::setDimensions(float width, float height)
@@ -303,8 +324,11 @@ void FUIRichText::setText(const std::string& value)
     _controls.clear();
     _numLines = 0;
 
-    for (int i = get_child_count() - 1; i >= 0; i--)
-        get_child(i)->queue_free();
+    if (_clipContainer)
+    {
+        for (int i = _clipContainer->get_child_count() - 1; i >= 0; i--)
+            _clipContainer->get_child(i)->queue_free();
+    }
 
     if (value.empty())
     {
@@ -363,8 +387,11 @@ void FUIRichText::formatText()
 
     _dirty = false;
 
-    for (int i = get_child_count() - 1; i >= 0; i--)
-        get_child(i)->queue_free();
+    if (_clipContainer)
+    {
+        for (int i = _clipContainer->get_child_count() - 1; i >= 0; i--)
+            _clipContainer->get_child(i)->queue_free();
+    }
 
     _renderers.clear();
 
@@ -584,8 +611,8 @@ void FUIRichText::formarRenderers()
                 setNodePosition(node, Vector2(nextPosX, rowY + adjustment));
                 nextPosX += sz.x;
             }
-            if (node->get_parent() != this)
-                add_child(node);
+            if (node->get_parent() != _clipContainer)
+                _clipContainer->add_child(node);
             if (FUILabel* label = Object::cast_to<FUILabel>(node))
                 label->queue_redraw();
             else if (CanvasItem* ci = Object::cast_to<CanvasItem>(node))
@@ -649,9 +676,13 @@ void FUIRichText::formarRenderers()
 
 void FUIRichText::updateClipping()
 {
-    // Cocos FUIRichText does not clip children. CLIP_CHILDREN_AND_DRAW on Node2D
-    // hides all FUILabel segments (see ScrollPane MaskContainer comment).
+    if (_clipContainer)
+    {
+        _clipContainer->set_size(Vector2(_dimensionsX, _dimensionsY));
+        _clipContainer->set_clip_contents(_overflow == 1 || _overflow == 2);
+    }
     set_clip_children_mode(CanvasItem::CLIP_CHILDREN_DISABLED);
+    queue_redraw();
 }
 
 void FUIRichText::doHorizontalAlignment(const std::vector<Node*>& row, float rowWidth)

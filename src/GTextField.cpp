@@ -474,13 +474,7 @@ void GBasicTextField::handleGrayedChanged()
 
     _label->setGrayed(_finalGrayed);
     if (_richText)
-    {
-        for (int i = 0; i < _richText->get_child_count(); i++)
-        {
-            if (FUILabel* label = Object::cast_to<FUILabel>(_richText->get_child(i)))
-                label->setGrayed(_finalGrayed);
-        }
-    }
+        _richText->applyGrayedToLabels(_finalGrayed);
 }
 
 void GBasicTextField::_bind_methods()

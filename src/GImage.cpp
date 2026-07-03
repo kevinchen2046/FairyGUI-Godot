@@ -169,6 +169,7 @@ void GImage::constructFromResource()
         ((FUISprite*)_content)->setScaleByTile(true);
 
     setSize(sourceSize.width, sourceSize.height);
+    ((FUISprite*)_content)->setGrayed(_finalGrayed);
 }
 
 void GImage::setup_beforeAdd(ByteBuffer* buffer, int beginPos)

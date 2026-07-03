@@ -1023,6 +1023,11 @@ void GObject::handleGrayedChanged()
     _finalGrayed = (_parent && _parent->_finalGrayed) || _grayed;
 }
 
+void GObject::refreshGrayedVisual()
+{
+    handleGrayedChanged();
+}
+
 void GObject::handleVisibleChanged()
 {
     if (_displayObject)
