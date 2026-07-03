@@ -8,6 +8,7 @@
 #include "display/FUISprite.h"
 #include "gears/GearDisplay.h"
 #include "gears/GearDisplay2.h"
+#include "scene/gui/control.h"
 #include "tween/GTween.h"
 #include "tween/GTweener.h"
 #include "utils/ByteBuffer.h"
@@ -327,6 +328,8 @@ void GObject::setSkewX(float value)
                 node->set_rotation(Math::deg_to_rad(_rotation));
                 node->set_scale(computeDisplayScale());
             }
+            else
+                syncControlDisplay();
         }
         else
             rebuildSkewedTransform();
@@ -346,6 +349,8 @@ void GObject::setSkewY(float value)
                 node->set_rotation(Math::deg_to_rad(_rotation));
                 node->set_scale(computeDisplayScale());
             }
+            else
+                syncControlDisplay();
         }
         else
             rebuildSkewedTransform();
@@ -363,6 +368,8 @@ void GObject::setRotation(float value)
                 rebuildSkewedTransform();
             else if (Node2D* node = Object::cast_to<Node2D>(_displayObject))
                 node->set_rotation(Math::deg_to_rad(_rotation));
+            else
+                syncControlDisplay();
         }
         updateGear(3);
     }
@@ -896,6 +903,16 @@ Vector2 GObject::computeDisplayPosition() const
     return pt;
 }
 
+void GObject::syncControlDisplay()
+{
+    Control* ctrl = Object::cast_to<Control>(_displayObject);
+    if (!ctrl)
+        return;
+    ctrl->set_position(computeDisplayPosition());
+    ctrl->set_rotation(Math::deg_to_rad(_rotation));
+    ctrl->set_scale(computeDisplayScale());
+}
+
 Vector2 GObject::computeContentPivotOffset() const
 {
     // Cocos: setAnchorPoint(pivot.x, 1 - pivot.y) on Y-up engine.
@@ -924,12 +941,6 @@ void GObject::rebuildSkewedTransform()
     if (!_displayObject)
         return;
 
-    Node2D* node = Object::cast_to<Node2D>(_displayObject);
-    if (!node)
-        return;
-
-    // FairyGUI "skew" maps to Cocos Node::setRotationSkewX/Y (Flash-style rotational skew),
-    // NOT Node::setSkewX/Y (tan shear). See cocos2d-x Node::getNodeToParentTransform().
     const Vector2 scale = computeDisplayScale();
     const Vector2 origin = computeDisplayPosition();
 
@@ -965,6 +976,17 @@ void GObject::rebuildSkewedTransform()
     xf.columns[1][0] = m2 * scale.y;
     xf.columns[1][1] = m3 * scale.y;
     xf.set_origin(origin);
+
+    if (Control* ctrl = Object::cast_to<Control>(_displayObject))
+    {
+        ctrl->set_transform(xf);
+        return;
+    }
+
+    Node2D* node = Object::cast_to<Node2D>(_displayObject);
+    if (!node)
+        return;
+
     node->set_transform(xf);
 }
 
@@ -977,6 +999,8 @@ void GObject::handlePositionChanged()
         rebuildSkewedTransform();
     else if (Node2D* node = Object::cast_to<Node2D>(_displayObject))
         node->set_position(computeDisplayPosition());
+    else
+        syncControlDisplay();
 }
 
 void GObject::handleSizeChanged()
@@ -1006,6 +1030,8 @@ void GObject::handleScaleChanged()
         rebuildSkewedTransform();
     else if (Node2D* node = Object::cast_to<Node2D>(_displayObject))
         node->set_scale(computeDisplayScale());
+    else
+        syncControlDisplay();
 }
 
 void GObject::handleAlphaChanged()

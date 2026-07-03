@@ -5,6 +5,7 @@
 #include "GObject.h"
 #include "UIPackage.h"
 #include "godot_types.h"
+#include "core/string/char_utils.h"
 #include <locale>
 #include <algorithm>
 #include <sstream>
@@ -28,21 +29,28 @@ static void rtrim(std::string& s) {
     s.erase(std::find_if_not(s.rbegin(), s.rend(), isWhitespace).base(), s.end());
 }
 
-static int getPrevWord(const std::string& text, int idx)
+static bool isBasicLatinAlnum(char32_t ch)
+{
+    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9');
+}
+
+static int getPrevWordCharIndex(const String& text, int idx)
 {
     for (int i = idx - 1; i >= 0; --i)
     {
-        if (!std::isalnum((unsigned char)text[i], std::locale()))
+        const char32_t ch = text[i];
+        if (!isBasicLatinAlnum(ch) && ch != '_')
             return i;
     }
     return -1;
 }
 
-static bool isWrappable(const std::string& text)
+static bool isWrappableString(const String& text)
 {
-    for (size_t i = 0, size = text.length(); i < size; ++i)
+    for (int i = 0; i < text.length(); ++i)
     {
-        if (!std::isalnum((unsigned char)text[i], std::locale()))
+        const char32_t ch = text[i];
+        if (!isBasicLatinAlnum(ch) && ch != '_')
             return true;
     }
     return false;
@@ -427,11 +435,12 @@ void FUIRichText::handleTextRenderer(HtmlElement* element, const std::string& te
     int leftLength = findSplitPositionForWord(textRenderer, text);
     if (leftLength == 0)
         leftLength = 1;
+    String textStr = String::utf8(text.c_str());
     std::string leftWords = getSubStringOfUTF8String(text, 0, leftLength);
     int rightStart = leftLength;
-    if (rightStart < (int)text.length() && std::isspace((unsigned char)text[rightStart], std::locale()))
+    if (rightStart < textStr.length() && is_whitespace(textStr[rightStart]))
         rightStart++;
-    std::string cutWords = getSubStringOfUTF8String(text, rightStart, text.length() - rightStart);
+    std::string cutWords = getSubStringOfUTF8String(text, rightStart, textStr.length() - rightStart);
 
     if (leftLength > 0)
     {
@@ -456,26 +465,27 @@ void FUIRichText::handleTextRenderer(HtmlElement* element, const std::string& te
 int FUIRichText::findSplitPositionForWord(Node* label, const std::string& text)
 {
     FUILabel* flabel = Object::cast_to<FUILabel>(label);
+    String textStr = String::utf8(text.c_str());
+    const int charLen = textStr.length();
     if (!flabel)
-        return (int)text.length();
+        return charLen;
 
     float originalLeftSpaceWidth = _leftSpaceWidth + flabel->getTextWidth();
     bool startingNewLine = (_textRectWidth == originalLeftSpaceWidth);
-    if (!isWrappable(text))
+    if (!isWrappableString(textStr))
     {
         if (startingNewLine)
-            return (int)text.length();
+            return charLen;
         return 0;
     }
 
-    for (int idx = (int)text.size() - 1; idx >= 0; )
+    for (int idx = charLen - 1; idx >= 0; )
     {
-        int newidx = getPrevWord(text, idx);
+        int newidx = getPrevWordCharIndex(textStr, idx);
         if (newidx >= 0)
         {
             idx = newidx;
-            auto leftStr = getSubStringOfUTF8String(text, 0, idx);
-            flabel->setText(leftStr);
+            flabel->setText(textStr.substr(0, idx).utf8().get_data());
             if (flabel->getTextWidth() <= originalLeftSpaceWidth)
                 return idx;
         }
@@ -488,7 +498,7 @@ int FUIRichText::findSplitPositionForWord(Node* label, const std::string& text)
     }
 
     flabel->setText(text);
-    return (int)text.size();
+    return charLen;
 }
 
 void FUIRichText::handleRichRenderer(HtmlElement* element, HtmlObject* obj)

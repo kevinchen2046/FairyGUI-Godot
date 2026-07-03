@@ -103,6 +103,7 @@ void GTextInput::setRestrict(const std::string& value)
 void GTextInput::handleSizeChanged()
 {
     _input->set_size(Size2(_size.width, _size.height));
+    handlePositionChanged();
 }
 
 void GTextInput::setup_beforeAdd(ByteBuffer* buffer, int beginPos)

@@ -40,6 +40,7 @@ public:
     float getLineHeight() const { return _lineHeight; }
     const FontLetterDefinition* getLetterDefinition(unsigned short ch) const;
     Ref<Texture2D> getTexture(int index) const;
+    const std::unordered_map<unsigned short, FontLetterDefinition>& getLetterDefinitions() const { return _letterDefinitions; }
 
 private:
     BitmapFont& _font;
@@ -56,6 +57,7 @@ public:
 
     static BitmapFont* create();
     void releaseAtlas();
+    void buildGodotFont();
 
     Ref<Font> getFont() const { return _font; }
     Ref<Texture2D> getAtlasTexture() const { return _atlasTexture; }

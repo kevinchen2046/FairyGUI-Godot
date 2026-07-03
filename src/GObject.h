@@ -203,6 +203,7 @@ protected:
     virtual void handleScaleChanged();
     virtual void handleGrayedChanged();
     virtual void handlePositionChanged();
+    void syncControlDisplay();
     Vector2 computeDisplayPosition() const;
     Vector2 computeContentPivotOffset() const;
     Vector2 computeDisplayScale() const;

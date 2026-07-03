@@ -944,6 +944,7 @@ void UIPackage::loadFont(PackageItem* item)
     fontAtlas->setLineHeight((float)lineHeight);
     item->bitmapFont->_originalFontSize = (float)fontSize;
     item->bitmapFont->_fontSize = fontSize;
+    item->bitmapFont->buildGodotFont();
 
     delete buffer;
     item->rawData = nullptr;

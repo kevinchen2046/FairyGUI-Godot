@@ -1,4 +1,5 @@
 ﻿#include "BitmapFont.h"
+#include "scene/resources/font.h"
 
 NS_FGUI_BEGIN
 
@@ -78,6 +79,57 @@ const FontLetterDefinition* BitmapFont::getLetterDefinition(unsigned short ch) c
     if (_fontAtlas)
         return _fontAtlas->getLetterDefinition(ch);
     return nullptr;
+}
+
+void BitmapFont::buildGodotFont()
+{
+    if (!_fontAtlas)
+        return;
+
+    Ref<Texture2D> texture = _fontAtlas->getTexture(0);
+    if (texture.is_null())
+        return;
+
+    Ref<FontFile> fontFile;
+    fontFile.instantiate();
+    const int baseSize = MAX(1, (int)_originalFontSize);
+    fontFile->set_fixed_size(baseSize);
+    fontFile->set_modulate_color_glyphs(_canTint);
+    fontFile->set_antialiasing(TextServer::FONT_ANTIALIASING_NONE);
+
+    Ref<Image> img = texture->get_image();
+    if (img.is_valid())
+        fontFile->set_texture_image(0, Vector2i(baseSize, 0), 0, img);
+
+    float lineHeight = _fontAtlas->getLineHeight();
+    if (lineHeight <= 0.0f)
+        lineHeight = (float)baseSize;
+    const float ascent = lineHeight;
+    const float descent = MAX(1.0f, lineHeight - (float)baseSize * 0.25f);
+    fontFile->set_cache_ascent(0, baseSize, ascent);
+    fontFile->set_cache_descent(0, baseSize, descent);
+
+    for (const auto& pair : _fontAtlas->getLetterDefinitions())
+    {
+        const unsigned short ch = pair.first;
+        const FontLetterDefinition& def = pair.second;
+        if (!def.validDefinition)
+            continue;
+
+        const Vector2 size(def.width, def.height);
+        const Vector2 advance(def.xAdvance, 0.0f);
+        const Vector2 offset(def.offsetX, def.offsetY - ascent);
+        const Rect2 uv(def.U, def.V, def.width, def.height);
+
+        fontFile->set_glyph_advance(0, baseSize, (int32_t)ch, advance);
+        fontFile->set_glyph_offset(0, Vector2i(baseSize, 0), (int32_t)ch, offset);
+        fontFile->set_glyph_size(0, Vector2i(baseSize, 0), (int32_t)ch, size);
+        fontFile->set_glyph_uv_rect(0, Vector2i(baseSize, 0), (int32_t)ch, uv);
+        fontFile->set_glyph_texture_idx(0, Vector2i(baseSize, 0), (int32_t)ch, 0);
+    }
+
+    _font = fontFile;
+    _atlasTexture = texture;
 }
 
 NS_FGUI_END

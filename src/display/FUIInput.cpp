@@ -1,8 +1,9 @@
 #include "FUIInput.h"
 
 #include "GObject.h"
-
+#include "UIPackage.h"
 #include "UIConfig.h"
+#include "display/BitmapFont.h"
 
 #include "scene/gui/line_edit.h"
 
@@ -222,9 +223,12 @@ void FUIInput::setText(const std::string& value)
 
     std::string text = filterText(value);
 
-    if (_maxLength > 0 && (int)text.length() > _maxLength)
-
-        text = text.substr(0, _maxLength);
+    if (_maxLength > 0)
+    {
+        String s = String::utf8(text.c_str());
+        if (s.length() > _maxLength)
+            text = s.substr(0, _maxLength).utf8().get_data();
+    }
 
     _text = text;
 
@@ -463,37 +467,31 @@ void FUIInput::applyEditorTheme()
 
 
     bool ttf = false;
-
-    const std::string& fontName = UIConfig::getRealFontName(_textFormat->face, &ttf);
-
     Ref<Font> font;
 
-    if (ttf)
-
+    if (_textFormat->face.find("ui://") != std::string::npos)
     {
-
-        Ref<FontFile> fontFile;
-
-        fontFile.instantiate();
-
-        if (fontFile->load_dynamic_font(GObject::toGodotStr(fontName)) == OK)
-
-            font = fontFile;
-
+        if (BitmapFont* bmFont = (BitmapFont*)UIPackage::getItemAssetByURL(_textFormat->face, PackageItemType::FONT))
+            font = bmFont->getFont();
     }
-
     else
-
     {
+        const std::string& fontName = UIConfig::getRealFontName(_textFormat->face, &ttf);
 
-        Ref<SystemFont> sysFont;
-
-        sysFont.instantiate();
-
-        sysFont->set_font_names(PackedStringArray(GObject::toGodotStr(fontName).split(",")));
-
-        font = sysFont;
-
+        if (ttf)
+        {
+            Ref<FontFile> fontFile;
+            fontFile.instantiate();
+            if (fontFile->load_dynamic_font(GObject::toGodotStr(fontName)) == OK)
+                font = fontFile;
+        }
+        else
+        {
+            Ref<SystemFont> sysFont;
+            sysFont.instantiate();
+            sysFont->set_font_names(PackedStringArray(GObject::toGodotStr(fontName).split(",")));
+            font = sysFont;
+        }
     }
 
 
@@ -604,9 +602,12 @@ void FUIInput::_on_line_edit_changed(const String& text)
 
     std::string value = filterText(text.utf8().get_data());
 
-    if (_maxLength > 0 && (int)value.length() > _maxLength)
-
-        value = value.substr(0, _maxLength);
+    if (_maxLength > 0)
+    {
+        String s = String::utf8(value.c_str());
+        if (s.length() > _maxLength)
+            value = s.substr(0, _maxLength).utf8().get_data();
+    }
 
     if (value != _text)
 

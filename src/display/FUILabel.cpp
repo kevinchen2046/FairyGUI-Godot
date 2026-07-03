@@ -305,16 +305,20 @@ void FUILabel::_draw()
 
     // Compute alignment offset within content rect
     Vector2 offset = _drawOffset;
+    float fontAscent = font.is_valid() ? font->get_ascent(fontSize) : fontSize * 0.8f;
     if (_contentSize.x > 0 || _contentSize.y > 0)
     {
         float textW = getTextWidth();
         float textH = getTextHeight();
-        float fontAscent = font.is_valid() ? font->get_ascent(fontSize) : fontSize * 0.8f;
         if (_textFormat->align == 1)      offset.x = (_contentSize.x - textW) * 0.5f;
         else if (_textFormat->align == 2) offset.x = _contentSize.x - textW;
         if (_textFormat->verticalAlign == 1)      offset.y = (_contentSize.y - textH) * 0.5f + fontAscent;
         else if (_textFormat->verticalAlign == 2) offset.y = _contentSize.y - textH + fontAscent;
         else                                      offset.y = fontAscent; // top: baseline offset
+    }
+    else
+    {
+        offset.y = fontAscent;
     }
 
     // Effects
