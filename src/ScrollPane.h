@@ -132,6 +132,7 @@ private:
     CALL_LATER_FUNC(ScrollPane, refresh);
     void refresh2();
 
+    void updateScrollBarDisplayPerc();
     void updateScrollBarPos();
     void updateScrollBarVisible();
     void updateScrollBarVisible2(GScrollBar* bar);

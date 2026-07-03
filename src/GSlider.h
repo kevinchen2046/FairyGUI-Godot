@@ -38,6 +38,7 @@ public:
     bool canDrag;
 
 protected:
+    virtual void onConstruct() override;
     virtual void handleSizeChanged() override;
     virtual void constructExtension(ByteBuffer* buffer) override;
     virtual void setup_afterAdd(ByteBuffer* buffer, int beginPos) override;

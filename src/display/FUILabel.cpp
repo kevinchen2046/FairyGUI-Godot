@@ -9,6 +9,43 @@
 
 NS_FGUI_BEGIN
 
+static HorizontalAlignment fui_text_h_align(int align)
+{
+    switch (align)
+    {
+    case 1:
+        return HORIZONTAL_ALIGNMENT_CENTER;
+    case 2:
+        return HORIZONTAL_ALIGNMENT_RIGHT;
+    default:
+        return HORIZONTAL_ALIGNMENT_LEFT;
+    }
+}
+
+static Vector2 fui_measure_text(const Ref<Font>& font, const String& text, int fontSize, bool wrap, float maxWidth, int align)
+{
+    if (wrap)
+        return font->get_multiline_string_size(text, fui_text_h_align(align), maxWidth, fontSize);
+    return font->get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, fontSize);
+}
+
+static void fui_draw_text(CanvasItem* item, const Ref<Font>& font, const Vector2& pos, const String& text,
+        int fontSize, const Color& color, bool wrap, float maxWidth, int align, bool outline, int outlineSize)
+{
+    if (wrap)
+    {
+        HorizontalAlignment halign = fui_text_h_align(align);
+        if (outline && outlineSize > 0)
+            item->draw_multiline_string_outline(font, pos, text, halign, maxWidth, fontSize, -1, outlineSize, color);
+        else
+            item->draw_multiline_string(font, pos, text, halign, maxWidth, fontSize, -1, color);
+    }
+    else if (outline && outlineSize > 0)
+        item->draw_string_outline(font, pos, text, HORIZONTAL_ALIGNMENT_LEFT, -1, fontSize, outlineSize, color);
+    else
+        item->draw_string(font, pos, text, HORIZONTAL_ALIGNMENT_LEFT, -1, fontSize, color);
+}
+
 Color FUILabel::toGrayed(const Color& source)
 {
     float gray = source.r * 0.299f + source.g * 0.587f + source.b * 0.114f;
@@ -99,7 +136,7 @@ void FUILabel::applyTextFormat()
                 // Load TTF/OTF font from file path
                 Ref<FontFile> fontFile;
                 fontFile.instantiate();
-                Error err = fontFile->load_dynamic_font(String(fontName.c_str()));
+                Error err = fontFile->load_dynamic_font(GObject::toGodotStr(fontName));
                 if (err == OK)
                     _bmFont = fontFile;
                 else
@@ -110,7 +147,7 @@ void FUILabel::applyTextFormat()
                 // Use system font by name
                 Ref<SystemFont> sysFont;
                 sysFont.instantiate();
-                Vector<String> names = String(fontName.c_str()).split(",");
+                Vector<String> names = GObject::toGodotStr(fontName).split(",");
                 sysFont->set_font_names(PackedStringArray(names));
                 _bmFont = sysFont;
             }
@@ -253,10 +290,9 @@ float FUILabel::getTextWidth() const
     if (font.is_valid())
     {
         int fontSize = getDrawFontSize();
-        float maxWidth = (_wrapEnabled && _contentSize.x > 0) ? _contentSize.x : -1;
-        Vector2 size = font->get_string_size(GObject::toGodotStr(_text),
-            HORIZONTAL_ALIGNMENT_LEFT, maxWidth, fontSize);
-        return size.x;
+        bool wrap = _wrapEnabled && _contentSize.x > 0;
+        float maxWidth = wrap ? _contentSize.x : -1;
+        return fui_measure_text(font, GObject::toGodotStr(_text), fontSize, wrap, maxWidth, _textFormat->align).x;
     }
     return 0;
 }
@@ -268,10 +304,9 @@ float FUILabel::getTextHeight() const
     if (font.is_valid())
     {
         int fontSize = getDrawFontSize();
-        float maxWidth = (_wrapEnabled && _contentSize.x > 0) ? _contentSize.x : -1;
-        Vector2 size = font->get_string_size(GObject::toGodotStr(_text),
-            HORIZONTAL_ALIGNMENT_LEFT, maxWidth, fontSize);
-        return size.y;
+        bool wrap = _wrapEnabled && _contentSize.x > 0;
+        float maxWidth = wrap ? _contentSize.x : -1;
+        return fui_measure_text(font, GObject::toGodotStr(_text), fontSize, wrap, maxWidth, _textFormat->align).y;
     }
     return getDrawFontSize();
 }
@@ -301,7 +336,9 @@ void FUILabel::_draw()
 
     Color textColor = _grayed ? toGrayed(_textFormat->color) : _textFormat->color;
     int fontSize = getDrawFontSize();
-    float maxWidth = (_wrapEnabled && _contentSize.x > 0) ? _contentSize.x : -1;
+    bool wrap = _wrapEnabled && _contentSize.x > 0;
+    float maxWidth = wrap ? _contentSize.x : -1;
+    String godotText = GObject::toGodotStr(_text);
 
     // Compute alignment offset within content rect
     Vector2 offset = _drawOffset;
@@ -310,8 +347,11 @@ void FUILabel::_draw()
     {
         float textW = getTextWidth();
         float textH = getTextHeight();
-        if (_textFormat->align == 1)      offset.x = (_contentSize.x - textW) * 0.5f;
-        else if (_textFormat->align == 2) offset.x = _contentSize.x - textW;
+        if (!wrap)
+        {
+            if (_textFormat->align == 1)      offset.x = (_contentSize.x - textW) * 0.5f;
+            else if (_textFormat->align == 2) offset.x = _contentSize.x - textW;
+        }
         if (_textFormat->verticalAlign == 1)      offset.y = (_contentSize.y - textH) * 0.5f + fontAscent;
         else if (_textFormat->verticalAlign == 2) offset.y = _contentSize.y - textH + fontAscent;
         else                                      offset.y = fontAscent; // top: baseline offset
@@ -326,31 +366,27 @@ void FUILabel::_draw()
     {
         Color shadowColor = _grayed ? toGrayed(_textFormat->shadowColor) : _textFormat->shadowColor;
         Vector2 shadowPos = offset + _textFormat->shadowOffset;
-        draw_string(font, shadowPos, GObject::toGodotStr(_text),
-            HORIZONTAL_ALIGNMENT_LEFT, maxWidth, fontSize, shadowColor);
+        fui_draw_text(this, font, shadowPos, godotText, fontSize, shadowColor, wrap, maxWidth, _textFormat->align, false, 0);
     }
 
     if (_textFormat->hasEffect(TextFormat::OUTLINE) && _textFormat->outlineSize > 0)
     {
         Color outlineColor = _grayed ? toGrayed(_textFormat->outlineColor) : _textFormat->outlineColor;
-        draw_string_outline(font, offset, GObject::toGodotStr(_text),
-            HORIZONTAL_ALIGNMENT_LEFT, maxWidth, fontSize, _textFormat->outlineSize, outlineColor);
+        fui_draw_text(this, font, offset, godotText, fontSize, outlineColor, wrap, maxWidth, _textFormat->align, true, _textFormat->outlineSize);
     }
     else if (_textFormat->hasEffect(TextFormat::GLOW))
     {
         Color glowColor = _grayed ? toGrayed(_textFormat->glowColor) : _textFormat->glowColor;
-        draw_string(font, offset, GObject::toGodotStr(_text),
-            HORIZONTAL_ALIGNMENT_LEFT, maxWidth, fontSize, glowColor);
+        fui_draw_text(this, font, offset, godotText, fontSize, glowColor, wrap, maxWidth, _textFormat->align, false, 0);
     }
 
     // Main text
-    draw_string(font, offset, GObject::toGodotStr(_text),
-        HORIZONTAL_ALIGNMENT_LEFT, maxWidth, fontSize, textColor);
+    fui_draw_text(this, font, offset, godotText, fontSize, textColor, wrap, maxWidth, _textFormat->align, false, 0);
 
     // Underline
     if (_textFormat->underline)
     {
-        float textWidth = getTextWidth();
+        float textWidth = wrap ? maxWidth : getTextWidth();
         Color lineColor = _hasUnderlineColor ? _underlineColor : textColor;
         draw_line(offset + Vector2(0, fontSize + 1), offset + Vector2(textWidth, fontSize + 1), lineColor);
     }

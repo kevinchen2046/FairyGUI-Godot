@@ -153,6 +153,11 @@ void GSlider::updateWithPercent(float percent, bool manual)
     }
 }
 
+void GSlider::onConstruct()
+{
+    update();
+}
+
 void GSlider::handleSizeChanged()
 {
     GComponent::handleSizeChanged();

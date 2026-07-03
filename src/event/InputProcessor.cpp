@@ -1,4 +1,5 @@
 #include "InputProcessor.h"
+#include "display/FUIInput.h"
 #include "GComponent.h"
 #include "GRoot.h"
 #include "GRichTextField.h"
@@ -303,6 +304,8 @@ void InputProcessor::disableDefaultTouchEvent()
 
 bool InputProcessor::onTouchBegin(const Vector2& screenPos, int touchId)
 {
+    FUIInput::handleGlobalPointer(screenPos);
+
     if (!(_owner->isTouchable() && _owner->isVisible()))
         return false;
 
@@ -456,6 +459,9 @@ void InputProcessor::onTouchCancel(const Vector2& screenPos, int touchId)
 
 bool InputProcessor::onMouseDown(const Vector2& screenPos, int button)
 {
+    if (button == (int)MouseButton::LEFT)
+        FUIInput::handleGlobalPointer(screenPos);
+
     if (!(_owner->isTouchable() && _owner->isVisible()))
         return false;
 

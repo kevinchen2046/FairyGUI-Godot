@@ -6,10 +6,10 @@
 #include "UIPackage.h"
 #include "godot_types.h"
 #include "core/string/char_utils.h"
-#include <locale>
 #include <algorithm>
 #include <sstream>
 #include <cfloat>
+#include <cstring>
 
 NS_FGUI_BEGIN
 using namespace std;
@@ -21,12 +21,10 @@ using namespace std;
 static const int GUTTER_X = 2;
 static const int GUTTER_Y = 2;
 
-static bool isWhitespace(char c) {
-    return std::isspace(c, std::locale());
-}
-
-static void rtrim(std::string& s) {
-    s.erase(std::find_if_not(s.rbegin(), s.rend(), isWhitespace).base(), s.end());
+static std::string godotStrToStd(const String& text)
+{
+    CharString utf8 = text.utf8();
+    return std::string(utf8.ptr(), utf8.length());
 }
 
 static bool isBasicLatinAlnum(char32_t ch)
@@ -71,10 +69,12 @@ static float stripTrailingWhitespace(const std::vector<Node*>& row) {
     if (!row.empty()) {
         if (auto label = Object::cast_to<FUILabel>(row.back())) {
             float width = label->getTextWidth();
-            auto str = label->getText();
-            rtrim(str);
-            if (label->getText() != str) {
-                label->setText(str);
+            String str = GObject::toGodotStr(label->getText());
+            String trimmed = str;
+            while (trimmed.length() > 0 && is_whitespace(trimmed[trimmed.length() - 1]))
+                trimmed = trimmed.substr(0, trimmed.length() - 1);
+            if (trimmed != str) {
+                label->setText(godotStrToStd(trimmed));
                 return label->getTextWidth() - width;
             }
         }
@@ -82,12 +82,12 @@ static float stripTrailingWhitespace(const std::vector<Node*>& row) {
     return 0.0f;
 }
 
-static std::string getSubStringOfUTF8String(const std::string& str, size_t start, size_t length)
+static std::string getSubStringOfUTF8String(const std::string& str, int start, int length)
 {
-    String s = String::utf8(str.c_str());
-    if (start >= (size_t)s.length())
+    String s = GObject::toGodotStr(str);
+    if (start < 0 || start >= s.length())
         return "";
-    return s.substr(start, length).utf8().get_data();
+    return godotStrToStd(s.substr(start, length));
 }
 
 static void setNodeElement(Node* node, HtmlElement* element)
@@ -372,7 +372,7 @@ void FUIRichText::formatText()
         case HtmlElement::Type::TEXT:
         {
             const std::string& text = element->text;
-            String textStr = String::utf8(text.c_str());
+            String textStr = GObject::toGodotStr(text);
             int startPos = 0;
             bool first = true;
             while (startPos < textStr.length())
@@ -385,7 +385,7 @@ void FUIRichText::formatText()
                 if (!first && hasNewline)
                     addNewLine();
                 if (!segment.is_empty())
-                    handleTextRenderer(element, segment.utf8().get_data());
+                    handleTextRenderer(element, godotStrToStd(segment));
                 first = false;
 
                 if (hasNewline)
@@ -435,7 +435,7 @@ void FUIRichText::handleTextRenderer(HtmlElement* element, const std::string& te
     int leftLength = findSplitPositionForWord(textRenderer, text);
     if (leftLength == 0)
         leftLength = 1;
-    String textStr = String::utf8(text.c_str());
+    String textStr = GObject::toGodotStr(text);
     std::string leftWords = getSubStringOfUTF8String(text, 0, leftLength);
     int rightStart = leftLength;
     if (rightStart < textStr.length() && is_whitespace(textStr[rightStart]))
@@ -465,7 +465,7 @@ void FUIRichText::handleTextRenderer(HtmlElement* element, const std::string& te
 int FUIRichText::findSplitPositionForWord(Node* label, const std::string& text)
 {
     FUILabel* flabel = Object::cast_to<FUILabel>(label);
-    String textStr = String::utf8(text.c_str());
+    String textStr = GObject::toGodotStr(text);
     const int charLen = textStr.length();
     if (!flabel)
         return charLen;
@@ -485,7 +485,7 @@ int FUIRichText::findSplitPositionForWord(Node* label, const std::string& text)
         if (newidx >= 0)
         {
             idx = newidx;
-            flabel->setText(textStr.substr(0, idx).utf8().get_data());
+            flabel->setText(godotStrToStd(textStr.substr(0, idx)));
             if (flabel->getTextWidth() <= originalLeftSpaceWidth)
                 return idx;
         }

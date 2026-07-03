@@ -16,7 +16,7 @@
 
 NS_FGUI_BEGIN
 
-
+FUIInput* FUIInput::_activeInput = nullptr;
 
 FUIInput::FUIInput() :
 
@@ -42,7 +42,7 @@ FUIInput::FUIInput() :
 
 {
 
-    set_focus_mode(FOCUS_ALL);
+    set_focus_mode(FOCUS_NONE);
 
     set_mouse_filter(MOUSE_FILTER_STOP);
 
@@ -176,6 +176,8 @@ void FUIInput::rebuildEditor()
 
         lineEdit->connect("text_submitted", callable_mp(this, &FUIInput::_on_line_edit_submitted));
 
+        lineEdit->set_select_all_on_focus(false);
+
         _editor = lineEdit;
 
     }
@@ -202,6 +204,8 @@ void FUIInput::rebuildEditor()
 
     add_child(_editor);
 
+    connectEditorSignals();
+
     setText(_text);
 
     setPassword(_password);
@@ -213,6 +217,110 @@ void FUIInput::rebuildEditor()
     setPlaceHolder(_placeHolder);
 
     applyEditorTheme();
+
+    updatePlaceholderVisibility();
+
+}
+
+
+
+void FUIInput::connectEditorSignals()
+
+{
+
+    if (!_editor)
+
+        return;
+
+
+
+    _editor->connect("focus_entered", callable_mp(this, &FUIInput::_on_editor_focus_entered));
+
+    _editor->connect("focus_exited", callable_mp(this, &FUIInput::_on_editor_focus_exited));
+
+}
+
+
+
+void FUIInput::updatePlaceholderVisibility()
+
+{
+
+    if (!_editor)
+
+        return;
+
+
+
+    const bool show = !_focused && _text.empty();
+
+    const String placeholder = show ? GObject::toGodotStr(_placeHolder) : String();
+
+
+
+    if (LineEdit* lineEdit = Object::cast_to<LineEdit>(_editor))
+
+        lineEdit->set_placeholder(placeholder);
+
+    else if (TextEdit* textEdit = Object::cast_to<TextEdit>(_editor))
+
+        textEdit->set_placeholder(placeholder);
+
+}
+
+
+
+void FUIInput::_on_editor_focus_entered()
+
+{
+
+    _focused = true;
+
+    if (_activeInput != this)
+
+        _activeInput = this;
+
+    updatePlaceholderVisibility();
+
+}
+
+
+
+void FUIInput::_on_editor_focus_exited()
+
+{
+
+    _focused = false;
+
+    if (_activeInput == this)
+
+        _activeInput = nullptr;
+
+    updatePlaceholderVisibility();
+
+    DisplayServer::get_singleton()->virtual_keyboard_hide();
+
+}
+
+
+
+void FUIInput::handleGlobalPointer(const Vector2& screenPos)
+
+{
+
+    if (!_activeInput || !_activeInput->_editor)
+
+        return;
+
+    if (!_activeInput->_editor->has_focus())
+
+        return;
+
+    if (_activeInput->get_global_rect().has_point(screenPos))
+
+        return;
+
+    _activeInput->_editor->release_focus();
 
 }
 
@@ -262,6 +370,8 @@ void FUIInput::setText(const std::string& value)
             textEdit->set_text(godotText);
 
     }
+
+    updatePlaceholderVisibility();
 
 }
 
@@ -335,9 +445,7 @@ void FUIInput::setPlaceHolder(const std::string& value)
 
     _placeHolder = value;
 
-    if (LineEdit* lineEdit = Object::cast_to<LineEdit>(_editor))
-
-        lineEdit->set_placeholder(GObject::toGodotStr(_placeHolder));
+    updatePlaceholderVisibility();
 
 }
 
@@ -443,20 +551,6 @@ std::string FUIInput::filterText(const std::string& value) const
 
 
 
-void FUIInput::_gui_input(const Ref<::InputEvent>& event)
-
-{
-
-    Ref<InputEventMouseButton> mb = event;
-
-    if (mb.is_valid() && mb->is_pressed() && (int)mb->get_button_index() == (int)MouseButton::LEFT)
-
-        openKeyboard();
-
-}
-
-
-
 static void apply_transparent_editor_style(Control* editor)
 {
     Ref<StyleBoxEmpty> transparent;
@@ -544,6 +638,10 @@ void FUIInput::applyEditorTheme()
 
     _editor->add_theme_color_override("font_color", _textFormat->color);
 
+    _editor->add_theme_color_override("caret_color", _textFormat->color);
+
+    _editor->add_theme_constant_override("caret_width", 2);
+
     if (_placeholderFontSize > 0)
 
         _editor->add_theme_font_size_override("font_placeholder_size", _placeholderFontSize);
@@ -575,40 +673,6 @@ void FUIInput::openKeyboard()
 
 
     _editor->grab_focus();
-
-
-
-    DisplayServer::VirtualKeyboardType vkType = DisplayServer::KEYBOARD_TYPE_DEFAULT;
-
-    switch (_keyboardType)
-
-    {
-
-    case 1: vkType = DisplayServer::KEYBOARD_TYPE_NUMBER; break;
-
-    case 2: vkType = DisplayServer::KEYBOARD_TYPE_NUMBER_DECIMAL; break;
-
-    case 3: vkType = DisplayServer::KEYBOARD_TYPE_PHONE; break;
-
-    case 4: vkType = DisplayServer::KEYBOARD_TYPE_EMAIL_ADDRESS; break;
-
-    case 5: vkType = DisplayServer::KEYBOARD_TYPE_PASSWORD; break;
-
-    case 6: vkType = DisplayServer::KEYBOARD_TYPE_URL; break;
-
-    default: break;
-
-    }
-
-
-
-    if (!_singleLine)
-
-        vkType = DisplayServer::KEYBOARD_TYPE_MULTILINE;
-
-
-
-    DisplayServer::get_singleton()->virtual_keyboard_show(GObject::toGodotStr(_text), get_global_rect(), vkType);
 
 }
 

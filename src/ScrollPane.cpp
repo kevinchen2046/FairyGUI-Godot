@@ -828,21 +828,6 @@ void ScrollPane::handleSizeChanged()
         _hScrollNone = _contentSize.width <= _viewSize.width;
     }
 
-    if (_vtScrollBar != nullptr)
-    {
-        if (_contentSize.height == 0)
-            _vtScrollBar->setDisplayPerc(0);
-        else
-            _vtScrollBar->setDisplayPerc(std::min(1.0f, _viewSize.height / _contentSize.height));
-    }
-    if (_hzScrollBar != nullptr)
-    {
-        if (_contentSize.width == 0)
-            _hzScrollBar->setDisplayPerc(0);
-        else
-            _hzScrollBar->setDisplayPerc(std::min(1.0f, _viewSize.width / _contentSize.width));
-    }
-
     updateScrollBarVisible();
 
     // Viewport origin in owner space (Y-down). Cocos adjustMaskContainer used a Y-up flip;
@@ -884,6 +869,8 @@ void ScrollPane::handleSizeChanged()
         _header->handlePositionChanged();
 	if (_footer.is_valid())
         _footer->handlePositionChanged();
+
+    updateScrollBarDisplayPerc();
 
     if (_scrollType == ScrollType::HORIZONTAL || _scrollType == ScrollType::BOTH)
         _overlapSize.width = ceil(std::max(0.0f, _contentSize.width - _viewSize.width));
@@ -1069,8 +1056,28 @@ void ScrollPane::refresh2()
         updatePageController();
 }
 
+void ScrollPane::updateScrollBarDisplayPerc()
+{
+    if (_vtScrollBar != nullptr)
+    {
+        if (_contentSize.height == 0)
+            _vtScrollBar->setDisplayPerc(0);
+        else
+            _vtScrollBar->setDisplayPerc(std::min(1.0f, _viewSize.height / _contentSize.height));
+    }
+    if (_hzScrollBar != nullptr)
+    {
+        if (_contentSize.width == 0)
+            _hzScrollBar->setDisplayPerc(0);
+        else
+            _hzScrollBar->setDisplayPerc(std::min(1.0f, _viewSize.width / _contentSize.width));
+    }
+}
+
 void ScrollPane::updateScrollBarPos()
 {
+    updateScrollBarDisplayPerc();
+
     if (_vtScrollBar != nullptr)
         _vtScrollBar->setScrollPerc(_overlapSize.height == 0 ? 0 : std::clamp(-_container->get_position().y, 0.0f, _overlapSize.height) / _overlapSize.height);
 

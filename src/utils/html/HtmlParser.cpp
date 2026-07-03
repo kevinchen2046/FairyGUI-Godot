@@ -5,8 +5,8 @@
 
 #include <sstream>
 #include <vector>
-#include <locale>
 #include <algorithm>
+#include <cstring>
 
 NS_FGUI_BEGIN
 using namespace std;
@@ -14,23 +14,6 @@ using namespace std;
 #ifdef _MSC_VER
 #define strcasecmp _stricmp
 #endif
-
-static bool isWhitespace(char c) {
-    return std::isspace(c, std::locale());
-}
-
-static void ltrim(std::string& s) {
-    s.erase(s.begin(), std::find_if_not(s.begin(),
-        s.end(),
-        isWhitespace));
-}
-
-static void rtrim(std::string& s) {
-    s.erase(std::find_if_not(s.rbegin(),
-        s.rend(),
-        isWhitespace).base(),
-        s.end());
-}
 
 Color HtmlParseOptions::defaultLinkColor(58.0f / 255.0f, 103.0f / 255.0f, 204.0f / 255.0f, 1.0f);
 bool HtmlParseOptions::defaultLinkUnderline = true;
@@ -265,13 +248,13 @@ void HtmlParser::textHandler(void* /*ctx*/, const char *str, size_t len)
 {
     if (_ignoreWhiteSpace)
     {
-        string s(str, len);
-        ltrim(s);
-        rtrim(s);
-        _textBlock += s;
+        String s = String::utf8(str, (int)len);
+        s = s.strip_edges();
+        CharString utf8 = s.utf8();
+        _textBlock.append(utf8.ptr(), utf8.length());
     }
     else
-        _textBlock += string(str, len);
+        _textBlock.append(str, len);
 }
 
 Dictionary HtmlParser::parseAttrs(const char** attrs)
@@ -314,10 +297,15 @@ void HtmlParser::parse(const std::string& source, const TextFormat& format, std:
     if (source.empty())
         return;
 
-    String xmlText = "<dummy>" + String(source.c_str()) + "</dummy>";
+    // Keep raw UTF-8 bytes (same as Cocos SAXParser); do not round-trip through String.
+    const std::string xmlText = std::string("<dummy>") + source + "</dummy>";
+    Vector<uint8_t> xmlBuf;
+    xmlBuf.resize(xmlText.size());
+    memcpy(xmlBuf.ptrw(), xmlText.data(), xmlText.size());
+
     Ref<XMLParser> parser;
     parser.instantiate();
-    if (parser->open_buffer(xmlText.to_utf8_buffer()) != OK)
+    if (parser->open_buffer(xmlBuf) != OK)
     {
         HtmlElement* element = new HtmlElement(HtmlElement::Type::TEXT);
         element->format = _format;
@@ -362,9 +350,11 @@ void HtmlParser::parse(const std::string& source, const TextFormat& format, std:
         case XMLParser::NODE_TEXT:
         {
             String data = parser->get_node_data();
-            std::string text = data.utf8().get_data();
-            if (!text.empty())
-                textHandler(nullptr, text.c_str(), text.length());
+            if (!data.is_empty())
+            {
+                CharString utf8 = data.utf8();
+                textHandler(nullptr, utf8.ptr(), utf8.length());
+            }
             break;
         }
         default:

@@ -64,10 +64,11 @@ public:
     void setSubmittedCallback(const std::function<void()>& callback) { _submittedCallback = callback; }
     void setTextChangedCallback(const std::function<void()>& callback) { _textChangedCallback = callback; }
 
+    static void handleGlobalPointer(const Vector2& screenPos);
+
     TextFormat* getTextFormat() const { return _textFormat; }
 
     static void _bind_methods();
-    void _gui_input(const Ref<::InputEvent>& event);
 
 private:
     void rebuildEditor();
@@ -78,6 +79,12 @@ private:
     void _on_line_edit_changed(const String& text);
     void _on_line_edit_submitted(const String& text);
     void _on_text_edit_changed();
+    void _on_editor_focus_entered();
+    void _on_editor_focus_exited();
+    void updatePlaceholderVisibility();
+    void connectEditorSignals();
+
+    static FUIInput* _activeInput;
 
     Control* _editor;
     std::string _text;
