@@ -79,8 +79,8 @@ func _render_list_item(index: int, obj: Object) -> void:
 	var tf = obj.getChild("msg")
 	if tf is GRichTextField:
 		tf.setUBBEnabled(false)
-		tf.setText(_parse_emoji(msg.text))
 		tf.setWidth(tf.getInitSize().x)
+		tf.setText(_parse_emoji(msg.text))
 		tf.setWidth(tf.getTextSize().x)
 
 	var name_obj = obj.getChild("name")
