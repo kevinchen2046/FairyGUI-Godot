@@ -226,6 +226,41 @@ FUIInnerContainer* GRoot::getOverlayContainer() const
     return _overlayContainer;
 }
 
+void GRoot::handleVisibleChanged()
+{
+    GComponent::handleVisibleChanged();
+    const bool vis = internalVisible2();
+    if (_contentCanvasLayer)
+        _contentCanvasLayer->set_visible(vis);
+    if (_overlayCanvasLayer)
+        _overlayCanvasLayer->set_visible(vis);
+}
+
+GObject* GRoot::hitTest(const Vector2& worldPoint, const Camera2D* camera)
+{
+    if (_touchDisabled || !_touchable || !_displayObject
+            || !Object::cast_to<CanvasItem>(_displayObject)->is_visible()
+            || !_displayObject->get_parent())
+        return nullptr;
+
+    // Windows / popups / modal render on _overlayCanvasLayer; hit-test them first.
+    const int cnt = numChildren();
+    for (int i = cnt - 1; i >= 0; --i)
+    {
+        GObject* child = getChildAt(i);
+        if (child->getParent() != this || child->getSortingOrder() == 0)
+            continue;
+        if (GObject* target = child->hitTest(worldPoint, camera))
+            return target;
+
+        const Rect2 bounds = child->localToGlobal(Rect2(Vector2(), child->getSize()));
+        if (bounds.has_point(worldPoint))
+            return child;
+    }
+
+    return GComponent::hitTest(worldPoint, camera);
+}
+
 void GRoot::showWindow(GWindow* win)
 {
     if (!win)
@@ -255,13 +290,23 @@ void GRoot::hideWindow(GWindow* win)
 
 void GRoot::hideWindowImmediately(GWindow* win)
 {
-    if (win)
+    if (!win)
+        return;
+
+    for (int i = (int)_popupStack.size() - 1; i >= 0; --i)
     {
-        GTween::kill(win, false);
-        win->setVisible(false);
+        GObject* popup = _popupStack[i].ptr();
+        if (popup && findPopupMountScope(popup) == win)
+        {
+            closePopup(popup);
+            _popupStack.erase(_popupStack.begin() + i);
+        }
     }
 
-    if (win && win->getParent() == this)
+    GTween::kill(win, false);
+    win->setVisible(false);
+
+    if (win->getParent() == this)
         removeChild(win);
 
     adjustModalLayer();
@@ -602,12 +647,16 @@ void GRoot::hidePopup(GObject* popup)
         auto it = std::find(_popupStack.cbegin(), _popupStack.cend(), popup);
         if (it != _popupStack.cend())
         {
-            int k = (int)(it - _popupStack.cbegin());
+            const int k = (int)(it - _popupStack.cbegin());
             for (int i = (int)_popupStack.size() - 1; i >= k; i--)
             {
                 closePopup(_popupStack.back().ptr());
                 _popupStack.pop_back();
             }
+        }
+        else
+        {
+            closePopup(popup);
         }
     }
     else
@@ -625,9 +674,37 @@ void GRoot::closePopup(GObject* target)
         return;
 
     if (dynamic_cast<GWindow*>(target))
+    {
         ((GWindow*)target)->hide();
-    else if (GComponent* parent = dynamic_cast<GComponent*>(target->getParent()))
+        return;
+    }
+
+    target->setVisible(false);
+    if (GComponent* parent = dynamic_cast<GComponent*>(target->getParent()))
         parent->removeChild(target);
+}
+
+static bool findPopupIndexForTarget(GObject* obj, const std::vector<WeakPtr>& stack, int& outIndex)
+{
+    if (!obj)
+        return false;
+
+    for (int i = 0; i < (int)stack.size(); i++)
+    {
+        GObject* popup = stack[i].ptr();
+        if (!popup)
+            continue;
+
+        for (GObject* p = obj; p != nullptr; p = p->findParent())
+        {
+            if (p == popup)
+            {
+                outIndex = i;
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 void GRoot::checkPopups()
@@ -636,27 +713,18 @@ void GRoot::checkPopups()
     if (!_popupStack.empty())
     {
         GObject* mc = _inputProcessor->getRecentInput()->getTarget();
-        bool handled = false;
-        while (mc != nullptr)
-        {
-            auto it = std::find(_popupStack.cbegin(), _popupStack.cend(), mc);
-            if (it != _popupStack.cend())
-            {
-                int k = (int)(it - _popupStack.cbegin());
-                for (int i = (int)_popupStack.size() - 1; i > k; i--)
-                {
-                    closePopup(_popupStack.back().ptr());
-                    _popupStack.pop_back();
-                }
-                handled = true;
-                break;
-            }
-            if (mc == this)
-                break;
-            mc = mc->findParent();
-        }
+        int popupIndex = -1;
+        const bool handled = findPopupIndexForTarget(mc, _popupStack, popupIndex);
 
-        if (!handled)
+        if (handled)
+        {
+            for (int i = (int)_popupStack.size() - 1; i > popupIndex; i--)
+            {
+                closePopup(_popupStack.back().ptr());
+                _popupStack.pop_back();
+            }
+        }
+        else
         {
             for (int i = (int)_popupStack.size() - 1; i >= 0; i--)
             {

@@ -87,12 +87,15 @@ public:
     virtual FUIInnerContainer* getOverlayContainer() const override;
     virtual FUIInnerContainer* getDisplayContainerFor(GObject* child) const override;
 
+    virtual GObject* hitTest(const Vector2& worldPoint, const Camera2D* camera) override;
+
 protected:
     virtual void handleInit() override;
     virtual void applyPivotOffset() override;
     virtual void handlePositionChanged() override;
     virtual void handleScaleChanged() override;
     virtual void handleSortingOrderChanged() override;
+    virtual void handleVisibleChanged() override;
     virtual void onInit() {};
     virtual void onShown() {};
     virtual void onHide() {};

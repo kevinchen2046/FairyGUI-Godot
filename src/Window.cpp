@@ -183,9 +183,43 @@ bool GWindow::getPopupTargetRect(GObject* target, Vector2& pos, Vector2& size) c
 
 FUIInnerContainer* GWindow::getDisplayContainerFor(GObject* child) const
 {
-    if (child != nullptr && child->getSortingOrder() != 0 && _overlayContainer != nullptr)
+    // Window popups are direct children with non-zero sorting order.
+    if (child != nullptr && child->getParent() == this && child->getSortingOrder() != 0 && _overlayContainer != nullptr)
         return _overlayContainer;
     return GComponent::getDisplayContainerFor(child);
+}
+
+void GWindow::handleVisibleChanged()
+{
+    GComponent::handleVisibleChanged();
+    const bool vis = internalVisible2();
+    if (_contentCanvasLayer)
+        _contentCanvasLayer->set_visible(vis);
+    if (_overlayCanvasLayer)
+        _overlayCanvasLayer->set_visible(vis);
+}
+
+GObject* GWindow::hitTest(const Vector2& worldPoint, const Camera2D* camera)
+{
+    if (_touchDisabled || !_touchable || !_displayObject || !_displayObject->get_parent())
+        return nullptr;
+
+    // Popups render on _overlayCanvasLayer; hit-test them before content children.
+    const int cnt = numChildren();
+    for (int i = cnt - 1; i >= 0; --i)
+    {
+        GObject* child = getChildAt(i);
+        if (child->getParent() != this || child->getSortingOrder() == 0)
+            continue;
+        if (GObject* target = child->hitTest(worldPoint, camera))
+            return target;
+
+        const Rect2 bounds = child->localToGlobal(Rect2(Vector2(), child->getSize()));
+        if (bounds.has_point(worldPoint))
+            return child;
+    }
+
+    return GComponent::hitTest(worldPoint, camera);
 }
 
 void GWindow::handleSortingOrderChanged()

@@ -50,19 +50,15 @@ FUIInnerContainer* GComponent::getDisplayContainerFor(GObject* child) const
     if (child == nullptr || child->getSortingOrder() == 0)
         return _container;
 
-    // Never attach in-window popup displays to GRoot overlay: stop at GWindow scope.
-    for (const GComponent* comp = this; comp != nullptr; comp = dynamic_cast<GComponent*>(comp->findParent()))
+    // Overlay containers are for popup/window mount only (direct children of GRoot).
+    // Nested components use sortingOrder for local z-order within their own _container.
+    const GRoot* root = GRoot::getInstance();
+    if (this == root && child->getParent() == this)
     {
-        if (const GWindow* win = dynamic_cast<const GWindow*>(comp))
-        {
-            if (child->getSortingOrder() != 0 && win->getOverlayContainer())
-                return win->getOverlayContainer();
-            return win->getContentContainer();
-        }
-
-        if (FUIInnerContainer* overlay = comp->getOverlayContainer())
+        if (FUIInnerContainer* overlay = getOverlayContainer())
             return overlay;
     }
+
     return _container;
 }
 
@@ -260,6 +256,10 @@ void GComponent::removeChildAt(int index)
 
     Ref<GObject> child = _children.at(index);
 
+    FUIInnerContainer* displayContainer = nullptr;
+    if (child->_displayObject != nullptr && child->_displayObject->get_parent() != nullptr)
+        displayContainer = getDisplayContainerFor(child.ptr());
+
     child->_parent = nullptr;
 
     if (child->_sortingOrder != 0)
@@ -268,7 +268,8 @@ void GComponent::removeChildAt(int index)
     child->setGroup(nullptr);
     if (child->_displayObject != nullptr && child->_displayObject->get_parent() != nullptr)
     {
-        getDisplayContainerFor(child.ptr())->remove_child(child->_displayObject);
+        if (displayContainer)
+            displayContainer->remove_child(child->_displayObject);
         if (_childrenRenderOrder == ChildrenRenderOrder::ARCH)
             CALL_LATER(GComponent, buildNativeDisplayList);
     }

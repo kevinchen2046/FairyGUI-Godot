@@ -260,6 +260,8 @@ protected:
 
     void setSizeDirectly(float wv, float hv);
 
+    bool internalVisible2() const;
+
     Vector2 _position;
     Vector2 _size;
     Vector2 _rawSize;
@@ -278,7 +280,6 @@ protected:
 
 private:
     bool internalVisible() const;
-    bool internalVisible2() const;
     bool internalVisible3() const;
     void updateGearFromRelations(int index, float dx, float dy);
     void transformRectPoint(const Vector2& pt, float rect[], GObject* targetSpace);

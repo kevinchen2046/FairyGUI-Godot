@@ -101,11 +101,14 @@ public:
 
     virtual FUIInnerContainer* getOverlayContainer() const override;
 
+    virtual GObject* hitTest(const Vector2& worldPoint, const Camera2D* camera) override;
+
 protected:
     virtual void handlePositionChanged() override;
     virtual void handleSizeChanged() override;
     virtual void handleInit() override;
     virtual void applyPivotOffset() override;
+    virtual void handleVisibleChanged() override;
     virtual void _enter_tree() override;
     virtual void _exit_tree() override;
 
