@@ -18,14 +18,15 @@
     "forceConsistentCasingInFileNames": true,
     "ignoreDeprecations": "6.0",
     "baseUrl": ".",
-    "typeRoots": ["./gen/godot"],
+    "typeRoots": ["./typings"],
     "paths": {
-      "godot": ["gen/godot/index.d.ts"],
-      "godot/*": ["gen/godot/*"]
+      "godot": ["typings/godot.mix.d.ts"]
     }
   },
   "include": [
-    "ts/Scripts/**/*.ts"
+    "ts/Scripts/**/*.ts",
+    "typings/godot.mix.d.ts",
+    "typings/godot*.gen.d.ts"
   ],
   "exclude": [
     "ts/Generated/**"

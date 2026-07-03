@@ -4,7 +4,7 @@ import { CanvasItem, Node2D, SceneTree } from "godot";
 
 export default class DebugPopup extends SceneTree {
     _initialize(): void {
-        this.call_deferred("_run");
+        (this as SceneTree).callDeferred("_run");
     }
 
     private _run(): void {
@@ -50,10 +50,10 @@ export default class DebugPopup extends SceneTree {
             console.log(`${label} displayObject=null`);
             return;
         }
-        console.log(`${label} display parent=`, disp.get_parent());
-        console.log(`${label} display in_tree=`, disp.is_inside_tree());
+        console.log(`${label} display parent=`, disp.getParent());
+        console.log(`${label} display in_tree=`, disp.isInsideTree());
         if (disp instanceof CanvasItem) {
-            console.log(`${label} display visible=`, disp.visible, " z_index=", disp.z_index);
+            console.log(`${label} display visible=`, disp.visible, " zIndex=", disp.zIndex);
         }
         if (disp instanceof Node2D) {
             console.log(`${label} display pos=`, disp.position);

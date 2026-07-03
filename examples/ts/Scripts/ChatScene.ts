@@ -99,8 +99,8 @@ export default class ChatScene extends DemoSceneBase {
         if (result == null) {
             return text;
         }
-        const tag = result.get_string(1);
-        return text.replace(result.get_string(0), `<img src='ui://Emoji/${tag}'/>`);
+        const tag = result.getString(1);
+        return text.replace(result.getString(0), `<img src='ui://Emoji/${tag}'/>`);
     }
 
     private _renderListItem(index: number, obj: GComponent): void {

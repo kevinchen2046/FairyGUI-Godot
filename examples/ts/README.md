@@ -10,8 +10,31 @@ ts/
   Scripts/         # TypeScript 源码（.ts）
   fairygui.d.ts    # FairyGUI 类型声明
 .godot/GodotJS/    # tsc 编译输出（.js），GodotJS 运行时加载此目录
-gen/godot/         # Godot 内置类型声明（供 tsc 与 IDE 使用）
+typings/           # GodotJS 生成的引擎 API 类型（declare module "godot"），需提交或本地生成
+gen/godot/         # GodotJS 生成的项目资源/场景/脚本映射（*.gen.ts），本地生成，不提交
 ```
+
+### `typings/` 与 `gen/` 的区别
+
+| 目录 | 内容 | 作用 | 是否提交 |
+|------|------|------|----------|
+| `typings/` | `godot0.gen.d.ts`～`godot10.gen.d.ts`、`godot.mix.d.ts` 等 | 让 `import { Node, GRoot } from "godot"` 通过类型检查 | 建议提交（当前未跟踪） |
+| `gen/godot/` | 按项目资源生成的 `*.gen.ts`（如 `MainMenu.ts.gen.ts`、`.nodes.gen.ts`、UI 资源映射） | 为场景节点、脚本路径等提供 `ResourceTypes` / `SceneNodes` 增强 | 不提交（`.gitignore`） |
+
+**`Cannot find module 'godot'` 的原因：** 旧版曾用手写 `gen/godot/index.d.ts` + `tsconfig paths`；现在 GodotJS 标准流程是 **`typings/` 提供 `godot` 模块类型**。克隆仓库后若没有 `typings/`，`tsc` 会报找不到 `godot`。
+
+### 本地生成类型
+
+需使用带 **GodotJS** 模块的自编译 Godot 编辑器：
+
+```powershell
+# 在项目根 examples/ 下执行（约需数分钟）
+.\path\to\godot.windows.editor.*.exe --headless --editor --generate-types --path "D:\Source\godot\modules\fairygui\examples"
+```
+
+或在编辑器 GodotJS 菜单：**Install TS Project** → **Generate Types**。
+
+会同时生成/更新 `typings/` 与 `gen/godot/`。仅做 `tsc` 类型检查时，**至少需要 `typings/`**；`gen/` 主要用于场景节点类型增强，当前 `tsconfig` 未纳入 `gen/` 下的文件。
 
 ## 编译
 

@@ -11,7 +11,7 @@ export default class DemoSceneBase extends Node {
     _ready(): void {
         this._registerDefaultFonts();
         if (GRoot.getInstance() == null) {
-            this.call_deferred("_delayedInit");
+            (this as Node).callDeferred("_delayedInit");
         } else {
             this._groot = GRoot.getInstance();
             void this.ContinueInit();
@@ -20,7 +20,7 @@ export default class DemoSceneBase extends Node {
     }
 
     _delayedInit(): void {
-        GRoot.create(this.get_tree()!);
+        GRoot.create(this.getTree()!);
         this._groot = GRoot.getInstance();
         void this.ContinueInit();
         this._addCloseButton();
@@ -38,12 +38,12 @@ export default class DemoSceneBase extends Node {
     }
 
     protected async waitSeconds(seconds: number): Promise<void> {
-        const tree = this.get_tree();
+        const tree = this.getTree();
         if (!tree) {
             return;
         }
-        const timer = tree.create_timer(seconds) as { timeout: { as_promise(): Promise<void> } };
-        await timer.timeout.as_promise();
+        const timer = tree.createTimer(seconds) as { timeout: { asPromise(): Promise<void> } };
+        await timer.timeout.asPromise();
     }
 
     protected _addCloseButton(): void {
@@ -101,6 +101,6 @@ export default class DemoSceneBase extends Node {
         if (this._groot != null) {
             this._groot.removeChildren();
         }
-        this.get_tree()?.change_scene_to_file(this.mainMenuScenePath);
+        this.getTree()?.changeSceneToFile(this.mainMenuScenePath);
     }
 }
