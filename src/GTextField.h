@@ -86,7 +86,7 @@ public:
 
     virtual void setAutoSize(AutoSizeType value) override;
 
-    virtual bool isSingleLine() const override { return _label ? _label->isWrapEnabled() : false; }
+    virtual bool isSingleLine() const override { return _label ? !_label->isWrapEnabled() : false; }
     virtual void setSingleLine(bool value) override;
 
     virtual TextFormat* getTextFormat() const override { return _label ? _label->getTextFormat() : nullptr; }

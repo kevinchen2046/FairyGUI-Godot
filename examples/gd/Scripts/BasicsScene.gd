@@ -14,10 +14,7 @@ var _progress_running: bool = false
 var _depth_start_pos: Vector2 = Vector2.ZERO
 
 func continue_init() -> void:
-	var font_path := "res://Resources/fonts/DroidSansFallback.ttf"
-	UIConfigHelper.getInstance().registerFont("default", font_path)
-	UIConfigHelper.getInstance().registerFont("微软雅黑", font_path)
-	UIConfigHelper.getInstance().setDefaultFont("default")
+	super.continue_init()
 	UIConfigHelper.getInstance().setButtonSound("ui://Basics/click")
 	UIConfigHelper.getInstance().setVerticalScrollBar("ui://Basics/ScrollBar_VT")
 	UIConfigHelper.getInstance().setHorizontalScrollBar("ui://Basics/ScrollBar_HZ")

@@ -4,6 +4,7 @@
 #include "UIPackage.h"
 #include "UIConfig.h"
 #include "display/BitmapFont.h"
+#include "scene/resources/style_box.h"
 
 #include "scene/gui/line_edit.h"
 
@@ -456,6 +457,32 @@ void FUIInput::_gui_input(const Ref<::InputEvent>& event)
 
 
 
+static void apply_transparent_editor_style(Control* editor)
+{
+    Ref<StyleBoxEmpty> transparent;
+    transparent.instantiate();
+    editor->add_theme_style_override("normal", transparent);
+    editor->add_theme_style_override("focus", transparent);
+    editor->add_theme_style_override("read_only", transparent);
+}
+
+
+
+static void apply_transparent_line_edit_style(LineEdit* lineEdit)
+{
+    lineEdit->set_flat(true);
+    apply_transparent_editor_style(lineEdit);
+}
+
+
+
+static void apply_transparent_text_edit_style(TextEdit* textEdit)
+{
+    apply_transparent_editor_style(textEdit);
+}
+
+
+
 void FUIInput::applyEditorTheme()
 
 {
@@ -505,6 +532,13 @@ void FUIInput::applyEditorTheme()
         _editor->add_theme_font_size_override("font_size", _textFormat->fontSize);
 
     }
+
+
+
+    if (LineEdit* lineEdit = Object::cast_to<LineEdit>(_editor))
+        apply_transparent_line_edit_style(lineEdit);
+    else if (TextEdit* textEdit = Object::cast_to<TextEdit>(_editor))
+        apply_transparent_text_edit_style(textEdit);
 
 
 

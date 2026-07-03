@@ -372,26 +372,26 @@ void FUIRichText::formatText()
         case HtmlElement::Type::TEXT:
         {
             const std::string& text = element->text;
-            size_t startPos = 0;
+            String textStr = String::utf8(text.c_str());
+            int startPos = 0;
             bool first = true;
-            while (startPos < text.length())
+            while (startPos < textStr.length())
             {
-                size_t endPos = text.find('\n', startPos);
-                bool hasNewline = (endPos != std::string::npos);
-                std::string segment = hasNewline
-                    ? text.substr(startPos, endPos - startPos)
-                    : text.substr(startPos);
-
+                int endPos = textStr.find("\n", startPos);
+                bool hasNewline = (endPos != -1);
+                String segment = hasNewline
+                    ? textStr.substr(startPos, endPos - startPos)
+                    : textStr.substr(startPos);
                 if (!first && hasNewline)
                     addNewLine();
-                if (!segment.empty())
-                    handleTextRenderer(element, segment);
+                if (!segment.is_empty())
+                    handleTextRenderer(element, segment.utf8().get_data());
                 first = false;
 
                 if (hasNewline)
                     startPos = endPos + 1;
                 else
-                    startPos = text.length();
+                    startPos = textStr.length();
             }
             break;
         }
@@ -600,11 +600,16 @@ void FUIRichText::formarRenderers()
     else if (_overflow == 3)
         _dimensionsY = _contentHeight;
 
-    float delta = _contentHeight - oldDimensionsHeight;
-    if (_textFormat.verticalAlign == 1)
-        delta -= floor((_dimensionsY - textHeight) * 0.5f);
-    else if (_textFormat.verticalAlign == 2)
-        delta -= _dimensionsY - textHeight;
+    float delta = 0;
+    if (_overflow == 3)
+        delta = _contentHeight - oldDimensionsHeight;
+    else if (_overflow == 1 || _overflow == 2)
+    {
+        if (_textFormat.verticalAlign == 1)
+            delta = floor((_dimensionsY - textHeight) * 0.5f);
+        else if (_textFormat.verticalAlign == 2)
+            delta = _dimensionsY - textHeight;
+    }
 
     if (delta != 0)
     {

@@ -5,6 +5,7 @@ var _groot: Object
 var _view: Object = null
 
 func _ready() -> void:
+	_register_default_fonts()
 	# GRoot 需要先创建才能使用，如果尚未创建则延迟到下一帧
 	if GRoot.getInstance() == null:
 		call_deferred("_delayed_init")
@@ -18,6 +19,12 @@ func _delayed_init() -> void:
 	_groot = GRoot.getInstance()
 	continue_init()
 	_add_close_button()
+
+func _register_default_fonts() -> void:
+	var font_path := "res://Resources/fonts/DroidSansFallback.ttf"
+	UIConfigHelper.getInstance().registerFont("default", font_path)
+	UIConfigHelper.getInstance().registerFont("微软雅黑", font_path)
+	UIConfigHelper.getInstance().setDefaultFont("default")
 
 func continue_init() -> void:
 	pass

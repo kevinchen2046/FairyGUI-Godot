@@ -32,7 +32,14 @@ public:
     void setGrayed(bool value);
     bool isGrayed() const { return _grayed; }
 
-    void setWrapEnabled(bool value) { _wrapEnabled = value; }
+    void setWrapEnabled(bool value)
+    {
+        if (_wrapEnabled != value)
+        {
+            _wrapEnabled = value;
+            queue_redraw();
+        }
+    }
     bool isWrapEnabled() const { return _wrapEnabled; }
     Vector2 getTextSize() const { return Vector2(getTextWidth(), getTextHeight()); }
     void setContentSize(const Vector2& size) { _contentSize = size; }

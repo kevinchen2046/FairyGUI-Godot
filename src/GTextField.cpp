@@ -157,8 +157,7 @@ void GTextField::setup_beforeAdd(ByteBuffer* buffer, int beginPos)
     tf->underline = buffer->readBool();
     tf->italics = buffer->readBool();
     tf->bold = buffer->readBool();
-    if (buffer->readBool())
-        setSingleLine(true);
+    setSingleLine(buffer->readBool());
     if (buffer->readBool())
     {
         tf->outlineColor = (Color)buffer->readColor();
@@ -277,8 +276,8 @@ GBasicTextField::~GBasicTextField()
 void GBasicTextField::handleInit()
 {
     _label = FUILabel::create();
+    _label->setWrapEnabled(true);
     _displayObject = _label;
-
 }
 
 void GBasicTextField::applyTextFormat()
@@ -293,7 +292,11 @@ void GBasicTextField::setAutoSize(AutoSizeType value)
 {
     _autoSize = value;
     if (_label)
+    {
+        // BOTH 模式按 FairyGUI 语义单行扩展；其余模式在固定宽度内换行。
+        _label->setWrapEnabled(!isSingleLine() && value != AutoSizeType::BOTH);
         _label->_contentSize = Vector2(_size.width, _size.height);
+    }
 
     if (!_underConstruct)
         updateSize();
@@ -301,9 +304,12 @@ void GBasicTextField::setAutoSize(AutoSizeType value)
 
 void GBasicTextField::setSingleLine(bool value)
 {
-    _label->setWrapEnabled(!value);
+    _label->setWrapEnabled(!value && _autoSize != AutoSizeType::BOTH);
     if (!_underConstruct)
+    {
         updateSize();
+        _label->queue_redraw();
+    }
 }
 
 void GBasicTextField::setTextFieldText()
