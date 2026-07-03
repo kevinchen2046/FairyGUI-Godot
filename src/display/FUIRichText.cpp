@@ -155,6 +155,15 @@ static void releaseRendererChild(Node* node)
         node->queue_free();
 }
 
+static void resetClipContainer(Control* clipContainer)
+{
+    if (!clipContainer)
+        return;
+    clipContainer->set_position(Vector2());
+    for (int i = clipContainer->get_child_count() - 1; i >= 0; i--)
+        releaseRendererChild(clipContainer->get_child(i));
+}
+
 HtmlObject* createHtmlObject(HtmlElement* element)
 {
     if (element->type == HtmlElement::Type::IMAGE
@@ -343,10 +352,7 @@ void FUIRichText::setText(const std::string& value)
     _numLines = 0;
 
     if (_clipContainer)
-    {
-        for (int i = _clipContainer->get_child_count() - 1; i >= 0; i--)
-            releaseRendererChild(_clipContainer->get_child(i));
-    }
+        resetClipContainer(_clipContainer);
 
     if (value.empty())
     {
@@ -406,10 +412,7 @@ void FUIRichText::formatText()
     _dirty = false;
 
     if (_clipContainer)
-    {
-        for (int i = _clipContainer->get_child_count() - 1; i >= 0; i--)
-            releaseRendererChild(_clipContainer->get_child(i));
-    }
+        resetClipContainer(_clipContainer);
 
     _renderers.clear();
 
@@ -692,7 +695,6 @@ void FUIRichText::formarRenderers()
     _contentWidth = textWidth;
     _contentHeight = textHeight;
 
-    float oldDimensionsHeight = _dimensionsY;
     if (_overflow == 0)
     {
         _dimensionsX = _contentWidth;
@@ -702,9 +704,7 @@ void FUIRichText::formarRenderers()
         _dimensionsY = _contentHeight;
 
     float delta = 0;
-    if (_overflow == 3)
-        delta = _contentHeight - oldDimensionsHeight;
-    else if (_overflow == 1 || _overflow == 2)
+    if (_overflow == 1 || _overflow == 2)
     {
         if (_textFormat.verticalAlign == 1)
             delta = floor((_dimensionsY - textHeight) * 0.5f);
@@ -714,10 +714,12 @@ void FUIRichText::formarRenderers()
 
     if (delta != 0)
     {
-        for (int i = 0; i < get_child_count(); i++)
+        if (_clipContainer)
+            offsetNodePosition(_clipContainer, Vector2(0, delta));
+        else
         {
-            Node* node = get_child(i);
-            offsetNodePosition(node, Vector2(0, delta));
+            for (int i = 0; i < get_child_count(); i++)
+                offsetNodePosition(get_child(i), Vector2(0, delta));
         }
     }
 
