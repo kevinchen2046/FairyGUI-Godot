@@ -280,13 +280,18 @@ int FUILabel::getDrawFontSize() const
     return size;
 }
 
-static float fui_font_style_extra_width(const TextFormat* format, int fontSize)
+static float fui_font_style_extra_width(const Ref<Font>& font, const TextFormat* format, int fontSize)
 {
     float extra = 0.0f;
     if (format->italics)
-        extra += fontSize * Math::tan(Math::deg_to_rad(12.0f));
+    {
+        // FontVariation slant overhang is often missing from get_string_size().
+        float ascent = font.is_valid() ? font->get_ascent(fontSize) : fontSize * 0.8f;
+        extra += ascent * Math::tan(Math::deg_to_rad(12.0f));
+        extra += MAX(1.0f, fontSize * 0.04f);
+    }
     if (format->bold)
-        extra += fontSize * 0.08f;
+        extra += fontSize * 0.1f;
     return extra;
 }
 
@@ -300,7 +305,7 @@ float FUILabel::getTextWidth() const
         bool wrap = _wrapEnabled && _contentSize.x > 0;
         float maxWidth = wrap ? _contentSize.x : -1;
         float width = fui_measure_text(font, GObject::toGodotStr(_text), fontSize, wrap, maxWidth, _textFormat->align).x;
-        width += fui_font_style_extra_width(_textFormat, fontSize);
+        width += fui_font_style_extra_width(font, _textFormat, fontSize);
         return width;
     }
     return 0;

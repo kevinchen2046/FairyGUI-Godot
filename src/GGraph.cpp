@@ -392,10 +392,8 @@ void GGraph::updateShape()
             _polygonPoints->clear();
 
         float radius = std::min(getWidth(), getHeight()) * 0.5f;
-        float cx = getWidth() * 0.5f;
-        float cy = getHeight() * 0.5f;
-        // FairyGUI: startAngle clockwise from +X in Y-down space.
-        float angle = -MATH_DEG_TO_RAD(_startAngle);
+        // FairyGUI + Godot are both Y-down: match editor vertex order (angle +=, no Y flip).
+        float angle = MATH_DEG_TO_RAD(_startAngle);
         float deltaAngle = 2 * (float)M_PI / _sides;
         float dist;
         for (int i = 0; i < _sides; i++)
@@ -405,11 +403,11 @@ void GGraph::updateShape()
             else
                 dist = 1;
 
-            float xv = cx + radius * dist * Math::cos(angle);
-            float yv = cy + radius * dist * Math::sin(angle);
+            float xv = radius + radius * dist * Math::cos(angle);
+            float yv = radius + radius * dist * Math::sin(angle);
             _polygonPoints->push_back(Vector2(xv, yv));
 
-            angle -= deltaAngle;
+            angle += deltaAngle;
         }
 
         _shape->drawPolygon(_polygonPoints->data(), (int)_polygonPoints->size(), _fillColor, _lineSize * 0.5f, _lineColor);

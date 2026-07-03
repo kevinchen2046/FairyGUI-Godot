@@ -20,6 +20,8 @@ using namespace std;
 
 static const int GUTTER_X = 2;
 static const int GUTTER_Y = 2;
+// Reserve a little width so slanted/bold glyphs are not clipped at line edge.
+static const float LINE_WIDTH_FUDGE = 2.0f;
 
 static std::string godotStrToStd(const String& text)
 {
@@ -471,7 +473,7 @@ void FUIRichText::handleTextRenderer(HtmlElement* element, const std::string& te
 
     float textRendererWidth = textRenderer->getTextWidth();
     _leftSpaceWidth -= textRendererWidth;
-    if (_leftSpaceWidth >= 0)
+    if (_leftSpaceWidth >= LINE_WIDTH_FUDGE)
     {
         _renderers.back().push_back(textRenderer);
         return;
@@ -531,7 +533,7 @@ int FUIRichText::findSplitPositionForWord(Node* label, const std::string& text)
         {
             idx = newidx;
             flabel->setText(godotStrToStd(textStr.substr(0, idx)));
-            if (flabel->getTextWidth() <= originalLeftSpaceWidth)
+            if (flabel->getTextWidth() <= originalLeftSpaceWidth - LINE_WIDTH_FUDGE)
                 return idx;
         }
         else
