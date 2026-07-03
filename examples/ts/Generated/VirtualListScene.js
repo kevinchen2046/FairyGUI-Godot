@@ -1,7 +1,12 @@
+"use strict";
 /// <reference path="../fairygui.d.ts" />
-import { Callable } from "godot";
-import DemoSceneBase from "./DemoSceneBase";
-export default class VirtualListScene extends DemoSceneBase {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const godot_1 = require("godot");
+const DemoSceneBase_1 = __importDefault(require("./DemoSceneBase"));
+class VirtualListScene extends DemoSceneBase_1.default {
     _list = null;
     ContinueInit() {
         UIPackage.addPackage("res://Resources/UI/VirtualList");
@@ -9,20 +14,20 @@ export default class VirtualListScene extends DemoSceneBase {
         this._groot.addChild(this._view);
         const n6 = this._view.getChild("n6");
         if (n6 != null) {
-            n6.addClickListener(Callable.create(() => {
+            n6.addClickListener(godot_1.Callable.create(() => {
                 this._list?.addSelection(500, true);
             }));
         }
         const n7 = this._view.getChild("n7");
         if (n7 != null) {
-            n7.addClickListener(Callable.create(() => {
+            n7.addClickListener(godot_1.Callable.create(() => {
                 const sp = this._list?.getScrollPane();
                 sp?.scrollTop(true);
             }));
         }
         const n8 = this._view.getChild("n8");
         if (n8 != null) {
-            n8.addClickListener(Callable.create(() => {
+            n8.addClickListener(godot_1.Callable.create(() => {
                 const sp = this._list?.getScrollPane();
                 sp?.scrollBottom(true);
             }));
@@ -50,3 +55,5 @@ export default class VirtualListScene extends DemoSceneBase {
         obj.setText(`${String(index)} Mail title here`);
     }
 }
+exports.default = VirtualListScene;
+//# sourceMappingURL=VirtualListScene.js.map

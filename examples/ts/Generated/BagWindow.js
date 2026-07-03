@@ -1,13 +1,15 @@
+"use strict";
 /// <reference path="../fairygui.d.ts" />
-import { Callable, Vector2 } from "godot";
-export default class BagWindow extends GWindow {
+Object.defineProperty(exports, "__esModule", { value: true });
+const godot_1 = require("godot");
+class BagWindow extends GWindow {
     _list = null;
     constructor() {
         super();
         this.setupDisplay();
-        this.setOnInitCallback(Callable.create(this._onInit.bind(this)));
-        this.setDoShowAnimationCallback(Callable.create(this._doShowAnimation.bind(this)));
-        this.setDoHideAnimationCallback(Callable.create(this._doHideAnimation.bind(this)));
+        this.setOnInitCallback(godot_1.Callable.create(this._onInit.bind(this)));
+        this.setDoShowAnimationCallback(godot_1.Callable.create(this._doShowAnimation.bind(this)));
+        this.setDoHideAnimationCallback(godot_1.Callable.create(this._doHideAnimation.bind(this)));
     }
     _onInit() {
         this.setContentPane(UIPackage.createObject("Bag", "BagWin"));
@@ -21,7 +23,7 @@ export default class BagWindow extends GWindow {
         if (this._list == null) {
             return;
         }
-        this._list.addEventListener(UIEventDispatcher.CLICKITEM, Callable.create(this._onClickItem.bind(this)));
+        this._list.addEventListener(UIEventDispatcher.CLICKITEM, godot_1.Callable.create(this._onClickItem.bind(this)));
         this._list.setItemRenderer(this._renderListItem.bind(this));
         this._list.setNumItems(45);
     }
@@ -49,10 +51,12 @@ export default class BagWindow extends GWindow {
     _doShowAnimation() {
         this.setScale(0.1, 0.1);
         this.setPivot(0.5, 0.5);
-        this.tweenScale(new Vector2(1.0, 1.0), 0.3);
+        this.tweenScale(new godot_1.Vector2(1.0, 1.0), 0.3);
     }
     _doHideAnimation() {
         GTweenHelper.getInstance().kill(this, false);
-        this.tweenScale(new Vector2(0.1, 0.1), 0.3).onComplete(Callable.create(this.hideImmediately.bind(this)));
+        this.tweenScale(new godot_1.Vector2(0.1, 0.1), 0.3).onComplete(godot_1.Callable.create(this.hideImmediately.bind(this)));
     }
 }
+exports.default = BagWindow;
+//# sourceMappingURL=BagWindow.js.map

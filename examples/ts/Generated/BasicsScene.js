@@ -1,9 +1,14 @@
+"use strict";
 /// <reference path="../fairygui.d.ts" />
-import { Callable, Rect2, Vector2 } from "godot";
-import DemoSceneBase from "./DemoSceneBase";
-import Window1 from "./Window1";
-import Window2 from "./Window2";
-export default class BasicsScene extends DemoSceneBase {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const godot_1 = require("godot");
+const DemoSceneBase_1 = __importDefault(require("./DemoSceneBase"));
+const Window1_1 = __importDefault(require("./Window1"));
+const Window2_1 = __importDefault(require("./Window2"));
+class BasicsScene extends DemoSceneBase_1.default {
     _backBtn = null;
     _demoContainer = null;
     _cc = null;
@@ -13,7 +18,7 @@ export default class BasicsScene extends DemoSceneBase {
     _pm = null;
     _popupCom = null;
     _progressRunning = false;
-    _depthStartPos = new Vector2(0, 0);
+    _depthStartPos = new godot_1.Vector2(0, 0);
     ContinueInit() {
         UIConfigHelper.getInstance().setButtonSound("ui://Basics/click");
         UIConfigHelper.getInstance().setVerticalScrollBar("ui://Basics/ScrollBar_VT");
@@ -25,14 +30,14 @@ export default class BasicsScene extends DemoSceneBase {
         this._groot.addChild(this._view);
         this._backBtn = this._view.getChild("btn_Back");
         this._backBtn?.setVisible(false);
-        this._backBtn?.addClickListener(Callable.create(this._onClickBack.bind(this)));
+        this._backBtn?.addClickListener(godot_1.Callable.create(this._onClickBack.bind(this)));
         this._demoContainer = this._view.getChild("container");
         this._cc = this._view.getController("c1");
         const cnt = this._view.numChildren();
         for (let i = 0; i < cnt; i++) {
             const obj = this._view.getChildAt(i);
             if (obj != null && obj.getGroup()?.getName() === "btns") {
-                obj.addClickListener(Callable.create(this._runDemo.bind(this)));
+                obj.addClickListener(godot_1.Callable.create(this._runDemo.bind(this)));
             }
         }
     }
@@ -92,13 +97,13 @@ export default class BasicsScene extends DemoSceneBase {
     _playText(obj) {
         const n12 = obj.getChild("n12");
         if (n12 != null) {
-            n12.addEventListener(UIEventDispatcher.CLICKLINK, Callable.create(() => {
+            n12.addEventListener(UIEventDispatcher.CLICKLINK, godot_1.Callable.create(() => {
                 n12.setText("[img]ui://Basics/pet[/img][color=#FF0000]You click the link[/color]:clicked");
             }));
         }
         const n25 = obj.getChild("n25");
         if (n25 != null) {
-            n25.addClickListener(Callable.create(() => {
+            n25.addClickListener(godot_1.Callable.create(() => {
                 const n22 = obj.getChild("n22");
                 const n24 = obj.getChild("n24");
                 if (n22 != null && n24 != null) {
@@ -125,17 +130,17 @@ export default class BasicsScene extends DemoSceneBase {
         }
         const n0 = obj.getChild("n0");
         if (n0 != null) {
-            n0.addClickListener(Callable.create(() => {
+            n0.addClickListener(godot_1.Callable.create(() => {
                 this._pm?.showMenuAt(n0, 2);
             }));
         }
         const n1 = obj.getChild("n1");
         if (n1 != null && this._popupCom != null) {
-            n1.addClickListener(Callable.create(() => {
+            n1.addClickListener(godot_1.Callable.create(() => {
                 this._groot.showPopupSimple(this._popupCom);
             }));
         }
-        obj.addEventListener(UIEventDispatcher.RIGHTCLICK, Callable.create(() => {
+        obj.addEventListener(UIEventDispatcher.RIGHTCLICK, godot_1.Callable.create(() => {
             this._pm?.show();
         }));
     }
@@ -143,17 +148,17 @@ export default class BasicsScene extends DemoSceneBase {
         if (this._winA != null) {
             return;
         }
-        this._winA = new Window1();
-        this._winB = new Window2();
+        this._winA = new Window1_1.default();
+        this._winB = new Window2_1.default();
         const n0 = obj.getChild("n0");
         if (n0 != null) {
-            n0.addClickListener(Callable.create(() => {
+            n0.addClickListener(godot_1.Callable.create(() => {
                 this._winA?.show();
             }));
         }
         const n1 = obj.getChild("n1");
         if (n1 != null) {
-            n1.addClickListener(Callable.create(() => {
+            n1.addClickListener(godot_1.Callable.create(() => {
                 this._winB?.show();
             }));
         }
@@ -178,10 +183,10 @@ export default class BasicsScene extends DemoSceneBase {
                 i += 1;
             }
         }
-        this._depthStartPos = new Vector2(fixedObj.getX(), fixedObj.getY());
+        this._depthStartPos = new godot_1.Vector2(fixedObj.getX(), fixedObj.getY());
         const btn0 = obj.getChild("btn0");
         if (btn0 != null) {
-            btn0.addClickListener(Callable.create(() => {
+            btn0.addClickListener(godot_1.Callable.create(() => {
                 this._depthStartPos.x += 10;
                 this._depthStartPos.y += 10;
                 const graph = UIPackage.createObject("Basics", "graph_template");
@@ -193,7 +198,7 @@ export default class BasicsScene extends DemoSceneBase {
         }
         const btn1 = obj.getChild("btn1");
         if (btn1 != null) {
-            btn1.addClickListener(Callable.create(() => {
+            btn1.addClickListener(godot_1.Callable.create(() => {
                 this._depthStartPos.x += 10;
                 this._depthStartPos.y += 10;
                 const graph = UIPackage.createObject("Basics", "graph_template");
@@ -213,7 +218,7 @@ export default class BasicsScene extends DemoSceneBase {
         const b = obj.getChild("b");
         if (b != null) {
             b.setDraggable(true);
-            b.addEventListener(UIEventDispatcher.DRAGSTART, Callable.create((ctx) => {
+            b.addEventListener(UIEventDispatcher.DRAGSTART, godot_1.Callable.create((ctx) => {
                 ctx.preventDefault();
                 DragDropManagerHelper.getInstance().startDrag(b.getIcon(), b.getIcon(), ctx.getTouchId());
             }));
@@ -221,7 +226,7 @@ export default class BasicsScene extends DemoSceneBase {
         const c = obj.getChild("c");
         if (c != null) {
             c.setIcon("");
-            c.addEventListener(UIEventDispatcher.DROP, Callable.create((ctx) => {
+            c.addEventListener(UIEventDispatcher.DROP, godot_1.Callable.create((ctx) => {
                 c.setIcon(String(ctx.getData()));
             }));
         }
@@ -231,7 +236,7 @@ export default class BasicsScene extends DemoSceneBase {
             if (n7 != null) {
                 const parent = d.getParent();
                 if (parent != null) {
-                    const rect = n7.transformRect(new Rect2(0, 0, n7.getWidth(), n7.getHeight()), parent);
+                    const rect = n7.transformRect(new godot_1.Rect2(0, 0, n7.getWidth(), n7.getHeight()), parent);
                     d.setDraggable(true);
                     d.setDragBounds(rect);
                 }
@@ -240,7 +245,7 @@ export default class BasicsScene extends DemoSceneBase {
     }
     _playProgress(obj) {
         this._progressRunning = true;
-        obj.addEventListener(UIEventDispatcher.EXIT, Callable.create(() => {
+        obj.addEventListener(UIEventDispatcher.EXIT, godot_1.Callable.create(() => {
             this._progressRunning = false;
         }));
     }
@@ -265,3 +270,5 @@ export default class BasicsScene extends DemoSceneBase {
         }
     }
 }
+exports.default = BasicsScene;
+//# sourceMappingURL=BasicsScene.js.map

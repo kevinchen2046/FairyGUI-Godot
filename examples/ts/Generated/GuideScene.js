@@ -1,7 +1,12 @@
+"use strict";
 /// <reference path="../fairygui.d.ts" />
-import { Callable, Rect2 } from "godot";
-import DemoSceneBase from "./DemoSceneBase";
-export default class GuideScene extends DemoSceneBase {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const godot_1 = require("godot");
+const DemoSceneBase_1 = __importDefault(require("./DemoSceneBase"));
+class GuideScene extends DemoSceneBase_1.default {
     _guideLayer = null;
     _bagBtn = null;
     ContinueInit() {
@@ -15,7 +20,7 @@ export default class GuideScene extends DemoSceneBase {
         }
         this._bagBtn = this._view.getChild("bagBtn");
         if (this._bagBtn != null) {
-            this._bagBtn.addClickListener(Callable.create(() => {
+            this._bagBtn.addClickListener(godot_1.Callable.create(() => {
                 if (this._guideLayer != null && this._guideLayer.getParent() != null) {
                     this._guideLayer.removeFromParent();
                 }
@@ -23,7 +28,7 @@ export default class GuideScene extends DemoSceneBase {
         }
         const n2 = this._view.getChild("n2");
         if (n2 != null) {
-            n2.addClickListener(Callable.create(this._showGuide.bind(this)));
+            n2.addClickListener(godot_1.Callable.create(this._showGuide.bind(this)));
         }
     }
     _showGuide() {
@@ -31,7 +36,7 @@ export default class GuideScene extends DemoSceneBase {
             return;
         }
         this._groot.addChild(this._guideLayer);
-        const rect = this._bagBtn.transformRect(new Rect2(0, 0, this._bagBtn.getWidth(), this._bagBtn.getHeight()), this._guideLayer);
+        const rect = this._bagBtn.transformRect(new godot_1.Rect2(0, 0, this._bagBtn.getWidth(), this._bagBtn.getHeight()), this._guideLayer);
         const window = this._guideLayer.getChild("window");
         if (window != null) {
             window.setSize(rect.size.x, rect.size.y);
@@ -41,3 +46,5 @@ export default class GuideScene extends DemoSceneBase {
         }
     }
 }
+exports.default = GuideScene;
+//# sourceMappingURL=GuideScene.js.map

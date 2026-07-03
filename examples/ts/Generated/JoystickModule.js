@@ -1,5 +1,7 @@
+"use strict";
 /// <reference path="../fairygui.d.ts" />
-import { Callable } from "godot";
+Object.defineProperty(exports, "__esModule", { value: true });
+const godot_1 = require("godot");
 class SimpleSignal {
     _listeners = [];
     connect(listener) {
@@ -11,7 +13,7 @@ class SimpleSignal {
         }
     }
 }
-export default class JoystickModule {
+class JoystickModule {
     move_changed = new SimpleSignal();
     ended = new SimpleSignal();
     _button = null;
@@ -41,9 +43,9 @@ export default class JoystickModule {
             this._initY = this._center.getY() + this._center.getHeight() / 2.0;
         }
         if (this._touchArea != null) {
-            this._touchArea.addEventListener(UIEventDispatcher.TOUCHBEGIN, Callable.create(this._onTouchBegin.bind(this)));
-            this._touchArea.addEventListener(UIEventDispatcher.TOUCHMOVE, Callable.create(this._onTouchMove.bind(this)));
-            this._touchArea.addEventListener(UIEventDispatcher.TOUCHEND, Callable.create(this._onTouchEnd.bind(this)));
+            this._touchArea.addEventListener(UIEventDispatcher.TOUCHBEGIN, godot_1.Callable.create(this._onTouchBegin.bind(this)));
+            this._touchArea.addEventListener(UIEventDispatcher.TOUCHMOVE, godot_1.Callable.create(this._onTouchMove.bind(this)));
+            this._touchArea.addEventListener(UIEventDispatcher.TOUCHEND, godot_1.Callable.create(this._onTouchEnd.bind(this)));
         }
     }
     _onTouchBegin() {
@@ -137,3 +139,5 @@ export default class JoystickModule {
         this.ended.emit();
     }
 }
+exports.default = JoystickModule;
+//# sourceMappingURL=JoystickModule.js.map

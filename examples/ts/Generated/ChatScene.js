@@ -1,7 +1,12 @@
+"use strict";
 /// <reference path="../fairygui.d.ts" />
-import { Callable, RegEx } from "godot";
-import DemoSceneBase from "./DemoSceneBase";
-export default class ChatScene extends DemoSceneBase {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const godot_1 = require("godot");
+const DemoSceneBase_1 = __importDefault(require("./DemoSceneBase"));
+class ChatScene extends DemoSceneBase_1.default {
     _list = null;
     _input = null;
     _messages = [];
@@ -18,21 +23,21 @@ export default class ChatScene extends DemoSceneBase {
         }
         this._input = this._view.getChild("input");
         if (this._input != null) {
-            this._input.addEventListener(UIEventDispatcher.SUBMIT, Callable.create(this._onSubmit.bind(this)));
+            this._input.addEventListener(UIEventDispatcher.SUBMIT, godot_1.Callable.create(this._onSubmit.bind(this)));
         }
         const sendBtn = this._view.getChild("btnSend");
         if (sendBtn != null) {
-            sendBtn.addClickListener(Callable.create(this._onClickSendBtn.bind(this)));
+            sendBtn.addClickListener(godot_1.Callable.create(this._onClickSendBtn.bind(this)));
         }
         const emojiBtn = this._view.getChild("btnEmoji");
         if (emojiBtn != null) {
-            emojiBtn.addClickListener(Callable.create(this._onClickEmojiBtn.bind(this)));
+            emojiBtn.addClickListener(godot_1.Callable.create(this._onClickEmojiBtn.bind(this)));
         }
         this._emojiSelectUi = UIPackage.createObject("Emoji", "EmojiSelectUI");
         if (this._emojiSelectUi != null) {
             const emojiList = this._emojiSelectUi.getChild("list");
             if (emojiList != null) {
-                emojiList.addEventListener(UIEventDispatcher.CLICKITEM, Callable.create(this._onClickEmoji.bind(this)));
+                emojiList.addEventListener(UIEventDispatcher.CLICKITEM, godot_1.Callable.create(this._onClickEmoji.bind(this)));
             }
         }
         this._addMsg("Unity", "r0", "Hello!", true);
@@ -65,7 +70,7 @@ export default class ChatScene extends DemoSceneBase {
         this._onClickSendBtn();
     }
     _parseEmoji(text) {
-        const regex = new RegEx();
+        const regex = new godot_1.RegEx();
         regex.compile("\\[:\\s*(\\w+)\\]");
         const result = regex.search(text);
         if (result == null) {
@@ -128,3 +133,5 @@ export default class ChatScene extends DemoSceneBase {
         }
     }
 }
+exports.default = ChatScene;
+//# sourceMappingURL=ChatScene.js.map

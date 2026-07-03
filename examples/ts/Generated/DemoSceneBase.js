@@ -1,6 +1,8 @@
+"use strict";
 /// <reference path="../fairygui.d.ts" />
-import { Callable, Node } from "godot";
-export default class DemoSceneBase extends Node {
+Object.defineProperty(exports, "__esModule", { value: true });
+const godot_1 = require("godot");
+class DemoSceneBase extends godot_1.Node {
     mainMenuScenePath = "res://ts/Scenes/MainMenu.tscn";
     _groot = null;
     _view = null;
@@ -50,7 +52,7 @@ export default class DemoSceneBase extends Node {
         closeBtn.addRelation(this._groot, GObject.RIGHT_RIGHT, false);
         closeBtn.addRelation(this._groot, GObject.BOTTOM_BOTTOM, false);
         closeBtn.setSortingOrder(100000);
-        closeBtn.addClickListener(Callable.create(this._onClose.bind(this)));
+        closeBtn.addClickListener(godot_1.Callable.create(this._onClose.bind(this)));
         this._groot.addChild(closeBtn);
     }
     _cleanupGrootOverlays() {
@@ -91,3 +93,5 @@ export default class DemoSceneBase extends Node {
         this.get_tree()?.change_scene_to_file(this.mainMenuScenePath);
     }
 }
+exports.default = DemoSceneBase;
+//# sourceMappingURL=DemoSceneBase.js.map

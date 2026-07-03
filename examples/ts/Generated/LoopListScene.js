@@ -1,7 +1,12 @@
+"use strict";
 /// <reference path="../fairygui.d.ts" />
-import { Callable } from "godot";
-import DemoSceneBase from "./DemoSceneBase";
-export default class LoopListScene extends DemoSceneBase {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const godot_1 = require("godot");
+const DemoSceneBase_1 = __importDefault(require("./DemoSceneBase"));
+class LoopListScene extends DemoSceneBase_1.default {
     _list = null;
     ContinueInit() {
         UIPackage.addPackage("res://Resources/UI/LoopList");
@@ -12,7 +17,7 @@ export default class LoopListScene extends DemoSceneBase {
             this._list.setItemRenderer(this._renderListItem.bind(this));
             this._list.setVirtualAndLoop();
             this._list.setNumItems(5);
-            this._list.addEventListener(UIEventDispatcher.SCROLL, Callable.create(this._doSpecialEffect.bind(this)));
+            this._list.addEventListener(UIEventDispatcher.SCROLL, godot_1.Callable.create(this._doSpecialEffect.bind(this)));
             this._doSpecialEffect();
         }
     }
@@ -54,3 +59,5 @@ export default class LoopListScene extends DemoSceneBase {
         }
     }
 }
+exports.default = LoopListScene;
+//# sourceMappingURL=LoopListScene.js.map

@@ -1,11 +1,13 @@
+"use strict";
 /// <reference path="../fairygui.d.ts" />
-import { Callable } from "godot";
-export default class Window1 extends GWindow {
+Object.defineProperty(exports, "__esModule", { value: true });
+const godot_1 = require("godot");
+class Window1 extends GWindow {
     constructor() {
         super();
         this.setupDisplay();
-        this.setOnInitCallback(Callable.create(this._onInit.bind(this)));
-        this.setOnShownCallback(Callable.create(this._onShown.bind(this)));
+        this.setOnInitCallback(godot_1.Callable.create(this._onInit.bind(this)));
+        this.setOnShownCallback(godot_1.Callable.create(this._onShown.bind(this)));
     }
     _onInit() {
         this.setContentPane(UIPackage.createObject("Basics", "WindowA"));
@@ -31,3 +33,5 @@ export default class Window1 extends GWindow {
         }
     }
 }
+exports.default = Window1;
+//# sourceMappingURL=Window1.js.map

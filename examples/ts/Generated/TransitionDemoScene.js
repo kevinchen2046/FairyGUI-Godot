@@ -1,7 +1,12 @@
+"use strict";
 /// <reference path="../fairygui.d.ts" />
-import { Callable } from "godot";
-import DemoSceneBase from "./DemoSceneBase";
-export default class TransitionDemoScene extends DemoSceneBase {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const godot_1 = require("godot");
+const DemoSceneBase_1 = __importDefault(require("./DemoSceneBase"));
+class TransitionDemoScene extends DemoSceneBase_1.default {
     _btnGroup = null;
     _g1 = null;
     _g2 = null;
@@ -32,12 +37,12 @@ export default class TransitionDemoScene extends DemoSceneBase {
         if (btn == null || target == null) {
             return;
         }
-        btn.addClickListener(Callable.create(() => {
+        btn.addClickListener(godot_1.Callable.create(() => {
             this._btnGroup?.setVisible(false);
             this._groot.addChild(target);
             const trans = target.getTransition("t0");
             if (trans != null) {
-                trans.play(1, 0, Callable.create(() => {
+                trans.play(1, 0, godot_1.Callable.create(() => {
                     this._btnGroup?.setVisible(true);
                     target.removeFromParent();
                 }));
@@ -45,3 +50,5 @@ export default class TransitionDemoScene extends DemoSceneBase {
         }));
     }
 }
+exports.default = TransitionDemoScene;
+//# sourceMappingURL=TransitionDemoScene.js.map

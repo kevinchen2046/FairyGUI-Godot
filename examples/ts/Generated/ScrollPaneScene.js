@@ -1,7 +1,12 @@
+"use strict";
 /// <reference path="../fairygui.d.ts" />
-import { Callable } from "godot";
-import DemoSceneBase from "./DemoSceneBase";
-export default class ScrollPaneScene extends DemoSceneBase {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const godot_1 = require("godot");
+const DemoSceneBase_1 = __importDefault(require("./DemoSceneBase"));
+class ScrollPaneScene extends DemoSceneBase_1.default {
     _list = null;
     ContinueInit() {
         UIPackage.addPackage("res://Resources/UI/ScrollPane");
@@ -12,7 +17,7 @@ export default class ScrollPaneScene extends DemoSceneBase {
             this._list.setItemRenderer(this._renderListItem.bind(this));
             this._list.setVirtual();
             this._list.setNumItems(1000);
-            this._list.addEventListener(UIEventDispatcher.TOUCHBEGIN, Callable.create(this._onClickList.bind(this)));
+            this._list.addEventListener(UIEventDispatcher.TOUCHBEGIN, godot_1.Callable.create(this._onClickList.bind(this)));
         }
     }
     _renderListItem(index, obj) {
@@ -23,7 +28,7 @@ export default class ScrollPaneScene extends DemoSceneBase {
         }
         const b0 = obj.getChild("b0");
         if (b0 != null) {
-            b0.addEventListener(UIEventDispatcher.CLICK, Callable.create(() => {
+            b0.addEventListener(UIEventDispatcher.CLICK, godot_1.Callable.create(() => {
                 const txt = this._view.getChild("txt");
                 if (txt != null) {
                     txt.setText(`Stick ${obj.getText()}`);
@@ -32,7 +37,7 @@ export default class ScrollPaneScene extends DemoSceneBase {
         }
         const b1 = obj.getChild("b1");
         if (b1 != null) {
-            b1.addEventListener(UIEventDispatcher.CLICK, Callable.create(() => {
+            b1.addEventListener(UIEventDispatcher.CLICK, godot_1.Callable.create(() => {
                 const txt = this._view.getChild("txt");
                 if (txt != null) {
                     txt.setText(`Delete ${obj.getText()}`);
@@ -68,3 +73,5 @@ export default class ScrollPaneScene extends DemoSceneBase {
         }
     }
 }
+exports.default = ScrollPaneScene;
+//# sourceMappingURL=ScrollPaneScene.js.map

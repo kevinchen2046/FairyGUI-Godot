@@ -1,7 +1,12 @@
+"use strict";
 /// <reference path="../fairygui.d.ts" />
-import { Callable } from "godot";
-import DemoSceneBase from "./DemoSceneBase";
-export default class MainMenu extends DemoSceneBase {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const godot_1 = require("godot");
+const DemoSceneBase_1 = __importDefault(require("./DemoSceneBase"));
+class MainMenu extends DemoSceneBase_1.default {
     ContinueInit() {
         UIPackage.addPackage("res://Resources/UI/MainMenu");
         this._view = UIPackage.createObject("MainMenu", "Main");
@@ -25,7 +30,7 @@ export default class MainMenu extends DemoSceneBase {
     _navBtn(childName, scenePath) {
         const btn = this._view.getChild(childName);
         if (btn != null) {
-            btn.addClickListener(Callable.create(() => {
+            btn.addClickListener(godot_1.Callable.create(() => {
                 this._cleanupGrootOverlays();
                 this._groot.removeChildren();
                 this.get_tree()?.change_scene_to_file(scenePath);
@@ -36,3 +41,5 @@ export default class MainMenu extends DemoSceneBase {
         this.get_tree()?.quit();
     }
 }
+exports.default = MainMenu;
+//# sourceMappingURL=MainMenu.js.map

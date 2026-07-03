@@ -1,7 +1,12 @@
+"use strict";
 /// <reference path="../fairygui.d.ts" />
-import { Callable } from "godot";
-import DemoSceneBase from "./DemoSceneBase";
-export default class PullToRefreshScene extends DemoSceneBase {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const godot_1 = require("godot");
+const DemoSceneBase_1 = __importDefault(require("./DemoSceneBase"));
+class PullToRefreshScene extends DemoSceneBase_1.default {
     _list1 = null;
     _list2 = null;
     _refreshing1 = false;
@@ -15,14 +20,14 @@ export default class PullToRefreshScene extends DemoSceneBase {
             this._list1.setItemRenderer(this._renderListItem1.bind(this));
             this._list1.setVirtual();
             this._list1.setNumItems(1);
-            this._list1.addEventListener(UIEventDispatcher.PULLDOWNRELEASE, Callable.create(this._onPullDownToRefresh.bind(this)));
+            this._list1.addEventListener(UIEventDispatcher.PULLDOWNRELEASE, godot_1.Callable.create(this._onPullDownToRefresh.bind(this)));
         }
         this._list2 = this._view.getChild("list2");
         if (this._list2 != null) {
             this._list2.setItemRenderer(this._renderListItem2.bind(this));
             this._list2.setVirtual();
             this._list2.setNumItems(1);
-            this._list2.addEventListener(UIEventDispatcher.PULLUPRELEASE, Callable.create(this._onPullUpToRefresh.bind(this)));
+            this._list2.addEventListener(UIEventDispatcher.PULLUPRELEASE, godot_1.Callable.create(this._onPullUpToRefresh.bind(this)));
         }
     }
     _renderListItem1(index, obj) {
@@ -89,3 +94,5 @@ export default class PullToRefreshScene extends DemoSceneBase {
         this._refreshing2 = false;
     }
 }
+exports.default = PullToRefreshScene;
+//# sourceMappingURL=PullToRefreshScene.js.map

@@ -1,22 +1,33 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "ES2022",
-    "moduleResolution": "bundler",
+    "module": "node16",
+    "moduleResolution": "node16",
     "strict": true,
     "strictNullChecks": false,
     "skipLibCheck": true,
     "noEmit": false,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "incremental": true,
+    "tsBuildInfoFile": ".godot/.tsbuildinfo",
+    "rootDir": ".",
+    "outDir": ".godot/GodotJS",
+    "sourceRoot": "../../../",
+    "newLine": "crlf",
+    "forceConsistentCasingInFileNames": true,
     "ignoreDeprecations": "6.0",
     "baseUrl": ".",
+    "typeRoots": ["./gen/godot"],
     "paths": {
       "godot": ["gen/godot/index.d.ts"],
       "godot/*": ["gen/godot/*"]
-    },
-    "rootDir": "./ts/Scripts",
-    "outDir": "./ts/Generated"
+    }
   },
   "include": [
-    "ts/**/*.ts"
+    "ts/Scripts/**/*.ts"
+  ],
+  "exclude": [
+    "ts/Generated/**"
   ]
 }

@@ -1,6 +1,11 @@
+"use strict";
 /// <reference path="../fairygui.d.ts" />
-import DemoSceneBase from "./DemoSceneBase";
-export default class ListEffectScene extends DemoSceneBase {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const DemoSceneBase_1 = __importDefault(require("./DemoSceneBase"));
+class ListEffectScene extends DemoSceneBase_1.default {
     _list = null;
     ContinueInit() {
         UIPackage.addPackage("res://Resources/UI/Extension");
@@ -49,3 +54,5 @@ export default class ListEffectScene extends DemoSceneBase {
         }
     }
 }
+exports.default = ListEffectScene;
+//# sourceMappingURL=ListEffectScene.js.map

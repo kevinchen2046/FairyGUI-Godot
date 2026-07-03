@@ -1,7 +1,12 @@
+"use strict";
 /// <reference path="../fairygui.d.ts" />
-import { Callable } from "godot";
-import DemoSceneBase from "./DemoSceneBase";
-export default class TreeViewScene extends DemoSceneBase {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const godot_1 = require("godot");
+const DemoSceneBase_1 = __importDefault(require("./DemoSceneBase"));
+class TreeViewScene extends DemoSceneBase_1.default {
     _tree1 = null;
     _tree2 = null;
     ContinueInit() {
@@ -10,11 +15,11 @@ export default class TreeViewScene extends DemoSceneBase {
         this._groot.addChild(this._view);
         this._tree1 = this._view.getChild("tree");
         if (this._tree1 != null) {
-            this._tree1.addEventListener(UIEventDispatcher.CLICKITEM, Callable.create(this._onClickNode.bind(this)));
+            this._tree1.addEventListener(UIEventDispatcher.CLICKITEM, godot_1.Callable.create(this._onClickNode.bind(this)));
         }
         this._tree2 = this._view.getChild("tree2");
         if (this._tree2 != null) {
-            this._tree2.addEventListener(UIEventDispatcher.CLICKITEM, Callable.create(this._onClickNode.bind(this)));
+            this._tree2.addEventListener(UIEventDispatcher.CLICKITEM, godot_1.Callable.create(this._onClickNode.bind(this)));
             this._tree2.setTreeNodeRender(this._renderTreeNode.bind(this));
             this._buildTree2();
         }
@@ -77,3 +82,5 @@ export default class TreeViewScene extends DemoSceneBase {
         }
     }
 }
+exports.default = TreeViewScene;
+//# sourceMappingURL=TreeViewScene.js.map

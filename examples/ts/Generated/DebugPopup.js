@@ -1,6 +1,8 @@
+"use strict";
 /// <reference path="../fairygui.d.ts" />
-import { CanvasItem, Node2D, SceneTree } from "godot";
-export default class DebugPopup extends SceneTree {
+Object.defineProperty(exports, "__esModule", { value: true });
+const godot_1 = require("godot");
+class DebugPopup extends godot_1.SceneTree {
     _initialize() {
         this.call_deferred("_run");
     }
@@ -48,11 +50,13 @@ export default class DebugPopup extends SceneTree {
         }
         console.log(`${label} display parent=`, disp.get_parent());
         console.log(`${label} display in_tree=`, disp.is_inside_tree());
-        if (disp instanceof CanvasItem) {
+        if (disp instanceof godot_1.CanvasItem) {
             console.log(`${label} display visible=`, disp.visible, " z_index=", disp.z_index);
         }
-        if (disp instanceof Node2D) {
+        if (disp instanceof godot_1.Node2D) {
             console.log(`${label} display pos=`, disp.position);
         }
     }
 }
+exports.default = DebugPopup;
+//# sourceMappingURL=DebugPopup.js.map

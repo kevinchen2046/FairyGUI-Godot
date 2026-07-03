@@ -1,13 +1,15 @@
+"use strict";
 /// <reference path="../fairygui.d.ts" />
-import { Callable, Vector2 } from "godot";
-export default class Window2 extends GWindow {
+Object.defineProperty(exports, "__esModule", { value: true });
+const godot_1 = require("godot");
+class Window2 extends GWindow {
     constructor() {
         super();
         this.setupDisplay();
-        this.setOnInitCallback(Callable.create(this._onInit.bind(this)));
-        this.setDoShowAnimationCallback(Callable.create(this._doShowAnimation.bind(this)));
-        this.setDoHideAnimationCallback(Callable.create(this._doHideAnimation.bind(this)));
-        this.setOnHideCallback(Callable.create(this._onHide.bind(this)));
+        this.setOnInitCallback(godot_1.Callable.create(this._onInit.bind(this)));
+        this.setDoShowAnimationCallback(godot_1.Callable.create(this._doShowAnimation.bind(this)));
+        this.setDoHideAnimationCallback(godot_1.Callable.create(this._doHideAnimation.bind(this)));
+        this.setOnHideCallback(godot_1.Callable.create(this._onHide.bind(this)));
     }
     _onInit() {
         this.setContentPane(UIPackage.createObject("Basics", "WindowB"));
@@ -16,7 +18,7 @@ export default class Window2 extends GWindow {
     _doShowAnimation() {
         this.setScale(0.1, 0.1);
         this.setPivot(0.5, 0.5);
-        this.tweenScale(new Vector2(1.0, 1.0), 0.3).onComplete(Callable.create(this._onShown.bind(this)));
+        this.tweenScale(new godot_1.Vector2(1.0, 1.0), 0.3).onComplete(godot_1.Callable.create(this._onShown.bind(this)));
     }
     _onShown() {
         const pane = this.getContentPane();
@@ -30,7 +32,7 @@ export default class Window2 extends GWindow {
     }
     _doHideAnimation() {
         GTweenHelper.getInstance().kill(this, false);
-        this.tweenScale(new Vector2(0.1, 0.1), 0.3).onComplete(Callable.create(this.hideImmediately.bind(this)));
+        this.tweenScale(new godot_1.Vector2(0.1, 0.1), 0.3).onComplete(godot_1.Callable.create(this.hideImmediately.bind(this)));
     }
     _onHide() {
         const pane = this.getContentPane();
@@ -43,3 +45,5 @@ export default class Window2 extends GWindow {
         }
     }
 }
+exports.default = Window2;
+//# sourceMappingURL=Window2.js.map
