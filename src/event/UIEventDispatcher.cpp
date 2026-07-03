@@ -283,8 +283,10 @@ void UIEventDispatcher::doBubble(int eventType, EventContext* context)
 
 void UIEventDispatcher::gd_addEventListener(int eventType, const Callable& callable)
 {
-    addEventListener(eventType, [callable](EventContext* ctx) {
+    addEventListener(eventType, [callable, eventType](EventContext* ctx) {
         callable.call();
+        if (eventType == UIEventType::TouchBegin && ctx->_touchCapture == 0)
+            ctx->captureTouch();
     });
 }
 

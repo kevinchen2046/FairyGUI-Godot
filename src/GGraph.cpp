@@ -472,7 +472,7 @@ void GGraph::setProp(ObjectPropID propId, const Variant& value)
 
 GObject* GGraph::hitTest(const Vector2& worldPoint, const Camera2D* camera)
 {
-    if (_touchDisabled || !_touchable || !((CanvasItem*)_displayObject)->is_visible() || !_displayObject->get_parent())
+    if (!_touchable || !((CanvasItem*)_displayObject)->is_visible() || !_displayObject->get_parent())
         return nullptr;
 
     Vector2 localPoint = globalToLocal(worldPoint);
