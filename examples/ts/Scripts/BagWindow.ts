@@ -1,5 +1,6 @@
 /// <reference path="../fairygui.d.ts" />
 
+import "./fgui-bootstrap";
 import { Callable, Vector2 } from "godot";
 
 export default class BagWindow extends GWindow {

@@ -1,5 +1,6 @@
 /// <reference path="../fairygui.d.ts" />
 
+import "./fgui-bootstrap";
 import { CanvasItem, Node2D, SceneTree } from "godot";
 
 export default class DebugPopup extends SceneTree {

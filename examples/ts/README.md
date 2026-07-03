@@ -76,10 +76,12 @@ camel_case_bindings_enabled=true
 
 GDScript 可直接写 `GRoot.getInstance()`；GodotJS 中 ClassDB 类型在 **`godot` 模块**上，不会自动成为 JS 全局变量。
 
-推荐从 `godot` 显式导入（脚本可逐步迁移）：
+`ts/Scripts/fgui-bootstrap.ts` 在加载时把 FairyGUI 类注册到 `globalThis`，与 `fairygui.d.ts` 的 `declare global` 配套。`DemoSceneBase` 及 `BagWindow`/`Window1`/`Window2`/`DebugPopup` 会 import 该模块。
+
+若单独编写不继承 `DemoSceneBase` 的脚本，需自行添加：
 
 ```typescript
-import { Callable, Node, GRoot, UIPackage, UIConfigHelper } from "godot";
+import "./fgui-bootstrap";
 ```
 
 `fairygui.d.ts` 的 `declare global` 仅用于 TypeScript 类型检查。

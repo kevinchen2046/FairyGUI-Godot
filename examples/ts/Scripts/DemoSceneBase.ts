@@ -1,5 +1,6 @@
 /// <reference path="../fairygui.d.ts" />
 
+import "./fgui-bootstrap";
 import { Callable, Node } from "godot";
 
 export default class DemoSceneBase extends Node {
