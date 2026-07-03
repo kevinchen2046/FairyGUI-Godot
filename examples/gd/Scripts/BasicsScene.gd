@@ -194,15 +194,15 @@ func _play_drag_drop(obj: Object) -> void:
 	var b = obj.getChild("b")
 	if b != null:
 		b.setDraggable(true)
-		b.addEventListener(UIEventDispatcher.DRAGSTART, func():
-			DragDropManagerHelper.getInstance().startDrag(b.getIcon(), b.getIcon(), -1)
+		b.addEventListener(UIEventDispatcher.DRAGSTART, func(ctx):
+			ctx.preventDefault()
+			DragDropManagerHelper.getInstance().startDrag(b.getIcon(), b.getIcon(), ctx.getTouchId())
 		)
 	var c = obj.getChild("c")
 	if c != null:
-		c.addEventListener(UIEventDispatcher.DROP, func():
-			var icon = _groot.getTouchTarget()
-			if icon != null:
-				c.setIcon(icon.getIcon())
+		c.setIcon("")
+		c.addEventListener(UIEventDispatcher.DROP, func(ctx):
+			c.setIcon(str(ctx.getData()))
 		)
 	var d = obj.getChild("d")
 	if d != null:
