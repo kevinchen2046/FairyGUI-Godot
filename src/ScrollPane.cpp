@@ -1,8 +1,10 @@
 #include "ScrollPane.h"
 #include "GList.h"
+#include "GRoot.h"
 #include "GScrollBar.h"
 #include "UIConfig.h"
 #include "UIPackage.h"
+#include "display/FUIContainer.h"
 #include "event/InputProcessor.h"
 #include "tween/GTween.h"
 #include "utils/ByteBuffer.h"
@@ -11,31 +13,6 @@
 
 NS_FGUI_BEGIN
 
-// Control-based clip container. Uses Control.clip_contents (like C# NClipContainer)
-// which clips children to the Control rect without depending on _draw() commands.
-// Avoids the Node2D CLIP_CHILDREN_AND_DRAW frame-delay deadloop.
-class MaskContainer : public Control
-{
-    GDCLASS(MaskContainer, Control)
-public:
-    std::function<void(float)> _processCallback;
-
-    static void _bind_methods() {}
-
-    MaskContainer()
-    {
-        set_clip_contents(true);
-        set_mouse_filter(MOUSE_FILTER_IGNORE);
-    }
-
-protected:
-    void _notification(int p_what)
-    {
-        if (p_what == NOTIFICATION_PROCESS && _processCallback)
-            _processCallback(get_process_delta_time());
-        Control::_notification(p_what);
-    }
-};
 ScrollPane* ScrollPane::_draggingPane = nullptr;
 int ScrollPane::_gestureFlag = 0;
 
@@ -133,7 +110,7 @@ ScrollPane::ScrollPane(GComponent* owner)
     _bouncebackEffect = UIConfig::defaultScrollBounceEffect;
     _pageSize = Vector2(1, 1);
 
-    _maskContainer = memnew(MaskContainer);
+    _maskContainer = memnew(FUIClipContainer);
     _owner->displayObject()->add_child(_maskContainer);
 
     // Use the container already created in GComponent::handleInit()
@@ -957,7 +934,9 @@ GObject* ScrollPane::hitTest(const Vector2& pt, const Camera2D* camera)
     }
     if (_maskContainer->is_clipping_contents())
     {
-        if (_maskContainer->get_global_rect().has_point(pt))
+        Vector2 canvasPoint = GRoot::getInstance()->rootToWorld(pt);
+        Vector2 localPoint = _maskContainer->get_global_transform_with_canvas().affine_inverse().xform(canvasPoint);
+        if (Rect2(Vector2(), _maskContainer->get_size()).has_point(localPoint))
             return _owner;
         else
             return nullptr;

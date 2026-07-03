@@ -26,6 +26,8 @@ public:
     void drawPolygon(int lineSize, const Color& lineColor, const Color& fillColor, const Vector2* points, int count);
     void drawRegularPolygon(int lineSize, const Color& lineColor, const Color& fillColor, int sides, float startAngle = 0, const float* distances = nullptr, int distanceCount = 0);
     bool isEmpty() const { return _type == 0; }
+    int getShapeType() const { return _type; }
+    const std::vector<Vector2>* getPolygonPoints() const { return _polygonPoints; }
 
     Color getColor() const;
     void setColor(const Color& value);

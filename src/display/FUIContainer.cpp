@@ -1,5 +1,6 @@
 #include "FUIContainer.h"
 #include "GComponent.h"
+#include "GGraph.h"
 #include "GRoot.h"
 #include "display/FUISprite.h"
 #include "event/InputProcessor.h"
@@ -136,15 +137,95 @@ void FUIContainer::_deferred_redraw_all()
     _queue_redraw_all(this);
 }
 
-void FUIContainer::_drawStencilSilhouette()
+static PackedVector2Array polygon_to_pva(const std::vector<Vector2>& v)
 {
-    FUISprite* sp = Object::cast_to<FUISprite>(_stencil);
-    if (!sp)
+    PackedVector2Array arr;
+    arr.resize((int)v.size());
+    for (size_t i = 0; i < v.size(); i++)
+        arr.set((int)i, v[i]);
+    return arr;
+}
+
+FUISprite* FUIContainer::findSpriteInTree(Node* node)
+{
+    if (FUISprite* sp = Object::cast_to<FUISprite>(node))
+        return sp;
+    int count = node->get_child_count();
+    for (int i = 0; i < count; i++)
+    {
+        if (FUISprite* sp = findSpriteInTree(node->get_child(i)))
+            return sp;
+    }
+    return nullptr;
+}
+
+void FUIContainer::_drawGraphMask(GGraph* graph)
+{
+    if (!graph)
         return;
 
-    Ref<Texture2D> tex = sp->getRealTexture();
-    if (tex.is_null())
+    const float w = graph->getWidth();
+    const float h = graph->getHeight();
+    if (w <= 0 || h <= 0)
         return;
+
+    switch (graph->getShapeType())
+    {
+    case 1: // rect
+        draw_rect(Rect2(0, 0, w, h), Color(1, 1, 1, 1), true);
+        break;
+    case 2: // ellipse
+        draw_set_transform(Vector2(w * 0.5f, h * 0.5f), 0.0f, Vector2(w * 0.5f, h * 0.5f));
+        draw_circle(Vector2(), 1.0f, Color(1, 1, 1, 1));
+        draw_set_transform(Vector2(), 0.0f, Vector2(1.0f, 1.0f));
+        break;
+    case 3: // polygon
+    case 4: // regular polygon
+    {
+        const std::vector<Vector2>* pts = graph->getPolygonPoints();
+        if (pts && pts->size() >= 3)
+            draw_colored_polygon(polygon_to_pva(*pts), Color(1, 1, 1, 1));
+        break;
+    }
+    default:
+        draw_rect(Rect2(0, 0, w, h), Color(1, 1, 1, 1), true);
+        break;
+    }
+}
+
+void FUIContainer::_drawStencilSilhouette()
+{
+    if (!_stencil)
+        return;
+
+    Node2D* stencil_nd = Object::cast_to<Node2D>(_stencil);
+    if (!stencil_nd)
+        return;
+
+    Transform2D xf = get_global_transform().affine_inverse() * stencil_nd->get_global_transform();
+    draw_set_transform_matrix(xf);
+
+    if (GComponent* comp = Object::cast_to<GComponent>(gOwner))
+    {
+        if (GObject* maskOwner = comp->getMaskOwner())
+        {
+            if (GGraph* graph = Object::cast_to<GGraph>(maskOwner))
+            {
+                _drawGraphMask(graph);
+                draw_set_transform_matrix(Transform2D());
+                return;
+            }
+        }
+    }
+
+    FUISprite* sp = Object::cast_to<FUISprite>(_stencil);
+    if (!sp)
+        sp = findSpriteInTree(_stencil);
+    if (!sp)
+    {
+        draw_set_transform_matrix(Transform2D());
+        return;
+    }
 
     Ref<Material> prevMat = get_material();
     Ref<ShaderMaterial> maskMat;
@@ -154,23 +235,24 @@ void FUIContainer::_drawStencilSilhouette()
         set_material(maskMat);
     }
 
-    Transform2D xf = get_global_transform().affine_inverse() * sp->get_global_transform();
-    draw_set_transform_matrix(xf);
+    Ref<Texture2D> tex = sp->getRealTexture();
+    if (tex.is_valid())
+    {
+        Rect2 texRect = sp->getRegion();
+        if (texRect.size.x <= 0 || texRect.size.y <= 0)
+            texRect.size = tex->get_size();
 
-    Rect2 texRect = sp->getRegion();
-    if (texRect.size.x <= 0 || texRect.size.y <= 0)
-        texRect.size = tex->get_size();
+        Vector2 size = sp->getContentSize();
+        if (size.x <= 0 || size.y <= 0)
+            size = sp->get_rect().size;
 
-    Vector2 size = sp->getContentSize();
-    if (size.x <= 0 || size.y <= 0)
-        size = sp->get_rect().size;
-
-    draw_texture_rect_region(tex, Rect2(Vector2(), size), texRect, Color(1, 1, 1, 1));
-
-    draw_set_transform_matrix(Transform2D());
+        draw_texture_rect_region(tex, Rect2(Vector2(), size), texRect, Color(1, 1, 1, 1));
+    }
 
     if (maskMat.is_valid())
         set_material(prevMat);
+
+    draw_set_transform_matrix(Transform2D());
 }
 
 void FUIContainer::_draw()
@@ -381,7 +463,7 @@ void FUIContainer::setInverted(bool inverted)
 void FUIContainer::applyClipping()
 {
     if (_stencil != nullptr)
-        set_clip_children_mode(CanvasItem::CLIP_CHILDREN_AND_DRAW);
+        set_clip_children_mode(CanvasItem::CLIP_CHILDREN_ONLY);
     else if (_clippingEnabled)
         set_clip_children_mode(_clipMode);
     else

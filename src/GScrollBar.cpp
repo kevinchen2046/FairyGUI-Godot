@@ -144,6 +144,10 @@ void GScrollBar::onGripTouchBegin(EventContext* context)
 
 void GScrollBar::onGripTouchMove(EventContext* context)
 {
+    if (!_gripDragging)
+        return;
+
+    context->stopPropagation();
     Vector2 pt = globalToLocal(context->getInput()->getPosition());
 
     if (_vertical)

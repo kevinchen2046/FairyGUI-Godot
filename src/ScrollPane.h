@@ -12,7 +12,7 @@ class GComponent;
 class GScrollBar;
 class FUIContainer;
 class FUIInnerContainer;
-class MaskContainer;
+class FUIClipContainer;
 class GController;
 class EventContext;
 class ByteBuffer;
@@ -217,7 +217,7 @@ private:
     Vector2 _tweenDuration;
 
     GComponent* _owner;
-    MaskContainer* _maskContainer;
+    FUIClipContainer* _maskContainer;
     FUIInnerContainer* _container;
     Ref<GScrollBar> _hzScrollBar;
     Ref<GScrollBar> _vtScrollBar;

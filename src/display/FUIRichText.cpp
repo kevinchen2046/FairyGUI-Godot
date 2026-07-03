@@ -133,7 +133,11 @@ static Vector2 getNodeSize(Node* node)
         return Vector2(label->getTextWidth(), label->getTextHeight());
     HtmlElement* element = getNodeElement(node);
     if (element && element->obj)
-        return Vector2(element->obj->getUI()->getWidth(), element->obj->getUI()->getHeight());
+    {
+        GObject* ui = element->obj->getUI();
+        if (ui != nullptr)
+            return Vector2(ui->getWidth(), ui->getHeight());
+    }
     if (Control* ctrl = Object::cast_to<Control>(node))
         return ctrl->get_size();
     return Vector2();
@@ -582,10 +586,17 @@ void FUIRichText::handleRichRenderer(HtmlElement* element, HtmlObject* obj)
     if (obj->isHidden())
         return;
 
-    Node* display = obj->getUI()->displayObject();
+    GObject* ui = obj->getUI();
+    if (ui == nullptr)
+        return;
+
+    Node* display = ui->displayObject();
+    if (display == nullptr)
+        return;
+
     setNodeElement(display, element);
 
-    float width = obj->getUI()->getWidth();
+    float width = ui->getWidth();
     _leftSpaceWidth -= (width + 4);
     if (_leftSpaceWidth < 0.0f)
     {

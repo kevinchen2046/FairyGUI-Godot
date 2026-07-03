@@ -82,6 +82,9 @@ protected:
 
     void setState(const std::string& value);
     void setCurrentState();
+    void syncButtonControllerState();
+
+    virtual void onConstruct() override;
 
 private:
     void onRollOver(EventContext* context);

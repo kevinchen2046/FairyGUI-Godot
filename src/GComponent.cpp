@@ -1,6 +1,7 @@
 #include "GComponent.h"
 #include "GButton.h"
 #include "GGroup.h"
+#include "GRoot.h"
 #include "Relations.h"
 #include "TranslationHelper.h"
 #include "UIObjectFactory.h"
@@ -115,6 +116,7 @@ void GComponent::refreshDisplayChildrenZOrder()
 }
 
 GComponent::GComponent() : _container(nullptr),
+_overflowClipContainer(nullptr),
 _childrenRenderOrder(ChildrenRenderOrder::ASCENT),
 _apexIndex(0),
 _boundsChanged(false),
@@ -1051,6 +1053,8 @@ GObject* GComponent::hitTest(const Vector2& worldPoint, const Camera2D* camera)
     if (_touchDisabled || !_touchable || !((CanvasItem*)_displayObject)->is_visible() || !_displayObject->get_parent())
         return nullptr;
 
+    Vector2 canvasPoint = GRoot::getInstance()->rootToWorld(worldPoint);
+
     GObject* target = nullptr;
     if (_maskOwner)
     {
@@ -1073,33 +1077,40 @@ GObject* GComponent::hitTest(const Vector2& worldPoint, const Camera2D* camera)
     {
         Rect rect;
         rect.size = _size;
-        Vector2 displayLocal = ((CanvasItem*)_displayObject)->get_global_transform_with_canvas().affine_inverse().xform(worldPoint);
+        Vector2 displayLocal = ((CanvasItem*)_displayObject)->get_global_transform_with_canvas().affine_inverse().xform(canvasPoint);
         Vector2 localPoint = displayLocalToLogical(displayLocal);
         flag = rect.has_point(localPoint) ? 1 : 2;
 
         ChildHitArea* childHit = dynamic_cast<ChildHitArea*>(_hitArea);
         if (childHit)
         {
-            if (!childHit->hitTestCanvas(this, worldPoint))
+            if (!childHit->hitTestCanvas(this, canvasPoint))
                 return nullptr;
         }
         else if (!_hitArea->hitTest(this, localPoint))
             return nullptr;
     }
-    else
+    else if (_overflowClipContainer)
     {
-        if (((FUIContainer*)_displayObject)->isClippingEnabled())
-        {
-            Rect rect;
-            rect.size = _size;
-            Vector2 displayLocal = ((CanvasItem*)_displayObject)->get_global_transform_with_canvas().affine_inverse().xform(worldPoint);
-            Vector2 localPoint = displayLocalToLogical(displayLocal);
-            flag = rect.has_point(localPoint) ? 1 : 2;
+        Vector2 displayLocal = ((CanvasItem*)_displayObject)->get_global_transform_with_canvas().affine_inverse().xform(canvasPoint);
+        Vector2 localPoint = displayLocalToLogical(displayLocal);
+        const Rect2 clipRect(_margin.left, _margin.top,
+            _size.width - _margin.left - _margin.right,
+            _size.height - _margin.top - _margin.bottom);
+        if (!clipRect.has_point(localPoint))
+            return nullptr;
+    }
+    else if (((FUIContainer*)_displayObject)->isClippingEnabled())
+    {
+        Rect rect;
+        rect.size = _size;
+        Vector2 displayLocal = ((CanvasItem*)_displayObject)->get_global_transform_with_canvas().affine_inverse().xform(canvasPoint);
+        Vector2 localPoint = displayLocalToLogical(displayLocal);
+        flag = rect.has_point(localPoint) ? 1 : 2;
 
-            const Rect& clipRect = ((FUIContainer*)_displayObject)->getClippingRegion();
-            if (!clipRect.has_point(localPoint))
-                return nullptr;
-        }
+        const Rect& clipRect = ((FUIContainer*)_displayObject)->getClippingRegion();
+        if (!clipRect.has_point(localPoint))
+            return nullptr;
     }
 
     if (_scrollPane.is_valid())
@@ -1176,7 +1187,7 @@ GObject* GComponent::hitTest(const Vector2& worldPoint, const Camera2D* camera)
         if (flag == 0)
         {
             rect.size = _size;
-            Vector2 displayLocal = ((CanvasItem*)_displayObject)->get_global_transform_with_canvas().affine_inverse().xform(worldPoint);
+            Vector2 displayLocal = ((CanvasItem*)_displayObject)->get_global_transform_with_canvas().affine_inverse().xform(canvasPoint);
             Vector2 localPoint = displayLocalToLogical(displayLocal);
             flag = rect.has_point(localPoint) ? 1 : 2;
         }
@@ -1197,18 +1208,45 @@ void GComponent::applyPivotOffset()
     // When pivotAsAnchor, the outer node sits on the anchor and the same offset applies.
     if (_container)
     {
-        _container->set_position(Vector2(
-                _margin.left - _size.width * _pivot.x,
-                _margin.top - _size.height * _pivot.y));
+        Vector2 pos(-_size.width * _pivot.x, -_size.height * _pivot.y);
+        if (!_scrollPane.is_valid() && !_overflowClipContainer)
+        {
+            pos.x += _margin.left;
+            pos.y += _margin.top;
+        }
+        _container->set_position(pos);
     }
+}
+
+void GComponent::updateOverflowClipRect()
+{
+    if (!_overflowClipContainer)
+        return;
+
+    const float mx = floor(_margin.left + _alignOffset.x);
+    const float my = floor(_margin.top + _alignOffset.y);
+    const float w = std::max(1.0f, _size.width - _margin.left - _margin.right);
+    const float h = std::max(1.0f, _size.height - _margin.top - _margin.bottom);
+    _overflowClipContainer->set_position(Vector2(mx, my));
+    _overflowClipContainer->set_size(Vector2(w, h));
 }
 
 void GComponent::setupOverflow(OverflowType overflow)
 {
     if (overflow == OverflowType::HIDDEN)
     {
-        ((FUIContainer*)_displayObject)->setClippingEnabled(true);
-        ((FUIContainer*)_displayObject)->setClippingRegion(Rect(_margin.left, _margin.top, _size.width - _margin.left - _margin.right, _size.height - _margin.top - _margin.bottom));
+        if (!_overflowClipContainer)
+        {
+            _overflowClipContainer = memnew(FUIClipContainer);
+            _displayObject->add_child(_overflowClipContainer);
+            if (_container && _container->get_parent() == _displayObject)
+            {
+                _displayObject->remove_child(_container);
+                _overflowClipContainer->add_child(_container);
+            }
+        }
+        updateOverflowClipRect();
+        ((FUIContainer*)_displayObject)->setClippingEnabled(false);
     }
 
     applyPivotOffset();
@@ -1227,6 +1265,8 @@ void GComponent::handleSizeChanged()
 
     if (_scrollPane.is_valid())
         _scrollPane->onOwnerSizeChanged();
+    else if (_overflowClipContainer)
+        updateOverflowClipRect();
     else
     {
         // Keep the non-scroll clipping region in sync with size changes.
@@ -1240,10 +1280,11 @@ void GComponent::handleSizeChanged()
     }
 
     if (_maskOwner)
+    {
         _maskOwner->handlePositionChanged();
-
-    if (((FUIContainer*)_displayObject)->isClippingEnabled())
-        ((FUIContainer*)_displayObject)->setClippingRegion(Rect(_margin.left, _margin.top, _size.width - _margin.left - _margin.right, _size.height - _margin.top - _margin.bottom));
+        if (FUIContainer* fui = dynamic_cast<FUIContainer*>(_displayObject))
+            fui->queue_redraw();
+    }
 
     if (_hitArea)
     {
@@ -1284,6 +1325,14 @@ void GComponent::_enter_tree()
     ensureBoundsCorrect();
     if (_scrollPane.is_valid())
         _scrollPane->refreshScrollBars();
+    else if (_overflowClipContainer)
+        updateOverflowClipRect();
+
+    if (FUIContainer* fui = dynamic_cast<FUIContainer*>(_displayObject))
+    {
+        if (fui->getStencil())
+            fui->queue_redraw();
+    }
 
     if (!_transitions.empty())
     {

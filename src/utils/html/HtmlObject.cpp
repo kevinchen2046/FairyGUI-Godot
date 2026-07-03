@@ -52,6 +52,9 @@ void HtmlObject::create(FUIRichText* owner, HtmlElement* element)
     _owner = owner;
     _element = element;
 
+    if (_ui.is_valid())
+        return;
+
     switch (element->type)
     {
     case HtmlElement::Type::IMAGE:
@@ -122,19 +125,19 @@ void HtmlObject::createImage()
     width = _element->getInt("width", width);
     height = _element->getInt("height", height);
 
-    GLoader* loader;
     if (!loaderPool.empty())
     {
-        loader = (GLoader*)loaderPool.back().ptr();
+        _ui = loaderPool.back();
         loaderPool.pop_back();
     }
     else
     {
         _ui = GLoader::create();
-        loader = Object::cast_to<GLoader>(_ui.ptr());
     }
 
-    _ui = loader;
+    GLoader* loader = Object::cast_to<GLoader>(_ui.ptr());
+    if (!loader)
+        return;
 
     loader->setSize(width, height);
     loader->setFill(LoaderFillType::SCALE_FREE);

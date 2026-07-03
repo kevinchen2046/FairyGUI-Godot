@@ -95,6 +95,7 @@ public:
 
     Node* getMask() const;
     void setMask(Node* value, bool inverted = false);
+    GObject* getMaskOwner() const { return _maskOwner; }
 
     IHitTest* getHitArea() const { return _hitArea; }
     void setHitArea(IHitTest* value);
@@ -145,6 +146,7 @@ protected:
 
     void setupOverflow(OverflowType overflow);
     void setupScroll(ByteBuffer* buffer);
+    void updateOverflowClipRect();
     void syncNativeChildrenZOrder();
     void refreshDisplayChildrenZOrder();
     virtual FUIInnerContainer* getDisplayContainerFor(GObject* child) const;
@@ -155,6 +157,7 @@ protected:
     std::vector<Ref<GController>> _controllers;
     std::vector<Ref<Transition>> _transitions;
     FUIInnerContainer* _container;
+    FUIClipContainer* _overflowClipContainer;
     Ref<ScrollPane> _scrollPane;
     Margin _margin;
     Vector2 _alignOffset;

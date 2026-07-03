@@ -8,6 +8,32 @@ NS_FGUI_BEGIN
 
 class GObject;
 
+// Control-based clip container (ScrollPane / overflow:hidden).
+// Uses clip_contents instead of Node2D CLIP_CHILDREN_AND_DRAW, which is unreliable.
+class FUIClipContainer : public Control
+{
+    GDCLASS(FUIClipContainer, Control)
+
+public:
+    std::function<void(float)> _processCallback;
+
+    FUIClipContainer()
+    {
+        set_clip_contents(true);
+        set_mouse_filter(MOUSE_FILTER_IGNORE);
+    }
+
+    static void _bind_methods() {}
+
+protected:
+    void _notification(int p_what)
+    {
+        if (p_what == NOTIFICATION_PROCESS && _processCallback)
+            _processCallback(get_process_delta_time());
+        Control::_notification(p_what);
+    }
+};
+
 class FUIContainer : public Node2D
 {
     GDCLASS(FUIContainer, Node2D)
@@ -47,6 +73,8 @@ private:
     void applyClipping();
     void applyStencilEffects();
     void _drawStencilSilhouette();
+    void _drawGraphMask(class GGraph* graph);
+    static class FUISprite* findSpriteInTree(Node* node);
 
     // Rect clipping support
     bool _clippingEnabled;

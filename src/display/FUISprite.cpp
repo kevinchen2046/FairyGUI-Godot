@@ -487,19 +487,19 @@ void FUISprite::drawFillHorizontal()
 
     // Top-Left
     _fillTexCoords[0] = Vector2(minT.x, maxT.y);
-    _fillVertices[0] = Vector2(minT.x, -(minT.y)) * get_rect().size; // Godot Y is inverted
+    _fillVertices[0] = _fillTexCoords[0];
 
     // Bottom-Left
     _fillTexCoords[1] = Vector2(minT.x, minT.y);
-    _fillVertices[1] = Vector2(minT.x, -(maxT.y)) * get_rect().size;
+    _fillVertices[1] = _fillTexCoords[1];
 
     // Top-Right
     _fillTexCoords[2] = Vector2(maxT.x, maxT.y);
-    _fillVertices[2] = Vector2(maxT.x, -(minT.y)) * get_rect().size;
+    _fillVertices[2] = _fillTexCoords[2];
 
     // Bottom-Right
     _fillTexCoords[3] = Vector2(maxT.x, minT.y);
-    _fillVertices[3] = Vector2(maxT.x, -(maxT.y)) * get_rect().size;
+    _fillVertices[3] = _fillTexCoords[3];
 }
 
 void FUISprite::drawFillVertical()
@@ -510,12 +510,34 @@ void FUISprite::drawFillVertical()
 
 // ===== Fill: Radial progress (circle/pie) =====
 
+// FairyGUI fill uses Cocos-style alpha coords: (0,0)=bottom-left, (1,1)=top-right.
+// Godot canvas is Y-down: convert alpha.y with (1 - alpha.y).
+static Vector2 fillAlphaToDisplay(const Vector2& alpha, const Vector2& origin, const Vector2& size)
+{
+    return origin + Vector2(alpha.x * size.x, (1.0f - alpha.y) * size.y);
+}
+
+static Vector2 fillAlphaToUV(const Vector2& alpha, const Rect2& texRect, const Vector2& texSize)
+{
+    return Vector2(
+            (texRect.position.x + alpha.x * texRect.size.x) / texSize.x,
+            (texRect.position.y + (1.0f - alpha.y) * texRect.size.y) / texSize.y);
+}
+
 void FUISprite::drawFillRadial()
 {
+    if (_fillAmount <= 0.0f)
+    {
+        _fillVertices.clear();
+        _fillTexCoords.clear();
+        _fillIndices.clear();
+        return;
+    }
+
     float angle = 2.0f * Math::PI * (_fillClockwise ? (1.0f - _fillAmount) : _fillAmount);
 
     Vector2 midpoint(0.5f, 0.5f);
-    Vector2 topMid(0.5f, 0.0f);
+    Vector2 topMid(0.5f, 1.0f);
     // Rotate topMid around midpoint by angle
     float dx = topMid.x - midpoint.x;
     float dy = topMid.y - midpoint.y;
@@ -527,12 +549,7 @@ void FUISprite::drawFillRadial()
     int index = 0;
     Vector2 hit;
 
-    if (_fillAmount == 0.0f)
-    {
-        hit = topMid;
-        index = 0;
-    }
-    else if (_fillAmount >= 1.0f)
+    if (_fillAmount >= 1.0f)
     {
         hit = topMid;
         index = 4;
@@ -570,6 +587,13 @@ void FUISprite::drawFillRadial()
                 min_t = t_val;
                 index = i;
             }
+        }
+        if (min_t == FLT_MAX)
+        {
+            _fillVertices.clear();
+            _fillTexCoords.clear();
+            _fillIndices.clear();
+            return;
         }
         hit = midpoint + (percentagePt - midpoint) * min_t;
     }
@@ -646,27 +670,52 @@ void FUISprite::_draw()
 
     if (_fillMethod != FillMethod::None)
     {
-        // Fill mode: draw custom triangles
-        if (_fillIndices.empty()) return;
+        if (_fillIndices.empty())
+            return;
 
-        Color color = drawModulate;
-        std::vector<PackedVector2Array> polys;
-        std::vector<Color> colors;
+        const Color color = drawModulate;
+        const Vector2 texSize = tex->get_size();
+        if (texSize.x <= 0.0f || texSize.y <= 0.0f)
+            return;
 
-        for (size_t i = 0; i < _fillIndices.size() / 3; i++)
+        auto map_vertex = [&](int idx) -> Vector2 {
+            return fillAlphaToDisplay(_fillTexCoords[idx], drawOrigin, contentSize);
+        };
+        auto map_uv = [&](int idx) -> Vector2 {
+            return fillAlphaToUV(_fillTexCoords[idx], texRect, texSize);
+        };
+
+        const bool isRadial = (_fillMethod != FillMethod::Horizontal && _fillMethod != FillMethod::Vertical);
+        const int vertCount = (int)_fillTexCoords.size();
+        int startIdx = 0;
+        int polyCount = vertCount;
+        if (isRadial && vertCount >= 3)
         {
-            PackedVector2Array tri;
-            tri.resize(3);
-            for (int j = 0; j < 3; j++)
+            // Full wedge outline (3+ edge points): omit fan center. Tiny wedge: keep center triangle.
+            if (vertCount - 1 >= 3)
             {
-                int idx = _fillIndices[i * 3 + j];
-                // Map vertex from normalized coords to pixel coords
-                tri.set(j, drawOrigin + Vector2(
-                    _fillVertices[idx].x * contentSize.x,
-                    -_fillVertices[idx].y * contentSize.y));
+                startIdx = 1;
+                polyCount = vertCount - 1;
             }
-            draw_colored_polygon(tri, color);
         }
+        if (polyCount < 3)
+            return;
+
+        PackedVector2Array poly;
+        PackedVector2Array uvs;
+        poly.resize(polyCount);
+        uvs.resize(polyCount);
+        for (int i = 0; i < polyCount; i++)
+        {
+            const int srcIdx = startIdx + i;
+            poly.set(i, map_vertex(srcIdx));
+            uvs.set(i, map_uv(srcIdx));
+        }
+        Vector<Color> colors;
+        colors.resize(polyCount);
+        for (int i = 0; i < polyCount; i++)
+            colors.set(i, color);
+        draw_polygon(poly, colors, uvs, tex);
         return;
     }
 

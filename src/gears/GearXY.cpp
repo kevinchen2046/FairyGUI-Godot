@@ -71,7 +71,7 @@ void GearXY::apply()
         endPt.y = gv.y;
     }
 
-    if (_tweenConfig && _tweenConfig->tween && UIPackage::_constructing == 0 && !disableAllTweenEffect)
+    if (_tweenConfig && _tweenConfig->tween && UIPackage::_constructing == 0 && !disableAllTweenEffect && _owner->onStage())
     {
         if (_tweenConfig->_tweener != nullptr)
         {

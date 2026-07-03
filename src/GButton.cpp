@@ -201,6 +201,23 @@ void GButton::setCurrentState()
     }
 }
 
+void GButton::syncButtonControllerState()
+{
+    if (_buttonController.is_null())
+        return;
+
+    setCurrentState();
+    // setState() skips applyController when selectedIndex is unchanged; gears must still run.
+    applyController(_buttonController.ptr());
+    refreshDisplayList();
+}
+
+void GButton::onConstruct()
+{
+    if (_buttonController.is_valid())
+        syncButtonControllerState();
+}
+
 GTextField* GButton::getTextField() const
 {
     if (dynamic_cast<GTextField*>(_titleObject))
@@ -328,11 +345,11 @@ void GButton::setup_afterAdd(ByteBuffer* buffer, int beginPos)
         _soundVolumeScale = buffer->readFloat();
 
     setSelected(buffer->readBool());
-    setCurrentState();
+    syncButtonControllerState();
     if (_grayed || _finalGrayed)
     {
         handleGrayedChanged();
-        setCurrentState();
+        syncButtonControllerState();
     }
 }
 
