@@ -47,6 +47,7 @@ func _cleanup_groot_overlays() -> void:
 		DragDropManagerHelper.getInstance().cancel()
 	_groot.hideTooltips()
 	_groot.hidePopup()
+	_groot.closeModalWait()
 	_groot.closeAllWindows()
 	# Remove any overlay nodes still parented to GRoot (popups, drag agent, etc.).
 	var i = _groot.numChildren() - 1
@@ -65,4 +66,6 @@ func _cleanup_groot_overlays() -> void:
 
 func _on_close() -> void:
 	_cleanup_groot_overlays()
+	if _groot != null:
+		_groot.removeChildren()
 	get_tree().change_scene_to_file("res://gd/Scenes/MainMenu.tscn")
