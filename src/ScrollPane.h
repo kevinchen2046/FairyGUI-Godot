@@ -31,6 +31,8 @@ public:
     GComponent* getOwner() const { return _owner; }
     GComponent* getHeader() const { return _header.ptr(); }
     GComponent* getFooter() const { return _footer.ptr(); }
+    Ref<GComponent> gd_getHeader() const { return _header; }
+    Ref<GComponent> gd_getFooter() const { return _footer; }
     GScrollBar* getVtScrollBar() const { return _vtScrollBar.ptr(); }
     GScrollBar* getHzScrollBar() const { return _hzScrollBar.ptr(); }
     void syncOverlayZOrder();

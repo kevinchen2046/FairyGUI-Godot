@@ -12,6 +12,7 @@ class UIConfigHelper : public RefCounted
 
 public:
     static UIConfigHelper* getInstance();
+    static Ref<UIConfigHelper> gd_getInstance() { return Ref<UIConfigHelper>(getInstance()); }
 
     void setDefaultFont(const String& value);
     String getDefaultFont() const;

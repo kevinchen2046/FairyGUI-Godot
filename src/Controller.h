@@ -22,6 +22,7 @@ public:
     static void _bind_methods();
 
     GComponent* getParent() const { return _parent; }
+    Ref<GComponent> gd_getParent() const;
     void setParent(GComponent* value) { _parent = value; }
 
     int getSelectedIndex() const { return _selectedIndex; }

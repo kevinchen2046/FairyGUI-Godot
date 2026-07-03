@@ -12,6 +12,7 @@ NS_FGUI_BEGIN
 
 class GComponent;
 class GGroup;
+class GTreeNode;
 class ByteBuffer;
 class GRoot;
 class PackageItem;
@@ -98,6 +99,7 @@ public:
     void applyAbsoluteOverlayZOrder(int baseZ);
 
     GGroup* getGroup() const { return _group; }
+    Ref<GGroup> gd_getGroup() const;
     void setGroup(GGroup* value);
 
     virtual const std::string& getText() const;
@@ -248,8 +250,8 @@ protected:
     Vector2 gd_getPivot() const;
     Rect2 gd_transformRect(const Rect2& rect, GObject* target_space);
     void gd_setDragBounds(const Rect2& bounds);
-    Object* gd_getParent() const;
-    Object* gd_getTreeNode() const;
+    Ref<GObject> gd_getParent() const;
+    Ref<GTreeNode> gd_getTreeNode() const;
     void gd_addRelation(Object* target, int relation_type, bool use_percent);
 
 protected:

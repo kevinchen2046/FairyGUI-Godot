@@ -502,7 +502,7 @@ void GButton::_bind_methods()
     ClassDB::bind_method(D_METHOD("isSelected"), &GButton::isSelected);
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "selected"), "setSelected", "isSelected");
 
-    ClassDB::bind_method(D_METHOD("getRelatedController"), &GButton::getRelatedController);
+    ClassDB::bind_method(D_METHOD("getRelatedController"), &GButton::gd_getRelatedController);
     ClassDB::bind_method(D_METHOD("setRelatedController", "controller"), &GButton::setRelatedController);
 
     ClassDB::bind_method(D_METHOD("setChangeStateOnClick", "value"), &GButton::setChangeStateOnClick);

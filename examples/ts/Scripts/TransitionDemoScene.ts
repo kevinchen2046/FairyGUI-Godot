@@ -6,12 +6,12 @@ import DemoSceneBase from "./DemoSceneBase";
 export default class TransitionDemoScene extends DemoSceneBase {
     private _btnGroup: GObject | null = null;
 
-    private _g1: GObject | null = null;
-    private _g2: GObject | null = null;
-    private _g3: GObject | null = null;
-    private _g4: GObject | null = null;
-    private _g5: GObject | null = null;
-    private _g6: GObject | null = null;
+    private _g1: GComponent | null = null;
+    private _g2: GComponent | null = null;
+    private _g3: GComponent | null = null;
+    private _g4: GComponent | null = null;
+    private _g5: GComponent | null = null;
+    private _g6: GComponent | null = null;
 
     protected ContinueInit(): void {
         UIPackage.addPackage("res://Resources/UI/Transition");
@@ -35,7 +35,7 @@ export default class TransitionDemoScene extends DemoSceneBase {
         this._setupTransitionBtn("btn5", this._g6);
     }
 
-    private _setupTransitionBtn(btnName: string, target: GObject | null): void {
+    private _setupTransitionBtn(btnName: string, target: GComponent | null): void {
         const btn = this._view!.getChild(btnName);
         if (btn == null || target == null) {
             return;

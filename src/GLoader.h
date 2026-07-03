@@ -82,6 +82,7 @@ public:
     void setFillAmount(float value);
 
     GComponent* getComponent() const { return _content2; }
+    Ref<GComponent> gd_getComponent() const;
 
     virtual Variant getProp(ObjectPropID propId) override;
     virtual void setProp(ObjectPropID propId, const Variant& value) override;

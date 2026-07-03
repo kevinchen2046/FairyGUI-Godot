@@ -61,6 +61,7 @@ public:
     std::vector<std::string>& getValues() { return _values; }
     
     GComponent* getDropdown() const { return _dropdown; }
+    Ref<GComponent> gd_getDropdown() const;
 
     void refresh();
 

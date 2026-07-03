@@ -24,6 +24,7 @@ public:
     virtual ~Transition();
 
     GComponent* getOwner() const { return _owner; }
+    Ref<GComponent> gd_getOwner() const;
     bool isPlaying() const { return _playing; }
 
     static void _bind_methods();

@@ -38,7 +38,7 @@ export default class JoystickModule {
     private readonly _radius = 150;
     private _touchId = -1;
 
-    constructor(mainView: GObject) {
+    constructor(mainView: GComponent) {
         this._groot = GRoot.getInstance();
         this._button = mainView.getChild("joystick") as GButton | null;
         if (this._button != null) {

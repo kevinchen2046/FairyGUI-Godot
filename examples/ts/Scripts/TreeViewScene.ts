@@ -26,7 +26,7 @@ export default class TreeViewScene extends DemoSceneBase {
                 UIEventDispatcher.CLICKITEM,
                 Callable.create(this._onClickNode.bind(this)),
             );
-            this._tree2.setTreeNodeRender(Callable.create(this._renderTreeNode.bind(this)));
+            this._tree2.setTreeNodeRender(this._renderTreeNode.bind(this));
             this._buildTree2();
         }
     }
@@ -82,7 +82,7 @@ export default class TreeViewScene extends DemoSceneBase {
         }
     }
 
-    private _renderTreeNode(node: GTreeNode, obj: GObject): void {
+    private _renderTreeNode(node: GTreeNode, obj: GComponent): void {
         let btn = obj.getChild("btn");
         if (btn == null) {
             btn = obj;

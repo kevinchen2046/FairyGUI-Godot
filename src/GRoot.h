@@ -26,6 +26,9 @@ public:
     static GRoot* create(SceneTree* tree, int zOrder = 1000);
     static GRoot* createDeferred(SceneTree* tree, int zOrder = 1000);
     static GRoot* getInstance() { return _inst; }
+    static Ref<GRoot> gd_create(SceneTree* tree, int zOrder = 1000) { return Ref<GRoot>(create(tree, zOrder)); }
+    static Ref<GRoot> gd_createDeferred(SceneTree* tree, int zOrder = 1000) { return Ref<GRoot>(createDeferred(tree, zOrder)); }
+    static Ref<GRoot> gd_getInstance() { return Ref<GRoot>(_inst); }
     static void cleanup();
 
     static void _bind_methods();
@@ -50,12 +53,13 @@ public:
     void gd_hideWindow(GWindow* win) { hideWindow(win); }
     void gd_hideWindowImmediately(GWindow* win) { hideWindowImmediately(win); }
     void gd_bringToFront(GWindow* win) { bringToFront(win); }
-    GWindow* gd_getTopWindow() { return getTopWindow(); }
+    Ref<GWindow> gd_getTopWindow() { return Ref<GWindow>(getTopWindow()); }
     void gd_closeAllWindows() { closeAllWindows(); }
     bool gd_hasModalWindow() { return hasModalWindow(); }
     void gd_hidePopup() { hidePopup(); }
-    GObject* gd_getModalWaitingPane() { return getModalWaitingPane(); }
-    GObject* gd_getTouchTarget() { return getTouchTarget(); }
+    Ref<GObject> gd_getModalWaitingPane() { return Ref<GObject>(getModalWaitingPane()); }
+    Ref<GObject> gd_getTouchTarget() { return Ref<GObject>(getTouchTarget()); }
+    Ref<GGraph> gd_getModalLayer() { return Ref<GGraph>(getModalLayer()); }
     Vector2 gd_getTouchPosition() { return getTouchPosition(0); }
     void gd_showTooltipsWin(GObject* tooltipWin) { showTooltipsWin(tooltipWin); }
     void gd_showPopup(GObject* popup, GObject* target, int dir) { showPopup(popup, target, (PopupDirection)dir); }

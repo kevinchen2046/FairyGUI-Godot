@@ -6,15 +6,18 @@
 
 NS_FGUI_BEGIN
 
+class GRoot;
+
 class FGUIHelper : public RefCounted
 {
     GDCLASS(FGUIHelper, RefCounted)
 
 public:
     static FGUIHelper* getInstance();
+    static Ref<FGUIHelper> gd_getInstance() { return Ref<FGUIHelper>(getInstance()); }
 
-    Object* getGRoot();
-    Object* createObject(const String& pkgName, const String& resName);
+    Ref<GRoot> gd_getGRoot();
+    Ref<GObject> gd_createObject(const String& pkgName, const String& resName);
     void addPackage(const String& path);
     void loadTranslation(const String& xmlPath);
     void loadTranslationFromXML(const String& xml);

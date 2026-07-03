@@ -2713,7 +2713,7 @@ void GList::_bind_methods()
     ADD_PROPERTY(PropertyInfo(Variant::INT, "layout"), "setLayout", "getLayout");
 
     ClassDB::bind_method(D_METHOD("setSelectionController", "controller"), &GList::setSelectionController);
-    ClassDB::bind_method(D_METHOD("getSelectionController"), &GList::getSelectionController);
+    ClassDB::bind_method(D_METHOD("getSelectionController"), &GList::gd_getSelectionController);
 
     ClassDB::bind_method(D_METHOD("setSelectedIndex", "index"), &GList::setSelectedIndex);
     ClassDB::bind_method(D_METHOD("getSelectedIndex"), &GList::getSelectedIndex);
@@ -2753,8 +2753,8 @@ void GList::gd_setItemProvider(const Callable& callable)
     };
 }
 
-GObject* GList::gd_addItemFromPool() { return addItemFromPool(); }
 void GList::gd_setVirtual() { setVirtual(); }
+Ref<GObject> GList::gd_addItemFromPool() { return Ref<GObject>(addItemFromPool()); }
 void GList::gd_setVirtualAndLoop() { setVirtualAndLoop(); }
 void GList::gd_setNumItems(int value) { setNumItems(value); }
 int GList::gd_getNumItems() { return getNumItems(); }

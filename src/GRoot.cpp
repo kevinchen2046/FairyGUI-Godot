@@ -125,9 +125,9 @@ void GRoot::_bind_methods()
     ClassDB::bind_integer_constant(get_class_static(), "PopupDirection", "UP", static_cast<GDExtensionInt>(PopupDirection::UP));
     ClassDB::bind_integer_constant(get_class_static(), "PopupDirection", "DOWN", static_cast<GDExtensionInt>(PopupDirection::DOWN));
 
-    ClassDB::bind_static_method(get_class_static(), D_METHOD("create", "tree", "z_order"), &GRoot::create, DEFVAL(1000));
-    ClassDB::bind_static_method(get_class_static(), D_METHOD("createDeferred", "tree", "z_order"), &GRoot::createDeferred, DEFVAL(1000));
-    ClassDB::bind_static_method(get_class_static(), D_METHOD("getInstance"), &GRoot::getInstance);
+    ClassDB::bind_static_method(get_class_static(), D_METHOD("create", "tree", "z_order"), &GRoot::gd_create, DEFVAL(1000));
+    ClassDB::bind_static_method(get_class_static(), D_METHOD("createDeferred", "tree", "z_order"), &GRoot::gd_createDeferred, DEFVAL(1000));
+    ClassDB::bind_static_method(get_class_static(), D_METHOD("getInstance"), &GRoot::gd_getInstance);
 
     ClassDB::bind_method(D_METHOD("showWindow", "win"), &GRoot::gd_showWindow);
     ClassDB::bind_method(D_METHOD("hideWindow", "win"), &GRoot::gd_hideWindow);
@@ -141,7 +141,7 @@ void GRoot::_bind_methods()
     ClassDB::bind_method(D_METHOD("closeAllWindows"), &GRoot::gd_closeAllWindows);
 
     ClassDB::bind_method(D_METHOD("getModalWaitingPane"), &GRoot::gd_getModalWaitingPane);
-    ClassDB::bind_method(D_METHOD("getModalLayer"), &GRoot::getModalLayer);
+    ClassDB::bind_method(D_METHOD("getModalLayer"), &GRoot::gd_getModalLayer);
     ClassDB::bind_method(D_METHOD("hasModalWindow"), &GRoot::gd_hasModalWindow);
     ClassDB::bind_method(D_METHOD("isModalWaiting"), &GRoot::isModalWaiting);
 

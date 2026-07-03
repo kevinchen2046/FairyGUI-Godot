@@ -27,7 +27,14 @@ public:
     virtual ~GWindow();
 
     FAIRYGUI_CREATE(GWindow)
-    static GWindow* gd_create();
+    static Ref<GWindow> gd_create();
+
+    Ref<GComponent> gd_getContentPane() const;
+    Ref<GComponent> gd_getFrame() const;
+    Ref<GObject> gd_getCloseButton() const;
+    Ref<GObject> gd_getDragArea() const;
+    Ref<GObject> gd_getContentArea() const;
+    Ref<GObject> gd_getModalWaitingPane() const;
 
     static void _bind_methods();
 

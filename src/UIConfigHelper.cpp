@@ -70,7 +70,7 @@ String UIConfigHelper::getRealFontName(const String& aliasName) const
 
 void UIConfigHelper::_bind_methods()
 {
-    ClassDB::bind_static_method(get_class_static(), D_METHOD("getInstance"), &UIConfigHelper::getInstance);
+    ClassDB::bind_static_method(get_class_static(), D_METHOD("getInstance"), &UIConfigHelper::gd_getInstance);
 
     ClassDB::bind_method(D_METHOD("setDefaultFont", "value"), &UIConfigHelper::setDefaultFont);
     ClassDB::bind_method(D_METHOD("getDefaultFont"), &UIConfigHelper::getDefaultFont);

@@ -13,7 +13,7 @@ export default class LoopListScene extends DemoSceneBase {
 
         this._list = this._view.getChild("list") as GList | null;
         if (this._list != null) {
-            this._list.setItemRenderer(Callable.create(this._renderListItem.bind(this)));
+            this._list.setItemRenderer(this._renderListItem.bind(this));
             this._list.setVirtualAndLoop();
             this._list.setNumItems(5);
             this._list.addEventListener(
@@ -24,7 +24,7 @@ export default class LoopListScene extends DemoSceneBase {
         }
     }
 
-    private _renderListItem(index: number, obj: GObject): void {
+    private _renderListItem(index: number, obj: GComponent): void {
         obj.setPivot(0.5, 0.5, false);
         obj.setIcon(`ui://LoopList/n${String(index + 1)}`);
     }

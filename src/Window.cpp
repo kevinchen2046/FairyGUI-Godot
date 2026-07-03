@@ -62,24 +62,24 @@ void GWindow::_bind_methods()
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "bringToFrontOnClick"), "setBringToFrontOnClick", "isBringToFrontOnClick");
 
     ClassDB::bind_method(D_METHOD("setContentPane", "pane"), &GWindow::setContentPane);
-    ClassDB::bind_method(D_METHOD("getContentPane"), &GWindow::getContentPane);
-    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "contentPane", PROPERTY_HINT_NODE_TYPE, "GComponent"), "setContentPane", "getContentPane");
+    ClassDB::bind_method(D_METHOD("getContentPane"), &GWindow::gd_getContentPane);
+    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "contentPane", PROPERTY_HINT_RESOURCE_TYPE, "GComponent"), "setContentPane", "getContentPane");
 
-    ClassDB::bind_method(D_METHOD("getFrame"), &GWindow::getFrame);
+    ClassDB::bind_method(D_METHOD("getFrame"), &GWindow::gd_getFrame);
 
     ClassDB::bind_method(D_METHOD("setCloseButton", "button"), &GWindow::setCloseButton);
-    ClassDB::bind_method(D_METHOD("getCloseButton"), &GWindow::getCloseButton);
-    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "closeButton", PROPERTY_HINT_NODE_TYPE, "GObject"), "setCloseButton", "getCloseButton");
+    ClassDB::bind_method(D_METHOD("getCloseButton"), &GWindow::gd_getCloseButton);
+    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "closeButton", PROPERTY_HINT_RESOURCE_TYPE, "GObject"), "setCloseButton", "getCloseButton");
 
     ClassDB::bind_method(D_METHOD("setDragArea", "area"), &GWindow::setDragArea);
-    ClassDB::bind_method(D_METHOD("getDragArea"), &GWindow::getDragArea);
-    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "dragArea", PROPERTY_HINT_NODE_TYPE, "GObject"), "setDragArea", "getDragArea");
+    ClassDB::bind_method(D_METHOD("getDragArea"), &GWindow::gd_getDragArea);
+    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "dragArea", PROPERTY_HINT_RESOURCE_TYPE, "GObject"), "setDragArea", "getDragArea");
 
     ClassDB::bind_method(D_METHOD("setContentArea", "area"), &GWindow::setContentArea);
-    ClassDB::bind_method(D_METHOD("getContentArea"), &GWindow::getContentArea);
-    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "contentArea", PROPERTY_HINT_NODE_TYPE, "GObject"), "setContentArea", "getContentArea");
+    ClassDB::bind_method(D_METHOD("getContentArea"), &GWindow::gd_getContentArea);
+    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "contentArea", PROPERTY_HINT_RESOURCE_TYPE, "GObject"), "setContentArea", "getContentArea");
 
-    ClassDB::bind_method(D_METHOD("getModalWaitingPane"), &GWindow::getModalWaitingPane);
+    ClassDB::bind_method(D_METHOD("getModalWaitingPane"), &GWindow::gd_getModalWaitingPane);
 
     // GDScript virtual method hooks
     ClassDB::bind_method(D_METHOD("setOnInitCallback", "callback"), &GWindow::setOnInitCallback);
@@ -281,14 +281,17 @@ void GWindow::setContentPane(GComponent* value)
     }
 }
 
-GWindow* GWindow::gd_create()
+Ref<GWindow> GWindow::gd_create()
 {
-    Ref<GWindow> ref = GWindow::create();
-    if (ref.is_null())
-        return nullptr;
-    ref->reference();
-    return ref.ptr();
+    return GWindow::create();
 }
+
+Ref<GComponent> GWindow::gd_getContentPane() const { return Ref<GComponent>(getContentPane()); }
+Ref<GComponent> GWindow::gd_getFrame() const { return Ref<GComponent>(getFrame()); }
+Ref<GObject> GWindow::gd_getCloseButton() const { return Ref<GObject>(getCloseButton()); }
+Ref<GObject> GWindow::gd_getDragArea() const { return Ref<GObject>(getDragArea()); }
+Ref<GObject> GWindow::gd_getContentArea() const { return Ref<GObject>(getContentArea()); }
+Ref<GObject> GWindow::gd_getModalWaitingPane() const { return Ref<GObject>(getModalWaitingPane()); }
 
 void GWindow::setCloseButton(GObject * value)
 {

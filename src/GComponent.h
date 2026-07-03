@@ -45,9 +45,11 @@ public:
     GObject* getChildById(const std::string& id) const;
     const std::vector<Ref<GObject>>& getChildren() const { return _children; }
 
-    GObject* gd_getChild(const String& name) const;
-    GObject* gd_getChildByPath(const String& path) const;
-    GObject* gd_getChildById(const String& id) const;
+    Ref<GObject> gd_getChild(const String& child_name) const;
+    Ref<GObject> gd_getChildByPath(const String& path) const;
+    Ref<GObject> gd_getChildById(const String& child_id) const;
+    Ref<GObject> gd_getChildAt(int index) const;
+    Ref<ScrollPane> gd_getScrollPane();
 
     int getChildIndex(const GObject* child) const;
     void setChildIndex(GObject* child, int index);
@@ -80,7 +82,7 @@ public:
     Transition* getTransitionAt(int index) const;
 
     Ref<Transition> gd_getTransition(const String& name) const;
-    Ref<Transition> gd_getTransitionAt(int index) const { return Ref<Transition>(getTransitionAt(index)); }
+    Ref<Transition> gd_getTransitionAt(int index) const;
 
     const std::vector<Ref<Transition>>& getTransitions() const { return _transitions; }
 

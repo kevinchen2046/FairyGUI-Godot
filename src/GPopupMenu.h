@@ -20,7 +20,11 @@ class GPopupMenu : public RefCounted
 public:
     static Ref<GPopupMenu> create(const std::string& resourceURL);
     static Ref<GPopupMenu> create() { return create(""); }
-    static GPopupMenu* gd_create();
+    static Ref<GPopupMenu> gd_create() { return create(); }
+
+    Ref<GButton> gd_addItem(const String& caption);
+    Ref<GComponent> gd_getContentPane() const;
+    Ref<GList> gd_getList() const;
 
     GPopupMenu();
     virtual ~GPopupMenu();
@@ -51,9 +55,6 @@ public:
     bool gd_isItemChecked(const String& name);
     bool gd_removeItem(const String& name);
     void gd_showMenuAt(GObject* target, int dir);
-    GButton* gd_addItem(const String& caption);
-    GComponent* getContentPane() const { return _contentPane; }
-    GList* getList() const { return _list; }
     void show() { show(nullptr, PopupDirection::AUTO); }
     void show(GObject* target, PopupDirection dir);
 

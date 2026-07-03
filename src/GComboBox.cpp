@@ -488,7 +488,7 @@ void GComboBox::_bind_methods()
     ClassDB::bind_method(D_METHOD("getSelectedIndex"), &GComboBox::getSelectedIndex);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "selectedIndex"), "setSelectedIndex", "getSelectedIndex");
 
-    ClassDB::bind_method(D_METHOD("getDropdown"), &GComboBox::getDropdown);
+    ClassDB::bind_method(D_METHOD("getDropdown"), &GComboBox::gd_getDropdown);
     ClassDB::bind_method(D_METHOD("refresh"), &GComboBox::refresh);
 }
 
@@ -498,6 +498,11 @@ void GComboBox::gd_setIcon(const String& value) { setIcon(value.utf8().get_data(
 String GComboBox::gd_getIcon() const { return GObject::toGodotStr(getIcon()); }
 void GComboBox::gd_setValue(const String& value) { setValue(value.utf8().get_data()); }
 String GComboBox::gd_getValue() const { return GObject::toGodotStr(getValue()); }
+
+Ref<GComponent> GComboBox::gd_getDropdown() const
+{
+    return Ref<GComponent>(_dropdown);
+}
 
 NS_FGUI_END
 

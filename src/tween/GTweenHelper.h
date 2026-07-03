@@ -12,6 +12,7 @@ class GTweenHelper : public RefCounted
 
 public:
     static GTweenHelper* getInstance();
+    static Ref<GTweenHelper> gd_getInstance() { return Ref<GTweenHelper>(getInstance()); }
 
     GTweener* to_float(float start, float end, float duration);
     GTweener* to_vec2(const Vector2& start, const Vector2& end, float duration);

@@ -4,7 +4,7 @@ import { Callable, Rect2, Vector2 } from "godot";
 import DemoSceneBase from "./DemoSceneBase";
 
 export default class GuideScene extends DemoSceneBase {
-    private _guideLayer: GObject | null = null;
+    private _guideLayer: GComponent | null = null;
     private _bagBtn: GObject | null = null;
 
     protected ContinueInit(): void {

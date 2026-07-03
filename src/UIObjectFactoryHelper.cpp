@@ -26,7 +26,7 @@ void UIObjectFactoryHelper::setPackageItemExtension(const String& url, const Cal
 
 void UIObjectFactoryHelper::_bind_methods()
 {
-    ClassDB::bind_static_method(get_class_static(), D_METHOD("getInstance"), &UIObjectFactoryHelper::getInstance);
+    ClassDB::bind_static_method(get_class_static(), D_METHOD("getInstance"), &UIObjectFactoryHelper::gd_getInstance);
     ClassDB::bind_method(D_METHOD("setPackageItemExtension", "url", "creator"), &UIObjectFactoryHelper::setPackageItemExtension);
 }
 

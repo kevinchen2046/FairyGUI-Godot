@@ -13,7 +13,7 @@ export default class ScrollPaneScene extends DemoSceneBase {
 
         this._list = this._view.getChild("list") as GList | null;
         if (this._list != null) {
-            this._list.setItemRenderer(Callable.create(this._renderListItem.bind(this)));
+            this._list.setItemRenderer(this._renderListItem.bind(this));
             this._list.setVirtual();
             this._list.setNumItems(1000);
             this._list.addEventListener(
@@ -23,7 +23,7 @@ export default class ScrollPaneScene extends DemoSceneBase {
         }
     }
 
-    private _renderListItem(index: number, obj: GObject): void {
+    private _renderListItem(index: number, obj: GComponent): void {
         obj.setTitle(`Item ${String(index)}`);
         const sp = obj.getScrollPane();
         if (sp != null) {
@@ -61,7 +61,7 @@ export default class ScrollPaneScene extends DemoSceneBase {
         }
         const cnt = this._list.numChildren();
         for (let i = 0; i < cnt; i++) {
-            const item = this._list.getChildAt(i);
+            const item = this._list.getChildAt(i) as GComponent | null;
             if (item == null) {
                 continue;
             }

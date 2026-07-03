@@ -6,7 +6,7 @@ export default class DemoSceneBase extends Node {
     protected mainMenuScenePath = "res://ts/Scenes/MainMenu.tscn";
 
     protected _groot: GRoot | null = null;
-    protected _view: GObject | null = null;
+    protected _view: GComponent | null = null;
 
     _ready(): void {
         this._registerDefaultFonts();

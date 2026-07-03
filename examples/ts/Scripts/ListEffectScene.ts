@@ -17,7 +17,7 @@ export default class ListEffectScene extends DemoSceneBase {
         }
 
         for (let i = 0; i < 10; i++) {
-            const item = this._list.addItemFromPool();
+            const item = this._list.addItemFromPool() as GComponent | null;
             if (item == null) {
                 continue;
             }
@@ -42,14 +42,14 @@ export default class ListEffectScene extends DemoSceneBase {
         this._list.ensureBoundsCorrect();
         let delay = 1.0;
         for (let i = 0; i < 10; i++) {
-            const item = this._list.getChildAt(i);
+            const item = this._list.getChildAt(i) as GComponent | null;
             if (item == null) {
                 break;
             }
             if (this._list.isChildInView(item)) {
                 const trans = item.getTransition("t0");
                 if (trans != null) {
-                    trans.play(1, delay, Callable.create());
+                    trans.play(1, delay);
                 }
                 delay += 0.2;
             } else {

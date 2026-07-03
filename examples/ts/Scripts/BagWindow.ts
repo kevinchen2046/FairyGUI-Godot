@@ -27,11 +27,11 @@ export default class BagWindow extends GWindow {
             return;
         }
         this._list.addEventListener(UIEventDispatcher.CLICKITEM, Callable.create(this._onClickItem.bind(this)));
-        this._list.setItemRenderer(Callable.create(this._renderListItem.bind(this)));
+        this._list.setItemRenderer(this._renderListItem.bind(this));
         this._list.setNumItems(45);
     }
 
-    private _renderListItem(index: number, obj: GObject): void {
+    private _renderListItem(index: number, obj: GComponent): void {
         const iconIdx = randi() % 10;
         obj.setIcon(`res://Resources/icons/i${String(iconIdx)}.png`);
         obj.setText(String(randi() % 100));

@@ -65,6 +65,7 @@ public:
     void setSelected(bool value);
 
     GController* getRelatedController() const { return _relatedController.ptr(); }
+    Ref<GController> gd_getRelatedController() const { return _relatedController; }
     void setRelatedController(GController* c);
 
     bool isChangeStateOnClick() { return _changeStateOnClick; }

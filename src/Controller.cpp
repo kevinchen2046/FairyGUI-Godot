@@ -214,8 +214,13 @@ void GController::_bind_methods()
     ClassDB::bind_method(D_METHOD("setSelectedPageId", "value"), &GController::gd_setSelectedPageId);
     ClassDB::bind_method(D_METHOD("getSelectedPageId"), &GController::gd_getSelectedPageId);
 
-    ClassDB::bind_method(D_METHOD("getParent"), &GController::getParent);
+    ClassDB::bind_method(D_METHOD("getParent"), &GController::gd_getParent);
     ClassDB::bind_method(D_METHOD("setParent", "parent"), &GController::setParent);
+}
+
+Ref<GComponent> GController::gd_getParent() const
+{
+    return Ref<GComponent>(_parent);
 }
 
 void GController::gd_setSelectedPage(const String& value) { setSelectedPage(value.utf8().get_data()); }

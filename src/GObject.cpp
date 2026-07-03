@@ -1,4 +1,5 @@
 #include "GObject.h"
+#include "GTreeNode.h"
 #include "GGroup.h"
 #include "GList.h"
 #include "GRoot.h"
@@ -1314,14 +1315,19 @@ void GObject::gd_setDragBounds(const Rect2& bounds)
     setDragBounds(bounds);
 }
 
-Object* GObject::gd_getParent() const
+Ref<GGroup> GObject::gd_getGroup() const
 {
-    return _parent;
+    return Ref<GGroup>(_group);
 }
 
-Object* GObject::gd_getTreeNode() const
+Ref<GObject> GObject::gd_getParent() const
 {
-    return (Object*)treeNode();
+    return Ref<GObject>(_parent);
+}
+
+Ref<GTreeNode> GObject::gd_getTreeNode() const
+{
+    return Ref<GTreeNode>(treeNode());
 }
 
 void GObject::gd_addRelation(Object* target, int relation_type, bool use_percent)
@@ -1447,7 +1453,7 @@ void GObject::_bind_methods()
     ClassDB::bind_method(D_METHOD("getParent"), &GObject::gd_getParent);
 
     ClassDB::bind_method(D_METHOD("setGroup", "group"), &GObject::setGroup);
-    ClassDB::bind_method(D_METHOD("getGroup"), &GObject::getGroup);
+    ClassDB::bind_method(D_METHOD("getGroup"), &GObject::gd_getGroup);
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "group", PROPERTY_HINT_RESOURCE_TYPE, "GGroup"), "setGroup", "getGroup");
 
     ClassDB::bind_method(D_METHOD("getInitSize"), &GObject::getSize);

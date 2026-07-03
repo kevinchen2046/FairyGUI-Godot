@@ -78,7 +78,7 @@ public:
     // GDScript extensions
     void gd_setItemRenderer(const Callable& callable);
     void gd_setItemProvider(const Callable& callable);
-    GObject* gd_addItemFromPool();
+    Ref<GObject> gd_addItemFromPool();
     void gd_setVirtual();
     void gd_setVirtualAndLoop();
     void gd_setNumItems(int value);
@@ -106,6 +106,7 @@ public:
     void scrollToView(int index, bool ani = false, bool setFirst = false);
 
     GController* getSelectionController() const { return _selectionController.ptr(); }
+    Ref<GController> gd_getSelectionController() const { return _selectionController; }
     void setSelectionController(GController* value);
 
     void setVirtual();

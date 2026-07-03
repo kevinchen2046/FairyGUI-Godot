@@ -1915,8 +1915,8 @@ void ScrollPane::_bind_methods()
     ClassDB::bind_method(D_METHOD("scrollTop", "ani"), &ScrollPane::gd_scrollTop, DEFVAL(false));
     ClassDB::bind_method(D_METHOD("scrollBottom", "ani"), &ScrollPane::gd_scrollBottom, DEFVAL(false));
     ClassDB::bind_method(D_METHOD("isBottomMost"), &ScrollPane::gd_isBottomMost);
-    ClassDB::bind_method(D_METHOD("getHeader"), &ScrollPane::getHeader);
-    ClassDB::bind_method(D_METHOD("getFooter"), &ScrollPane::getFooter);
+    ClassDB::bind_method(D_METHOD("getHeader"), &ScrollPane::gd_getHeader);
+    ClassDB::bind_method(D_METHOD("getFooter"), &ScrollPane::gd_getFooter);
     ClassDB::bind_method(D_METHOD("lockHeader", "size"), &ScrollPane::lockHeader);
     ClassDB::bind_method(D_METHOD("lockFooter", "size"), &ScrollPane::lockFooter);
     ClassDB::bind_method(D_METHOD("cancelDragging"), &ScrollPane::cancelDragging);

@@ -30,7 +30,7 @@ export default class Window2 extends GWindow {
         }
         const trans = pane.getTransition("t1");
         if (trans != null) {
-            trans.play(1, 0, Callable.create());
+            trans.play(1, 0);
         }
     }
 

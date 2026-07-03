@@ -972,25 +972,17 @@ void UIPackage::_bind_methods()
 
 String UIPackage::gd_getId() const { return String(getId().c_str()); }
 String UIPackage::gd_getName() const { return String(getName().c_str()); }
-UIPackage* UIPackage::gd_getById(const String& id) { return getById(id.utf8().get_data()); }
-UIPackage* UIPackage::gd_getByName(const String& name) { return getByName(name.utf8().get_data()); }
-UIPackage* UIPackage::gd_addPackage(const String& descFilePath) { return addPackage(descFilePath.utf8().get_data()); }
+Ref<UIPackage> UIPackage::gd_getById(const String& id) { return Ref<UIPackage>(getById(id.utf8().get_data())); }
+Ref<UIPackage> UIPackage::gd_getByName(const String& name) { return Ref<UIPackage>(getByName(name.utf8().get_data())); }
+Ref<UIPackage> UIPackage::gd_addPackage(const String& descFilePath) { return Ref<UIPackage>(addPackage(descFilePath.utf8().get_data())); }
 void UIPackage::gd_removePackage(const String& packageIdOrName) { removePackage(packageIdOrName.utf8().get_data()); }
-GObject* UIPackage::gd_createObject(const String& pkgName, const String& resName)
+Ref<GObject> UIPackage::gd_createObject(const String& pkgName, const String& resName)
 {
-    Ref<GObject> obj = createObject(pkgName.utf8().get_data(), resName.utf8().get_data());
-    if (obj.is_null())
-        return nullptr;
-    obj->reference(); // keep alive after this function's Ref<> goes out of scope
-    return obj.ptr();
+    return createObject(pkgName.utf8().get_data(), resName.utf8().get_data());
 }
-GObject* UIPackage::gd_createObjectFromURL(const String& url)
+Ref<GObject> UIPackage::gd_createObjectFromURL(const String& url)
 {
-    Ref<GObject> obj = createObjectFromURL(url.utf8().get_data());
-    if (obj.is_null())
-        return nullptr;
-    obj->reference(); // keep alive after this function's Ref<> goes out of scope
-    return obj.ptr();
+    return createObjectFromURL(url.utf8().get_data());
 }
 String UIPackage::gd_getItemURL(const String& pkgName, const String& resName) { return String(getItemURL(pkgName.utf8().get_data(), resName.utf8().get_data()).c_str()); }
 

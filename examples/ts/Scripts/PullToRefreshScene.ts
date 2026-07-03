@@ -16,7 +16,7 @@ export default class PullToRefreshScene extends DemoSceneBase {
 
         this._list1 = this._view.getChild("list1") as GList | null;
         if (this._list1 != null) {
-            this._list1.setItemRenderer(Callable.create(this._renderListItem1.bind(this)));
+            this._list1.setItemRenderer(this._renderListItem1.bind(this));
             this._list1.setVirtual();
             this._list1.setNumItems(1);
             this._list1.addEventListener(
@@ -27,7 +27,7 @@ export default class PullToRefreshScene extends DemoSceneBase {
 
         this._list2 = this._view.getChild("list2") as GList | null;
         if (this._list2 != null) {
-            this._list2.setItemRenderer(Callable.create(this._renderListItem2.bind(this)));
+            this._list2.setItemRenderer(this._renderListItem2.bind(this));
             this._list2.setVirtual();
             this._list2.setNumItems(1);
             this._list2.addEventListener(
@@ -37,12 +37,12 @@ export default class PullToRefreshScene extends DemoSceneBase {
         }
     }
 
-    private _renderListItem1(index: number, obj: GObject): void {
+    private _renderListItem1(index: number, obj: GComponent): void {
         const num = this._list1!.getNumItems();
         obj.setText(`Item ${String(num - index - 1)}`);
     }
 
-    private _renderListItem2(index: number, obj: GObject): void {
+    private _renderListItem2(index: number, obj: GComponent): void {
         obj.setText(`Item ${String(index)}`);
     }
 

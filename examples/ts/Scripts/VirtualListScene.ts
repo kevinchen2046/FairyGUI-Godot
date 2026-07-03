@@ -40,13 +40,13 @@ export default class VirtualListScene extends DemoSceneBase {
 
         this._list = this._view.getChild("mailList") as GList | null;
         if (this._list != null) {
-            this._list.setItemRenderer(Callable.create(this._renderListItem.bind(this)));
+            this._list.setItemRenderer(this._renderListItem.bind(this));
             this._list.setVirtual();
             this._list.setNumItems(1000);
         }
     }
 
-    private _renderListItem(index: number, obj: GObject): void {
+    private _renderListItem(index: number, obj: GComponent): void {
         const readCtrl = obj.getController("IsRead");
         if (readCtrl != null) {
             readCtrl.setSelectedIndex(index % 2 === 0 ? 0 : 1);

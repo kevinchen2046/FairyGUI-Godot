@@ -12,6 +12,7 @@ class UIObjectFactoryHelper : public RefCounted
 
 public:
     static UIObjectFactoryHelper* getInstance();
+    static Ref<UIObjectFactoryHelper> gd_getInstance() { return Ref<UIObjectFactoryHelper>(getInstance()); }
 
     void setPackageItemExtension(const String& url, const Callable& creator);
 

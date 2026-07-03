@@ -14,7 +14,7 @@ export default class ChatScene extends DemoSceneBase {
     private _list: GList | null = null;
     private _input: GTextField | null = null;
     private _messages: ChatMessage[] = [];
-    private _emojiSelectUi: GObject | null = null;
+    private _emojiSelectUi: GComponent | null = null;
 
     protected ContinueInit(): void {
         UIPackage.addPackage("res://Resources/UI/Emoji");
@@ -25,8 +25,8 @@ export default class ChatScene extends DemoSceneBase {
         this._list = this._view.getChild("list") as GList | null;
         if (this._list != null) {
             this._list.setVirtual();
-            this._list.setItemRenderer(Callable.create(this._renderListItem.bind(this)));
-            this._list.setItemProvider(Callable.create(this._getListItemResource.bind(this)));
+            this._list.setItemRenderer(this._renderListItem.bind(this));
+            this._list.setItemProvider(this._getListItemResource.bind(this));
         }
 
         this._input = this._view.getChild("input") as GTextField | null;
@@ -103,7 +103,7 @@ export default class ChatScene extends DemoSceneBase {
         return text.replace(result.get_string(0), `<img src='ui://Emoji/${tag}'/>`);
     }
 
-    private _renderListItem(index: number, obj: GObject): void {
+    private _renderListItem(index: number, obj: GComponent): void {
         if (index >= this._messages.length) {
             return;
         }

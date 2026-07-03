@@ -14,15 +14,6 @@ Ref<GPopupMenu> GPopupMenu::create(const std::string & resourceURL)
     return Ref<GPopupMenu>();
 }
 
-GPopupMenu* GPopupMenu::gd_create()
-{
-    Ref<GPopupMenu> ref = create();
-    if (ref.is_null())
-        return nullptr;
-    ref->reference(); // keep alive for GDScript (same as UIPackage::gd_createObjectFromURL)
-    return ref.ptr();
-}
-
 GPopupMenu::GPopupMenu() :
     _contentPane(nullptr),
     _list(nullptr)
@@ -262,8 +253,8 @@ void GPopupMenu::_bind_methods()
     ClassDB::bind_method(D_METHOD("addSeperator"), &GPopupMenu::addSeperator);
     ClassDB::bind_method(D_METHOD("clearItems"), &GPopupMenu::clearItems);
     ClassDB::bind_method(D_METHOD("getItemCount"), &GPopupMenu::getItemCount);
-    ClassDB::bind_method(D_METHOD("getList"), &GPopupMenu::getList);
-    ClassDB::bind_method(D_METHOD("getContentPane"), &GPopupMenu::getContentPane);
+    ClassDB::bind_method(D_METHOD("getList"), &GPopupMenu::gd_getList);
+    ClassDB::bind_method(D_METHOD("getContentPane"), &GPopupMenu::gd_getContentPane);
 
     ClassDB::bind_method(D_METHOD("getItemName", "index"), &GPopupMenu::gd_getItemName);
     ClassDB::bind_method(D_METHOD("setItemText", "name", "caption"), &GPopupMenu::gd_setItemText);
@@ -280,7 +271,17 @@ void GPopupMenu::_bind_methods()
 
 void GPopupMenu::gd_showMenuAt(GObject* target, int dir) { show(target, static_cast<PopupDirection>(dir)); }
 
-GButton* GPopupMenu::gd_addItem(const String& caption) { return addItem(caption.utf8().get_data()); }
+Ref<GButton> GPopupMenu::gd_addItem(const String& caption) { return Ref<GButton>(addItem(caption.utf8().get_data())); }
+
+Ref<GComponent> GPopupMenu::gd_getContentPane() const
+{
+    return Ref<GComponent>(_contentPane);
+}
+
+Ref<GList> GPopupMenu::gd_getList() const
+{
+    return Ref<GList>(_list);
+}
 
 String GPopupMenu::gd_getItemName(int index) const { return String(getItemName(index).c_str()); }
 void GPopupMenu::gd_setItemText(const String& name, const String& caption) { setItemText(name.utf8().get_data(), caption.utf8().get_data()); }

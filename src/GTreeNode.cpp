@@ -318,4 +318,9 @@ String GTreeNode::gd_getText() const { return GObject::toGodotStr(getText()); }
 void GTreeNode::gd_setIcon(const String& value) { setIcon(value.utf8().get_data()); }
 String GTreeNode::gd_getIcon() const { return GObject::toGodotStr(getIcon()); }
 
+Ref<GTreeNode> GTreeNode::gd_getParent() const { return Ref<GTreeNode>(getParent()); }
+Ref<GTree> GTreeNode::gd_getTree() const { return Ref<GTree>(getTree()); }
+Ref<GComponent> GTreeNode::gd_getCell() const { return Ref<GComponent>(getCell()); }
+Ref<GTreeNode> GTreeNode::gd_getChildAt(int index) const { return Ref<GTreeNode>(getChildAt(index)); }
+
 NS_FGUI_END

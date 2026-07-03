@@ -11,6 +11,7 @@ class DragDropManagerHelper : public RefCounted
 
 public:
     static DragDropManagerHelper* getInstance();
+    static Ref<DragDropManagerHelper> gd_getInstance() { return Ref<DragDropManagerHelper>(getInstance()); }
 
     void startDrag(const String& icon, const Variant& sourceData, int touchPointID);
     void cancel();

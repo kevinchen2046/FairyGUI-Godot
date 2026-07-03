@@ -712,7 +712,7 @@ void GLoader::_bind_methods()
     ClassDB::bind_method(D_METHOD("getFillAmount"), &GLoader::getFillAmount);
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "fillAmount", PROPERTY_HINT_RANGE, "0,1,0.01"), "setFillAmount", "getFillAmount");
 
-    ClassDB::bind_method(D_METHOD("getComponent"), &GLoader::getComponent);
+    ClassDB::bind_method(D_METHOD("getComponent"), &GLoader::gd_getComponent);
 
     ClassDB::bind_method(D_METHOD("setColor", "color"), &GLoader::setColor);
     ClassDB::bind_method(D_METHOD("getColor"), &GLoader::getColor);
@@ -721,6 +721,11 @@ void GLoader::_bind_methods()
 
 void GLoader::gd_setURL(const String& value) { setURL(value.utf8().get_data()); }
 String GLoader::gd_getURL() const { return String(getURL().c_str()); }
+
+Ref<GComponent> GLoader::gd_getComponent() const
+{
+    return Ref<GComponent>(_content2);
+}
 
 NS_FGUI_END
 

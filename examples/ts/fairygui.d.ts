@@ -91,6 +91,7 @@ declare global {
         getSortingOrder(): number;
         setText(text: string): void;
         getText(): string;
+        setTitle(title: string): void;
         setName(name: string): void;
         getName(): string;
         setIcon(icon: string): void;
@@ -191,8 +192,8 @@ declare global {
     }
 
     class GList extends GComponent {
-        setItemRenderer(callable: Callable): void;
-        setItemProvider(callable: Callable): void;
+        setItemRenderer(callable: (index: number, obj: GComponent) => void): void;
+        setItemProvider(callable: (index: number) => string): void;
         setVirtual(): void;
         setVirtualAndLoop(): void;
         setNumItems(value: number): void;
@@ -205,7 +206,7 @@ declare global {
 
     class GTree extends GList {
         getRootNode(): GTreeNode | null;
-        setTreeNodeRender(callable: Callable): void;
+        setTreeNodeRender(callable: (node: GTreeNode, obj: GComponent) => void): void;
     }
 
     class GTreeNode extends RefCounted {
@@ -243,7 +244,7 @@ declare global {
     }
 
     class Transition extends RefCounted {
-        play(times: number, delay: number, callback: Callable): void;
+        play(times: number, delay: number, callback?: Callable): void;
         stop(): void;
     }
 
@@ -289,8 +290,8 @@ declare global {
 
     class UIPackage extends RefCounted {
         static addPackage(assetPath: string): UIPackage;
-        static createObject(pkgName: string, resName: string): GObject | null;
-        static createObjectFromURL(url: string): GObject | null;
+        static createObject(pkgName: string, resName: string): GComponent | null;
+        static createObjectFromURL(url: string): GComponent | null;
     }
 
     class DragDropManagerHelper extends RefCounted {

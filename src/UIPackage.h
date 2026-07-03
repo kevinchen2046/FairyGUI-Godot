@@ -31,12 +31,12 @@ public:
     static std::string getItemURL(const std::string& pkgName, const std::string& resName);
     static PackageItem* getItemByURL(const std::string& url);
 
-    static UIPackage* gd_getById(const String& id);
-    static UIPackage* gd_getByName(const String& name);
-    static UIPackage* gd_addPackage(const String& descFilePath);
+    static Ref<UIPackage> gd_getById(const String& id);
+    static Ref<UIPackage> gd_getByName(const String& name);
+    static Ref<UIPackage> gd_addPackage(const String& descFilePath);
     static void gd_removePackage(const String& packageIdOrName);
-    static GObject* gd_createObject(const String& pkgName, const String& resName);
-    static GObject* gd_createObjectFromURL(const String& url);
+    static Ref<GObject> gd_createObject(const String& pkgName, const String& resName);
+    static Ref<GObject> gd_createObjectFromURL(const String& url);
     static String gd_getItemURL(const String& pkgName, const String& resName);
 
     static void gd_registerFont(const String& aliasName, const String& realName);

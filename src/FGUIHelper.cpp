@@ -19,14 +19,14 @@ FGUIHelper* FGUIHelper::getInstance()
     return _inst;
 }
 
-Object* FGUIHelper::getGRoot()
+Ref<GRoot> FGUIHelper::gd_getGRoot()
 {
-    return (Object*)GRoot::getInstance();
+    return Ref<GRoot>(GRoot::getInstance());
 }
 
-Object* FGUIHelper::createObject(const String& pkgName, const String& resName)
+Ref<GObject> FGUIHelper::gd_createObject(const String& pkgName, const String& resName)
 {
-    return UIPackage::createObject(pkgName.utf8().get_data(), resName.utf8().get_data()).ptr();
+    return UIPackage::createObject(pkgName.utf8().get_data(), resName.utf8().get_data());
 }
 
 void FGUIHelper::addPackage(const String& path)
@@ -68,10 +68,10 @@ void FGUIHelper::setHtmlSelectResource(const String& url)
 
 void FGUIHelper::_bind_methods()
 {
-    ClassDB::bind_static_method(get_class_static(), D_METHOD("getInstance"), &FGUIHelper::getInstance);
+    ClassDB::bind_static_method(get_class_static(), D_METHOD("getInstance"), &FGUIHelper::gd_getInstance);
 
-    ClassDB::bind_method(D_METHOD("getGRoot"), &FGUIHelper::getGRoot);
-    ClassDB::bind_method(D_METHOD("createObject", "pkg", "res"), &FGUIHelper::createObject);
+    ClassDB::bind_method(D_METHOD("getGRoot"), &FGUIHelper::gd_getGRoot);
+    ClassDB::bind_method(D_METHOD("createObject", "pkg", "res"), &FGUIHelper::gd_createObject);
     ClassDB::bind_method(D_METHOD("addPackage", "path"), &FGUIHelper::addPackage);
     ClassDB::bind_method(D_METHOD("loadTranslation", "xml_path"), &FGUIHelper::loadTranslation);
     ClassDB::bind_method(D_METHOD("loadTranslationFromXML", "xml"), &FGUIHelper::loadTranslationFromXML);

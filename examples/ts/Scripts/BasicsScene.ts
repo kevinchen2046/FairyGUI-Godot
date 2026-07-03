@@ -9,7 +9,7 @@ export default class BasicsScene extends DemoSceneBase {
     private _backBtn: GObject | null = null;
     private _demoContainer: GComponent | null = null;
     private _cc: GController | null = null;
-    private readonly _demoObjects = new Map<string, GObject>();
+    private readonly _demoObjects = new Map<string, GComponent>();
 
     private _winA: Window1 | null = null;
     private _winB: Window2 | null = null;
@@ -104,7 +104,7 @@ export default class BasicsScene extends DemoSceneBase {
         }
     }
 
-    private _playText(obj: GObject): void {
+    private _playText(obj: GComponent): void {
         const n12 = obj.getChild("n12");
         if (n12 != null) {
             n12.addEventListener(
@@ -130,7 +130,7 @@ export default class BasicsScene extends DemoSceneBase {
         }
     }
 
-    private _playPopup(obj: GObject): void {
+    private _playPopup(obj: GComponent): void {
         if (this._pm == null) {
             this._pm = GPopupMenu.create();
             if (this._pm == null) {
@@ -174,7 +174,7 @@ export default class BasicsScene extends DemoSceneBase {
         );
     }
 
-    private _playWindow(obj: GObject): void {
+    private _playWindow(obj: GComponent): void {
         if (this._winA != null) {
             return;
         }
@@ -201,7 +201,7 @@ export default class BasicsScene extends DemoSceneBase {
         }
     }
 
-    private _playDepth(obj: GObject): void {
+    private _playDepth(obj: GComponent): void {
         const testContainer = obj.getChild("n22") as GComponent | null;
         if (testContainer == null) {
             return;
@@ -255,7 +255,7 @@ export default class BasicsScene extends DemoSceneBase {
         }
     }
 
-    private _playDragDrop(obj: GObject): void {
+    private _playDragDrop(obj: GComponent): void {
         const a = obj.getChild("a");
         if (a != null) {
             a.setDraggable(true);
@@ -302,7 +302,7 @@ export default class BasicsScene extends DemoSceneBase {
         }
     }
 
-    private _playProgress(obj: GObject): void {
+    private _playProgress(obj: GComponent): void {
         this._progressRunning = true;
         obj.addEventListener(
             UIEventDispatcher.EXIT,

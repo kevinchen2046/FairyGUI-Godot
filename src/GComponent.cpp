@@ -1705,9 +1705,9 @@ void GComponent::_bind_methods()
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "viewHeight"), "setViewHeight", "getViewHeight");
 
     // GDScript extensions
-    ClassDB::bind_method(D_METHOD("getChildAt", "index"), &GComponent::getChildAt);
+    ClassDB::bind_method(D_METHOD("getChildAt", "index"), &GComponent::gd_getChildAt);
     ClassDB::bind_method(D_METHOD("getTransition", "name"), &GComponent::gd_getTransition);
-    ClassDB::bind_method(D_METHOD("getScrollPane"), &GComponent::getScrollPane);
+    ClassDB::bind_method(D_METHOD("getScrollPane"), &GComponent::gd_getScrollPane);
     ClassDB::bind_method(D_METHOD("ensureBoundsCorrect"), &GComponent::ensureBoundsCorrect);
     ClassDB::bind_method(D_METHOD("doUpdateBounds"), &GComponent::doUpdateBounds);
     ClassDB::bind_method(D_METHOD("buildNativeDisplayList"), &GComponent::buildNativeDisplayList);
@@ -1722,12 +1722,16 @@ void GComponent::gd_addChildAt(Object* child, int index) {
 }
 void GComponent::gd_removeChildren(int beginIndex, int endIndex) { removeChildren(beginIndex, endIndex); }
 
-GObject* GComponent::gd_getChild(const String& name) const { return getChild(name.utf8().get_data()); }
-GObject* GComponent::gd_getChildByPath(const String& path) const { return getChildByPath(path.utf8().get_data()); }
-GObject* GComponent::gd_getChildById(const String& id) const { return getChildById(id.utf8().get_data()); }
+Ref<GObject> GComponent::gd_getChild(const String& child_name) const { return Ref<GObject>(getChild(child_name.utf8().get_data())); }
+Ref<GObject> GComponent::gd_getChildByPath(const String& path) const { return Ref<GObject>(getChildByPath(path.utf8().get_data())); }
+Ref<GObject> GComponent::gd_getChildById(const String& child_id) const { return Ref<GObject>(getChildById(child_id.utf8().get_data())); }
+Ref<GObject> GComponent::gd_getChildAt(int index) const { return Ref<GObject>(getChildAt(index)); }
+Ref<ScrollPane> GComponent::gd_getScrollPane() { return Ref<ScrollPane>(getScrollPane()); }
+
 Ref<GController> GComponent::gd_getController(const String& name) const { return Ref<GController>(getController(name.utf8().get_data())); }
 Ref<GController> GComponent::gd_getControllerAt(int index) const { return Ref<GController>(getControllerAt(index)); }
 Ref<Transition> GComponent::gd_getTransition(const String& name) const { return Ref<Transition>(getTransition(name.utf8().get_data())); }
+Ref<Transition> GComponent::gd_getTransitionAt(int index) const { return Ref<Transition>(getTransitionAt(index)); }
 
 NS_FGUI_END
 

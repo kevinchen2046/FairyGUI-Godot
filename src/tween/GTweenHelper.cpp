@@ -117,7 +117,7 @@ void GTweenHelper::killAll(bool complete)
 
 void GTweenHelper::_bind_methods()
 {
-    ClassDB::bind_static_method(get_class_static(), D_METHOD("getInstance"), &GTweenHelper::getInstance);
+    ClassDB::bind_static_method(get_class_static(), D_METHOD("getInstance"), &GTweenHelper::gd_getInstance);
 
     ClassDB::bind_method(D_METHOD("toFloat", "start", "end", "duration"), &GTweenHelper::gd_to_float);
     ClassDB::bind_method(D_METHOD("toVec2", "start", "end", "duration"), &GTweenHelper::gd_to_vec2);

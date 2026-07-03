@@ -6,10 +6,21 @@
 
 ```
 ts/
-  Scenes/          # 场景入口（.tscn）
-  Scripts/         # TypeScript 脚本（.ts）
+  Scenes/          # 场景入口（.tscn），挂载 Generated 下的 .js
+  Scripts/         # TypeScript 源码（.ts）
+  Generated/       # tsc 编译输出（.js），由 tsconfig outDir 生成
   fairygui.d.ts    # FairyGUI GDExtension 类型声明
 ```
+
+## 编译
+
+在 `examples/` 目录执行：
+
+```bash
+npx -p typescript tsc
+```
+
+输出到 `ts/Generated/*.js`。修改 `.ts` 后需重新编译，场景才会加载最新脚本。
 
 ## 运行
 
