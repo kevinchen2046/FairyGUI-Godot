@@ -21,7 +21,7 @@ public partial class PullToRefreshScene : DemoSceneBase
             _list1.SetItemRenderer(new Callable(this, MethodName.RenderListItem1));
             _list1.SetVirtual();
             _list1.SetNumItems(1);
-            _list1.AddEventListener(UIEventDispatcher.PullDownRelease, new Callable(this, MethodName.OnPullDownToRefresh));
+            _list1.AddEventListener(FguiEvent.PullDownRelease, new Callable(this, MethodName.OnPullDownToRefresh));
         }
 
         _list2 = _view.GetChild("list2");
@@ -30,7 +30,7 @@ public partial class PullToRefreshScene : DemoSceneBase
             _list2.SetItemRenderer(new Callable(this, MethodName.RenderListItem2));
             _list2.SetVirtual();
             _list2.SetNumItems(1);
-            _list2.AddEventListener(UIEventDispatcher.PullUpRelease, new Callable(this, MethodName.OnPullUpToRefresh));
+            _list2.AddEventListener(FguiEvent.PullUpRelease, new Callable(this, MethodName.OnPullUpToRefresh));
         }
     }
 
@@ -62,7 +62,7 @@ public partial class PullToRefreshScene : DemoSceneBase
         {
             var c1 = header.GetController("c1");
             c1?.SetSelectedIndex(2);
-            sp.LockHeader(header.GetHeight());
+            sp.LockHeader((int)header.GetHeight());
         }
 
         await ToSignal(GetTree().CreateTimer(2.0), SceneTreeTimer.SignalName.Timeout);
@@ -104,7 +104,7 @@ public partial class PullToRefreshScene : DemoSceneBase
         {
             var c1 = footer.GetController("c1");
             c1?.SetSelectedIndex(1);
-            sp.LockFooter(footer.GetHeight());
+            sp.LockFooter((int)footer.GetHeight());
         }
 
         await ToSignal(GetTree().CreateTimer(2.0), SceneTreeTimer.SignalName.Timeout);

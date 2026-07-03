@@ -19,7 +19,7 @@ public partial class ScrollPaneScene : DemoSceneBase
         _list.SetItemRenderer(new Callable(this, MethodName.RenderListItem));
         _list.SetVirtual();
         _list.SetNumItems(1000);
-        _list.AddEventListener(UIEventDispatcher.TouchBegin, new Callable(this, MethodName.OnClickList));
+        _list.AddEventListener(FguiEvent.TouchBegin, new Callable(this, MethodName.OnClickList));
     }
 
     private void RenderListItem(int index, GodotObject obj)
@@ -29,14 +29,14 @@ public partial class ScrollPaneScene : DemoSceneBase
         sp?.SetPosX(0, false);
 
         var b0 = obj.GetChild("b0");
-        b0?.AddEventListener(UIEventDispatcher.Click, Callable.From(() =>
+        b0?.AddEventListener(FguiEvent.Click, Callable.From(() =>
         {
             var txt = _view.GetChild("txt");
             txt?.SetText("Stick " + obj.GetText());
         }));
 
         var b1 = obj.GetChild("b1");
-        b1?.AddEventListener(UIEventDispatcher.Click, Callable.From(() =>
+        b1?.AddEventListener(FguiEvent.Click, Callable.From(() =>
         {
             var txt = _view.GetChild("txt");
             txt?.SetText("Delete " + obj.GetText());

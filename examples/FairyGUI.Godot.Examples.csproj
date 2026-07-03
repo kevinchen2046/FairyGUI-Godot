@@ -4,7 +4,7 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>FairyGUI.Examples</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <!-- 自编译 Godot（含 FairyGUI glue）的 API 程序集 -->
     <GodotSharpApiDir>$(MSBuildThisFileDirectory)../../../bin/GodotSharp/Api/Debug</GodotSharpApiDir>
   </PropertyGroup>

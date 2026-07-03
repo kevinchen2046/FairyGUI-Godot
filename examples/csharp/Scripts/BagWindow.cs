@@ -3,9 +3,9 @@ using System;
 
 namespace FairyGUI.Examples;
 
-public class BagWindow : GWindow
+public partial class BagWindow : GWindow
 {
-    private GObject _list;
+    private GList _list;
 
     public BagWindow()
     {
@@ -24,19 +24,19 @@ public class BagWindow : GWindow
         var pane = GetContentPane();
         if (pane == null)
             return;
-        _list = pane.GetChild("list");
+        _list = pane.GetChild("list") as GList;
         if (_list == null)
             return;
-        _list.AddEventListener(UIEventDispatcher.ClickItem, Callable.From(OnClickItem));
+        _list.AddEventListener(FguiEvent.ClickItem, Callable.From(OnClickItem));
         _list.SetItemRenderer(Callable.From(new Action<int, GodotObject>(RenderListItem)));
         _list.SetNumItems(45);
     }
 
     private void RenderListItem(int index, GodotObject obj)
     {
-        var iconIdx = GD.Randi() % 10;
+        var iconIdx = (int)(GD.Randi() % 10);
         obj.SetIcon($"res://Resources/icons/i{iconIdx}.png");
-        obj.SetText((GD.Randi() % 100).ToString());
+        obj.SetText(((int)(GD.Randi() % 100)).ToString());
     }
 
     private void OnClickItem()

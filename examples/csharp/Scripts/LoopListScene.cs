@@ -19,7 +19,7 @@ public partial class LoopListScene : DemoSceneBase
         _list.SetItemRenderer(new Callable(this, MethodName.RenderListItem));
         _list.SetVirtualAndLoop();
         _list.SetNumItems(5);
-        _list.AddEventListener(UIEventDispatcher.Scroll, new Callable(this, MethodName.DoSpecialEffect));
+        _list.AddEventListener(FguiEvent.Scroll, new Callable(this, MethodName.DoSpecialEffect));
         DoSpecialEffect();
     }
 

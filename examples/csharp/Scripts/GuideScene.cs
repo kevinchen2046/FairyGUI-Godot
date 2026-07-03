@@ -47,7 +47,7 @@ public partial class GuideScene : DemoSceneBase
             window.SetSize(rect.Size.X, rect.Size.Y);
             GTweenHelper.GetInstance()
                 .ToVec2(window.GetPosition(), rect.Position, 0.5f)
-                .SetTarget(window, GTweener.TweenPropType.Position);
+                .SetTarget(window, (int)GTweener.TweenPropType.Position);
         }
     }
 }

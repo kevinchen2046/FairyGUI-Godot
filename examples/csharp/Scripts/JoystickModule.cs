@@ -40,9 +40,9 @@ public class JoystickModule
             _initY = _center.GetY() + _center.GetHeight() / 2.0f;
         }
 
-        _touchArea?.AddEventListener(UIEventDispatcher.TouchBegin, Callable.From(OnTouchBegin));
-        _touchArea?.AddEventListener(UIEventDispatcher.TouchMove, Callable.From(OnTouchMove));
-        _touchArea?.AddEventListener(UIEventDispatcher.TouchEnd, Callable.From(OnTouchEnd));
+        _touchArea?.AddEventListener(FguiEvent.TouchBegin, Callable.From(OnTouchBegin));
+        _touchArea?.AddEventListener(FguiEvent.TouchMove, Callable.From(OnTouchMove));
+        _touchArea?.AddEventListener(FguiEvent.TouchEnd, Callable.From(OnTouchEnd));
     }
 
     private void OnTouchBegin()

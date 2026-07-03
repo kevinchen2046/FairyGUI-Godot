@@ -19,7 +19,7 @@ public partial class ModalWaitingScene : DemoSceneBase
         _testWin.SetOnInitCallback(new Callable(this, MethodName.OnTestWinInit));
         _testWin.Show();
 
-        _ = RunGlobalModalWait();
+        RunGlobalModalWait();
     }
 
     private async void RunGlobalModalWait()

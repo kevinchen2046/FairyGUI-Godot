@@ -14,12 +14,12 @@ public partial class TreeViewScene : DemoSceneBase
         _groot.AddChild(_view);
 
         _tree1 = _view.GetChild("tree");
-        _tree1?.AddEventListener(UIEventDispatcher.ClickItem, new Callable(this, MethodName.OnClickNode));
+        _tree1?.AddEventListener(FguiEvent.ClickItem, new Callable(this, MethodName.OnClickNode));
 
         _tree2 = _view.GetChild("tree2");
         if (_tree2 != null)
         {
-            _tree2.AddEventListener(UIEventDispatcher.ClickItem, new Callable(this, MethodName.OnClickNode));
+            _tree2.AddEventListener(FguiEvent.ClickItem, new Callable(this, MethodName.OnClickNode));
             _tree2.SetTreeNodeRender(new Callable(this, MethodName.RenderTreeNode));
             BuildTree2();
         }

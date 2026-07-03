@@ -34,7 +34,7 @@ public partial class ChatScene : DemoSceneBase
         }
 
         _input = _view.GetChild("input");
-        _input?.AddEventListener(UIEventDispatcher.Submit, new Callable(this, MethodName.OnSubmit));
+        _input?.AddEventListener(FguiEvent.Submit, new Callable(this, MethodName.OnSubmit));
 
         var sendBtn = _view.GetChild("btnSend");
         sendBtn?.AddClickListener(new Callable(this, MethodName.OnClickSendBtn));
@@ -46,7 +46,7 @@ public partial class ChatScene : DemoSceneBase
         if (_emojiSelectUi != null)
         {
             var emojiList = _emojiSelectUi.GetChild("list");
-            emojiList?.AddEventListener(UIEventDispatcher.ClickItem, new Callable(this, MethodName.OnClickEmoji));
+            emojiList?.AddEventListener(FguiEvent.ClickItem, new Callable(this, MethodName.OnClickEmoji));
         }
 
         AddMsg("Unity", "r0", "Hello!", true);

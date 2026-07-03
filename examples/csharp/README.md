@@ -74,3 +74,24 @@ godot.windows.editor.dev.x86_64.mono.exe
 - 脚本命名空间：`FairyGUI.Examples`
 - UI 资源与 `gd/` 共用 `res://Resources/UI/`
 - CloseButton 返回 `res://csharp/Scenes/MainMenu.tscn`
+
+## C# 与 GDScript API 差异
+
+Mono glue 生成的命名与 GDScript 不完全一致，Demo 通过 `Scripts/FguiExtensions.cs` 适配：
+
+| GDScript / 直觉写法 | C# glue 实际名称 | Demo 中的用法 |
+|---------------------|------------------|---------------|
+| `UIEventDispatcher.CLICK_ITEM` | `UIEventDispatcher.Clickitem` | `FguiEvent.ClickItem` |
+| `FGUIEventContext` | `FguiEventContext` | 直接使用 `FguiEventContext` |
+| `obj.getChild()` 在任意 GObject 上 | 仅 `GComponent`/`GList` 等有 | `FguiExtensions` 扩展方法 |
+| `add_relation(..., RelationType.X)` | 第二参数为 `int` | `AddRelation(..., RelationType.X)` 扩展自动转换 |
+| 继承 `GWindow` 的类 | 须 `partial class` | `BagWindow`、`Window1`、`Window2` |
+
+本地构建：
+
+```powershell
+cd modules\fairygui\examples
+dotnet build FairyGUI.Godot.Examples.csproj
+```
+
+需已存在 `bin/GodotSharp/Api/Debug/GodotSharp.dll`（见上文 glue 步骤）。

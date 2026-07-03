@@ -2,7 +2,7 @@ using Godot;
 
 namespace FairyGUI.Examples;
 
-public class Window2 : GWindow
+public partial class Window2 : GWindow
 {
     public Window2()
     {

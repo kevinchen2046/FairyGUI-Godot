@@ -7,7 +7,7 @@ public partial class BasicsScene : DemoSceneBase
 {
     private GObject _backBtn;
     private GObject _demoContainer;
-    private GObject _cc;
+    private GController _cc;
     private readonly Dictionary<string, GObject> _demoObjects = new();
 
     private GWindow _winA;
@@ -108,7 +108,7 @@ public partial class BasicsScene : DemoSceneBase
         var n12 = obj.GetChild("n12");
         if (n12 != null)
         {
-            n12.AddEventListener(UIEventDispatcher.ClickLink, Callable.From(() =>
+            n12.AddEventListener(FguiEvent.ClickLink, Callable.From(() =>
             {
                 n12.SetText("[img]ui://Basics/pet[/img][color=#FF0000]You click the link[/color]:clicked");
             }));
@@ -154,7 +154,7 @@ public partial class BasicsScene : DemoSceneBase
         var n1 = obj.GetChild("n1");
         n1?.AddClickListener(Callable.From(() => _groot.ShowPopupSimple(_popupCom)));
 
-        obj.AddEventListener(UIEventDispatcher.RightClick, Callable.From(() => _pm.Show()));
+        obj.AddEventListener(FguiEvent.RightClick, Callable.From(() => _pm.Show()));
     }
 
     private void PlayWindow(GObject obj)
@@ -235,7 +235,7 @@ public partial class BasicsScene : DemoSceneBase
         if (b != null)
         {
             b.SetDraggable(true);
-            b.AddEventListener(UIEventDispatcher.DragStart, Callable.From<FGUIEventContext>(ctx =>
+            b.AddEventListener(FguiEvent.DragStart, Callable.From<FguiEventContext>(ctx =>
             {
                 ctx.PreventDefault();
                 DragDropManagerHelper.GetInstance().StartDrag(b.GetIcon(), b.GetIcon(), ctx.GetTouchId());
@@ -246,7 +246,7 @@ public partial class BasicsScene : DemoSceneBase
         if (c != null)
         {
             c.SetIcon("");
-            c.AddEventListener(UIEventDispatcher.Drop, Callable.From<FGUIEventContext>(ctx =>
+            c.AddEventListener(FguiEvent.Drop, Callable.From<FguiEventContext>(ctx =>
             {
                 c.SetIcon(ctx.GetData().AsString());
             }));
@@ -269,7 +269,7 @@ public partial class BasicsScene : DemoSceneBase
     private void PlayProgress(GObject obj)
     {
         _progressRunning = true;
-        obj.AddEventListener(UIEventDispatcher.Exit, Callable.From(() => _progressRunning = false));
+        obj.AddEventListener(FguiEvent.Exit, Callable.From(() => _progressRunning = false));
     }
 
     public override void _Process(double delta)
