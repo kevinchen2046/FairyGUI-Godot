@@ -979,7 +979,7 @@ void GObject::rebuildSkewedTransform()
 
     if (Control* ctrl = Object::cast_to<Control>(_displayObject))
     {
-        ctrl->set_transform(xf);
+        syncControlDisplay();
         return;
     }
 
