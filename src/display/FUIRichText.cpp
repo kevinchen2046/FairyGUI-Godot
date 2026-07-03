@@ -143,6 +143,18 @@ static Vector2 getNodeSize(Node* node)
     return Vector2();
 }
 
+// FUILabel renderers are owned by layout; GObject displays (GLoader etc.) stay alive in HtmlObject pool.
+static void releaseRendererChild(Node* node)
+{
+    if (!node)
+        return;
+    Node* parent = node->get_parent();
+    if (parent)
+        parent->remove_child(node);
+    if (Object::cast_to<FUILabel>(node))
+        node->queue_free();
+}
+
 HtmlObject* createHtmlObject(HtmlElement* element)
 {
     if (element->type == HtmlElement::Type::IMAGE
@@ -333,7 +345,7 @@ void FUIRichText::setText(const std::string& value)
     if (_clipContainer)
     {
         for (int i = _clipContainer->get_child_count() - 1; i >= 0; i--)
-            _clipContainer->get_child(i)->queue_free();
+            releaseRendererChild(_clipContainer->get_child(i));
     }
 
     if (value.empty())
@@ -396,7 +408,7 @@ void FUIRichText::formatText()
     if (_clipContainer)
     {
         for (int i = _clipContainer->get_child_count() - 1; i >= 0; i--)
-            _clipContainer->get_child(i)->queue_free();
+            releaseRendererChild(_clipContainer->get_child(i));
     }
 
     _renderers.clear();
@@ -667,7 +679,9 @@ void FUIRichText::formarRenderers()
 
     if (textWidth == GUTTER_X + GUTTER_X)
         textWidth = 0;
-    else if (_numLines > 1 || (_textFormat.align != 0 && _overflow != 0))
+    else if (_numLines > 1)
+        textWidth = MAX(_dimensionsX, textWidth);
+    else if (_textFormat.align != 0 && _overflow != 0 && _overflow != 3)
         textWidth = MAX(_dimensionsX, textWidth);
 
     if (rowY != GUTTER_Y)

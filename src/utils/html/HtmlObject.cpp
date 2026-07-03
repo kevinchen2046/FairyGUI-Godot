@@ -52,9 +52,6 @@ void HtmlObject::create(FUIRichText* owner, HtmlElement* element)
     _owner = owner;
     _element = element;
 
-    if (_ui.is_valid())
-        return;
-
     switch (element->type)
     {
     case HtmlElement::Type::IMAGE:
@@ -63,6 +60,8 @@ void HtmlObject::create(FUIRichText* owner, HtmlElement* element)
 
     case HtmlElement::Type::INPUT:
     {
+        if (_ui.is_valid())
+            break;
         string type = element->getString("type");
         transform(type.begin(), type.end(), type.begin(), ::tolower);
         if (type == "button" || type == "submit")
@@ -73,11 +72,13 @@ void HtmlObject::create(FUIRichText* owner, HtmlElement* element)
     }
 
     case HtmlElement::Type::SELECT:
-        createSelect();
+        if (!_ui.is_valid())
+            createSelect();
         break;
 
     case HtmlElement::Type::OBJECT:
-        createCommon();
+        if (!_ui.is_valid())
+            createCommon();
         break;
     }
 }
@@ -125,14 +126,17 @@ void HtmlObject::createImage()
     width = _element->getInt("width", width);
     height = _element->getInt("height", height);
 
-    if (!loaderPool.empty())
+    if (!_ui.is_valid())
     {
-        _ui = loaderPool.back();
-        loaderPool.pop_back();
-    }
-    else
-    {
-        _ui = GLoader::create();
+        if (!loaderPool.empty())
+        {
+            _ui = loaderPool.back();
+            loaderPool.pop_back();
+        }
+        else
+        {
+            _ui = GLoader::create();
+        }
     }
 
     GLoader* loader = Object::cast_to<GLoader>(_ui.ptr());

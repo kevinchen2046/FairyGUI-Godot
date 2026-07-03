@@ -76,6 +76,17 @@ void GRichTextField::setTextFieldText()
         }
     }
 
+    // autoSize=height: lay out at design width first so virtual-list reuse (narrow width)
+    // does not wrap short text before the caller shrinks the field to content width.
+    if (_autoSize == AutoSizeType::HEIGHT)
+    {
+        float layoutWidth = sourceSize.width;
+        if (layoutWidth <= 0.f)
+            layoutWidth = initSize.width;
+        if (layoutWidth > 0.f)
+            _richText->setDimensions(layoutWidth, _size.height);
+    }
+
     if (_ubbEnabled)
     {
         std::string parsedText = UBBParser::getInstance()->parse(text.c_str());
