@@ -13,6 +13,7 @@
 #include "scene/main/scene_tree.h"
 #include "scene/main/viewport.h"
 #include "scene/main/window.h"
+#include "scene/main/canvas_layer.h"
 #include "servers/display_server.h"
 
 #include <algorithm>
@@ -78,6 +79,8 @@ GRoot::GRoot()
       _modalWaitPane(nullptr),
       _tooltipWin(nullptr),
       _defaultTooltipWin(nullptr),
+      _overlayCanvasLayer(nullptr),
+      _overlayContainer(nullptr),
       _hasDesignResolution(false),
       _viewportSizeConnected(false),
       _soundPlayerCount(0),
@@ -172,6 +175,32 @@ void GRoot::_bind_methods()
     ClassDB::bind_method(D_METHOD("showPopupSimple", "popup"), &GRoot::gd_showPopupSimple);
 }
 
+void GRoot::handleInit()
+{
+    GComponent::handleInit();
+
+    _overlayCanvasLayer = memnew(CanvasLayer);
+    _overlayCanvasLayer->set_layer(100);
+    _overlayCanvasLayer->set_follow_viewport(false);
+    _displayObject->add_child(_overlayCanvasLayer);
+
+    _overlayContainer = memnew(FUIInnerContainer);
+    _overlayCanvasLayer->add_child(_overlayContainer);
+
+    if (CanvasItem* mainLayer = Object::cast_to<CanvasItem>(_container))
+    {
+        mainLayer->set_z_as_relative(false);
+        mainLayer->set_z_index(0);
+    }
+}
+
+FUIInnerContainer* GRoot::getDisplayContainerFor(GObject* child) const
+{
+    if (child != nullptr && child->getSortingOrder() != 0 && _overlayContainer != nullptr)
+        return _overlayContainer;
+    return _container;
+}
+
 void GRoot::showWindow(GWindow* win)
 {
     if (!win)
@@ -181,6 +210,9 @@ void GRoot::showWindow(GWindow* win)
     if (win->getSortingOrder() < kPopupWindowSortingOrder)
         win->setSortingOrder(kPopupWindowSortingOrder);
 
+    GTween::kill(win, false);
+    win->setVisible(true);
+
     Ref<GObject> ref(win);
     addChild(ref);
     win->refreshDisplayListRecursive();
@@ -188,6 +220,7 @@ void GRoot::showWindow(GWindow* win)
     win->center();
     bringToFront(win);
     adjustModalLayer();
+    childStateChanged(win);
 }
 
 void GRoot::hideWindow(GWindow* win)
@@ -306,6 +339,7 @@ void GRoot::createModalLayer()
 
     _modalLayer->drawRect(getWidth(), getHeight(), 0, Color(1.0f, 1.0f, 1.0f, 1.0f), UIConfig::modalLayerColor);
     _modalLayer->addRelation(this, RelationType::Size);
+    _modalLayer->setSortingOrder(49999);
 }
 
 void GRoot::adjustModalLayer()
@@ -478,6 +512,7 @@ void GRoot::showPopup(GObject* popup, GObject* target, PopupDirection dir)
     syncNativeChildrenZOrder();
     if (GComponent* com = dynamic_cast<GComponent*>(popup))
         com->refreshDisplayListRecursive();
+    childStateChanged(popup);
 }
 
 void GRoot::togglePopup(GObject* popup)
@@ -664,6 +699,7 @@ void GRoot::doShowTooltipsWin()
     }
 
     _tooltipWin->setPosition(round(xx), round(yy));
+    _tooltipWin->setSortingOrder(50000);
     addChild(Ref<GObject>(_tooltipWin));
 }
 

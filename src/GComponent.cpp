@@ -43,6 +43,77 @@ void GComponent::ensure_display_child_added(FUIInnerContainer* container, GObjec
     }
 }
 
+FUIInnerContainer* GComponent::getDisplayContainerFor(GObject* child) const
+{
+    return _container;
+}
+
+int GComponent::getDisplaySiblingIndex(GObject* child) const
+{
+    FUIInnerContainer* dc = getDisplayContainerFor(child);
+    int z = 0;
+    for (const auto& c : _children)
+    {
+        if (c.ptr() == child)
+            break;
+        if (c->internalVisible() && c.ptr() != _maskOwner && getDisplayContainerFor(c.ptr()) == dc
+                && c->_displayObject != nullptr && c->_displayObject->get_parent() != nullptr)
+            z++;
+    }
+    return z;
+}
+
+int GComponent::getDisplaySiblingIndexDescent(GObject* child) const
+{
+    FUIInnerContainer* dc = getDisplayContainerFor(child);
+    int sameCnt = 0;
+    for (const auto& c : _children)
+    {
+        if (c->internalVisible() && c.ptr() != _maskOwner && getDisplayContainerFor(c.ptr()) == dc
+                && c->_displayObject != nullptr && c->_displayObject->get_parent() != nullptr)
+            sameCnt++;
+    }
+
+    int z = 0;
+    for (const auto& c : _children)
+    {
+        if (c.ptr() == child)
+            break;
+        if (c->internalVisible() && c.ptr() != _maskOwner && getDisplayContainerFor(c.ptr()) == dc
+                && c->_displayObject != nullptr && c->_displayObject->get_parent() != nullptr)
+            z++;
+    }
+    return sameCnt - 1 - z;
+}
+
+void GComponent::refreshDisplayChildrenZOrder()
+{
+    const int cnt = (int)_children.size();
+    switch (_childrenRenderOrder)
+    {
+    case ChildrenRenderOrder::ASCENT:
+        for (int i = 0; i < cnt; i++)
+        {
+            GObject* c = _children.at(i).ptr();
+            if (c->_displayObject != nullptr && c != _maskOwner && c->internalVisible()
+                    && c->_displayObject->get_parent() != nullptr)
+                set_display_child_z_order(c, getDisplaySiblingIndex(c));
+        }
+        break;
+    case ChildrenRenderOrder::DESCENT:
+        for (int i = 0; i < cnt; i++)
+        {
+            GObject* c = _children.at(i).ptr();
+            if (c->_displayObject != nullptr && c != _maskOwner && c->internalVisible()
+                    && c->_displayObject->get_parent() != nullptr)
+                set_display_child_z_order(c, getDisplaySiblingIndexDescent(c));
+        }
+        break;
+    default:
+        break;
+    }
+}
+
 GComponent::GComponent() : _container(nullptr),
 _childrenRenderOrder(ChildrenRenderOrder::ASCENT),
 _apexIndex(0),
@@ -161,7 +232,7 @@ void GComponent::removeChildAt(int index)
     child->setGroup(nullptr);
     if (child->_displayObject != nullptr && child->_displayObject->get_parent() != nullptr)
     {
-        _container->remove_child(child->_displayObject);
+        getDisplayContainerFor(child.ptr())->remove_child(child->_displayObject);
         if (_childrenRenderOrder == ChildrenRenderOrder::ARCH)
             CALL_LATER(GComponent, buildNativeDisplayList);
     }
@@ -748,42 +819,30 @@ void GComponent::childStateChanged(GObject* child)
 
     if (child->internalVisible())
     {
-        if (child->_displayObject->get_parent() == nullptr)
+        FUIInnerContainer* dc = getDisplayContainerFor(child);
+        Node* display = child->_displayObject;
+        Node* parent = display->get_parent();
+        if (parent != dc)
         {
-            if (_childrenRenderOrder == ChildrenRenderOrder::ASCENT)
-            {
-                int index = (int)(std::find_if(_children.begin(), _children.end(), [&](const Ref<GObject>& r) { return r.ptr() == child; }) - _children.begin());
-                ensure_display_child_added(_container, child);
-                set_display_child_z_order(child, index);
-                size_t childCount = _children.size();
-                for (size_t i = index + 1; i < childCount; i++)
-                {
-                    GObject* c = _children.at(i).ptr();
-                    set_display_child_z_order(c, (int)i);
-                }
-            }
-            else if (_childrenRenderOrder == ChildrenRenderOrder::DESCENT)
-            {
-                ssize_t index = (std::find_if(_children.begin(), _children.end(), [&](const Ref<GObject>& r) { return r.ptr() == child; }) - _children.begin());
-                ensure_display_child_added(_container, child);
-                set_display_child_z_order(child, (int)(cnt - 1 - index));
-                for (ssize_t i = 0; i < index; i++)
-                {
-                    GObject* c = _children.at(i).ptr();
-                    set_display_child_z_order(c, (int)(cnt - 1 - i));
-                }
-            }
-            else
-            {
-                CALL_LATER(GComponent, buildNativeDisplayList);
-            }
+            if (parent != nullptr)
+                parent->remove_child(display);
+            ensure_display_child_added(dc, child);
         }
+        else if (parent == nullptr)
+        {
+            ensure_display_child_added(dc, child);
+        }
+
+        if (_childrenRenderOrder == ChildrenRenderOrder::ASCENT || _childrenRenderOrder == ChildrenRenderOrder::DESCENT)
+            refreshDisplayChildrenZOrder();
+        else
+            CALL_LATER(GComponent, buildNativeDisplayList);
     }
     else
     {
         if (child->_displayObject->get_parent() != nullptr)
         {
-            _container->remove_child(child->_displayObject);
+            child->_displayObject->get_parent()->remove_child(child->_displayObject);
             if (_childrenRenderOrder == ChildrenRenderOrder::ARCH)
             {
                 CALL_LATER(GComponent, buildNativeDisplayList);
@@ -794,29 +853,14 @@ void GComponent::childStateChanged(GObject* child)
 
 void GComponent::syncNativeChildrenZOrder()
 {
-    int cnt = (int)_children.size();
-    if (cnt == 0)
+    if ((int)_children.size() == 0)
         return;
 
     switch (_childrenRenderOrder)
     {
     case ChildrenRenderOrder::ASCENT:
-        for (int i = 0; i < cnt; i++)
-        {
-            GObject* child = _children.at(i).ptr();
-            if (child->_displayObject != nullptr && child != _maskOwner && child->internalVisible()
-                    && child->_displayObject->get_parent() != nullptr)
-                set_display_child_z_order(child, i);
-        }
-        break;
     case ChildrenRenderOrder::DESCENT:
-        for (int i = 0; i < cnt; i++)
-        {
-            GObject* child = _children.at(i).ptr();
-            if (child->_displayObject != nullptr && child != _maskOwner && child->internalVisible()
-                    && child->_displayObject->get_parent() != nullptr)
-                set_display_child_z_order(child, cnt - 1 - i);
-        }
+        refreshDisplayChildrenZOrder();
         break;
     case ChildrenRenderOrder::ARCH:
         CALL_LATER(GComponent, buildNativeDisplayList);
@@ -858,6 +902,8 @@ void GComponent::childSortingOrderChanged(GObject* child, int oldValue, int newV
         else
             moveChild(child, oldIndex, index);
     }
+
+    childStateChanged(child);
 }
 
 void GComponent::buildNativeDisplayList()
@@ -877,8 +923,9 @@ void GComponent::buildNativeDisplayList()
             GObject* child = _children.at(i).ptr();
             if (child->_displayObject != nullptr && child != _maskOwner && child->internalVisible())
             {
-                ensure_display_child_added(_container, child);
-                set_display_child_z_order(child, i);
+                FUIInnerContainer* dc = getDisplayContainerFor(child);
+                ensure_display_child_added(dc, child);
+                set_display_child_z_order(child, getDisplaySiblingIndex(child));
             }
         }
     }
@@ -890,8 +937,9 @@ void GComponent::buildNativeDisplayList()
             GObject* child = _children.at(i).ptr();
             if (child->_displayObject != nullptr && child != _maskOwner && child->internalVisible())
             {
-                ensure_display_child_added(_container, child);
-                set_display_child_z_order(child, cnt - 1 - i);
+                FUIInnerContainer* dc = getDisplayContainerFor(child);
+                ensure_display_child_added(dc, child);
+                set_display_child_z_order(child, getDisplaySiblingIndexDescent(child));
             }
         }
     }
@@ -905,7 +953,8 @@ void GComponent::buildNativeDisplayList()
             GObject* child = _children.at(i).ptr();
             if (child->_displayObject != nullptr && child != _maskOwner && child->internalVisible())
             {
-                ensure_display_child_added(_container, child);
+                FUIInnerContainer* dc = getDisplayContainerFor(child);
+                ensure_display_child_added(dc, child);
                 set_display_child_z_order(child, i);
             }
         }
@@ -914,7 +963,8 @@ void GComponent::buildNativeDisplayList()
             GObject* child = _children.at(i).ptr();
             if (child->_displayObject != nullptr && child != _maskOwner && child->internalVisible())
             {
-                ensure_display_child_added(_container, child);
+                FUIInnerContainer* dc = getDisplayContainerFor(child);
+                ensure_display_child_added(dc, child);
                 set_display_child_z_order(child, ai + cnt - 1 - i);
             }
         }

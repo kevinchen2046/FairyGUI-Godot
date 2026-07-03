@@ -146,6 +146,10 @@ protected:
     void setupOverflow(OverflowType overflow);
     void setupScroll(ByteBuffer* buffer);
     void syncNativeChildrenZOrder();
+    void refreshDisplayChildrenZOrder();
+    virtual FUIInnerContainer* getDisplayContainerFor(GObject* child) const;
+    int getDisplaySiblingIndex(GObject* child) const;
+    int getDisplaySiblingIndexDescent(GObject* child) const;
 
     std::vector<Ref<GObject>> _children;
     std::vector<Ref<GController>> _controllers;

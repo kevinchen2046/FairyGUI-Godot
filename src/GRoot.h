@@ -8,6 +8,7 @@
 #include "godot_types.h"
 #include "event/InputProcessor.h"
 #include "scene/main/scene_tree.h"
+#include "scene/main/canvas_layer.h"
 #include "scene/audio/audio_stream_player.h"
 
 NS_FGUI_BEGIN
@@ -100,6 +101,8 @@ public:
 protected:
     virtual void handlePositionChanged() override;
     virtual void handleSizeChanged() override;
+    virtual void handleInit() override;
+    virtual FUIInnerContainer* getDisplayContainerFor(GObject* child) const override;
     virtual void _enter_tree() override;
     virtual void _exit_tree() override;
 
@@ -142,6 +145,9 @@ private:
     bool _viewportSizeConnected;
 
     static GRoot* _inst;
+
+    CanvasLayer* _overlayCanvasLayer;
+    FUIInnerContainer* _overlayContainer;
 };
 
 NS_FGUI_END

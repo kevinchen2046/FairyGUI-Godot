@@ -19,6 +19,24 @@
 NS_FGUI_BEGIN
 GObject* GObject::_draggingObject = nullptr;
 
+static int apply_absolute_overlay_z_order(Node* node, int baseZ, int localZ)
+{
+    if (!node)
+        return localZ;
+
+    if (CanvasItem* ci = Object::cast_to<CanvasItem>(node))
+    {
+        ci->set_z_as_relative(false);
+        ci->set_z_index(baseZ + localZ);
+        localZ++;
+    }
+
+    const int childCount = node->get_child_count();
+    for (int i = 0; i < childCount; i++)
+        localZ = apply_absolute_overlay_z_order(node->get_child(i), baseZ, localZ);
+    return localZ;
+}
+
 static Vector2 sGlobalDragStart;
 static Rect sGlobalRect;
 static bool sUpdateInDragging;
@@ -414,6 +432,12 @@ void GObject::setSortingOrder(int value)
         if (_parent != nullptr)
             _parent->childSortingOrderChanged(this, old, _sortingOrder);
     }
+}
+
+void GObject::applyAbsoluteOverlayZOrder(int baseZ)
+{
+    if (_displayObject)
+        apply_absolute_overlay_z_order(_displayObject, baseZ, 0);
 }
 
 void GObject::setGroup(GGroup* value)

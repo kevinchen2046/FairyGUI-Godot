@@ -94,6 +94,8 @@ public:
 
     int getSortingOrder() const { return _sortingOrder; }
     void setSortingOrder(int value);
+    // Force popup/overlay display nodes to absolute z_index (z_as_relative=false).
+    void applyAbsoluteOverlayZOrder(int baseZ);
 
     GGroup* getGroup() const { return _group; }
     void setGroup(GGroup* value);
