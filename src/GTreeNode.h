@@ -48,6 +48,7 @@ public:
 
     GTreeNode* addChild(const Ref<GTreeNode>& child);
     GTreeNode* addChildAt(const Ref<GTreeNode>& child, int index);
+    Ref<GTreeNode> gd_addChild(const Ref<GTreeNode>& child);
 
     void removeChild(GTreeNode* child);
     void removeChildAt(int index);

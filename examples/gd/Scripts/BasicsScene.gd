@@ -1,4 +1,4 @@
-extends DemoSceneBase
+extends "res://gd/Scripts/DemoSceneBase.gd"
 
 var _back_btn: Object
 var _demo_container: Object

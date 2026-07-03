@@ -1,5 +1,5 @@
-class_name DemoSceneBase
 extends Node
+class_name DemoSceneBase
 
 var _groot: Object
 var _view: Object = null

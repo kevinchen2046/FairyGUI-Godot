@@ -1,4 +1,4 @@
-extends DemoSceneBase
+extends "res://gd/Scripts/DemoSceneBase.gd"
 
 var _guide_layer: Object
 var _bag_btn: Object

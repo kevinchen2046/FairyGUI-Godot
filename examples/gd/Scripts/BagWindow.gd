@@ -1,5 +1,5 @@
-class_name BagWindow
 extends GWindow
+class_name BagWindow
 
 var _list: Object = null
 

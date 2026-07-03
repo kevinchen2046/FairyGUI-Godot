@@ -1,4 +1,4 @@
-extends DemoSceneBase
+extends "res://gd/Scripts/DemoSceneBase.gd"
 
 
 func continue_init() -> void:

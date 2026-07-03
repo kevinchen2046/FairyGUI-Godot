@@ -1,6 +1,6 @@
-extends DemoSceneBase
+extends "res://gd/Scripts/DemoSceneBase.gd"
 
-var _bag_window: BagWindow = null
+var _bag_window: Object = null
 
 func continue_init() -> void:
 	UIPackage.addPackage("res://Resources/UI/Bag")
@@ -8,7 +8,7 @@ func continue_init() -> void:
 	_view = UIPackage.createObject("Bag", "Main")
 	_groot.addChild(_view)
 
-	_bag_window = BagWindow.new()
+	_bag_window = load("res://gd/Scripts/BagWindow.gd").new()
 
 	var bag_btn = _view.getChild("bagBtn")
 	if bag_btn != null:
