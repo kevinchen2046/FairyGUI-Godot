@@ -301,14 +301,9 @@ void GGraph::drawPolygon(int lineSize, const Color& lineColor, const Color& fill
     else
         _polygonPoints->clear();
     _polygonBaseWidth = getWidth();
-    float h = getHeight();
-    _polygonPointOffset = h;
+    _polygonPointOffset = getHeight();
     for (int i = 0; i < count; i++)
-    {
-        Vector2 pt = points[i];
-        pt.y = h - pt.y;
-        _polygonPoints->push_back(pt);
-    }
+        _polygonPoints->push_back(points[i]);
     updateShape();
 }
 
@@ -519,20 +514,20 @@ void GGraph::handleSizeChanged()
 {
     GObject::handleSizeChanged();
 
-    if (_type == 3 || _type == 4)
+    if ((_type == 3 || _type == 4) && _polygonPoints != nullptr && _polygonBaseWidth > 0 && _polygonPointOffset > 0)
     {
-        float h = getHeight();
-        if (_polygonPoints != nullptr)
+        float ratioX = getWidth() / _polygonBaseWidth;
+        float ratioY = getHeight() / _polygonPointOffset;
+        if (ratioX != 1.0f || ratioY != 1.0f)
         {
-            int count = (int)_polygonPoints->size();
-            for (int i = 0; i < count; i++)
+            for (size_t i = 0; i < _polygonPoints->size(); i++)
             {
-                Vector2 pt = (*_polygonPoints)[i];
-                pt.y = h - (_polygonPointOffset - pt.y);
-                (*_polygonPoints)[i] = pt;
+                (*_polygonPoints)[i].x *= ratioX;
+                (*_polygonPoints)[i].y *= ratioY;
             }
+            _polygonBaseWidth = getWidth();
+            _polygonPointOffset = getHeight();
         }
-        _polygonPointOffset = h;
     }
 
     if (_type != 0)
@@ -568,12 +563,12 @@ void GGraph::setup_beforeAdd(ByteBuffer* buffer, int beginPos)
         {
             int cnt = buffer->readShort() / 2;
             _polygonPoints = new std::vector<Vector2>(cnt);
-            float h = getHeight();
-            _polygonPointOffset = h;
+            _polygonBaseWidth = getWidth();
+            _polygonPointOffset = getHeight();
             for (int i = 0; i < cnt; i++)
             {
                 float f1 = buffer->readFloat();
-                float f2 = h - buffer->readFloat();
+                float f2 = buffer->readFloat();
                 (*_polygonPoints)[i] = Vector2(f1, f2);
             }
         }

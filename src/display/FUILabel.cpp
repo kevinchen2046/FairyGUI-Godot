@@ -415,9 +415,11 @@ void FUILabel::_draw()
     // Underline
     if (_textFormat->underline)
     {
-        float textWidth = wrap ? maxWidth : getTextWidth();
-        Color lineColor = _hasUnderlineColor ? _underlineColor : textColor;
-        draw_line(offset + Vector2(0, fontSize + 1), offset + Vector2(textWidth, fontSize + 1), lineColor);
+        const float textWidth = getTextWidth();
+        Color lineColor = (_hasUnderlineColor && _underlineColor.a > 0.0f) ? _underlineColor : textColor;
+        const float descent = font->get_descent(fontSize);
+        const float underlineY = offset.y + MAX(1.0f, descent);
+        draw_line(Vector2(offset.x, underlineY), Vector2(offset.x + textWidth, underlineY), lineColor);
     }
 }
 

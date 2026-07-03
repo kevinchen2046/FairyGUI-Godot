@@ -471,7 +471,8 @@ void FUIRichText::handleTextRenderer(HtmlElement* element, const std::string& te
     FUILabel* textRenderer = memnew(FUILabel);
     textRenderer->getTextFormat()->setFormat(element->format);
     textRenderer->applyTextFormat();
-    textRenderer->setUnderlineColor(_parseOptions.linkColor);
+    if (_parseOptions.linkColor.a > 0.0f)
+        textRenderer->setUnderlineColor(_parseOptions.linkColor);
     textRenderer->setText(text);
     setNodeElement(textRenderer, element);
 
@@ -511,7 +512,8 @@ void FUIRichText::handleTextRenderer(HtmlElement* element, const std::string& te
         FUILabel* leftRenderer = memnew(FUILabel);
         leftRenderer->getTextFormat()->setFormat(element->format);
         leftRenderer->applyTextFormat();
-        leftRenderer->setUnderlineColor(_parseOptions.linkColor);
+        if (_parseOptions.linkColor.a > 0.0f)
+            leftRenderer->setUnderlineColor(_parseOptions.linkColor);
         leftRenderer->setText(leftWords);
         setNodeElement(leftRenderer, element);
         _renderers.back().push_back(leftRenderer);

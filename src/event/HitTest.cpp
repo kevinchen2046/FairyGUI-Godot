@@ -2,6 +2,7 @@
 #include "GGraph.h"
 #include "GComponent.h"
 #include "GObject.h"
+#include "GRoot.h"
 #include "utils/ByteBuffer.h"
 #include "utils/ToolSet.h"
 
@@ -69,19 +70,15 @@ bool ChildHitArea::hitTestCanvas(GComponent* obj, const Vector2& canvasPoint)
     if (_child == nullptr || obj == nullptr || !_child->displayObject())
         return false;
 
-    CanvasItem* childDisplay = Object::cast_to<CanvasItem>(_child->displayObject());
-    if (!childDisplay || !childDisplay->get_parent())
-        return false;
-
-    // Match Cocos ShapeHitTest: test in the hit-area child's display local space.
-    Vector2 childLocal = childDisplay->get_global_transform_with_canvas().affine_inverse().xform(canvasPoint);
+    // Same logical space as GGraph::hitTest / globalToLocal (handles pivot offset).
+    Vector2 logical = _child->globalToLocal(GRoot::getInstance()->worldToRoot(canvasPoint));
 
     if (GGraph* graph = dynamic_cast<GGraph*>(_child))
-        return graph->hitTestShape(childLocal);
+        return graph->hitTestShape(logical);
 
     Rect rect;
     rect.size = _child->getSize();
-    return rect.has_point(childLocal);
+    return rect.has_point(logical);
 }
 
 bool ChildHitArea::hitTest(GComponent* obj, const Vector2& localPoint)
