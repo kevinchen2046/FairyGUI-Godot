@@ -280,18 +280,22 @@ int FUILabel::getDrawFontSize() const
     return size;
 }
 
-static float fui_font_style_extra_width(const Ref<Font>& font, const TextFormat* format, int fontSize)
+static float fui_font_style_extra_width(const Ref<Font>& font, const TextFormat* format, int fontSize, float measuredHeight)
 {
     float extra = 0.0f;
     if (format->italics)
     {
         // FontVariation slant overhang is often missing from get_string_size().
-        float ascent = font.is_valid() ? font->get_ascent(fontSize) : fontSize * 0.8f;
-        extra += ascent * Math::tan(Math::deg_to_rad(12.0f));
-        extra += MAX(1.0f, fontSize * 0.04f);
+        float height = measuredHeight > 0.0f
+            ? measuredHeight
+            : (font.is_valid() ? font->get_height(fontSize) : (float)fontSize);
+        extra += height * Math::tan(Math::deg_to_rad(12.0f));
+        extra += MAX(2.0f, fontSize * 0.06f);
     }
     if (format->bold)
-        extra += fontSize * 0.1f;
+        extra += fontSize * 0.12f + 2.0f;
+    if (format->letterSpacing != 0)
+        extra += Math::abs((float)format->letterSpacing);
     return extra;
 }
 
@@ -304,9 +308,9 @@ float FUILabel::getTextWidth() const
         int fontSize = getDrawFontSize();
         bool wrap = _wrapEnabled && _contentSize.x > 0;
         float maxWidth = wrap ? _contentSize.x : -1;
-        float width = fui_measure_text(font, GObject::toGodotStr(_text), fontSize, wrap, maxWidth, _textFormat->align).x;
-        width += fui_font_style_extra_width(font, _textFormat, fontSize);
-        return width;
+        Vector2 measured = fui_measure_text(font, GObject::toGodotStr(_text), fontSize, wrap, maxWidth, _textFormat->align);
+        float width = measured.x + fui_font_style_extra_width(font, _textFormat, fontSize, measured.y);
+        return Math::ceil(width);
     }
     return 0;
 }

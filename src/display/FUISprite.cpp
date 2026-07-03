@@ -55,7 +55,6 @@ FUISprite::FUISprite() :
 {
     set_centered(false); // FairyGUI uses top-left origin, NOT center origin
     item_rect_changed(); // enable NOTIFICATION_DRAW for Node2D
-    updateDrawMaterial();
 }
 
 FUISprite::~FUISprite()
@@ -331,20 +330,26 @@ static void drawRotatedAtlasRegion(CanvasItem* item, const Ref<Texture2D>& tex,
 void FUISprite::setColor(const Color& c)
 {
     _tintColor = Color(c.r, c.g, c.b, 1.0f);
-    applyTintColor();
+    if (!_grayed)
+        set_modulate(Color(c.r, c.g, c.b, get_modulate().a));
     queue_redraw();
 }
 
 void FUISprite::updateDrawMaterial()
 {
+    if (!_grayed)
+    {
+        set_material(Ref<Material>());
+        return;
+    }
+
     if (_drawMaterial.is_null())
     {
         _drawMaterial.instantiate();
         _drawMaterial->set_shader(get_fui_sprite_shader());
     }
-    _drawMaterial->set_shader_parameter("u_grayed", _grayed);
+    _drawMaterial->set_shader_parameter("u_grayed", true);
     set_material(_drawMaterial);
-    set_modulate(Color(1, 1, 1, 1));
 }
 
 void FUISprite::applyTintColor()
@@ -354,8 +359,19 @@ void FUISprite::applyTintColor()
 
 void FUISprite::setGrayed(bool value)
 {
+    if (_grayed == value)
+        return;
+
     _grayed = value;
-    updateDrawMaterial();
+    if (_grayed)
+    {
+        updateDrawMaterial();
+    }
+    else
+    {
+        set_material(Ref<Material>());
+        set_modulate(Color(_tintColor.r, _tintColor.g, _tintColor.b, get_modulate().a));
+    }
     queue_redraw();
 }
 
@@ -620,7 +636,7 @@ void FUISprite::_draw()
         return;
 
     Ref<Texture2D> tex = _realTexture;
-    const Color drawModulate = _tintColor;
+    const Color drawModulate = _grayed ? _tintColor : get_modulate();
 
     Vector2 contentSize = _contentSize.x > 0 ? _contentSize : get_rect().size;
     Rect2 texRect = get_region_rect();
