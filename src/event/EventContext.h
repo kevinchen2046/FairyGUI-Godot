@@ -39,6 +39,25 @@ private:
     int _type;
 
     friend class UIEventDispatcher;
+    friend class FGUIEventContext;
+};
+
+class FGUIEventContext : public RefCounted
+{
+    GDCLASS(FGUIEventContext, RefCounted)
+
+public:
+    void bind(EventContext* context) { _context = context; }
+
+    void preventDefault();
+    Variant getData() const;
+    int getTouchId() const;
+
+protected:
+    static void _bind_methods();
+
+private:
+    EventContext* _context = nullptr;
 };
 
 NS_FGUI_END

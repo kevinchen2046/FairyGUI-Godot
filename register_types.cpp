@@ -64,6 +64,7 @@ void initialize_fairygui_module(ModuleInitializationLevel p_level)
     if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE)
     {
         // Core
+        GDREGISTER_CLASS(fairygui::FGUIEventContext);
         GDREGISTER_CLASS(fairygui::UIEventDispatcher);
         GDREGISTER_CLASS(fairygui::GController);
         GDREGISTER_CLASS(fairygui::GObject);
