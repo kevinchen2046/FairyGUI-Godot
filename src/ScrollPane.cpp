@@ -926,6 +926,7 @@ void ScrollPane::handleSizeChanged()
         updatePageController();
 
     syncOverlayZOrder();
+    CALL_LATER(ScrollPane, refreshScrollBars);
 }
 
 GObject* ScrollPane::hitTest(const Vector2& pt, const Camera2D* camera)
@@ -1085,6 +1086,13 @@ void ScrollPane::updateScrollBarPos()
         _hzScrollBar->setScrollPerc(_overlapSize.width == 0 ? 0 : std::clamp(-_container->get_position().x, 0.0f, _overlapSize.width) / _overlapSize.width);
 
     checkRefreshBar();
+}
+
+void ScrollPane::refreshScrollBars()
+{
+    if (_deferredCallsCancelled || !_owner)
+        return;
+    updateScrollBarPos();
 }
 
 void ScrollPane::updateScrollBarVisible()
@@ -1932,6 +1940,8 @@ void ScrollPane::_bind_methods()
     ClassDB::bind_method(D_METHOD("lockHeader", "size"), &ScrollPane::lockHeader);
     ClassDB::bind_method(D_METHOD("lockFooter", "size"), &ScrollPane::lockFooter);
     ClassDB::bind_method(D_METHOD("cancelDragging"), &ScrollPane::cancelDragging);
+    ClassDB::bind_method(D_METHOD("refresh"), &ScrollPane::refresh);
+    ClassDB::bind_method(D_METHOD("refreshScrollBars"), &ScrollPane::refreshScrollBars);
 }
 
 NS_FGUI_END

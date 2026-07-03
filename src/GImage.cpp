@@ -1,5 +1,6 @@
 #include "GImage.h"
 #include "PackageItem.h"
+#include "display/FUIContainer.h"
 #include "display/FUISprite.h"
 #include "utils/ByteBuffer.h"
 #include "utils/ToolSet.h"
@@ -16,9 +17,29 @@ GImage::~GImage()
 
 void GImage::handleInit()
 {
+    FUIInnerContainer* root = memnew(FUIInnerContainer);
     _content = FUISprite::create();
-    _displayObject = _content;
+    _content->set_offset(Vector2());
+    root->add_child(_content);
+    _displayObject = root;
+    applyPivotOffset();
+}
 
+void GImage::handleSizeChanged()
+{
+    GObject::handleSizeChanged();
+    if (_content)
+        _content->set_content_size(_size);
+    applyPivotOffset();
+}
+
+void GImage::applyPivotOffset()
+{
+    if (_content)
+    {
+        _content->set_offset(Vector2());
+        _content->set_position(computeContentPivotOffset());
+    }
 }
 
 FlipType GImage::getFlip() const

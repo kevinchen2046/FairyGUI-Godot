@@ -421,6 +421,10 @@ void GLoader::updateLayout()
                 _content->set_scale(Vector2(1, 1));
                 _content->set_position(Vector2());
             }
+            if (_content)
+                _content->setGrayed(_finalGrayed);
+            if (_content2 != nullptr)
+                _content2->setGrayed(_finalGrayed);
             return;
         }
     }
@@ -527,6 +531,11 @@ void GLoader::updateLayout()
 
         _content->set_position(Vector2(nx, ny));
     }
+
+    if (_content)
+        _content->setGrayed(_finalGrayed);
+    if (_content2 != nullptr)
+        _content2->setGrayed(_finalGrayed);
 }
 
 void GLoader::setErrorState()

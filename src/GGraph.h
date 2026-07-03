@@ -42,6 +42,7 @@ protected:
     virtual void handleInit() override;
     virtual void setup_beforeAdd(ByteBuffer* buffer, int beginPos) override;
     virtual void handleSizeChanged() override;
+    virtual void applyPivotOffset() override;
 
 private:
     void updateShape();

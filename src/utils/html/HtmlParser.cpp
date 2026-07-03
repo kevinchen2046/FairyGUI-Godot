@@ -15,7 +15,8 @@ using namespace std;
 #define strcasecmp _stricmp
 #endif
 
-Color HtmlParseOptions::defaultLinkColor(58.0f / 255.0f, 103.0f / 255.0f, 204.0f / 255.0f, 1.0f);
+// Alpha 0 = inherit surrounding text color (matches Unity HtmlParseOptions.DefaultLinkColor).
+Color HtmlParseOptions::defaultLinkColor(0, 0, 0, 0);
 bool HtmlParseOptions::defaultLinkUnderline = true;
 
 HtmlParseOptions::HtmlParseOptions()
@@ -149,7 +150,7 @@ void HtmlParser::startElement(void* /*ctx*/, const char *elementName, const char
 
         if (_parseOptions.linkUnderline)
             _format.underline = true;
-        if (!_format._hasColor)
+        if (!_format._hasColor && _parseOptions.linkColor.a > 0.0f)
             _format.color = _parseOptions.linkColor;
     }
     else if (strcasecmp(elementName, "p") == 0 || strcasecmp(elementName, "ui") == 0 || strcasecmp(elementName, "div") == 0
@@ -285,6 +286,7 @@ int HtmlParser::attributeInt(const Dictionary& valueMap, const std::string& key,
 void HtmlParser::parse(const std::string& source, const TextFormat& format, std::vector<HtmlElement*>& elements, const HtmlParseOptions& parseOptions)
 {
     _format = format;
+    _format._hasColor = false;
     _elements = &elements;
     _parseOptions = parseOptions;
     _ignoreWhiteSpace = false;

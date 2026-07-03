@@ -26,6 +26,7 @@ FUISprite::FUISprite() :
     _tileDisplaySize(0, 0),
     _grayed(false),
     _rotated(false),
+    _tintColor(1, 1, 1, 1),
     _scale9Enabled(false),
     _trimOffset()
 {
@@ -228,6 +229,8 @@ void FUISprite::setFlippedV(bool v)
     queue_redraw();
 }
 
+static const Color kDrawUnitModulate(1, 1, 1, 1);
+
 static void draw_texture_region_with_flip(CanvasItem* item, const Ref<Texture2D>& tex,
         const Rect2& dst, const Rect2& src, const Color& modulate, bool flipH, bool flipV)
 {
@@ -303,13 +306,30 @@ static void drawRotatedAtlasRegion(CanvasItem* item, const Ref<Texture2D>& tex,
     item->draw_set_transform(Vector2(), 0, Vector2(1, 1));
 }
 
+void FUISprite::setColor(const Color& c)
+{
+    _tintColor = Color(c.r, c.g, c.b, 1.0f);
+    applyTintColor();
+}
+
+void FUISprite::applyTintColor()
+{
+    Color c = _tintColor;
+    if (_grayed)
+    {
+        const float gray = c.r * 0.299f + c.g * 0.587f + c.b * 0.114f;
+        c = Color(gray, gray, gray, 1.0f);
+    }
+    set_modulate(c);
+}
+
 void FUISprite::setGrayed(bool value)
 {
+    if (_grayed == value)
+        return;
     _grayed = value;
-    if (_grayed)
-        set_modulate(Color(0.3f, 0.59f, 0.11f, get_modulate().a));
-    else
-        set_modulate(Color(1, 1, 1, get_modulate().a));
+    applyTintColor();
+    queue_redraw();
 }
 
 void FUISprite::setFillMethod(FillMethod value)
@@ -588,7 +608,7 @@ void FUISprite::_draw()
         // Fill mode: draw custom triangles
         if (_fillIndices.empty()) return;
 
-        Color color = get_modulate();
+        Color color = kDrawUnitModulate;
         std::vector<PackedVector2Array> polys;
         std::vector<Color> colors;
 
@@ -640,7 +660,7 @@ void FUISprite::_draw()
 
         const Vector2 dstPos = drawOrigin + Vector2(_trimOffset.x * sx, _trimOffset.y * sy);
         drawRotatedAtlasRegion(this, tex, texRect, drawOrigin, contentSize,
-            dstPos, logicalTrim.x, logicalTrim.y, sx, sy, get_modulate());
+            dstPos, logicalTrim.x, logicalTrim.y, sx, sy, kDrawUnitModulate);
     }
     else if (hasTrim)
     {
@@ -649,14 +669,14 @@ void FUISprite::_draw()
         draw_texture_region_with_flip(this, tex,
             Rect2(dstPos, dstSize),
             texRect,
-            get_modulate(), flipH, flipV);
+            kDrawUnitModulate, flipH, flipV);
     }
     else
     {
         draw_texture_region_with_flip(this, tex,
             Rect2(drawOrigin.x, drawOrigin.y, contentSize.x, contentSize.y),
             texRect,
-            get_modulate(), flipH, flipV);
+            kDrawUnitModulate, flipH, flipV);
     }
 }
 
@@ -694,7 +714,7 @@ void FUISprite::drawTile()
         return;
 
     const Vector2 topLeft = get_offset();
-    const Color modulate = get_modulate();
+    const Color drawModulate = kDrawUnitModulate;
     const bool flipH = is_flipped_h();
     const bool flipV = is_flipped_v();
     const float tw = tileSrc.size.x;
@@ -714,7 +734,7 @@ void FUISprite::drawTile()
             const float srcY = (flipV && rh < th) ? tileSrc.position.y + th - rh : tileSrc.position.y;
             const Rect2 src(srcX, srcY, rw, rh);
             draw_tile_region(this, _realTexture,
-                topLeft + Vector2(x, y), rw, rh, src, modulate, flipH, flipV);
+                topLeft + Vector2(x, y), rw, rh, src, drawModulate, flipH, flipV);
             x += tw;
         }
         y += th;
@@ -808,7 +828,7 @@ void FUISprite::drawScale9()
             Rect2 localDst(dy - center.y,
                            center.x - dx - dw,
                            dh, dw);
-            draw_texture_rect_region(tex, localDst, src, get_modulate());
+            draw_texture_rect_region(tex, localDst, src, kDrawUnitModulate);
         }
         draw_set_transform(Vector2(), 0, Vector2(1, 1));
         return;
@@ -826,7 +846,7 @@ void FUISprite::drawScale9()
                   destRects[i][2], destRects[i][3]);
         if (dst.size.x <= 0 || dst.size.y <= 0) continue;
 
-        draw_texture_region_with_flip(this, tex, dst, src, get_modulate(), flipH, flipV);
+        draw_texture_region_with_flip(this, tex, dst, src, kDrawUnitModulate, flipH, flipV);
     }
 }
 

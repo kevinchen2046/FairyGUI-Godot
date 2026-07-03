@@ -28,6 +28,7 @@ public:
 
 protected:
     virtual void constructExtension(ByteBuffer* buffer) override;
+    virtual void handleSizeChanged() override;
 
 private:
     void onTouchBegin(EventContext* context);
@@ -45,6 +46,7 @@ private:
 
     bool _vertical;
     float _scrollPerc;
+    float _displayPerc;
     bool _fixedGripSize;
 
     Vector2 _dragOffset;

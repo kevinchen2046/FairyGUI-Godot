@@ -160,6 +160,7 @@ FUIRichText::FUIRichText() :
     _textRectWidth(0),
     _numLines(0)
 {
+    item_rect_changed();
 }
 
 FUIRichText::~FUIRichText()
@@ -198,10 +199,25 @@ FUIRichText* FUIRichText::create()
     return memnew(FUIRichText);
 }
 
-void FUIRichText::_ready()
+void FUIRichText::_notification(int p_what)
 {
-    if (_dirty)
-        formatText();
+    if (p_what == NOTIFICATION_READY)
+    {
+        if (_dirty)
+            formatText();
+        return;
+    }
+    if (p_what == NOTIFICATION_ENTER_TREE)
+    {
+        for (int i = 0; i < get_child_count(); i++)
+        {
+            if (CanvasItem* ci = Object::cast_to<CanvasItem>(get_child(i)))
+                ci->queue_redraw();
+        }
+        queue_redraw();
+        return;
+    }
+    Node2D::_notification(p_what);
 }
 
 Vector2 FUIRichText::get_content_size() const
@@ -235,6 +251,7 @@ void FUIRichText::setDimensions(float width, float height)
         _dirty = true;
     _dimensionsX = width;
     _dimensionsY = height;
+    updateClipping();
 }
 
 void FUIRichText::setOverflow(int overflow)
@@ -243,6 +260,7 @@ void FUIRichText::setOverflow(int overflow)
     {
         _overflow = overflow;
         _dirty = true;
+        updateClipping();
     }
 }
 
@@ -568,6 +586,10 @@ void FUIRichText::formarRenderers()
             }
             if (node->get_parent() != this)
                 add_child(node);
+            if (FUILabel* label = Object::cast_to<FUILabel>(node))
+                label->queue_redraw();
+            else if (CanvasItem* ci = Object::cast_to<CanvasItem>(node))
+                ci->queue_redraw();
         }
 
         rowY += lineHeight;
@@ -621,6 +643,15 @@ void FUIRichText::formarRenderers()
     }
 
     _renderers.clear();
+    updateClipping();
+    queue_redraw();
+}
+
+void FUIRichText::updateClipping()
+{
+    // Cocos FUIRichText does not clip children. CLIP_CHILDREN_AND_DRAW on Node2D
+    // hides all FUILabel segments (see ScrollPane MaskContainer comment).
+    set_clip_children_mode(CanvasItem::CLIP_CHILDREN_DISABLED);
 }
 
 void FUIRichText::doHorizontalAlignment(const std::vector<Node*>& row, float rowWidth)

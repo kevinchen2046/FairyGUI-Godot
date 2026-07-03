@@ -1,4 +1,5 @@
 #include "GGraph.h"
+#include "display/FUIContainer.h"
 #include "utils/ByteBuffer.h"
 #include "utils/ToolSet.h"
 
@@ -34,7 +35,7 @@ static PackedVector2Array to_pva(const std::vector<Vector2>& v) {
 // Stores draw commands and replays them in _draw()
 
 struct Cmd {
-    enum Type { RECT, CIRCLE, POLYGON };
+    enum Type { FILLED_RECT, RECT, CIRCLE, POLYGON };
     Type type;
     std::vector<Vector2> pts;
     Color fillColor;
@@ -55,6 +56,15 @@ class DrawNode : public Node2D {
         void clear() {
             _cmds.clear();
             _outlinePts.clear();
+            queue_redraw();
+        }
+
+        void drawFilledRect(float x, float y, float width, float height, const Color& color) {
+            Cmd c;
+            c.type = Cmd::FILLED_RECT;
+            c.pts = { Vector2(x, y), Vector2(width, height) };
+            c.fillColor = color;
+            _cmds.push_back(c);
             queue_redraw();
         }
 
@@ -116,6 +126,10 @@ class DrawNode : public Node2D {
         void _draw() {
             for (auto& cmd : _cmds) {
                 switch (cmd.type) {
+                case Cmd::FILLED_RECT:
+                    if (cmd.pts.size() == 2)
+                        draw_rect(Rect2(cmd.pts[0], cmd.pts[1]), cmd.fillColor, true);
+                    break;
                 case Cmd::RECT:
                     if (cmd.pts.size() == 3) {
                         draw_colored_polygon(to_pva(cmd.pts), cmd.color);
@@ -134,17 +148,22 @@ class DrawNode : public Node2D {
                     Vector2 center = cmd.pts[0];
                     float scaleY = cmd.borderColor.g;
                     float radius = cmd.borderWidth;
-                    std::vector<Vector2> pts;
-                    int segments = 64;
-                    for (int i = 0; i <= segments; i++) {
-                        float angle = 2.0f * (float)M_PI * i / segments;
-                        pts.push_back(Vector2(center.x + radius * cos(angle), center.y + radius * sin(angle) * scaleY));
+                    if (cmd.fillColor.a > 0.0f && radius > 0.0f)
+                    {
+                        draw_set_transform(center, 0.0f, Vector2(radius, radius * scaleY));
+                        draw_circle(Vector2(), 1.0f, cmd.fillColor);
+                        draw_set_transform(Vector2(), 0.0f, Vector2(1.0f, 1.0f));
                     }
-                    draw_colored_polygon(to_pva(pts), cmd.fillColor);
                     break;
                 }
                 case Cmd::POLYGON:
                     draw_colored_polygon(to_pva(cmd.pts), cmd.fillColor);
+                    if (cmd.borderWidth > 0 && cmd.pts.size() >= 2)
+                    {
+                        for (size_t i = 1; i < cmd.pts.size(); ++i)
+                            draw_line(cmd.pts[i - 1], cmd.pts[i], cmd.borderColor, cmd.borderWidth * 2.0f);
+                        draw_line(cmd.pts.back(), cmd.pts.front(), cmd.borderColor, cmd.borderWidth * 2.0f);
+                    }
                     break;
                 }
             }
@@ -163,10 +182,7 @@ class DrawNode : public Node2D {
 
 static void drawVertRect(DrawNode* shape, float x, float y, float width, float height, const Color& color)
 {
-    float mx = x + width;
-    float my = y + height;
-    shape->drawTriangle(Vector2(x, y), Vector2(mx, y), Vector2(x, my), color);
-    shape->drawTriangle(Vector2(mx, y), Vector2(mx, my), Vector2(x, my), color);
+    shape->drawFilledRect(x, y, width, height, color);
 }
 
 static void appendArc(std::vector<Vector2>& pts, const Vector2& center, float radius, float startRad, float endRad, int segments)
@@ -228,9 +244,11 @@ GGraph::~GGraph()
 
 void GGraph::handleInit()
 {
+    FUIInnerContainer* root = memnew(FUIInnerContainer);
     _shape = DrawNode::create();
-    _displayObject = _shape;
-
+    root->add_child(_shape);
+    _displayObject = root;
+    applyPivotOffset();
 }
 
 void GGraph::drawRect(float aWidth, float aHeight, int lineSize, const Color& lineColor, const Color& fillColor)
@@ -266,9 +284,14 @@ void GGraph::drawPolygon(int lineSize, const Color& lineColor, const Color& fill
     else
         _polygonPoints->clear();
     _polygonBaseWidth = getWidth();
-    _polygonPointOffset = getHeight();
+    float h = getHeight();
+    _polygonPointOffset = h;
     for (int i = 0; i < count; i++)
-        _polygonPoints->push_back(points[i]);
+    {
+        Vector2 pt = points[i];
+        pt.y = h - pt.y;
+        _polygonPoints->push_back(pt);
+    }
     updateShape();
 }
 
@@ -316,6 +339,8 @@ void GGraph::updateShape()
 
         if (_lineSize > 0)
         {
+            float innerW = _size.width - _lineSize * 2;
+            float innerH = _size.height - _lineSize * 2;
             float wl = _size.width - _lineSize;
             float hl = _size.height - _lineSize;
             if (hasRadius)
@@ -324,7 +349,7 @@ void GGraph::updateShape()
                 float innerRadii[4];
                 for (int i = 0; i < 4; i++)
                     innerRadii[i] = std::max(0.0f, _cornerRadius[i] - _lineSize);
-                drawRoundedFill(_shape, _lineSize, _lineSize, wl, hl, innerRadii, _fillColor);
+                drawRoundedFill(_shape, _lineSize, _lineSize, innerW, innerH, innerRadii, _fillColor);
             }
             else
             {
@@ -332,7 +357,7 @@ void GGraph::updateShape()
                 drawVertRect(_shape, wl, 0, _lineSize, hl, _lineColor);
                 drawVertRect(_shape, _lineSize, hl, wl, _lineSize, _lineColor);
                 drawVertRect(_shape, 0, _lineSize, _lineSize, hl, _lineColor);
-                drawVertRect(_shape, _lineSize, _lineSize, wl, hl, _fillColor);
+                drawVertRect(_shape, _lineSize, _lineSize, innerW, innerH, _fillColor);
             }
         }
         else if (hasRadius)
@@ -377,8 +402,9 @@ void GGraph::updateShape()
             else
                 dist = 1;
 
-            float xv = radius + radius * dist * cos(angle);
-            float yv = radius + radius * dist * sin(angle);
+            // Match FairyGUI editor (Y-down): same as Cocos with y flipped from Y-up.
+            float xv = radius + radius * dist * Math::cos(angle);
+            float yv = (h - radius) - radius * dist * Math::sin(angle);
             _polygonPoints->push_back(Vector2(xv, yv));
 
             angle += deltaAngle;
@@ -389,6 +415,7 @@ void GGraph::updateShape()
         break;
     }
     }
+    _shape->queue_redraw();
 }
 
 Color GGraph::getColor() const
@@ -470,24 +497,30 @@ void GGraph::handleSizeChanged()
 {
     GObject::handleSizeChanged();
 
-    if ((_type == 3 || _type == 4) && _polygonPoints != nullptr && _polygonBaseWidth > 0 && _polygonPointOffset > 0)
+    if (_type == 3 || _type == 4)
     {
-        float ratioX = getWidth() / _polygonBaseWidth;
-        float ratioY = getHeight() / _polygonPointOffset;
-        if (ratioX != 1.0f || ratioY != 1.0f)
+        float h = getHeight();
+        if (_polygonPoints != nullptr)
         {
-            for (size_t i = 0; i < _polygonPoints->size(); i++)
+            int count = (int)_polygonPoints->size();
+            for (int i = 0; i < count; i++)
             {
-                (*_polygonPoints)[i].x *= ratioX;
-                (*_polygonPoints)[i].y *= ratioY;
+                Vector2 pt = (*_polygonPoints)[i];
+                pt.y = h - (_polygonPointOffset - pt.y);
+                (*_polygonPoints)[i] = pt;
             }
-            _polygonBaseWidth = getWidth();
-            _polygonPointOffset = getHeight();
         }
+        _polygonPointOffset = h;
     }
 
     if (_type != 0)
         updateShape();
+}
+
+void GGraph::applyPivotOffset()
+{
+    if (_shape)
+        _shape->set_position(computeContentPivotOffset());
 }
 
 void GGraph::setup_beforeAdd(ByteBuffer* buffer, int beginPos)
@@ -513,12 +546,12 @@ void GGraph::setup_beforeAdd(ByteBuffer* buffer, int beginPos)
         {
             int cnt = buffer->readShort() / 2;
             _polygonPoints = new std::vector<Vector2>(cnt);
-            _polygonBaseWidth = getWidth();
-            _polygonPointOffset = getHeight();
+            float h = getHeight();
+            _polygonPointOffset = h;
             for (int i = 0; i < cnt; i++)
             {
                 float f1 = buffer->readFloat();
-                float f2 = buffer->readFloat();
+                float f2 = h - buffer->readFloat();
                 (*_polygonPoints)[i] = Vector2(f1, f2);
             }
         }
@@ -537,6 +570,7 @@ void GGraph::setup_beforeAdd(ByteBuffer* buffer, int beginPos)
 
         updateShape();
     }
+    applyPivotOffset();
 }
 
 void GGraph::_bind_methods()

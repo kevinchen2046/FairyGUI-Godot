@@ -4,6 +4,7 @@
 #include "FairyGUIMacros.h"
 #include "GObject.h"
 #include "display/FUILabel.h"
+#include "display/FUIRichText.h"
 #include "godot_types.h"
 
 NS_FGUI_BEGIN
@@ -85,6 +86,7 @@ public:
     static void _bind_methods();
 
     virtual void setAutoSize(AutoSizeType value) override;
+    virtual void setUBBEnabled(bool value) override;
 
     virtual bool isSingleLine() const override { return _label ? !_label->isWrapEnabled() : false; }
     virtual void setSingleLine(bool value) override;
@@ -101,7 +103,12 @@ protected:
     virtual void updateSize() override;
 
 private:
+    void syncRichTextSettings();
+    void updateDisplayMode();
+    void configureRichTextAutoSize(AutoSizeType value);
+
     FUILabel* _label;
+    FUIRichText* _richText;
     bool _updatingSize;
 };
 

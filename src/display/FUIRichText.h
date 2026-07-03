@@ -50,9 +50,9 @@ public:
     void setAnchorFontColor(const Color& color);
 
     static void _bind_methods();
-    void _ready();
 
 protected:
+    void _notification(int p_what);
 
 private:
     void formatText();
@@ -62,6 +62,7 @@ private:
     void addNewLine();
     int findSplitPositionForWord(Node* label, const std::string& text);
     void doHorizontalAlignment(const std::vector<Node*>& row, float rowWidth);
+    void updateClipping();
 
     std::vector<HtmlElement*> _elements;
     std::vector<HtmlObject*> _objects;

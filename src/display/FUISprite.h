@@ -28,8 +28,8 @@ public:
     bool isFlippedH() const { return is_flipped_h(); }
     void setFlippedV(bool v);
     bool isFlippedV() const { return is_flipped_v(); }
-    Color getColor() const { return get_modulate(); }
-    void setColor(const Color& c) { set_modulate(c); }
+    Color getColor() const { return _tintColor; }
+    void setColor(const Color& c);
     void setRegion(const Rect2& r) { set_region_rect(r); }
     Rect2 getRegion() const { return get_region_rect(); }
     void setImageFrameInfo(const Vector2& originalSize, const Vector2& trimOffset);
@@ -72,6 +72,7 @@ protected:
     void _notification(int p_what);
 
 private:
+    void applyTintColor();
     void setupFill();
     void drawFillHorizontal();
     void drawFillVertical();
@@ -88,6 +89,7 @@ private:
     bool _scaleByTile;
     bool _grayed;
     bool _rotated;
+    Color _tintColor;
 
     // Store real texture while keeping Sprite2D::texture null to suppress auto-render
     Ref<Texture2D> _realTexture;

@@ -12,6 +12,7 @@ GScrollBar::GScrollBar()
       _target(nullptr),
       _vertical(false),
       _scrollPerc(0),
+      _displayPerc(0),
       _fixedGripSize(false),
       _gripDragging(false)
 {
@@ -29,25 +30,42 @@ void GScrollBar::setScrollPane(ScrollPane* target, bool vertical)
 
 void GScrollBar::setDisplayPerc(float value)
 {
+    _displayPerc = value;
+    if (_grip == nullptr || _bar == nullptr)
+        return;
+
     if (_vertical)
     {
+        float barHeight = _bar->getHeight();
         if (!_fixedGripSize)
-            _grip->setHeight(floor(value * _bar->getHeight()));
-        _grip->setY(round(_bar->getY() + (_bar->getHeight() - _grip->getHeight()) * _scrollPerc));
+            _grip->setHeight(floor(value * barHeight));
+        _grip->setY(round(_bar->getY() + (barHeight - _grip->getHeight()) * _scrollPerc));
     }
     else
     {
+        float barWidth = _bar->getWidth();
         if (!_fixedGripSize)
-            _grip->setWidth(floor(value * _bar->getWidth()));
-        _grip->setX(round(_bar->getX() + (_bar->getWidth() - _grip->getWidth()) * _scrollPerc));
+            _grip->setWidth(floor(value * barWidth));
+        _grip->setX(round(_bar->getX() + (barWidth - _grip->getWidth()) * _scrollPerc));
     }
 
     _grip->setVisible(value != 0 && value != 1);
 }
 
+void GScrollBar::handleSizeChanged()
+{
+    GComponent::handleSizeChanged();
+    if (_grip == nullptr || _bar == nullptr)
+        return;
+    setDisplayPerc(_displayPerc);
+    setScrollPerc(_scrollPerc);
+}
+
 void GScrollBar::setScrollPerc(float value)
 {
     _scrollPerc = value;
+    if (_grip == nullptr || _bar == nullptr)
+        return;
     if (_vertical)
         _grip->setY(round(_bar->getY() + (_bar->getHeight() - _grip->getHeight()) * _scrollPerc));
     else

@@ -328,6 +328,21 @@ void GButton::setup_afterAdd(ByteBuffer* buffer, int beginPos)
         _soundVolumeScale = buffer->readFloat();
 
     setSelected(buffer->readBool());
+    setCurrentState();
+    if (_grayed || _finalGrayed)
+        handleGrayedChanged();
+}
+
+void GButton::handleGrayedChanged()
+{
+    GComponent::handleGrayedChanged();
+    setCurrentState();
+    // setCurrentState may switch controller pages / reload loader content; re-apply gray.
+    if (_finalGrayed && getController("grayed") == nullptr)
+    {
+        for (auto& child : _children)
+            child->setGrayed(child->isGrayed());
+    }
 }
 
 void GButton::handleControllerChanged(GController* c)

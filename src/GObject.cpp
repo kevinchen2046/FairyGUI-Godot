@@ -539,16 +539,8 @@ std::string GObject::getResourceURL() const
 Vector2 GObject::localToGlobal(const Vector2& pt)
 {
     Vector2 pt2 = pt;
-    if (_pivotAsAnchor)
-    {
-        pt2.x += _size.width * _pivot.x;
-        pt2.y += _size.height * _pivot.y;
-    }
-    else if (_pivot.x != 0.0f || _pivot.y != 0.0f)
-    {
+    if (_pivot.x != 0.0f || _pivot.y != 0.0f)
         pt2 += computeContentPivotOffset();
-    }
-    // FairyGUI + Godot both Y-down: no Y flip (Cocos had: pt2.y = _size.height - pt2.y)
     pt2 = ((CanvasItem*)_displayObject)->get_global_transform_with_canvas().xform(pt2);
     return GRoot::getInstance()->worldToRoot(pt2);
 }
@@ -574,12 +566,6 @@ Vector2 GObject::globalToLocal(const Vector2& pt)
 
 Vector2 GObject::displayLocalToLogical(const Vector2& displayLocal) const
 {
-    if (_pivotAsAnchor)
-    {
-        return Vector2(
-                displayLocal.x - _size.width * _pivot.x,
-                displayLocal.y - _size.height * _pivot.y);
-    }
     if (_pivot.x != 0.0f || _pivot.y != 0.0f)
         return displayLocal - computeContentPivotOffset();
     return displayLocal;
@@ -944,37 +930,27 @@ void GObject::rebuildSkewedTransform()
     const Vector2 scale = computeDisplayScale();
     const Vector2 origin = computeDisplayPosition();
 
-    float m0, m1, m2, m3;
-    if (_skewX == _skewY)
+    Transform2D xf;
+    if (_skewX != 0.0f || _skewY != 0.0f)
     {
-        const float deg = (_skewX != 0.0f || _skewY != 0.0f) ? _skewX : _rotation;
-        const float rad = Math::deg_to_rad(deg);
-        const float cz = Math::cos(rad);
-        const float sz = Math::sin(rad);
-        m0 = cz;
-        m1 = sz;
-        m2 = -sz;
-        m3 = cz;
+        // Godot Y-down: use FairyGUI skew values directly (Cocos negated for Y-up).
+        const float radiansX = Math::deg_to_rad(_skewX);
+        const float radiansY = Math::deg_to_rad(_skewY);
+        xf.columns[0][0] = Math::cos(radiansY) * scale.x;
+        xf.columns[0][1] = Math::sin(radiansY) * scale.x;
+        xf.columns[1][0] = -Math::sin(radiansX) * scale.y;
+        xf.columns[1][1] = Math::cos(radiansX) * scale.y;
+        if (_rotation != 0.0f)
+        {
+            Transform2D rot(Math::deg_to_rad(_rotation), Vector2());
+            xf = rot * xf;
+        }
     }
     else
     {
-        const float radiansX = -Math::deg_to_rad(_skewX);
-        const float radiansY = -Math::deg_to_rad(_skewY);
-        const float cx = Math::cos(radiansX);
-        const float sx = Math::sin(radiansX);
-        const float cy = Math::cos(radiansY);
-        const float sy = Math::sin(radiansY);
-        m0 = cy;
-        m1 = sy;
-        m2 = -sx;
-        m3 = cx;
+        xf.set_rotation(Math::deg_to_rad(_rotation));
+        xf.set_scale(scale);
     }
-
-    Transform2D xf;
-    xf.columns[0][0] = m0 * scale.x;
-    xf.columns[0][1] = m1 * scale.x;
-    xf.columns[1][0] = m2 * scale.y;
-    xf.columns[1][1] = m3 * scale.y;
     xf.set_origin(origin);
 
     if (Control* ctrl = Object::cast_to<Control>(_displayObject))

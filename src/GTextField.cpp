@@ -1,6 +1,9 @@
 #include "GTextField.h"
 #include "utils/ByteBuffer.h"
 #include "utils/ToolSet.h"
+#include "utils/UBBParser.h"
+#include "display/FUIContainer.h"
+#include "display/FUILabel.h"
 
 NS_FGUI_BEGIN
 GTextField::GTextField()
@@ -83,12 +86,12 @@ void GTextField::setTemplateVars(std::unordered_map<std::string, Variant>* value
     flushVars();
 }
 
-GTextField* GTextField::setVar(const std::string& name, const Variant& value)
+GTextField* GTextField::setVar(const std::string& varName, const Variant& value)
 {
     if (_templateVars == nullptr)
         _templateVars = new std::unordered_map<std::string, Variant>();
 
-    (*_templateVars)[name] = value;
+    (*_templateVars)[varName] = value;
 
     return this;
 }
@@ -264,6 +267,7 @@ std::string GTextField::parseTemplate(const char* text)
 //---------------------------
 
 GBasicTextField::GBasicTextField() : _label(nullptr),
+                                     _richText(nullptr),
                                      _updatingSize(false)
 {
     _touchDisabled = true;
@@ -275,14 +279,76 @@ GBasicTextField::~GBasicTextField()
 
 void GBasicTextField::handleInit()
 {
+    FUIContainer* container = FUIContainer::create();
     _label = FUILabel::create();
+    _richText = FUIRichText::create();
     _label->setWrapEnabled(true);
-    _displayObject = _label;
+    container->add_child(_label);
+    container->add_child(_richText);
+    _richText->set_visible(false);
+    _displayObject = container;
+}
+
+void GBasicTextField::syncRichTextSettings()
+{
+    if (!_richText || !_label)
+        return;
+
+    _richText->getTextFormat()->setFormat(*_label->getTextFormat());
+    configureRichTextAutoSize(_autoSize);
+    _richText->setDimensions(_size.width, _size.height);
+}
+
+void GBasicTextField::updateDisplayMode()
+{
+    if (!_label || !_richText)
+        return;
+
+    _label->set_visible(!_ubbEnabled);
+    _richText->set_visible(_ubbEnabled);
+}
+
+void GBasicTextField::configureRichTextAutoSize(AutoSizeType value)
+{
+    if (!_richText)
+        return;
+
+    switch (value)
+    {
+    case AutoSizeType::NONE:
+        _richText->setOverflow(1);
+        break;
+    case AutoSizeType::BOTH:
+        _richText->setOverflow(0);
+        break;
+    case AutoSizeType::HEIGHT:
+        _richText->setOverflow(3);
+        break;
+    case AutoSizeType::SHRINK:
+        _richText->setOverflow(2);
+        break;
+    }
+}
+
+void GBasicTextField::setUBBEnabled(bool value)
+{
+    if (_ubbEnabled != value)
+    {
+        _ubbEnabled = value;
+        updateDisplayMode();
+        setTextFieldText();
+        updateSize();
+    }
 }
 
 void GBasicTextField::applyTextFormat()
 {
     _label->applyTextFormat();
+    if (_ubbEnabled)
+    {
+        syncRichTextSettings();
+        _richText->applyTextFormat();
+    }
     updateGear(4);
     if (!_underConstruct)
         updateSize();
@@ -297,6 +363,10 @@ void GBasicTextField::setAutoSize(AutoSizeType value)
         _label->setWrapEnabled(!isSingleLine() && value != AutoSizeType::BOTH);
         _label->_contentSize = Vector2(_size.width, _size.height);
     }
+
+    configureRichTextAutoSize(value);
+    if (_richText)
+        _richText->setDimensions(_size.width, _size.height);
 
     if (!_underConstruct)
         updateSize();
@@ -314,7 +384,28 @@ void GBasicTextField::setSingleLine(bool value)
 
 void GBasicTextField::setTextFieldText()
 {
-    if (_templateVars != nullptr)
+    updateDisplayMode();
+
+    if (_ubbEnabled)
+    {
+        std::string text = _text;
+        if (isSingleLine())
+        {
+            for (char& c : text)
+            {
+                if (c == '\n' || c == '\r')
+                    c = ' ';
+            }
+        }
+
+        std::string parsedText = UBBParser::getInstance()->parse(text.c_str());
+        if (_templateVars != nullptr)
+            parsedText = parseTemplate(parsedText.c_str());
+
+        syncRichTextSettings();
+        _richText->setText(parsedText);
+    }
+    else if (_templateVars != nullptr)
         _label->setText(parseTemplate(_text.c_str()));
     else
         _label->setText(_text);
@@ -327,7 +418,7 @@ void GBasicTextField::updateSize()
 
     _updatingSize = true;
 
-    Vector2 sz = _label->getTextSize();
+    Vector2 sz = _ubbEnabled ? _richText->get_content_size() : _label->getTextSize();
     if (_autoSize == AutoSizeType::BOTH)
         setSize(sz.x, sz.y);
     else if (_autoSize == AutoSizeType::HEIGHT)
@@ -342,8 +433,10 @@ void GBasicTextField::handleSizeChanged()
         return;
 
     _label->_contentSize = Vector2(_size.width, _size.height);
+    if (_richText)
+        _richText->setDimensions(_size.width, _size.height);
 
-    if (_autoSize == AutoSizeType::SHRINK && !_text.empty() && _size.width > 0 && _size.height > 0)
+    if (!_ubbEnabled && _autoSize == AutoSizeType::SHRINK && !_text.empty() && _size.width > 0 && _size.height > 0)
     {
         int fontSize = (int)getTextFormat()->fontSize;
         while (fontSize > 1)
@@ -367,7 +460,10 @@ void GBasicTextField::handleSizeChanged()
         if (_autoSize == AutoSizeType::HEIGHT)
         {
             if (!_text.empty())
-                setSizeDirectly(_size.width, _label->getTextSize().y);
+            {
+                float height = _ubbEnabled ? _richText->get_content_size().y : _label->getTextSize().y;
+                setSizeDirectly(_size.width, height);
+            }
         }
     }
 }
@@ -377,6 +473,14 @@ void GBasicTextField::handleGrayedChanged()
     GObject::handleGrayedChanged();
 
     _label->setGrayed(_finalGrayed);
+    if (_richText)
+    {
+        for (int i = 0; i < _richText->get_child_count(); i++)
+        {
+            if (FUILabel* label = Object::cast_to<FUILabel>(_richText->get_child(i)))
+                label->setGrayed(_finalGrayed);
+        }
+    }
 }
 
 void GBasicTextField::_bind_methods()

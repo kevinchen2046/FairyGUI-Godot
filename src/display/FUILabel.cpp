@@ -380,8 +380,8 @@ void FUILabel::_draw()
         fui_draw_text(this, font, offset, godotText, fontSize, glowColor, wrap, maxWidth, _textFormat->align, false, 0);
     }
 
-    // Main text
-    fui_draw_text(this, font, offset, godotText, fontSize, textColor, wrap, maxWidth, _textFormat->align, false, 0);
+    // Main text — color comes from node modulate (see applyTextFormat).
+    fui_draw_text(this, font, offset, godotText, fontSize, Color(1, 1, 1, 1), wrap, maxWidth, _textFormat->align, false, 0);
 
     // Underline
     if (_textFormat->underline)
