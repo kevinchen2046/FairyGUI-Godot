@@ -13,7 +13,6 @@ GWindow::GWindow() :
     _requestingCmd(0),
     _frame(nullptr),
     _contentPane(nullptr),
-    _modalWaitPane(nullptr),
     _closeButton(nullptr),
     _dragArea(nullptr),
     _contentArea(nullptr),
@@ -368,21 +367,23 @@ void GWindow::showModalWait(int requestingCmd)
 
     if (!UIConfig::windowModalWaiting.empty())
     {
-        if (_modalWaitPane == nullptr)
-        {
-            _modalWaitPane = UIPackage::createObjectFromURL(UIConfig::windowModalWaiting).ptr();
-            _modalWaitPane;
-        }
+        if (!_modalWaitPane.is_valid())
+            _modalWaitPane = UIPackage::createObjectFromURL(UIConfig::windowModalWaiting);
+
+        if (!_modalWaitPane.is_valid())
+            return;
 
         layoutModalWaitPane();
-
-        addChild(Ref<GObject>(_modalWaitPane));
+        addChild(_modalWaitPane);
     }
 }
 
 void GWindow::layoutModalWaitPane()
 {
-    if (_contentArea != nullptr)
+    if (!_modalWaitPane.is_valid())
+        return;
+
+    if (_contentArea != nullptr && _frame != nullptr)
     {
         Vector2 pt = _frame->localToGlobal(Vector2());
         pt = globalToLocal(pt);
@@ -402,8 +403,8 @@ bool GWindow::closeModalWait(int requestingCmd)
     }
     _requestingCmd = 0;
 
-    if (_modalWaitPane != nullptr && _modalWaitPane->getParent() != nullptr)
-        removeChild(_modalWaitPane);
+    if (_modalWaitPane.is_valid() && _modalWaitPane->getParent() != nullptr)
+        removeChild(_modalWaitPane.ptr());
 
     return true;
 }

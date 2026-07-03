@@ -70,7 +70,7 @@ public:
     GObject* getContentArea() const { return _contentArea; }
     void setContentArea(GObject* value) { _contentArea = value; }
 
-    GObject* getModalWaitingPane() const { return _modalWaitPane; }
+    GObject* getModalWaitingPane() const { return _modalWaitPane.is_valid() ? _modalWaitPane.ptr() : nullptr; }
 
     // GDScript virtual method hooks (Callable)
     void setOnInitCallback(const Callable& cb) { _onInitCallback = cb; }
@@ -122,7 +122,7 @@ private:
 
     int _requestingCmd;
     GComponent* _frame;
-    GObject* _modalWaitPane;
+    Ref<GObject> _modalWaitPane;
     GObject* _closeButton;
     GObject* _dragArea;
     GObject* _contentArea;
