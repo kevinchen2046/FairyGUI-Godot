@@ -16,7 +16,7 @@ export default class GuideScene extends DemoSceneBase {
         this._guideLayer = UIPackage.createObject("Guide", "GuideLayer");
         if (this._guideLayer != null) {
             this._guideLayer.makeFullScreen();
-            this._guideLayer.addRelation(this._groot!, GuiObject.RIGHT_RIGHT, false);
+            this._guideLayer.addRelation(this._groot!, FguiRelationType.RightRight, false);
         }
 
         this._bagBtn = this._view.getChild("bagBtn");

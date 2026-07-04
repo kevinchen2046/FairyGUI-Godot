@@ -87,6 +87,9 @@ FairyGUI 类在 GodotJS 运行时挂在 `godot` 模块上，不会自动成为 J
 **GodotJS 与 GDScript 差异（常见）：**
 
 - `UIConfigHelper` 的配置项用**属性**（`ui.defaultFont = "..."`），不用 `setDefaultFont()`（GodotJS 对 `ADD_PROPERTY` 隐藏 setter 方法）。
+- 同理 `GuiObject.group`（勿用 `getGroup()`）、`GuiObject.icon`（优先用 `icon` 属性）等带 `ADD_PROPERTY` 的字段。
+- **RelationType**：Demo 优先用全局 `FguiRelationType.RightRight` 等常量（不依赖 GodotJS 枚举加载时机）；也可写 `GuiObject.RelationType.RightRight` 或经 `fgui-globals` 延迟别名后的 `GuiObject.RIGHT_RIGHT`。
+- **GGroup 名称**：用 `fguiGroupName(obj)` 代替 `obj.group?.getName()`（GodotJS 上 `group` 属性返回的对象可能缺少 `getName` 方法）。
 - FairyGUI 基类在 ClassDB 中注册为 **`GuiObject`**（C++ 内部仍可用 `GObject` 别名），避免与 GodotJS 引擎 `Object` 的 JS 名 `GObject` 冲突。
 - 若 `GComponent.addChild` 报 `not a function`：多为上述命名冲突导致继承链错误；重编含 `GuiObject` 的 FairyGUI 后应恢复正常。
 

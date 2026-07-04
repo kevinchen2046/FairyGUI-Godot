@@ -33,7 +33,10 @@ export default class MainMenu extends DemoSceneBase {
                 Callable.create(() => {
                     this._cleanupGrootOverlays();
                     this._groot!.removeChildren();
-                    this.getTree()?.changeSceneToFile(scenePath);
+                    (this.getTree() as unknown as { callDeferred(method: string, scenePath: string): void }).callDeferred(
+                        "change_scene_to_file",
+                        scenePath,
+                    );
                 }),
             );
         }

@@ -15,6 +15,7 @@ export class DemoSceneBase extends Node {
             (this as unknown as { callDeferred(method: string): void }).callDeferred("_delayedInit");
         } else {
             this._groot = GRoot.getInstance();
+            this._prepareGrootForScene();
             void this.ContinueInit();
             this._addCloseButton();
         }
@@ -25,6 +26,20 @@ export class DemoSceneBase extends Node {
         this._groot = GRoot.getInstance();
         void this.ContinueInit();
         this._addCloseButton();
+    }
+
+    protected _prepareGrootForScene(): void {
+        if (this._groot == null) {
+            return;
+        }
+        if (DragDropManagerHelper.getInstance().isDragging()) {
+            DragDropManagerHelper.getInstance().cancel();
+        }
+        this._groot.hideTooltips();
+        this._groot.hidePopup();
+        this._groot.closeModalWait();
+        this._groot.closeAllWindows();
+        this._groot.removeChildren();
     }
 
     protected _registerDefaultFonts(): void {
@@ -60,8 +75,8 @@ export class DemoSceneBase extends Node {
             this._groot.getWidth() - closeBtn.getWidth() - 10,
             this._groot.getHeight() - closeBtn.getHeight() - 10,
         );
-        closeBtn.addRelation(this._groot, GuiObject.RIGHT_RIGHT, false);
-        closeBtn.addRelation(this._groot, GuiObject.BOTTOM_BOTTOM, false);
+        closeBtn.addRelation(this._groot, FguiRelationType.RightRight, false);
+        closeBtn.addRelation(this._groot, FguiRelationType.BottomBottom, false);
         closeBtn.setSortingOrder(100000);
         closeBtn.addClickListener(Callable.create(this._onClose.bind(this)));
         this._groot.addChild(closeBtn);
@@ -103,6 +118,6 @@ export class DemoSceneBase extends Node {
         if (this._groot != null) {
             this._groot.removeChildren();
         }
-        this.getTree()?.changeSceneToFile(this.mainMenuScenePath);
+        this.getTree()?.callDeferred("change_scene_to_file", this.mainMenuScenePath);
     }
 }

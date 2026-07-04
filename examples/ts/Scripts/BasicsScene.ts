@@ -41,7 +41,7 @@ export default class BasicsScene extends DemoSceneBase {
         const cnt = this._view.numChildren();
         for (let i = 0; i < cnt; i++) {
             const obj = this._view.getChildAt(i);
-            if (obj != null && obj.getGroup()?.getName() === "btns") {
+            if (obj != null && fguiGroupName(obj) === "btns") {
                 obj.addClickListener(Callable.create(this._runDemo.bind(this)));
             }
         }

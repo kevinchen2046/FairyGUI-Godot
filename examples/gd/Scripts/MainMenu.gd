@@ -28,7 +28,7 @@ func _nav_btn(child_name: String, scene_path: String) -> void:
 		btn.addClickListener(func():
 			_cleanup_groot_overlays()
 			_groot.removeChildren()
-			get_tree().change_scene_to_file(scene_path)
+			get_tree().call_deferred("change_scene_to_file", scene_path)
 		)
 
 func _on_close() -> void:

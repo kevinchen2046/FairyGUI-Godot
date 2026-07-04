@@ -10,6 +10,29 @@ declare global {
     function randi(): number;
     function randf(): number;
 
+    /** RelationType 数值常量（与 C++ RelationItem.h 一致，Demo 优先使用）。 */
+    const FguiRelationType: {
+        readonly LeftLeft: 0;
+        readonly LeftCenter: 1;
+        readonly LeftRight: 2;
+        readonly CenterCenter: 3;
+        readonly RightLeft: 4;
+        readonly RightCenter: 5;
+        readonly RightRight: 6;
+        readonly TopTop: 7;
+        readonly TopMiddle: 8;
+        readonly TopBottom: 9;
+        readonly MiddleMiddle: 10;
+        readonly BottomTop: 11;
+        readonly BottomMiddle: 12;
+        readonly BottomBottom: 13;
+        readonly Width: 14;
+        readonly Height: 15;
+    };
+
+    /** 读取 GObject 所属 GGroup 名称（兼容 group 属性 / getGroup()）。 */
+    function fguiGroupName(obj: GuiObject | null | undefined): string;
+
     class UIEventDispatcher extends RefCounted {
         static readonly ENTER: number;
         static readonly EXIT: number;
@@ -53,6 +76,26 @@ declare global {
     }
 
     class GuiObject extends UIEventDispatcher {
+        /** GodotJS 原生嵌套枚举（camelCase，如 RelationType.RightRight） */
+        static readonly RelationType: {
+            readonly LeftLeft: number;
+            readonly LeftCenter: number;
+            readonly LeftRight: number;
+            readonly CenterCenter: number;
+            readonly RightLeft: number;
+            readonly RightCenter: number;
+            readonly RightRight: number;
+            readonly TopTop: number;
+            readonly TopMiddle: number;
+            readonly TopBottom: number;
+            readonly MiddleMiddle: number;
+            readonly BottomTop: number;
+            readonly BottomMiddle: number;
+            readonly BottomBottom: number;
+            readonly Width: number;
+            readonly Height: number;
+        };
+        /** GDScript 风格扁平常量（由 fgui-globals 从 RelationType 别名，运行时可用） */
         static readonly LEFT_LEFT: number;
         static readonly LEFT_CENTER: number;
         static readonly LEFT_RIGHT: number;
@@ -97,6 +140,8 @@ declare global {
         setTitle(title: string): void;
         setName(name: string): void;
         getName(): string;
+        /** GodotJS：ADD_PROPERTY，读写用 icon 属性 */
+        icon: string;
         setIcon(icon: string): void;
         getIcon(): string;
         setDraggable(value: boolean): void;
@@ -108,6 +153,8 @@ declare global {
         transformRect(rect: Rect2, targetSpace: GuiObject): Rect2;
         getInitSize(): Vector2;
         getParent(): GComponent | null;
+        /** GodotJS：ADD_PROPERTY，用属性不用 getGroup() */
+        group: GGroup | null;
         getGroup(): GGroup | null;
         getTreeNode(): GTreeNode | null;
         setupDisplay(): void;

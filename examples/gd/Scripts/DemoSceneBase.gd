@@ -10,6 +10,7 @@ func _ready() -> void:
 		call_deferred("_delayed_init")
 	else:
 		_groot = GRoot.getInstance()
+		_prepare_groot_for_scene()
 		continue_init()
 		_add_close_button()
 
@@ -18,6 +19,17 @@ func _delayed_init() -> void:
 	_groot = GRoot.getInstance()
 	continue_init()
 	_add_close_button()
+
+func _prepare_groot_for_scene() -> void:
+	if _groot == null:
+		return
+	if DragDropManagerHelper.getInstance().isDragging():
+		DragDropManagerHelper.getInstance().cancel()
+	_groot.hideTooltips()
+	_groot.hidePopup()
+	_groot.closeModalWait()
+	_groot.closeAllWindows()
+	_groot.removeChildren()
 
 func _register_default_fonts() -> void:
 	var font_path := "res://Resources/fonts/DroidSansFallback.ttf"
@@ -67,4 +79,4 @@ func _on_close() -> void:
 	_cleanup_groot_overlays()
 	if _groot != null:
 		_groot.removeChildren()
-	get_tree().change_scene_to_file("res://gd/Scenes/MainMenu.tscn")
+	get_tree().call_deferred("change_scene_to_file", "res://gd/Scenes/MainMenu.tscn")
