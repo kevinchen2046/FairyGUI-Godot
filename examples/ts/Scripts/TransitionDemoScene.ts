@@ -4,7 +4,7 @@ import { Callable } from "godot";
 import DemoSceneBase from "./DemoSceneBase";
 
 export default class TransitionDemoScene extends DemoSceneBase {
-    private _btnGroup: GObject | null = null;
+    private _btnGroup: GuiObject | null = null;
 
     private _g1: GComponent | null = null;
     private _g2: GComponent | null = null;

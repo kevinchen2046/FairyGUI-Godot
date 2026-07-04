@@ -52,7 +52,7 @@ declare global {
         getTouchId(): number;
     }
 
-    class GObject extends UIEventDispatcher {
+    class GuiObject extends UIEventDispatcher {
         static readonly LEFT_LEFT: number;
         static readonly LEFT_CENTER: number;
         static readonly LEFT_RIGHT: number;
@@ -102,10 +102,10 @@ declare global {
         setDraggable(value: boolean): void;
         setDragBounds(bounds: Rect2): void;
         addClickListener(callable: Callable): void;
-        addRelation(target: GObject, relationType: number, usePercent?: boolean): void;
+        addRelation(target: GuiObject, relationType: number, usePercent?: boolean): void;
         removeFromParent(): void;
         globalToLocal(pt: Vector2): Vector2;
-        transformRect(rect: Rect2, targetSpace: GObject): Rect2;
+        transformRect(rect: Rect2, targetSpace: GuiObject): Rect2;
         getInitSize(): Vector2;
         getParent(): GComponent | null;
         getGroup(): GGroup | null;
@@ -118,23 +118,23 @@ declare global {
         changeStateOnClick?: boolean;
     }
 
-    class GGroup extends GObject {}
+    class GGroup extends GuiObject {}
 
-    class GComponent extends GObject {
-        getChild(name: string): GObject | null;
-        getChildAt(index: number): GObject | null;
+    class GComponent extends GuiObject {
+        getChild(name: string): GuiObject | null;
+        getChildAt(index: number): GuiObject | null;
         numChildren(): number;
         getController(name: string): GController | null;
         getTransition(name: string): Transition | null;
         getScrollPane(): ScrollPane | null;
-        addChild(child: GObject): GObject;
-        addChildAt(child: GObject, index: number): GObject;
+        addChild(child: GuiObject): GuiObject;
+        addChildAt(child: GuiObject, index: number): GuiObject;
         removeChildAt(index: number): void;
         removeChildren(beginIndex?: number, endIndex?: number): void;
         getViewWidth(): number;
         ensureBoundsCorrect(): void;
-        isChildInView(child: GObject): boolean;
-        isAncestorOf(obj: GObject): boolean;
+        isChildInView(child: GuiObject): boolean;
+        isAncestorOf(obj: GuiObject): boolean;
         setTitle(title: string): void;
     }
 
@@ -144,11 +144,11 @@ declare global {
 
         getWidth(): number;
         getHeight(): number;
-        getTouchTarget(): GObject | null;
+        getTouchTarget(): GuiObject | null;
         getTouchPosition(touchId?: number): Vector2;
-        addChild(child: GObject): GObject;
+        addChild(child: GuiObject): GuiObject;
         removeChildren(beginIndex?: number, endIndex?: number): void;
-        showPopupSimple(popup: GObject): void;
+        showPopupSimple(popup: GuiObject): void;
         showModalWait(): void;
         closeModalWait(): void;
         closeAllWindows(): void;
@@ -203,7 +203,7 @@ declare global {
         getNumItems(): number;
         getFirstChildInView(): number;
         addSelection(index: number, scrollToView?: boolean): void;
-        addItemFromPool(): GObject | null;
+        addItemFromPool(): GuiObject | null;
         removeChildrenToPool(beginIndex?: number, endIndex?: number): void;
     }
 
@@ -229,7 +229,7 @@ declare global {
         static create(): GPopupMenu | null;
         addItem(caption: string): void;
         show(): void;
-        showMenuAt(target: GObject, dir: number): void;
+        showMenuAt(target: GuiObject, dir: number): void;
         getContentPane(): GComponent | null;
     }
 
@@ -268,7 +268,7 @@ declare global {
             readonly PROGRESS: number;
         };
 
-        setTarget(target: GObject, propType?: number): GTweener;
+        setTarget(target: GuiObject, propType?: number): GTweener;
         onComplete(callable: Callable): GTweener;
     }
 

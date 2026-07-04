@@ -13,10 +13,10 @@ public partial class ChatScene : DemoSceneBase
         public bool FromMe;
     }
 
-    private GObject _list;
-    private GObject _input;
+    private GuiObject _list;
+    private GuiObject _input;
     private readonly List<ChatMessage> _messages = new();
-    private GObject _emojiSelectUi;
+    private GuiObject _emojiSelectUi;
 
     protected override void ContinueInit()
     {

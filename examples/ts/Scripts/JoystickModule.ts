@@ -24,9 +24,9 @@ export default class JoystickModule {
     readonly ended = new SimpleSignal<EndedListener>();
 
     private _button: GButton | null = null;
-    private _thumb: GObject | null = null;
-    private _touchArea: GObject | null = null;
-    private _center: GObject | null = null;
+    private _thumb: GuiObject | null = null;
+    private _touchArea: GuiObject | null = null;
+    private _center: GuiObject | null = null;
     private _groot: GRoot | null = null;
 
     private _initX = 0.0;

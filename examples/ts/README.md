@@ -80,9 +80,11 @@ FairyGUI 类在 GodotJS 运行时挂在 `godot` 模块上，不会自动成为 J
 
 各脚本在文件顶部 `import "./fgui-globals"`。单独编写的新脚本也需添加该行。
 
-`GComponent.addChild` 由引擎侧 ClassDB 绑定（`GComponent.cpp`），重编 Godot 后 GodotJS 可直接调用，与 GDScript Demo 一致。
+**GodotJS 与 GDScript 差异（常见）：**
 
-`fairygui.d.ts` 的 `declare global` 仅用于 TypeScript 类型检查。注意 GodotJS 中 `UIConfigHelper` 的配置项是**属性**（如 `ui.defaultFont = "default"`），不是 GDScript 的 `setDefaultFont()` 方法；`registerFont` 等少数接口仍为方法。
+- `UIConfigHelper` 的配置项用**属性**（`ui.defaultFont = "..."`），不用 `setDefaultFont()`（GodotJS 对 `ADD_PROPERTY` 隐藏 setter 方法）。
+- FairyGUI 基类在 ClassDB 中注册为 **`GuiObject`**（C++ 内部仍可用 `GObject` 别名），避免与 GodotJS 引擎 `Object` 的 JS 名 `GObject` 冲突。
+- 若 `GComponent.addChild` 报 `not a function`：多为上述命名冲突导致继承链错误；重编含 `GuiObject` 的 FairyGUI 后应恢复正常。
 
 ## 说明
 

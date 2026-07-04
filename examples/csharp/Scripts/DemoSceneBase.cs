@@ -7,7 +7,7 @@ public partial class DemoSceneBase : Node
     protected const string MainMenuScenePath = "res://csharp/Scenes/MainMenu.tscn";
 
     protected GRoot _groot;
-    protected GObject _view;
+    protected GuiObject _view;
 
     public override void _Ready()
     {
@@ -48,8 +48,8 @@ public partial class DemoSceneBase : Node
         if (closeBtn == null)
             return;
         closeBtn.SetPosition(_groot.GetWidth() - closeBtn.GetWidth() - 10, _groot.GetHeight() - closeBtn.GetHeight() - 10);
-        closeBtn.AddRelation(_groot, GObject.RelationType.RightRight, false);
-        closeBtn.AddRelation(_groot, GObject.RelationType.BottomBottom, false);
+        closeBtn.AddRelation(_groot, GuiObject.RelationType.RightRight, false);
+        closeBtn.AddRelation(_groot, GuiObject.RelationType.BottomBottom, false);
         closeBtn.SetSortingOrder(100000);
         closeBtn.AddClickListener(new Callable(this, MethodName.OnClose));
         _groot.AddChild(closeBtn);

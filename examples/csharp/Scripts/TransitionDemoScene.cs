@@ -4,14 +4,14 @@ namespace FairyGUI.Examples;
 
 public partial class TransitionDemoScene : DemoSceneBase
 {
-    private GObject _btnGroup;
+    private GuiObject _btnGroup;
 
-    private GObject _g1;
-    private GObject _g2;
-    private GObject _g3;
-    private GObject _g4;
-    private GObject _g5;
-    private GObject _g6;
+    private GuiObject _g1;
+    private GuiObject _g2;
+    private GuiObject _g3;
+    private GuiObject _g4;
+    private GuiObject _g5;
+    private GuiObject _g6;
 
     protected override void ContinueInit()
     {
@@ -36,7 +36,7 @@ public partial class TransitionDemoScene : DemoSceneBase
         SetupTransitionBtn("btn5", _g6);
     }
 
-    private void SetupTransitionBtn(string btnName, GObject target)
+    private void SetupTransitionBtn(string btnName, GuiObject target)
     {
         var btn = _view.GetChild(btnName);
         if (btn == null || target == null)

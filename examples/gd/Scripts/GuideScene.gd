@@ -12,7 +12,7 @@ func continue_init() -> void:
 	_guide_layer = UIPackage.createObject("Guide", "GuideLayer")
 	if _guide_layer != null:
 		_guide_layer.makeFullScreen()
-		_guide_layer.addRelation(_groot, GObject.RIGHT_RIGHT, false)
+		_guide_layer.addRelation(_groot, GuiObject.RIGHT_RIGHT, false)
 
 	_bag_btn = _view.getChild("bagBtn")
 	if _bag_btn != null:

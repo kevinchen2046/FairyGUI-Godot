@@ -4,8 +4,8 @@ namespace FairyGUI.Examples;
 
 public partial class TreeViewScene : DemoSceneBase
 {
-    private GObject _tree1;
-    private GObject _tree2;
+    private GuiObject _tree1;
+    private GuiObject _tree2;
 
     protected override void ContinueInit()
     {
@@ -80,7 +80,7 @@ public partial class TreeViewScene : DemoSceneBase
 
     private void RenderTreeNode(GTreeNode node, GodotObject obj)
     {
-        var item = (GObject)obj;
+        var item = (GuiObject)obj;
         var btn = item.GetChild("btn");
         if (btn == null)
             btn = item;

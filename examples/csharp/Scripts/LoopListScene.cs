@@ -4,7 +4,7 @@ namespace FairyGUI.Examples;
 
 public partial class LoopListScene : DemoSceneBase
 {
-    private GObject _list;
+    private GuiObject _list;
 
     protected override void ContinueInit()
     {

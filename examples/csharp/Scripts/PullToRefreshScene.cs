@@ -4,8 +4,8 @@ namespace FairyGUI.Examples;
 
 public partial class PullToRefreshScene : DemoSceneBase
 {
-    private GObject _list1;
-    private GObject _list2;
+    private GuiObject _list1;
+    private GuiObject _list2;
     private bool _refreshing1;
     private bool _refreshing2;
 

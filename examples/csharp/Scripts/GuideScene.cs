@@ -4,8 +4,8 @@ namespace FairyGUI.Examples;
 
 public partial class GuideScene : DemoSceneBase
 {
-    private GObject _guideLayer;
-    private GObject _bagBtn;
+    private GuiObject _guideLayer;
+    private GuiObject _bagBtn;
 
     protected override void ContinueInit()
     {
@@ -18,7 +18,7 @@ public partial class GuideScene : DemoSceneBase
         if (_guideLayer != null)
         {
             _guideLayer.MakeFullScreen();
-            _guideLayer.AddRelation(_groot, GObject.RelationType.RightRight, false);
+            _guideLayer.AddRelation(_groot, GuiObject.RelationType.RightRight, false);
         }
 
         _bagBtn = _view.GetChild("bagBtn");

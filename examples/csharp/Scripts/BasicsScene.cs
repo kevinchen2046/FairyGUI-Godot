@@ -5,16 +5,16 @@ namespace FairyGUI.Examples;
 
 public partial class BasicsScene : DemoSceneBase
 {
-    private GObject _backBtn;
-    private GObject _demoContainer;
+    private GuiObject _backBtn;
+    private GuiObject _demoContainer;
     private GController _cc;
-    private readonly Dictionary<string, GObject> _demoObjects = new();
+    private readonly Dictionary<string, GuiObject> _demoObjects = new();
 
     private GWindow _winA;
     private GWindow _winB;
     private GPopupMenu _pm;
 
-    private GObject _popupCom;
+    private GuiObject _popupCom;
     private bool _progressRunning;
     private Vector2 _depthStartPos;
 
@@ -103,7 +103,7 @@ public partial class BasicsScene : DemoSceneBase
         }
     }
 
-    private void PlayText(GObject obj)
+    private void PlayText(GuiObject obj)
     {
         var n12 = obj.GetChild("n12");
         if (n12 != null)
@@ -126,7 +126,7 @@ public partial class BasicsScene : DemoSceneBase
         }
     }
 
-    private void PlayPopup(GObject obj)
+    private void PlayPopup(GuiObject obj)
     {
         if (_pm == null)
         {
@@ -157,7 +157,7 @@ public partial class BasicsScene : DemoSceneBase
         obj.AddEventListener(FguiEvent.RightClick, Callable.From(() => _pm.Show()));
     }
 
-    private void PlayWindow(GObject obj)
+    private void PlayWindow(GuiObject obj)
     {
         if (_winA != null)
             return;
@@ -172,7 +172,7 @@ public partial class BasicsScene : DemoSceneBase
         n1?.AddClickListener(Callable.From(() => _winB.Show()));
     }
 
-    private void PlayDepth(GObject obj)
+    private void PlayDepth(GuiObject obj)
     {
         var testContainer = obj.GetChild("n22");
         if (testContainer == null)
@@ -226,7 +226,7 @@ public partial class BasicsScene : DemoSceneBase
         }));
     }
 
-    private void PlayDragDrop(GObject obj)
+    private void PlayDragDrop(GuiObject obj)
     {
         var a = obj.GetChild("a");
         a?.SetDraggable(true);
@@ -266,7 +266,7 @@ public partial class BasicsScene : DemoSceneBase
         }
     }
 
-    private void PlayProgress(GObject obj)
+    private void PlayProgress(GuiObject obj)
     {
         _progressRunning = true;
         obj.AddEventListener(FguiEvent.Exit, Callable.From(() => _progressRunning = false));

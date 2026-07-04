@@ -8,10 +8,10 @@ public class JoystickModule
     public event Action<float> MoveChanged;
     public event Action Ended;
 
-    private GObject _button;
-    private GObject _thumb;
-    private GObject _touchArea;
-    private GObject _center;
+    private GuiObject _button;
+    private GuiObject _thumb;
+    private GuiObject _touchArea;
+    private GuiObject _center;
     private GRoot _groot;
 
     private float _initX;
@@ -23,7 +23,7 @@ public class JoystickModule
     private int _radius = 150;
     private int _touchId = -1;
 
-    public JoystickModule(GObject mainView)
+    public JoystickModule(GuiObject mainView)
     {
         _groot = GRoot.GetInstance();
         _button = mainView.GetChild("joystick");

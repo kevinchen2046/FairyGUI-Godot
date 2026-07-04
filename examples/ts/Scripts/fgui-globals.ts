@@ -22,7 +22,7 @@ if (!g[flag]) {
         "GController",
         "GLabel",
         "GList",
-        "GObject",
+        "GuiObject",
         "GPopupMenu",
         "GProgressBar",
         "GRichTextField",

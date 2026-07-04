@@ -60,8 +60,8 @@ export default class DemoSceneBase extends Node {
             this._groot.getWidth() - closeBtn.getWidth() - 10,
             this._groot.getHeight() - closeBtn.getHeight() - 10,
         );
-        closeBtn.addRelation(this._groot, GObject.RIGHT_RIGHT, false);
-        closeBtn.addRelation(this._groot, GObject.BOTTOM_BOTTOM, false);
+        closeBtn.addRelation(this._groot, GuiObject.RIGHT_RIGHT, false);
+        closeBtn.addRelation(this._groot, GuiObject.BOTTOM_BOTTOM, false);
         closeBtn.setSortingOrder(100000);
         closeBtn.addClickListener(Callable.create(this._onClose.bind(this)));
         this._groot.addChild(closeBtn);

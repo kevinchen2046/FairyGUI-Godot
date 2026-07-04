@@ -12,7 +12,7 @@ csharp/
 
 ## 前置条件（必读）
 
-C# Demo **必须**使用带 **Mono + FairyGUI** 的自编译 Godot，且 API 绑定来自本地 glue，**不能**用 NuGet 官方 `GodotSharp 4.5.0`（不含 `GRoot`、`GObject` 等 FairyGUI 类型）。
+C# Demo **必须**使用带 **Mono + FairyGUI** 的自编译 Godot，且 API 绑定来自本地 glue，**不能**用 NuGet 官方 `GodotSharp 4.5.0`（不含 `GRoot`、`GuiObject` 等 FairyGUI 类型）。
 
 ### 1. 编译引擎（启用 Mono）
 
@@ -67,7 +67,7 @@ godot.windows.editor.dev.x86_64.mono.exe
 | **主场景仍是 GD 版** | F5 运行的是 `project.godot` 里的 `run/main_scene`，不是编辑器里当前打开的标签页。需改主场景或用“运行当前场景”。 |
 | **C# 未编译成功** | 编译失败时 `.cs` 不会生效，节点相当于无脚本或报错。 |
 | **用了非 Mono 编辑器** | 无法加载 C# 程序集。 |
-| **GodotSharp 引用错误** | 若引用 NuGet 官方包，会报 `未能找到 GRoot/GObject/GWindow`。本仓库 `FairyGUI.Godot.Examples.csproj` 已配置引用 `../../../bin/GodotSharp/Api/Debug`。 |
+| **GodotSharp 引用错误** | 若引用 NuGet 官方包，会报 `未能找到 GRoot/GuiObject/GWindow`。本仓库 `FairyGUI.Godot.Examples.csproj` 已配置引用 `../../../bin/GodotSharp/Api/Debug`。 |
 
 ## 说明
 
@@ -83,7 +83,7 @@ Mono glue 生成的命名与 GDScript 不完全一致，Demo 通过 `Scripts/Fgu
 |---------------------|------------------|---------------|
 | `UIEventDispatcher.CLICK_ITEM` | `UIEventDispatcher.Clickitem` | `FguiEvent.ClickItem` |
 | `FGUIEventContext` | `FguiEventContext` | 直接使用 `FguiEventContext` |
-| `obj.getChild()` 在任意 GObject 上 | 仅 `GComponent`/`GList` 等有 | `FguiExtensions` 扩展方法 |
+| `obj.getChild()` 在任意 GuiObject 上 | 仅 `GComponent`/`GList` 等有 | `FguiExtensions` 扩展方法 |
 | `add_relation(..., RelationType.X)` | 第二参数为 `int` | `AddRelation(..., RelationType.X)` 扩展自动转换 |
 | 继承 `GWindow` 的类 | 须 `partial class` | `BagWindow`、`Window1`、`Window2` |
 

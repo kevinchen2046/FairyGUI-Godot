@@ -6,7 +6,7 @@ import Window1 from "./Window1";
 import Window2 from "./Window2";
 
 export default class BasicsScene extends DemoSceneBase {
-    private _backBtn: GObject | null = null;
+    private _backBtn: GuiObject | null = null;
     private _demoContainer: GComponent | null = null;
     private _cc: GController | null = null;
     private readonly _demoObjects = new Map<string, GComponent>();
@@ -15,7 +15,7 @@ export default class BasicsScene extends DemoSceneBase {
     private _winB: Window2 | null = null;
     private _pm: GPopupMenu | null = null;
 
-    private _popupCom: GObject | null = null;
+    private _popupCom: GuiObject | null = null;
     private _progressRunning = false;
     private _depthStartPos = new Vector2(0, 0);
 

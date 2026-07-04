@@ -5,7 +5,7 @@ import DemoSceneBase from "./DemoSceneBase";
 
 export default class GuideScene extends DemoSceneBase {
     private _guideLayer: GComponent | null = null;
-    private _bagBtn: GObject | null = null;
+    private _bagBtn: GuiObject | null = null;
 
     protected ContinueInit(): void {
         UIPackage.addPackage("res://Resources/UI/Guide");
@@ -16,7 +16,7 @@ export default class GuideScene extends DemoSceneBase {
         this._guideLayer = UIPackage.createObject("Guide", "GuideLayer");
         if (this._guideLayer != null) {
             this._guideLayer.makeFullScreen();
-            this._guideLayer.addRelation(this._groot!, GObject.RIGHT_RIGHT, false);
+            this._guideLayer.addRelation(this._groot!, GuiObject.RIGHT_RIGHT, false);
         }
 
         this._bagBtn = this._view.getChild("bagBtn");
