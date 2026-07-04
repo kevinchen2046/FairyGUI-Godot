@@ -45,23 +45,24 @@ func _on_click_back() -> void:
 		_win_a.hideImmediately()
 	_cleanup_groot_overlays()
 	_demo_container.removeChildren()
+	_demo_objects.clear()
 	_cc.setSelectedIndex(0)
 	_back_btn.setVisible(false)
 	_progress_running = false
 
 func _run_demo() -> void:
+	if not _is_scene_active():
+		return
 	_cleanup_groot_overlays()
 	var sender = _groot.getTouchTarget()
 	if sender == null:
 		return
 	var type_name = String(sender.getName()).substr(4)
 
-	var obj = _demo_objects.get(type_name)
+	var obj = UIPackage.createObject("Basics", "Demo_" + type_name)
 	if obj == null:
-		obj = UIPackage.createObject("Basics", "Demo_" + type_name)
-		if obj == null:
-			return
-		_demo_objects[type_name] = obj
+		return
+	_demo_objects[type_name] = obj
 
 	_demo_container.removeChildren()
 	_demo_container.addChild(obj)
@@ -219,7 +220,7 @@ func _play_progress(obj: Object) -> void:
 		_progress_running = false
 	)
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if not _progress_running:
 		return
 	var obj = _demo_objects.get("ProgressBar")

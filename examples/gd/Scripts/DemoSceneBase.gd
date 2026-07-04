@@ -13,6 +13,8 @@ func _ready() -> void:
 	call_deferred("_delayed_init")
 
 func _exit_tree() -> void:
+	_view = null
+	_groot = null
 	_scene_active = false
 	_pending_scene_path = ""
 

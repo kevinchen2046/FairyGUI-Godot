@@ -8,7 +8,6 @@ var _button: Object
 var _thumb: Object
 var _touch_area: Object
 var _center: Object
-var _groot: Object
 
 var _init_x: float = 0.0
 var _init_y: float = 0.0
@@ -19,40 +18,28 @@ var _last_stage_y: float = 0.0
 var _radius: int = 150
 var _touch_id: int = -1
 
-func _init(main_view: Object) -> void:
-	_groot = GRoot.getInstance()
+func setup(main_view: Object) -> void:
 	_button = main_view.getChild("joystick")
-	_thumb = _button.getChild("thumb")
+	if _button != null:
+		_thumb = _button.getChild("thumb")
+		_button.setTouchable(false)
+		if _button is GButton:
+			(_button as GButton).changeStateOnClick = false
+
 	_touch_area = main_view.getChild("joystick_touch")
 	_center = main_view.getChild("joystick_center")
-
-	if _button is GButton:
-		(_button as GButton).changeStateOnClick = false
-
 	if _center != null:
+		_center.setTouchable(false)
 		_init_x = _center.getX() + _center.getWidth() / 2.0
 		_init_y = _center.getY() + _center.getHeight() / 2.0
 
-	if _touch_area != null:
-		_touch_area.addEventListener(
-			UIEventDispatcher.TOUCHBEGIN,
-			Callable(self, "_on_touch_begin"),
-		)
-		_touch_area.addEventListener(
-			UIEventDispatcher.TOUCHMOVE,
-			Callable(self, "_on_touch_move"),
-		)
-		_touch_area.addEventListener(
-			UIEventDispatcher.TOUCHEND,
-			Callable(self, "_on_touch_end"),
-		)
-
-func _on_touch_begin() -> void:
-	if _touch_id != -1 or _groot == null:
+func on_touch_begin() -> void:
+	var groot = GRoot.getInstance()
+	if _touch_id != -1 or groot == null or _touch_area == null or _button == null or _thumb == null:
 		return
 	_touch_id = 0
 
-	var pt = _groot.globalToLocal(_groot.getTouchPosition())
+	var pt = groot.globalToLocal(groot.getTouchPosition())
 	var bx = pt.x
 	var by = pt.y
 
@@ -60,8 +47,8 @@ func _on_touch_begin() -> void:
 		bx = 0
 	if bx > _touch_area.getWidth():
 		bx = _touch_area.getWidth()
-	if by > _groot.getHeight():
-		by = _groot.getHeight()
+	if by > groot.getHeight():
+		by = groot.getHeight()
 	elif by < _touch_area.getY():
 		by = _touch_area.getY()
 
@@ -73,8 +60,9 @@ func _on_touch_begin() -> void:
 	if _button is GButton:
 		(_button as GButton).selected = true
 
-	_center.setVisible(true)
-	_center.setPosition(bx - _center.getWidth() / 2.0, by - _center.getHeight() / 2.0)
+	if _center != null:
+		_center.setVisible(true)
+		_center.setPosition(bx - _center.getWidth() / 2.0, by - _center.getHeight() / 2.0)
 	_button.setPosition(bx - _button.getWidth() / 2.0, by - _button.getHeight() / 2.0)
 
 	var delta_x = bx - _init_x
@@ -82,10 +70,12 @@ func _on_touch_begin() -> void:
 	var degrees = atan2(delta_y, delta_x) * 180.0 / PI
 	_thumb.setRotation(degrees + 90)
 
-func _on_touch_move() -> void:
-	if _touch_id == -1 or _groot == null:
+func on_touch_move() -> void:
+	var groot = GRoot.getInstance()
+	if _touch_id == -1 or groot == null or _button == null or _thumb == null:
 		return
-	var pt = _groot.globalToLocal(_groot.getTouchPosition())
+
+	var pt = groot.globalToLocal(groot.getTouchPosition())
 	var bx = pt.x
 	var by = pt.y
 	var move_x = bx - _last_stage_x
@@ -114,19 +104,20 @@ func _on_touch_move() -> void:
 	button_y = _start_stage_y + offset_y
 	if button_x < 0:
 		button_x = 0
-	if button_y > _groot.getHeight():
-		button_y = _groot.getHeight()
+	if button_y > groot.getHeight():
+		button_y = groot.getHeight()
 
 	_button.setPosition(button_x - _button.getWidth() / 2.0, button_y - _button.getHeight() / 2.0)
 	move_changed.emit(degree)
 
-func _on_touch_end() -> void:
-	if _touch_id == -1:
+func on_touch_end() -> void:
+	if _touch_id == -1 or _button == null or _thumb == null:
 		return
 	_touch_id = -1
 	_thumb.setRotation(_thumb.getRotation() + 180)
-	_center.setVisible(true)
-	_center.setPosition(_init_x - _center.getWidth() / 2.0, _init_y - _center.getHeight() / 2.0)
+	if _center != null:
+		_center.setVisible(true)
+		_center.setPosition(_init_x - _center.getWidth() / 2.0, _init_y - _center.getHeight() / 2.0)
 	_button.setPosition(_init_x - _button.getWidth() / 2.0, _init_y - _button.getHeight() / 2.0)
 
 	if _button is GButton:
