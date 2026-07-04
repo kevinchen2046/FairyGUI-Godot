@@ -1,5 +1,4 @@
 extends GWindow
-class_name BagWindow
 
 var _list: Object = null
 

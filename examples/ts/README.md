@@ -63,6 +63,8 @@ npx -p typescript tsc
 
 **不需要** 做 GDScript 那套 `DemoSceneBase` 全局类 / 路径继承修改；TypeScript 用 `import DemoSceneBase from "./DemoSceneBase"` 即可。
 
+**注意：** `gd/` 与 `ts/` 同仓共存时，勿在 GDScript 里对 `DemoSceneBase`、`BagWindow` 等写 `class_name`（与 TS 的 `export default class` 全局注册重名）。GD 子场景已用 `extends "res://gd/Scripts/..."` 或 `load(...).new()`，不依赖 `class_name`。
+
 ## GodotJS 项目设置
 
 `project.godot` 中需启用（与 GDScript 示例 API 命名一致）：
