@@ -307,14 +307,17 @@ void UIEventDispatcher::doBubble(int eventType, EventContext* context)
 void UIEventDispatcher::gd_addEventListener(int eventType, const Callable& callable)
 {
     addEventListener(eventType, [callable, eventType](EventContext* ctx) {
-        bool valid = false;
-        const int req_args = callable.get_argument_count(&valid);
+        Ref<FGUIEventContext> evt = Ref<FGUIEventContext>(memnew(FGUIEventContext));
+        evt->bind(ctx);
 
-        if (valid && req_args > 0) {
-            Ref<FGUIEventContext> evt = Ref<FGUIEventContext>(memnew(FGUIEventContext));
-            evt->bind(ctx);
-            callable.call(evt);
-        } else {
+        Callable::CallError err;
+        Variant ret;
+        const Variant arg = evt;
+        const Variant *args[1] = { &arg };
+        callable.callp(args, 1, ret, err);
+
+        // GDScript/C# handlers with no parameters: fall back to zero-arg call.
+        if (err.error == Callable::CallError::CALL_ERROR_TOO_MANY_ARGUMENTS) {
             callable.call();
         }
 
