@@ -8,21 +8,24 @@
 
 NS_FGUI_BEGIN
 
-static Callable fui_control_size_changed_callable(Control* self)
-{
-    return Callable(self, "_size_changed");
-}
-
+// Access Control protected callables for is_connected checks (must match engine connect targets).
+class FUIControlNotifyAccess : public Control {
+protected:
+    static Callable size_changed_callable(Control* self)
+    {
+        return callable_mp(self, &Control::_size_changed);
+    }
 #ifdef DEBUG_ENABLED
-static Callable fui_control_clear_size_warning_callable(Control* self)
-{
-    return Callable(self, "_clear_size_warning");
-}
+    static Callable clear_size_warning_callable(Control* self)
+    {
+        return callable_mp(self, &Control::_clear_size_warning);
+    }
 #endif
+};
 
 static bool fui_control_canvas_wired(Control* self)
 {
-    const Callable size_cb = fui_control_size_changed_callable(self);
+    const Callable size_cb = FUIControlNotifyAccess::size_changed_callable(self);
     if (CanvasItem* parent_item = self->get_parent_item())
         return parent_item->is_connected(SNAME("item_rect_changed"), size_cb);
     if (Viewport* viewport = self->get_viewport())
@@ -39,12 +42,9 @@ bool fui_control_handle_notification(Control* self, int p_what, uint8_t& state)
     {
         if (state & 1)
             return true;
-        // Stale wiring when EXIT_CANVAS was skipped (e.g. state cleared on EXIT_TREE first).
+        // Stale wiring: disconnect before reconnect (missed EXIT_CANVAS during GRoot cleanup).
         if (fui_control_canvas_wired(self))
-        {
-            state |= 1;
-            return true;
-        }
+            Control::_notification(CanvasItem::NOTIFICATION_EXIT_CANVAS);
         state |= 1;
         return false;
     }
@@ -63,7 +63,7 @@ bool fui_control_handle_notification(Control* self, int p_what, uint8_t& state)
     {
         if (state & 2)
             return true;
-        const Callable clear_cb = fui_control_clear_size_warning_callable(self);
+        const Callable clear_cb = FUIControlNotifyAccess::clear_size_warning_callable(self);
         if (self->is_connected(SNAME("ready"), clear_cb))
         {
             state |= 2;

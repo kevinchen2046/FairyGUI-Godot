@@ -1,4 +1,5 @@
 #include "FUIRichText.h"
+#include "FUIContainer.h"
 #include "FUIDisplayNode.h"
 #include "utils/html/HtmlElement.h"
 #include "utils/html/HtmlObject.h"
@@ -189,10 +190,8 @@ FUIRichText::FUIRichText() :
     _numLines(0)
 {
     item_rect_changed();
-    _clipContainer = memnew(Control);
+    _clipContainer = memnew(FUIClipContainer);
     _clipContainer->set_name("ClipContainer");
-    _clipContainer->set_mouse_filter(Control::MOUSE_FILTER_IGNORE);
-    _clipContainer->set_clip_contents(true);
     add_child(_clipContainer);
 }
 
