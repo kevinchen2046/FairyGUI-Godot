@@ -72,13 +72,15 @@ export default class TreeViewScene extends DemoSceneBase {
         rootNode.addChild(anotherTop);
     }
 
-    private _onClickNode(): void {
-        // GodotJS: avoid ctx.getData() — returning GuiObject to JS can crash during lazy class bind.
-        const target = this._groot!.getTouchTarget();
-        if (target == null) {
+    private _onClickNode(ctx: FGUIEventContext | null = null): void {
+        let item: GuiObject | null = null;
+        if (ctx != null) {
+            item = ctx.getData() as GuiObject | null;
+        }
+        if (item == null) {
             return;
         }
-        const node = target.getTreeNode();
+        const node = item.getTreeNode();
         if (node != null) {
             console.log("click node ", node.getText());
         }

@@ -72,6 +72,8 @@ declare global {
     class FGUIEventContext extends RefCounted {
         preventDefault(): void;
         getData(): unknown;
+        /** ClickItem 等事件的列表项文本（getData 不可用时的兜底） */
+        getItemText(): string;
         getTouchId(): number;
     }
 

@@ -80,11 +80,10 @@ export default class ChatScene extends DemoSceneBase {
         this._groot!.showPopupSimple(this._emojiSelectUi);
     }
 
-    private _onClickEmoji(): void {
-        // GodotJS: avoid ctx.getData() — returning GuiObject to JS can crash during lazy class bind.
-        let item = this._groot!.getTouchTarget();
-        while (item != null && item.getText().length === 0) {
-            item = item.getParent();
+    private _onClickEmoji(ctx: FGUIEventContext | null = null): void {
+        let item: GuiObject | null = null;
+        if (ctx != null) {
+            item = ctx.getData() as GuiObject | null;
         }
         if (item == null || this._inputField == null) {
             return;
