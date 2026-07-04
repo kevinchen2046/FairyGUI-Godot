@@ -1221,7 +1221,10 @@ void GList::_enter_tree()
 {
     GComponent::_enter_tree();
     if (_virtual)
+    {
+        setVirtualListChangedFlag(true);
         checkVirtualList();
+    }
 }
 
 void GList::doRefreshVirtualList()

@@ -309,6 +309,23 @@ PackageItem* UIPackage::getItemByName(const string& itemName)
     auto it = _itemsByName.find(itemName);
     if (it != _itemsByName.end())
         return it->second;
+
+    static const char* kExtensions[] = { ".jta", ".png", ".jpg", ".jpeg", ".xml", ".fnt" };
+    for (const char* ext : kExtensions)
+    {
+        it = _itemsByName.find(itemName + ext);
+        if (it != _itemsByName.end())
+            return it->second;
+    }
+
+    const size_t dot = itemName.find_last_of('.');
+    if (dot != string::npos && dot > 0)
+    {
+        it = _itemsByName.find(itemName.substr(0, dot));
+        if (it != _itemsByName.end())
+            return it->second;
+    }
+
     return nullptr;
 }
 

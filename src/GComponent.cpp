@@ -1377,7 +1377,7 @@ void GComponent::_enter_tree()
     ensureHitAreaChildAttached();
     ensureBoundsCorrect();
     if (_scrollPane.is_valid())
-        _scrollPane->refreshScrollBars();
+        _scrollPane->onOwnerStageChanged(true);
     else if (_overflowClipContainer)
         updateOverflowClipRect();
 
@@ -1396,6 +1396,9 @@ void GComponent::_enter_tree()
 
 void GComponent::_exit_tree()
 {
+    if (_scrollPane.is_valid())
+        _scrollPane->onOwnerStageChanged(false);
+
     GObject::_exit_tree();
 
     if (!_transitions.empty())

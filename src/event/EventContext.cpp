@@ -27,8 +27,16 @@ void FGUIEventContext::preventDefault()
 
 Variant FGUIEventContext::getData() const
 {
-    if (_context != nullptr)
-        return _context->getDataValue();
+    if (_context == nullptr)
+        return Variant();
+
+    const Variant& value = _context->getDataValue();
+    if (value.get_type() != Variant::NIL)
+        return value;
+
+    if (void* data = _context->getData())
+        return Variant(Object::cast_to<Object>(static_cast<GObject*>(data)));
+
     return Variant();
 }
 

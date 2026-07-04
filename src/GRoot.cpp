@@ -317,6 +317,7 @@ void GRoot::hideWindowImmediately(GWindow* win)
     }
 
     GTween::kill(win, false);
+    win->setScale(1.0f, 1.0f);
     win->setVisible(false);
 
     if (win->getParent() == this)

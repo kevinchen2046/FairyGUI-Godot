@@ -171,6 +171,7 @@ private:
     void onRollOver(EventContext* context);
     void onRollOut(EventContext* context);
     void onBarTweenComplete(GTweener* tweener);
+    void onOwnerStageChanged(bool onStage);
 
     ScrollType _scrollType;
     float _scrollStep;

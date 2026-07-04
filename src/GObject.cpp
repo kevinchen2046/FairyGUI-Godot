@@ -73,6 +73,7 @@ GuiObject::GuiObject() : _scale{1, 1},
                      _data(nullptr),
                      _touchDisabled(false),
                      _alignToBL(false),
+                     _treeNode(nullptr),
                      _weakPtrRef(0),
                      _deferredCallsCancelled(false)
 {
@@ -1362,7 +1363,20 @@ Ref<GObject> GuiObject::gd_getParent() const
 
 Ref<GTreeNode> GuiObject::gd_getTreeNode() const
 {
-    return Ref<GTreeNode>(treeNode());
+    GTreeNode* node = findTreeNode();
+    if (node == nullptr)
+        return Ref<GTreeNode>();
+    return Ref<GTreeNode>(node);
+}
+
+GTreeNode* GuiObject::findTreeNode() const
+{
+    for (GObject* obj = const_cast<GObject*>(this); obj != nullptr; obj = obj->_parent)
+    {
+        if (obj->_treeNode != nullptr)
+            return obj->_treeNode;
+    }
+    return nullptr;
 }
 
 void GuiObject::gd_addRelation(Object* target, int relation_type, bool use_percent)

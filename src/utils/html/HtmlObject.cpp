@@ -6,6 +6,7 @@
 #include "GLabel.h"
 #include "GComponent.h"
 #include "GLoader.h"
+#include "PackageItem.h"
 #include "display/FUIRichText.h"
 #include "utils/ToolSet.h"
 #include "UIPackage.h"
@@ -134,8 +135,19 @@ void HtmlObject::createImage()
     int width = 0;
     int height = 0;
     string src = _element->getString("src");
-    if (!src.empty()) {
-        PackageItem* pi = UIPackage::getItemByURL(src);
+    PackageItem* pi = nullptr;
+    if (!src.empty())
+    {
+        pi = UIPackage::getItemByURL(src);
+        if (pi == nullptr)
+        {
+            const string normalized = UIPackage::normalizeURL(src);
+            if (!normalized.empty())
+            {
+                src = normalized;
+                pi = UIPackage::getItemByURL(src);
+            }
+        }
         if (pi)
         {
             width = pi->width;
@@ -166,6 +178,8 @@ void HtmlObject::createImage()
     loader->setSize(width, height);
     loader->setFill(LoaderFillType::SCALE_FREE);
     loader->setURL(src);
+    if (pi && pi->type == PackageItemType::MOVIECLIP)
+        loader->setPlaying(true);
 }
 
 void HtmlObject::createButton()

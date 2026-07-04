@@ -187,6 +187,7 @@ public:
     T* as();
 
     GTreeNode* treeNode() const { return _treeNode; }
+    GTreeNode* findTreeNode() const;
 
     std::string id;
     std::string name;

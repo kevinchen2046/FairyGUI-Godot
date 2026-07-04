@@ -344,20 +344,29 @@ void GTweener::clearScriptBindings()
 
 void GTweener::callScriptOnStart(GTweener* tweener)
 {
-    if (_scriptOnStartId.is_valid() && ObjectDB::get_instance(_scriptOnStartId))
-        _scriptOnStart.call(tweener);
+    if (!_scriptOnStart.is_valid())
+        return;
+    if (_scriptOnStartId.is_valid() && !ObjectDB::get_instance(_scriptOnStartId))
+        return;
+    _scriptOnStart.call(tweener);
 }
 
 void GTweener::callScriptOnUpdate(GTweener* tweener)
 {
-    if (_scriptOnUpdateId.is_valid() && ObjectDB::get_instance(_scriptOnUpdateId))
-        _scriptOnUpdate.call(tweener);
+    if (!_scriptOnUpdate.is_valid())
+        return;
+    if (_scriptOnUpdateId.is_valid() && !ObjectDB::get_instance(_scriptOnUpdateId))
+        return;
+    _scriptOnUpdate.call(tweener);
 }
 
 void GTweener::callScriptOnComplete()
 {
-    if (_scriptOnCompleteId.is_valid() && ObjectDB::get_instance(_scriptOnCompleteId))
-        _scriptOnComplete.call();
+    if (!_scriptOnComplete.is_valid())
+        return;
+    if (_scriptOnCompleteId.is_valid() && !ObjectDB::get_instance(_scriptOnCompleteId))
+        return;
+    _scriptOnComplete.call();
 }
 
 void GTweener::_reset()

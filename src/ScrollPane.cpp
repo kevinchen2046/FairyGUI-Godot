@@ -166,6 +166,7 @@ ScrollPane::ScrollPane(GComponent* owner)
     _owner->addEventListener(UIEventType::Exit, [this](EventContext*) {
         if (_draggingPane == this)
             _draggingPane = nullptr;
+        onOwnerStageChanged(false);
     });
 }
 
@@ -1233,6 +1234,39 @@ void ScrollPane::onBarTweenComplete(GTweener* tweener)
     GObject* bar = (GObject*)tweener->getTarget();
     bar->setAlpha(1);
     bar->setVisible(false);
+}
+
+void ScrollPane::onOwnerStageChanged(bool onStage)
+{
+    if (_deferredCallsCancelled || !_owner)
+        return;
+
+    _hover = false;
+
+    if (_vtScrollBar.is_valid())
+        GTween::kill(_vtScrollBar.ptr(), TweenPropType::Alpha, false);
+    if (_hzScrollBar.is_valid())
+        GTween::kill(_hzScrollBar.ptr(), TweenPropType::Alpha, false);
+
+    if (!onStage)
+    {
+        if (_scrollBarDisplayAuto)
+        {
+            if (_vtScrollBar.is_valid())
+            {
+                _vtScrollBar->setAlpha(1);
+                _vtScrollBar->setVisible(false);
+            }
+            if (_hzScrollBar.is_valid())
+            {
+                _hzScrollBar->setAlpha(1);
+                _hzScrollBar->setVisible(false);
+            }
+        }
+        return;
+    }
+
+    handleSizeChanged();
 }
 
 float ScrollPane::getLoopPartSize(float division, int axis)

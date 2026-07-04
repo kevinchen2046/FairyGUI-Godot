@@ -656,18 +656,12 @@ void FUIRichText::handleRichRenderer(HtmlElement* element, HtmlObject* obj)
         return;
 
     GObject* uiObj = resolve_live_gobject(obj->getUI());
-    if (uiObj == nullptr || uiObj->getParent() != nullptr)
+    if (uiObj == nullptr)
         return;
 
     Node* display = uiObj->displayObject();
     if (display == nullptr)
         return;
-
-    Object* display_obj = ObjectDB::get_instance(display->get_instance_id());
-    Node* display_node = Object::cast_to<Node>(display_obj);
-    if (display_node == nullptr)
-        return;
-    display = display_node;
 
     bindRendererElement(display, element);
 
