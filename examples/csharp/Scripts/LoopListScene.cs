@@ -37,7 +37,7 @@ public partial class LoopListScene : DemoSceneBase
         if (sp == null)
             return;
 
-        var midX = sp.GetScrollingPosX() + _list.GetViewWidth() / 2.0f;
+        var midX = sp.GetPosX() + _list.GetViewWidth() / 2.0f;
         var cnt = _list.NumChildren();
         for (var i = 0; i < cnt; i++)
         {

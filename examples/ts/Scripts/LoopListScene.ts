@@ -37,7 +37,7 @@ export default class LoopListScene extends DemoSceneBase {
         if (sp == null) {
             return;
         }
-        const midX = sp.getScrollingPosX() + this._list.getViewWidth() / 2.0;
+        const midX = sp.getPosX() + this._list.getViewWidth() / 2.0;
         const cnt = this._list.numChildren();
         for (let i = 0; i < cnt; i++) {
             const obj = this._list.getChildAt(i);
