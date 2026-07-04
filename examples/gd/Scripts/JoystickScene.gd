@@ -1,7 +1,5 @@
 extends "res://gd/Scripts/DemoSceneBase.gd"
 
-const JoystickModule = preload("res://gd/Scripts/JoystickModule.gd")
-
 var _joystick: JoystickModule
 
 func continue_init() -> void:
