@@ -53,6 +53,11 @@ func _deferred_click_back() -> void:
 func _apply_demo_menu() -> void:
 	if not _is_ui_active():
 		return
+	call_deferred("_apply_demo_menu_controller")
+
+func _apply_demo_menu_controller() -> void:
+	if not _is_ui_active():
+		return
 	_cc.setSelectedIndex(0)
 	_back_btn.setVisible(false)
 	_progress_running = false
@@ -73,6 +78,11 @@ func _deferred_run_demo(sender: Object) -> void:
 	call_deferred("_apply_demo_ui", type_name, obj)
 
 func _apply_demo_ui(type_name: String, obj: Object) -> void:
+	if not _is_ui_active() or obj == null or not obj.onStage():
+		return
+	call_deferred("_apply_demo_controller", type_name, obj)
+
+func _apply_demo_controller(type_name: String, obj: Object) -> void:
 	if not _is_ui_active() or obj == null or not obj.onStage():
 		return
 	_cc.setSelectedIndex(1)

@@ -64,6 +64,13 @@ public partial class BasicsScene : DemoSceneBase
     {
         if (!IsUiActive())
             return;
+        CallDeferred(MethodName.ApplyDemoMenuController);
+    }
+
+    private void ApplyDemoMenuController()
+    {
+        if (!IsUiActive())
+            return;
         _cc.SetSelectedIndex(0);
         _backBtn.SetVisible(false);
         _progressRunning = false;
@@ -90,6 +97,13 @@ public partial class BasicsScene : DemoSceneBase
     }
 
     private void ApplyDemoUi(string typeName, GuiObject obj)
+    {
+        if (!IsUiActive() || obj == null || !obj.OnStage())
+            return;
+        CallDeferred(MethodName.ApplyDemoController, typeName, obj);
+    }
+
+    private void ApplyDemoController(string typeName, GuiObject obj)
     {
         if (!IsUiActive() || obj == null || !obj.OnStage())
             return;

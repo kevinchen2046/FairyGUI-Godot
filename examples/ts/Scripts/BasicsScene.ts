@@ -75,6 +75,13 @@ export default class BasicsScene extends DemoSceneBase {
         if (!this.isUiActive()) {
             return;
         }
+        (this as unknown as GodotNode).callDeferred("_applyDemoMenuController");
+    }
+
+    _applyDemoMenuController(): void {
+        if (!this.isUiActive()) {
+            return;
+        }
         this._cc!.selectedIndex = 0;
         this._backBtn?.setVisible(false);
         this._progressRunning = false;
@@ -102,6 +109,13 @@ export default class BasicsScene extends DemoSceneBase {
     }
 
     _applyDemoUi(typeName: string, obj: GComponent): void {
+        if (!this.isUiActive() || obj == null || !obj.onStage()) {
+            return;
+        }
+        (this as unknown as GodotNode).callDeferred("_applyDemoController", typeName, obj);
+    }
+
+    _applyDemoController(typeName: string, obj: GComponent): void {
         if (!this.isUiActive() || obj == null || !obj.onStage()) {
             return;
         }

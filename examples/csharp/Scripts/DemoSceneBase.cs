@@ -39,7 +39,7 @@ public partial class DemoSceneBase : Node
             return false;
         if (GRoot.GetInstance() == null)
             return false;
-        return _view.GetParent() == _groot && _view.OnStage();
+        return GRoot.GetInstance() != null;
     }
 
     protected SceneTree GetEngineTree()

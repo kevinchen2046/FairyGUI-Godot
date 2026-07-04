@@ -49,7 +49,7 @@ export class DemoSceneBase extends Node {
         if (GRoot.getInstance() == null) {
             return false;
         }
-        return this._view.getParent() === this._groot && this._view.onStage();
+        return GRoot.getInstance() != null;
     }
 
     /** 不依赖场景节点，切场景后仍可用。 */

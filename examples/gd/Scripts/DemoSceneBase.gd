@@ -26,9 +26,7 @@ func _is_ui_active() -> bool:
 		return false
 	if _groot == null or _view == null:
 		return false
-	if GRoot.getInstance() == null:
-		return false
-	return _view.getParent() == _groot and _view.onStage()
+	return GRoot.getInstance() != null
 
 func _get_engine_tree() -> SceneTree:
 	var loop = Engine.get_main_loop()
