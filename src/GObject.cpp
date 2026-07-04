@@ -915,12 +915,24 @@ Vector2 GuiObject::computeDisplayPosition() const
     return pt;
 }
 
+Vector2 GuiObject::computeControlPosition() const
+{
+    Vector2 pt = _pivotAsAnchor ? Vector2(getXMin(), getYMin()) : _position;
+    if (_pixelSnapping)
+    {
+        pt.x = (int)pt.x;
+        pt.y = (int)pt.y;
+    }
+    return pt;
+}
+
 void GuiObject::syncControlDisplay()
 {
     Control* ctrl = Object::cast_to<Control>(_displayObject);
     if (!ctrl)
         return;
-    ctrl->set_position(computeDisplayPosition());
+    ctrl->set_position(computeControlPosition());
+    ctrl->set_pivot_offset(Vector2(_size.width * _pivot.x, _size.height * _pivot.y));
     ctrl->set_rotation(Math::deg_to_rad(_rotation));
     ctrl->set_scale(computeDisplayScale());
 }
@@ -937,8 +949,11 @@ void GuiObject::applyPivotOffset()
     if (!_displayObject)
         return;
 
+    const Vector2 off = computeContentPivotOffset();
     if (FUISprite* sp = Object::cast_to<FUISprite>(_displayObject))
-        sp->set_offset(computeContentPivotOffset());
+        sp->set_offset(off);
+    else if (Control* ctrl = Object::cast_to<Control>(_displayObject))
+        ctrl->set_pivot_offset(Vector2(_size.width * _pivot.x, _size.height * _pivot.y));
 }
 
 Vector2 GuiObject::computeDisplayScale() const
@@ -996,6 +1011,8 @@ void GuiObject::handlePositionChanged()
 {
     if (!_displayObject)
         return;
+
+    applyPivotOffset();
 
     if (_skewX != 0.0f || _skewY != 0.0f)
         rebuildSkewedTransform();

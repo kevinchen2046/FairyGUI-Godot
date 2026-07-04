@@ -200,13 +200,7 @@ Ref<GObject> GList::getFromPool(const std::string& url)
     else
         ref = _pool->getObject(url);
     if (ref.is_valid())
-    {
-        if (ref->getParent() != nullptr)
-            ref->removeFromParent();
-        ref->setPosition(0, 0);
-        ref->setScale(1, 1);
         ref->setVisible(true);
-    }
     return ref;
 }
 
@@ -1349,18 +1343,8 @@ void GList::doRefreshVirtualList()
 void GList::onScroll(EventContext* context)
 {
     handleScroll(false);
-
-    // Virtual list reuses pooled items; reset scale before user SCROLL handlers
-    // (e.g. LoopList demo) recalculate center item magnification.
-    if (_virtual)
-    {
-        const int cnt = numChildren();
-        for (int i = 0; i < cnt; i++)
-        {
-            if (GObject* obj = getChildAt(i))
-                obj->setScale(1, 1);
-        }
-    }
+    if (_scrollPane.is_valid() && !_scrollPane->isBarGripDragging())
+        _scrollPane->syncScrollPosFromContainer();
 }
 
 int GList::getIndexOnPos1(float& pos, bool forceUpdate)
@@ -1672,12 +1656,11 @@ bool GList::handleScroll1(bool forceUpdate)
 
             if (ii.obj != nullptr)
             {
-                ii.obj->setVisible(true);
                 setChildIndex(ii.obj.ptr(), forward ? curIndex - newFirstIndex : numChildren());
             }
             else
             {
-                ii.obj = getFromPool(url);
+                ii.obj = _pool->getObject(url);
                 if (ii.obj.is_null())
                 {
                     curIndex++;
@@ -1883,12 +1866,11 @@ bool GList::handleScroll2(bool forceUpdate)
 
             if (ii.obj != nullptr)
             {
-                ii.obj->setVisible(true);
                 setChildIndex(ii.obj.ptr(), forward ? curIndex - newFirstIndex : numChildren());
             }
             else
             {
-                ii.obj = getFromPool(url);
+                ii.obj = _pool->getObject(url);
                 if (ii.obj.is_null())
                 {
                     curIndex++;
@@ -2064,7 +2046,6 @@ void GList::handleScroll3(bool forceUpdate)
                         ii2.selected = ((GButton*)ii2.obj.ptr())->isSelected();
                     ii.obj = ii2.obj;
                     ii2.obj = nullptr;
-                    ii.obj->setVisible(true);
                     break;
                 }
                 reuseIndex++;
@@ -2083,12 +2064,11 @@ void GList::handleScroll3(bool forceUpdate)
                     url = UIPackage::normalizeURL(url);
                 }
 
-                ii.obj = getFromPool(url);
+                ii.obj = _pool->getObject(url);
                 addChildAt(ii.obj, insertIndex);
             }
             else
             {
-                ii.obj->setVisible(true);
                 insertIndex = setChildIndexBefore(ii.obj.ptr(), insertIndex);
             }
             insertIndex++;

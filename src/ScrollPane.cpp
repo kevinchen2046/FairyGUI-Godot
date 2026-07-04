@@ -584,12 +584,28 @@ void ScrollPane::setPageY(int value, bool ani)
 
 float ScrollPane::getScrollingPosX() const
 {
-    return std::clamp(-_container->get_position().x, 0.0f, _overlapSize.width);
+    if (!_container)
+        return _xPos;
+
+    const float raw = -_container->get_position().x;
+    if (_overlapSize.width > 0)
+        return std::clamp(raw, 0.0f, _overlapSize.width);
+    if (_scrollType == ScrollType::HORIZONTAL || _scrollType == ScrollType::BOTH)
+        return raw;
+    return 0.0f;
 }
 
 float ScrollPane::getScrollingPosY() const
 {
-    return std::clamp(-_container->get_position().y, 0.0f, _overlapSize.height);
+    if (!_container)
+        return _yPos;
+
+    const float raw = -_container->get_position().y;
+    if (_overlapSize.height > 0)
+        return std::clamp(raw, 0.0f, _overlapSize.height);
+    if (_scrollType == ScrollType::VERTICAL || _scrollType == ScrollType::BOTH)
+        return raw;
+    return 0.0f;
 }
 
 void ScrollPane::syncScrollPosFromContainer()
@@ -597,10 +613,29 @@ void ScrollPane::syncScrollPosFromContainer()
     if (!_container)
         return;
 
-    if (_overlapSize.width > 0)
-        _xPos = std::clamp(-_container->get_position().x, 0.0f, _overlapSize.width);
-    if (_overlapSize.height > 0)
-        _yPos = std::clamp(-_container->get_position().y, 0.0f, _overlapSize.height);
+    const float rawX = -_container->get_position().x;
+    const float rawY = -_container->get_position().y;
+
+    if (_scrollType == ScrollType::HORIZONTAL || _scrollType == ScrollType::BOTH)
+    {
+        if (_overlapSize.width > 0)
+            _xPos = std::clamp(rawX, 0.0f, _overlapSize.width);
+        else
+            _xPos = rawX;
+    }
+    if (_scrollType == ScrollType::VERTICAL || _scrollType == ScrollType::BOTH)
+    {
+        if (_overlapSize.height > 0)
+            _yPos = std::clamp(rawY, 0.0f, _overlapSize.height);
+        else
+            _yPos = rawY;
+    }
+}
+
+bool ScrollPane::isBarGripDragging() const
+{
+    return (_vtScrollBar.is_valid() && _vtScrollBar->_gripDragging) ||
+           (_hzScrollBar.is_valid() && _hzScrollBar->_gripDragging);
 }
 
 void ScrollPane::setViewWidth(float value)
@@ -894,10 +929,11 @@ void ScrollPane::handleSizeChanged()
         _hzScrollBar->handlePositionChanged();
 	if (_header.is_valid())
         _header->handlePositionChanged();
-	if (_footer.is_valid())
+    if (_footer.is_valid())
         _footer->handlePositionChanged();
 
-    updateScrollBarDisplayPerc();
+    if (!isBarGripDragging())
+        updateScrollBarDisplayPerc();
 
     if (_scrollType == ScrollType::HORIZONTAL || _scrollType == ScrollType::BOTH)
         _overlapSize.width = ceil(std::max(0.0f, _contentSize.width - _viewSize.width));
@@ -914,7 +950,11 @@ void ScrollPane::handleSizeChanged()
     if (_container != nullptr && _container->get_parent() != nullptr)
     {
         Vector2 containerPos = _container->get_position();
-        if (!_dragged && _tweening == 0)
+        if (isBarGripDragging())
+        {
+            _container->set_position(Vector2((int)-_xPos, (int)-_yPos));
+        }
+        else if (!_dragged && _tweening == 0)
         {
             float max = sp_getField(_overlapSize, _refreshBarAxis);
             if (max == 0)
@@ -963,7 +1003,8 @@ void ScrollPane::handleSizeChanged()
             _footer->setWidth(_viewSize.width);
     }
 
-    updateScrollBarPos();
+    if (!isBarGripDragging())
+        updateScrollBarPos();
     if (_pageMode)
         updatePageController();
 
@@ -1047,7 +1088,8 @@ void ScrollPane::refresh()
 
     refresh2();
 
-    syncScrollPosFromContainer();
+    if (!isBarGripDragging())
+        syncScrollPosFromContainer();
     _owner->dispatchEvent(UIEventType::Scroll);
     if (_needRefresh) //pos may change in onScroll
     {
@@ -1131,8 +1173,6 @@ void ScrollPane::updateScrollBarDisplayPerc()
 
 void ScrollPane::updateScrollBarPos()
 {
-    updateScrollBarDisplayPerc();
-
     if (_vtScrollBar != nullptr)
         _vtScrollBar->setScrollPerc(_overlapSize.height == 0 ? 0 : std::clamp(-_container->get_position().y, 0.0f, _overlapSize.height) / _overlapSize.height);
 
@@ -1821,11 +1861,6 @@ void ScrollPane::onTouchMove(EventContext* context)
     _lastTouchGlobalPos = evt->getPosition();
     _lastMoveTime = clock();
 
-    if (_overlapSize.width > 0)
-        _xPos = std::clamp(-_container->get_position().x, 0.0f, _overlapSize.width);
-    if (_overlapSize.height > 0)
-        _yPos = std::clamp(-_container->get_position().y, 0.0f, _overlapSize.height);
-
     if (_loop != 0)
     {
         newPos = _container->get_position();
@@ -1837,11 +1872,11 @@ void ScrollPane::onTouchMove(EventContext* context)
     _isHoldAreaDone = true;
     _dragged = true;
 
+    syncScrollPosFromContainer();
     updateScrollBarPos();
     updateScrollBarVisible();
     if (_pageMode)
         updatePageController();
-    syncScrollPosFromContainer();
     _owner->dispatchEvent(UIEventType::Scroll);
 }
 

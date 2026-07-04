@@ -307,9 +307,17 @@ void UIEventDispatcher::doBubble(int eventType, EventContext* context)
 void UIEventDispatcher::gd_addEventListener(int eventType, const Callable& callable)
 {
     addEventListener(eventType, [callable, eventType](EventContext* ctx) {
-        Ref<FGUIEventContext> evt = Ref<FGUIEventContext>(memnew(FGUIEventContext));
-        evt->bind(ctx);
-        callable.call(evt);
+        bool valid = false;
+        const int req_args = callable.get_argument_count(&valid);
+
+        if (valid && req_args > 0) {
+            Ref<FGUIEventContext> evt = Ref<FGUIEventContext>(memnew(FGUIEventContext));
+            evt->bind(ctx);
+            callable.call(evt);
+        } else {
+            callable.call();
+        }
+
         if (eventType == UIEventType::TouchBegin && ctx->_touchCapture == 0)
             ctx->captureTouch();
     });

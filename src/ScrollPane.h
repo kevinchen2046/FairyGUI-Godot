@@ -110,6 +110,8 @@ public:
 
     void syncScrollPosFromContainer();
 
+    bool isBarGripDragging() const;
+
     const Vector2& getContentSize() const { return _contentSize; }
     const Vector2& getViewSize() const { return _viewSize; }
 

@@ -1268,6 +1268,8 @@ void GComponent::applyPivotOffset()
         if (overlay->get_parent() == _displayObject)
             overlay->set_position(pos);
     }
+
+    GuiObject::applyPivotOffset();
 }
 
 void GComponent::updateOverflowClipRect()

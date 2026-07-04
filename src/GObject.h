@@ -214,6 +214,7 @@ protected:
     virtual void handlePositionChanged();
     void syncControlDisplay();
     Vector2 computeDisplayPosition() const;
+    Vector2 computeControlPosition() const;
     Vector2 computeContentPivotOffset() const;
     Vector2 computeDisplayScale() const;
     Vector2 displayLocalToLogical(const Vector2& displayLocal) const;

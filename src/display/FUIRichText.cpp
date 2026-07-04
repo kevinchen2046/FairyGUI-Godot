@@ -202,7 +202,7 @@ Vector2 FUIRichText::measureRendererNode(Node *p_node) const
 
 void FUIRichText::resetRendererChildren()
 {
-    if (!_clipContainer)
+    if (!_clipContainer || _clipContainer->is_queued_for_deletion())
         return;
 
     _rendererElements.clear();
@@ -226,11 +226,22 @@ Rect2 FUIRichText::get_anchorable_rect() const
 
 FUIRichText::~FUIRichText()
 {
-    resetRendererChildren();
-    if (_parser) delete _parser;
-    for (auto& obj : _objects)
+    _rendererElements.clear();
+    if (_clipContainer)
+    {
+        for (int i = _clipContainer->get_child_count() - 1; i >= 0; i--)
+        {
+            Node *child = _clipContainer->get_child(i);
+            _clipContainer->remove_child(child);
+            if (Object::cast_to<FUILabel>(child))
+                memdelete(child);
+        }
+    }
+    if (_parser)
+        delete _parser;
+    for (auto &obj : _objects)
         delete obj;
-    for (auto& elem : _elements)
+    for (auto &elem : _elements)
         delete elem;
 }
 
@@ -777,11 +788,11 @@ void FUIRichText::formarRenderers()
 
 void FUIRichText::updateClipping()
 {
-    if (_clipContainer)
-    {
-        _clipContainer->applyClipRect(Vector2(), Vector2(_dimensionsX, _dimensionsY));
-        _clipContainer->set_clip_contents(_overflow == 1 || _overflow == 2);
-    }
+    if (!_clipContainer || _clipContainer->is_queued_for_deletion() || is_queued_for_deletion())
+        return;
+
+    _clipContainer->applyClipRect(Vector2(), Vector2(_dimensionsX, _dimensionsY));
+    _clipContainer->set_clip_contents(_overflow == 1 || _overflow == 2);
     set_clip_children_mode(CanvasItem::CLIP_CHILDREN_DISABLED);
     queue_redraw();
 }

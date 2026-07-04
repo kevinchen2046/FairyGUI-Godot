@@ -22,12 +22,17 @@ FUIClipContainer::FUIClipContainer()
 
 void FUIClipContainer::applyClipRect(const Vector2 &p_pos, const Vector2 &p_size)
 {
+    if (is_queued_for_deletion())
+        return;
+
+    Node *parent = get_parent();
+    if (parent && parent->is_queued_for_deletion())
+        return;
+
     const real_t w = MAX(p_size.x, 1.0f);
     const real_t h = MAX(p_size.y, 1.0f);
-    set_offset(SIDE_LEFT, p_pos.x);
-    set_offset(SIDE_TOP, p_pos.y);
-    set_offset(SIDE_RIGHT, p_pos.x + w);
-    set_offset(SIDE_BOTTOM, p_pos.y + h);
+    set_position(p_pos);
+    set_size(Vector2(w, h));
 }
 
 void FUIClipContainer::applyClipPosition(const Vector2 &p_pos)
