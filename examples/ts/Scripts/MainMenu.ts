@@ -31,15 +31,22 @@ export default class MainMenu extends DemoSceneBase {
         if (btn != null) {
             btn.addClickListener(
                 Callable.create(() => {
-                    this._cleanupGrootOverlays();
-                    this._groot!.removeChildren();
-                    (this.getTree() as unknown as { callDeferred(method: string, scenePath: string): void }).callDeferred(
-                        "change_scene_to_file",
+                    (this as unknown as { callDeferred(method: string, scenePath: string): void }).callDeferred(
+                        "_navigateToScene",
                         scenePath,
                     );
                 }),
             );
         }
+    }
+
+    private _navigateToScene(scenePath: string): void {
+        this._cleanupGrootOverlays();
+        this._groot!.removeChildren();
+        (this.getTree() as unknown as { callDeferred(method: string, scenePath: string): void }).callDeferred(
+            "change_scene_to_file",
+            scenePath,
+        );
     }
 
     protected _onClose(): void {
