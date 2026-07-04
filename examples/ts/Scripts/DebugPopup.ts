@@ -1,9 +1,7 @@
 /// <reference path="../fairygui.d.ts" />
 
-import DemoSceneBase from "./DemoSceneBase";
+import "./fgui-globals";
 import { CanvasItem, Node2D, SceneTree } from "godot";
-
-void DemoSceneBase;
 
 export default class DebugPopup extends SceneTree {
     _initialize(): void {

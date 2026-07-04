@@ -3,6 +3,9 @@
 import type { Callable, Node, Object, Rect2, RefCounted, Vector2 } from "godot";
 
 declare global {
+    /** GodotJS CommonJS require（用于加载 godot 模块等） */
+    function require(moduleId: string): unknown;
+
     /** Godot built-in random helpers used by GDScript examples. */
     function randi(): number;
     function randf(): number;

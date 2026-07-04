@@ -1,9 +1,7 @@
 /// <reference path="../fairygui.d.ts" />
 
-import DemoSceneBase from "./DemoSceneBase";
+import "./fgui-globals";
 import { Callable } from "godot";
-
-void DemoSceneBase;
 
 export default class Window1 extends GWindow {
     constructor() {

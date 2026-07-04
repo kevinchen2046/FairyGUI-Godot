@@ -1,50 +1,7 @@
 /// <reference path="../fairygui.d.ts" />
 
-import * as godot from "godot";
+import "./fgui-globals";
 import { Callable, Node } from "godot";
-
-(function registerFguiGlobals(): void {
-    const flag = "__fguiGlobalsRegistered";
-    const g = globalThis as Record<string, unknown>;
-    if (g[flag]) {
-        return;
-    }
-    g[flag] = true;
-
-    const mod = godot as unknown as Record<string, unknown>;
-    const names = [
-        "DragDropManagerHelper",
-        "FguiEventContext",
-        "GButton",
-        "GComponent",
-        "GController",
-        "GLabel",
-        "GList",
-        "GObject",
-        "GPopupMenu",
-        "GProgressBar",
-        "GRichTextField",
-        "GRoot",
-        "GTextField",
-        "GTree",
-        "GTreeNode",
-        "GTweenHelper",
-        "GTweener",
-        "GWindow",
-        "ScrollPane",
-        "Transition",
-        "UIConfigHelper",
-        "UIEventDispatcher",
-        "UIPackage",
-        "randf",
-        "randi",
-    ] as const;
-
-    for (const name of names) {
-        g[name] = mod[name];
-    }
-    g.FGUIEventContext = mod.FguiEventContext;
-})();
 
 export default class DemoSceneBase extends Node {
     protected mainMenuScenePath = "res://ts/Scenes/MainMenu.tscn";
