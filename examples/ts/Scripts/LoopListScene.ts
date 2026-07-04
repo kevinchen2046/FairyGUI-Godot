@@ -1,6 +1,6 @@
 /// <reference path="../fairygui.d.ts" />
 
-import { Callable, Vector2 } from "godot";
+import { Callable } from "godot";
 import { DemoSceneBase } from "./DemoSceneBase";
 
 export default class LoopListScene extends DemoSceneBase {
@@ -33,17 +33,18 @@ export default class LoopListScene extends DemoSceneBase {
         if (this._list == null) {
             return;
         }
+        const sp = this._list.getScrollPane();
+        if (sp == null) {
+            return;
+        }
+        const midX = sp.getScrollingPosX() + this._list.getViewWidth() / 2.0;
         const cnt = this._list.numChildren();
-        const viewCenterX = this._list.localToGlobal(
-            new Vector2(this._list.getViewWidth() / 2.0, 0),
-        ).x;
         for (let i = 0; i < cnt; i++) {
             const obj = this._list.getChildAt(i);
             if (obj == null) {
                 continue;
             }
-            const objCenterX = obj.localToGlobal(new Vector2(obj.getWidth() / 2.0, 0)).x;
-            const dist = Math.abs(viewCenterX - objCenterX);
+            const dist = Math.abs(midX - obj.getX() - obj.getWidth() / 2.0);
             if (dist > obj.getWidth()) {
                 obj.setScaleX(1);
                 obj.setScaleY(1);

@@ -33,16 +33,18 @@ public partial class LoopListScene : DemoSceneBase
     {
         if (_list == null)
             return;
+        var sp = _list.GetScrollPane();
+        if (sp == null)
+            return;
 
+        var midX = sp.GetScrollingPosX() + _list.GetViewWidth() / 2.0f;
         var cnt = _list.NumChildren();
-        var viewCenterX = _list.LocalToGlobal(new Vector2(_list.GetViewWidth() / 2.0f, 0)).X;
         for (var i = 0; i < cnt; i++)
         {
             var obj = _list.GetChildAt(i);
             if (obj == null)
                 continue;
-            var objCenterX = obj.LocalToGlobal(new Vector2(obj.GetWidth() / 2.0f, 0)).X;
-            var dist = Mathf.Abs(viewCenterX - objCenterX);
+            var dist = Mathf.Abs(midX - obj.GetX() - obj.GetWidth() / 2.0f);
             if (dist > obj.GetWidth())
             {
                 obj.SetScaleX(1);

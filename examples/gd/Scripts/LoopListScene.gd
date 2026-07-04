@@ -22,14 +22,16 @@ func _render_list_item(index: int, obj: Object) -> void:
 func _do_special_effect() -> void:
 	if _list == null:
 		return
+	var sp = _list.getScrollPane()
+	if sp == null:
+		return
+	var mid_x = sp.getScrollingPosX() + _list.getViewWidth() / 2.0
 	var cnt = _list.numChildren()
-	var view_center_x = _list.localToGlobal(Vector2(_list.getViewWidth() / 2.0, 0)).x
 	for i in range(cnt):
 		var obj = _list.getChildAt(i)
 		if obj == null:
 			continue
-		var obj_center_x = obj.localToGlobal(Vector2(obj.getWidth() / 2.0, 0)).x
-		var dist = abs(view_center_x - obj_center_x)
+		var dist = abs(mid_x - obj.getX() - obj.getWidth() / 2.0)
 		if dist > obj.getWidth():
 			obj.setScaleX(1)
 			obj.setScaleY(1)
