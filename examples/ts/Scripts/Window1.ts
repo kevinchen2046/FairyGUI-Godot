@@ -32,7 +32,7 @@ export class Window1 extends GWindow {
                 continue;
             }
             item.setTitle(String(i));
-            item.setIcon("ui://Basics/r4");
+            item.icon = "ui://Basics/r4";
         }
     }
 }

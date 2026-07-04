@@ -28,12 +28,12 @@ export default class ListEffectScene extends DemoSceneBase {
 
             const readCtrl = item.getController("IsRead");
             if (readCtrl != null) {
-                readCtrl.setSelectedIndex(i % 2 === 0 ? 0 : 1);
+                readCtrl.selectedIndex = i % 2 === 0 ? 0 : 1;
             }
 
             const fetchCtrl = item.getController("c1");
             if (fetchCtrl != null) {
-                fetchCtrl.setSelectedIndex(i % 3 !== 0 ? 0 : 1);
+                fetchCtrl.selectedIndex = i % 3 !== 0 ? 0 : 1;
             }
 
             item.setTitle("Mail title here");

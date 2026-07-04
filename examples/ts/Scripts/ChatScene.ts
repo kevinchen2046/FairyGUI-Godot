@@ -108,7 +108,7 @@ export default class ChatScene extends DemoSceneBase {
             return;
         }
         const msg = this._messages[index];
-        obj.setIcon(`ui://Emoji/${msg.sender_icon}`);
+        obj.icon = `ui://Emoji/${msg.sender_icon}`;
 
         const tf = obj.getChild("msg");
         if (tf instanceof GRichTextField) {

@@ -59,7 +59,7 @@ export default class PullToRefreshScene extends DemoSceneBase {
         const header = sp.getHeader();
         if (header != null) {
             const c1 = header.getController("c1");
-            c1?.setSelectedIndex(2);
+            c1!.selectedIndex = 2;
             sp.lockHeader(header.getHeight());
         }
 
@@ -69,7 +69,7 @@ export default class PullToRefreshScene extends DemoSceneBase {
 
         if (header != null) {
             const c1 = header.getController("c1");
-            c1?.setSelectedIndex(3);
+            c1!.selectedIndex = 3;
             sp.lockHeader(35);
         }
 
@@ -77,7 +77,7 @@ export default class PullToRefreshScene extends DemoSceneBase {
 
         if (header != null) {
             const c1 = header.getController("c1");
-            c1?.setSelectedIndex(0);
+            c1!.selectedIndex = 0;
             sp.lockHeader(0);
         }
         this._refreshing1 = false;
@@ -96,7 +96,7 @@ export default class PullToRefreshScene extends DemoSceneBase {
         const footer = sp.getFooter();
         if (footer != null) {
             const c1 = footer.getController("c1");
-            c1?.setSelectedIndex(1);
+            c1!.selectedIndex = 1;
             sp.lockFooter(footer.getHeight());
         }
 
@@ -106,7 +106,7 @@ export default class PullToRefreshScene extends DemoSceneBase {
 
         if (footer != null) {
             const c1 = footer.getController("c1");
-            c1?.setSelectedIndex(0);
+            c1!.selectedIndex = 0;
             sp.lockFooter(0);
         }
         this._refreshing2 = false;

@@ -42,7 +42,11 @@ export default class BasicsScene extends DemoSceneBase {
         for (let i = 0; i < cnt; i++) {
             const obj = this._view.getChildAt(i);
             if (obj != null && fguiGroupName(obj) === "btns") {
-                obj.addClickListener(Callable.create(this._runDemo.bind(this)));
+                obj.addClickListener(
+                    Callable.create(() => {
+                        (this as unknown as { callDeferred(method: string): void }).callDeferred("_runDemo");
+                    }),
+                );
             }
         }
     }
@@ -56,12 +60,12 @@ export default class BasicsScene extends DemoSceneBase {
         }
         this._cleanupGrootOverlays();
         this._demoContainer?.removeChildren();
-        this._cc?.setSelectedIndex(0);
+        this._cc!.selectedIndex = 0;
         this._backBtn?.setVisible(false);
         this._progressRunning = false;
     }
 
-    private _runDemo(): void {
+    _runDemo(): void {
         this._cleanupGrootOverlays();
         const sender = this._groot!.getTouchTarget();
         if (sender == null) {
@@ -80,7 +84,7 @@ export default class BasicsScene extends DemoSceneBase {
 
         this._demoContainer?.removeChildren();
         this._demoContainer?.addChild(obj);
-        this._cc?.setSelectedIndex(1);
+        this._cc!.selectedIndex = 1;
         this._backBtn?.setVisible(true);
 
         switch (typeName) {
@@ -269,8 +273,8 @@ export default class BasicsScene extends DemoSceneBase {
                 Callable.create((ctx: FGUIEventContext) => {
                     ctx.preventDefault();
                     DragDropManagerHelper.getInstance().startDrag(
-                        b.getIcon(),
-                        b.getIcon(),
+                        b.icon,
+                        b.icon,
                         ctx.getTouchId(),
                     );
                 }),
@@ -278,11 +282,11 @@ export default class BasicsScene extends DemoSceneBase {
         }
         const c = obj.getChild("c");
         if (c != null) {
-            c.setIcon("");
+            c.icon = "";
             c.addEventListener(
                 UIEventDispatcher.DROP,
                 Callable.create((ctx: FGUIEventContext) => {
-                    c.setIcon(String(ctx.getData()));
+                    c.icon = String(ctx.getData());
                 }),
             );
         }
@@ -325,11 +329,11 @@ export default class BasicsScene extends DemoSceneBase {
         for (let i = 0; i < cnt; i++) {
             const child = obj.getChildAt(i);
             if (child instanceof GProgressBar) {
-                let val = child.getValue() + 1;
-                if (val > child.getMax()) {
-                    val = child.getMin();
+                let val = child.value + 1;
+                if (val > child.max) {
+                    val = child.min;
                 }
-                child.setValue(val);
+                child.value = val;
             }
         }
     }

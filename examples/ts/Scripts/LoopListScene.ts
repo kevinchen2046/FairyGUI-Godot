@@ -26,7 +26,7 @@ export default class LoopListScene extends DemoSceneBase {
 
     private _renderListItem(index: number, obj: GComponent): void {
         obj.setPivot(0.5, 0.5, false);
-        obj.setIcon(`ui://LoopList/n${String(index + 1)}`);
+        obj.icon = `ui://LoopList/n${String(index + 1)}`;
     }
 
     private _doSpecialEffect(): void {

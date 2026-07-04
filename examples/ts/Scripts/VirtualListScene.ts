@@ -49,11 +49,11 @@ export default class VirtualListScene extends DemoSceneBase {
     private _renderListItem(index: number, obj: GComponent): void {
         const readCtrl = obj.getController("IsRead");
         if (readCtrl != null) {
-            readCtrl.setSelectedIndex(index % 2 === 0 ? 0 : 1);
+            readCtrl.selectedIndex = index % 2 === 0 ? 0 : 1;
         }
         const fetchCtrl = obj.getController("c1");
         if (fetchCtrl != null) {
-            fetchCtrl.setSelectedIndex(index % 3 !== 0 ? 0 : 1);
+            fetchCtrl.selectedIndex = index % 3 !== 0 ? 0 : 1;
         }
         const timeText = obj.getChild("timeText");
         if (timeText != null) {

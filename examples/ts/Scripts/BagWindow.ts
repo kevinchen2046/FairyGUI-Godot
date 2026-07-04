@@ -34,7 +34,7 @@ export class BagWindow extends GWindow {
 
     private _renderListItem(index: number, obj: GComponent): void {
         const iconIdx = randi() % 10;
-        obj.setIcon(`res://Resources/icons/i${String(iconIdx)}.png`);
+        obj.icon = `res://Resources/icons/i${String(iconIdx)}.png`;
         obj.setText(String(randi() % 100));
     }
 
@@ -50,7 +50,7 @@ export class BagWindow extends GWindow {
         const n11 = pane.getChild("n11");
         const n13 = pane.getChild("n13");
         if (n11 != null && n13 != null) {
-            n11.setIcon(item.getIcon());
+            n11.icon = item.icon;
             n13.setText(item.getText());
         }
     }

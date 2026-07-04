@@ -90,7 +90,7 @@ export default class TreeViewScene extends DemoSceneBase {
         if (node.isFolder()) {
             btn.setText(node.getText());
         } else {
-            btn.setIcon("ui://TreeView/file");
+            btn.icon = "ui://TreeView/file";
             btn.setText(node.getText());
         }
     }

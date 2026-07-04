@@ -12,7 +12,7 @@ export default class CooldownScene extends DemoSceneBase {
         if (b0 instanceof GProgressBar) {
             const icon0 = b0.getChild("icon");
             if (icon0 != null) {
-                icon0.setIcon("res://Resources/icons/k0.png");
+                icon0.icon = "res://Resources/icons/k0.png";
             }
             b0.tweenValue(100, 5);
         }
@@ -21,7 +21,7 @@ export default class CooldownScene extends DemoSceneBase {
         if (b1 instanceof GProgressBar) {
             const icon1 = b1.getChild("icon");
             if (icon1 != null) {
-                icon1.setIcon("res://Resources/icons/k1.png");
+                icon1.icon = "res://Resources/icons/k1.png";
             }
             b1.tweenValue(0, 10);
         }

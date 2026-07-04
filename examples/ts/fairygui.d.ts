@@ -234,6 +234,10 @@ declare global {
     class GRichTextField extends GTextField {}
 
     class GProgressBar extends GComponent {
+        /** GodotJS：ADD_PROPERTY */
+        min: number;
+        max: number;
+        value: number;
         getMin(): number;
         getMax(): number;
         getValue(): number;
@@ -268,6 +272,8 @@ declare global {
     }
 
     class GController extends RefCounted {
+        /** GodotJS：ADD_PROPERTY，读写用 selectedIndex */
+        selectedIndex: number;
         setSelectedIndex(index: number): void;
         getSelectedIndex(): number;
     }
