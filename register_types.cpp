@@ -67,7 +67,7 @@ void initialize_fairygui_module(ModuleInitializationLevel p_level)
         GDREGISTER_CLASS(fairygui::FGUIEventContext);
         GDREGISTER_CLASS(fairygui::UIEventDispatcher);
         GDREGISTER_CLASS(fairygui::GController);
-        GDREGISTER_CLASS(fairygui::GObject);
+        GDREGISTER_CLASS(fairygui::GuiObject);
         GDREGISTER_CLASS(fairygui::GComponent);
         GDREGISTER_CLASS(fairygui::GRoot);
 

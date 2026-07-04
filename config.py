@@ -23,7 +23,7 @@ def get_doc_classes():
         "GLoader",
         "GLoader3D",
         "GMovieClip",
-        "GObject",
+        "GuiObject",
         "GObjectPool",
         "GPopupMenu",
         "GProgressBar",
