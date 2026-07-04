@@ -25,7 +25,7 @@ func _do_special_effect() -> void:
 	var sp = _list.getScrollPane()
 	if sp == null:
 		return
-	var mid_x = sp.getPosX() + _list.getViewWidth() / 2.0
+	var mid_x = sp.getScrollingPosX() + _list.getViewWidth() / 2.0
 	var cnt = _list.numChildren()
 	for i in range(cnt):
 		var obj = _list.getChildAt(i)

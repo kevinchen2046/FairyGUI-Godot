@@ -592,6 +592,17 @@ float ScrollPane::getScrollingPosY() const
     return std::clamp(-_container->get_position().y, 0.0f, _overlapSize.height);
 }
 
+void ScrollPane::syncScrollPosFromContainer()
+{
+    if (!_container)
+        return;
+
+    if (_overlapSize.width > 0)
+        _xPos = std::clamp(-_container->get_position().x, 0.0f, _overlapSize.width);
+    if (_overlapSize.height > 0)
+        _yPos = std::clamp(-_container->get_position().y, 0.0f, _overlapSize.height);
+}
+
 void ScrollPane::setViewWidth(float value)
 {
     value = value + _owner->_margin.left + _owner->_margin.right;
@@ -1036,6 +1047,7 @@ void ScrollPane::refresh()
 
     refresh2();
 
+    syncScrollPosFromContainer();
     _owner->dispatchEvent(UIEventType::Scroll);
     if (_needRefresh) //pos may change in onScroll
     {
@@ -1464,6 +1476,7 @@ void ScrollPane::killTween()
     {
         Vector2 t = _tweenStart + _tweenChange;
         _container->set_position(t);
+        syncScrollPosFromContainer();
         _owner->dispatchEvent(UIEventType::Scroll);
     }
 
@@ -1549,12 +1562,14 @@ void ScrollPane::tweenUpdate(float dt)
         updateScrollBarPos();
         updateScrollBarVisible();
 
+        syncScrollPosFromContainer();
         _owner->dispatchEvent(UIEventType::Scroll);
         _owner->dispatchEvent(UIEventType::ScrollEnd);
     }
     else
     {
         updateScrollBarPos();
+        syncScrollPosFromContainer();
         _owner->dispatchEvent(UIEventType::Scroll);
     }
 }
@@ -1826,6 +1841,7 @@ void ScrollPane::onTouchMove(EventContext* context)
     updateScrollBarVisible();
     if (_pageMode)
         updatePageController();
+    syncScrollPosFromContainer();
     _owner->dispatchEvent(UIEventType::Scroll);
 }
 
@@ -1972,6 +1988,8 @@ void ScrollPane::_bind_methods()
     ClassDB::bind_method(D_METHOD("setPosX", "value", "ani"), &ScrollPane::gd_setPosX, DEFVAL(false));
     ClassDB::bind_method(D_METHOD("getPosY"), &ScrollPane::gd_getPosY);
     ClassDB::bind_method(D_METHOD("setPosY", "value", "ani"), &ScrollPane::gd_setPosY, DEFVAL(false));
+    ClassDB::bind_method(D_METHOD("getScrollingPosX"), &ScrollPane::gd_getScrollingPosX);
+    ClassDB::bind_method(D_METHOD("getScrollingPosY"), &ScrollPane::gd_getScrollingPosY);
     ClassDB::bind_method(D_METHOD("scrollTop", "ani"), &ScrollPane::gd_scrollTop, DEFVAL(false));
     ClassDB::bind_method(D_METHOD("scrollBottom", "ani"), &ScrollPane::gd_scrollBottom, DEFVAL(false));
     ClassDB::bind_method(D_METHOD("isBottomMost"), &ScrollPane::gd_isBottomMost);

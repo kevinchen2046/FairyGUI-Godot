@@ -204,6 +204,7 @@ Ref<GObject> GList::getFromPool(const std::string& url)
         if (ref->getParent() != nullptr)
             ref->removeFromParent();
         ref->setPosition(0, 0);
+        ref->setScale(1, 1);
         ref->setVisible(true);
     }
     return ref;
@@ -1348,6 +1349,18 @@ void GList::doRefreshVirtualList()
 void GList::onScroll(EventContext* context)
 {
     handleScroll(false);
+
+    // Virtual list reuses pooled items; reset scale before user SCROLL handlers
+    // (e.g. LoopList demo) recalculate center item magnification.
+    if (_virtual)
+    {
+        const int cnt = numChildren();
+        for (int i = 0; i < cnt; i++)
+        {
+            if (GObject* obj = getChildAt(i))
+                obj->setScale(1, 1);
+        }
+    }
 }
 
 int GList::getIndexOnPos1(float& pos, bool forceUpdate)
@@ -2160,7 +2173,7 @@ void GList::handleArchOrder1()
 {
     if (_childrenRenderOrder == ChildrenRenderOrder::ARCH)
     {
-        float mid = _scrollPane->getPosY() + getViewHeight() / 2;
+        float mid = _scrollPane->getScrollingPosY() + getViewHeight() / 2;
         float minDist = FLT_MAX, dist;
         int apexIndex = 0;
         int cnt = numChildren();
@@ -2185,7 +2198,7 @@ void GList::handleArchOrder2()
 {
     if (_childrenRenderOrder == ChildrenRenderOrder::ARCH)
     {
-        float mid = _scrollPane->getPosX() + getViewWidth() / 2;
+        float mid = _scrollPane->getScrollingPosX() + getViewWidth() / 2;
         float minDist = FLT_MAX, dist;
         int apexIndex = 0;
         int cnt = numChildren();

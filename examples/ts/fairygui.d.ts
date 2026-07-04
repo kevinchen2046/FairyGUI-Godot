@@ -301,6 +301,8 @@ declare global {
         getHeader(): GComponent | null;
         getFooter(): GComponent | null;
         getPosX(): number;
+        getScrollingPosX(): number;
+        getScrollingPosY(): number;
         setPosX(value: number, ani: boolean): void;
         lockHeader(size: number): void;
         lockFooter(size: number): void;

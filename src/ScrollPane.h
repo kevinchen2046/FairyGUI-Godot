@@ -105,6 +105,10 @@ public:
 
     float getScrollingPosX() const;
     float getScrollingPosY() const;
+    float gd_getScrollingPosX() const { return getScrollingPosX(); }
+    float gd_getScrollingPosY() const { return getScrollingPosY(); }
+
+    void syncScrollPosFromContainer();
 
     const Vector2& getContentSize() const { return _contentSize; }
     const Vector2& getViewSize() const { return _viewSize; }

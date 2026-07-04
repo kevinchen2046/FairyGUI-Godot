@@ -23,6 +23,7 @@ Ref<GObject> GObjectPool::getObject(const std::string & url)
         Ref<GObject> ref = arr.back();
         arr.pop_back();
         ref->setVisible(true);
+        ref->setScale(1, 1);
         return ref;
     }
     return UIPackage::createObjectFromURL(url2);
@@ -35,6 +36,7 @@ void GObjectPool::returnObject(GObject* obj)
     if (obj->getParent() != nullptr)
         obj->removeFromParent();
     obj->setPosition(0, 0);
+    obj->setScale(1, 1);
     Ref<GObject> ref = obj;
     ref->setVisible(false);
     _pool[ref->getResourceURL()].push_back(ref);
