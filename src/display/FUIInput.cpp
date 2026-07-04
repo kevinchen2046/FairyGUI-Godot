@@ -25,6 +25,7 @@ protected:
         if (fui_control_handle_notification(this, p_what, _fuiNotifyState))
             return;
         LineEdit::_notification(p_what);
+        fui_control_after_notification(this, p_what, _fuiNotifyState);
     }
 
 private:
@@ -39,6 +40,7 @@ protected:
         if (fui_control_handle_notification(this, p_what, _fuiNotifyState))
             return;
         TextEdit::_notification(p_what);
+        fui_control_after_notification(this, p_what, _fuiNotifyState);
     }
 
 private:
@@ -84,15 +86,13 @@ void FUIInput::_notification(int p_what)
 {
 
     if (fui_control_handle_notification(this, p_what, _fuiNotifyState))
-
         return;
 
     if (p_what == NOTIFICATION_ENTER_TREE)
-
         ensureEditor();
 
     Control::_notification(p_what);
-
+    fui_control_after_notification(this, p_what, _fuiNotifyState);
 }
 
 

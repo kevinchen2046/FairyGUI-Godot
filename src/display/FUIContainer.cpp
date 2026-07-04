@@ -26,6 +26,7 @@ void FUIClipContainer::_notification(int p_what)
     if (fui_control_handle_notification(this, p_what, _fuiNotifyState))
         return;
     Control::_notification(p_what);
+    fui_control_after_notification(this, p_what, _fuiNotifyState);
 }
 
 static void mark_input_handled(Node* node)
