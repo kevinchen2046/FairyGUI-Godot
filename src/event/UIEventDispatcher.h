@@ -3,6 +3,7 @@
 
 #include "FairyGUIMacros.h"
 // cocos2d.h removed - see godot_types.h
+#include "core/templates/local_vector.h"
 #include "EventContext.h"
 #include "UIEventType.h"
 
@@ -77,9 +78,17 @@ private:
         int eventType;
         EventTag tag;
         int dispatching;
+        bool pending_delete = false;
     };
     std::vector<EventCallbackItem*> _callbacks;
     int _dispatching;
+
+    static LocalVector<EventCallbackItem*> _deferred_callback_items;
+    static void _schedule_callback_item_delete(EventCallbackItem* p_item);
+
+public:
+    /** 延迟释放含脚本 Callable 的监听器项，避免 GodotJS 在 V8 回调栈内析构 JSCallable。 */
+    static void flush_deferred_callback_items();
 };
 
 NS_FGUI_END

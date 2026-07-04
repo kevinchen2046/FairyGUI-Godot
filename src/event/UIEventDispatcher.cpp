@@ -2,8 +2,31 @@
 #include "GComponent.h"
 #include "InputProcessor.h"
 #include "utils/WeakPtr.h"
+#include "core/object/message_queue.h"
+#include "core/object/callable_method_pointer.h"
 
 NS_FGUI_BEGIN
+
+LocalVector<UIEventDispatcher::EventCallbackItem*> UIEventDispatcher::_deferred_callback_items;
+
+void UIEventDispatcher::_schedule_callback_item_delete(EventCallbackItem* p_item)
+{
+    if (!p_item)
+        return;
+    _deferred_callback_items.push_back(p_item);
+    if (_deferred_callback_items.size() == 1)
+    {
+        MessageQueue::get_singleton()->push_callable(
+            callable_mp_static(UIEventDispatcher::flush_deferred_callback_items));
+    }
+}
+
+void UIEventDispatcher::flush_deferred_callback_items()
+{
+    for (EventCallbackItem* item : _deferred_callback_items)
+        delete item;
+    _deferred_callback_items.clear();
+}
 
 const EventTag EventTag::None;
 
@@ -125,12 +148,12 @@ void UIEventDispatcher::removeEventListener(int eventType, const EventTag& tag)
         {
             if (_dispatching > 0)
             {
-                (*it)->callback = nullptr;
+                (*it)->pending_delete = true;
                 it++;
             }
             else
             {
-                delete (*it);
+                _schedule_callback_item_delete(*it);
                 it = _callbacks.erase(it);
             }
         }
@@ -147,12 +170,12 @@ void UIEventDispatcher::removeEventListeners()
     if (_dispatching > 0)
     {
         for (auto it = _callbacks.begin(); it != _callbacks.end(); ++it)
-            (*it)->callback = nullptr;
+            (*it)->pending_delete = true;
     }
     else
     {
         for (auto it = _callbacks.begin(); it != _callbacks.end(); it++)
-            delete (*it);
+            _schedule_callback_item_delete(*it);
         _callbacks.clear();
     }
 }
@@ -164,7 +187,7 @@ bool UIEventDispatcher::hasEventListener(int eventType, const EventTag& tag) con
 
     for (auto it = _callbacks.cbegin(); it != _callbacks.cend(); ++it)
     {
-        if ((*it)->eventType == eventType && ((*it)->tag == tag || tag.isNone()) && (*it)->callback != nullptr)
+        if ((*it)->eventType == eventType && ((*it)->tag == tag || tag.isNone()) && (*it)->callback != nullptr && !(*it)->pending_delete)
             return true;
     }
     return false;
@@ -224,7 +247,7 @@ void UIEventDispatcher::doDispatch(int eventType, EventContext* context)
     for (size_t i = 0; i < cnt; i++)
     {
         EventCallbackItem* ci = _callbacks[i];
-        if (ci->callback == nullptr)
+        if (ci->callback == nullptr || ci->pending_delete)
         {
             hasDeletedItems = true;
             continue;
@@ -250,9 +273,9 @@ void UIEventDispatcher::doDispatch(int eventType, EventContext* context)
     {
         for (auto it = _callbacks.begin(); it != _callbacks.end(); )
         {
-            if ((*it)->callback == nullptr)
+            if ((*it)->callback == nullptr || (*it)->pending_delete)
             {
-                delete (*it);
+                _schedule_callback_item_delete(*it);
                 it = _callbacks.erase(it);
             }
             else

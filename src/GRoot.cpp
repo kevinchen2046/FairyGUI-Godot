@@ -62,6 +62,12 @@ void GRoot::cleanup()
 {
     if (_inst != nullptr)
     {
+        _inst->hideTooltips();
+        _inst->hidePopup();
+        _inst->closeModalWait();
+        _inst->closeAllWindows();
+        _inst->removeChildren();
+
         Node* displayNode = _inst->displayObject();
         if (displayNode != nullptr)
         {
@@ -128,6 +134,7 @@ void GRoot::_bind_methods()
     ClassDB::bind_static_method(get_class_static(), D_METHOD("create", "tree", "z_order"), &GRoot::gd_create, DEFVAL(1000));
     ClassDB::bind_static_method(get_class_static(), D_METHOD("createDeferred", "tree", "z_order"), &GRoot::gd_createDeferred, DEFVAL(1000));
     ClassDB::bind_static_method(get_class_static(), D_METHOD("getInstance"), &GRoot::gd_getInstance);
+    ClassDB::bind_static_method(get_class_static(), D_METHOD("cleanup"), &GRoot::cleanup);
 
     ClassDB::bind_method(D_METHOD("showWindow", "win"), &GRoot::gd_showWindow);
     ClassDB::bind_method(D_METHOD("hideWindow", "win"), &GRoot::gd_hideWindow);

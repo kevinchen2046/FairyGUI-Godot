@@ -200,7 +200,11 @@ Ref<GObject> GList::getFromPool(const std::string& url)
     else
         ref = _pool->getObject(url);
     if (ref.is_valid())
+    {
+        if (ref->getParent() != nullptr)
+            ref->removeFromParent();
         ref->setVisible(true);
+    }
     return ref;
 }
 
@@ -244,8 +248,9 @@ void GList::removeChildAt(int index)
 
 void GList::removeChildToPoolAt(int index)
 {
-    returnToPool(getChildAt(index));
+    GObject* child = getChildAt(index);
     removeChildAt(index);
+    returnToPool(child);
 }
 
 void GList::removeChildToPool(GObject* child)

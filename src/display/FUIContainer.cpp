@@ -7,9 +7,29 @@
 #include "scene/resources/shader.h"
 #include "scene/resources/material.h"
 #include "scene/main/viewport.h"
+#include "core/object/callable_method_pointer.h"
 #include "servers/rendering_server.h"
 
 NS_FGUI_BEGIN
+
+static void fui_sync_child_order_changed(FUIContainer* self, bool p_connect)
+{
+    Viewport* viewport = self->get_viewport();
+    Node* parent = self->get_parent();
+    if (!viewport || !parent)
+        return;
+
+    Callable callable = callable_mp(viewport, &Viewport::gui_set_root_order_dirty);
+    if (p_connect)
+    {
+        if (!parent->is_connected(SNAME("child_order_changed"), callable))
+            parent->connect(SNAME("child_order_changed"), callable, CONNECT_REFERENCE_COUNTED);
+    }
+    else if (parent->is_connected(SNAME("child_order_changed"), callable))
+    {
+        parent->disconnect(SNAME("child_order_changed"), callable);
+    }
+}
 
 static void mark_input_handled(Node* node)
 {
@@ -128,6 +148,17 @@ void FUIContainer::_notification(int p_what)
     {
         while (get_child_count() > 0)
             remove_child(get_child(0));
+        return;
+    }
+    if (p_what == NOTIFICATION_ENTER_TREE)
+    {
+        fui_sync_child_order_changed(this, true);
+        return;
+    }
+    if (p_what == NOTIFICATION_EXIT_TREE)
+    {
+        fui_sync_child_order_changed(this, false);
+        return;
     }
     Node2D::_notification(p_what);
 }

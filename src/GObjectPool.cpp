@@ -29,6 +29,9 @@ Ref<GObject> GObjectPool::getObject(const std::string & url)
 
 void GObjectPool::returnObject(GObject* obj)
 {
+    if (obj == nullptr)
+        return;
+    obj->setVisible(false);
     _pool[obj->getResourceURL()].push_back(obj);
 }
 

@@ -6,6 +6,7 @@ import { Callable } from "godot";
 /** GodotJS 不可用 `extends GWindow`，用组合包装原生 GWindow 实例。 */
 export class Window1 {
     private readonly _win: GWindow;
+    private _listPopulated = false;
 
     constructor() {
         this._win = new GWindow();
@@ -32,6 +33,9 @@ export class Window1 {
     }
 
     private _onShown(): void {
+        if (this._listPopulated) {
+            return;
+        }
         const pane = this._win.contentPane;
         if (pane == null) {
             return;
@@ -49,5 +53,6 @@ export class Window1 {
             item.setTitle(String(i));
             item.icon = "ui://Basics/r4";
         }
+        this._listPopulated = true;
     }
 }
