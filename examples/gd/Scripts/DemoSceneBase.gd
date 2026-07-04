@@ -2,21 +2,41 @@ extends Node
 
 var _groot: Object
 var _view: Object = null
+var _scene_active := false
+var _pending_scene_path: String = ""
 
 func _ready() -> void:
+	_scene_active = true
 	_register_default_fonts()
-	# GRoot 需要先创建才能使用，如果尚未创建则延迟到下一帧
 	if GRoot.getInstance() == null:
 		call_deferred("_delayed_init")
 	else:
-		_groot = GRoot.getInstance()
-		_prepare_groot_for_scene()
-		continue_init()
-		_add_close_button()
+		call_deferred("_deferred_attach_to_groot")
+
+func _exit_tree() -> void:
+	_scene_active = false
+	_pending_scene_path = ""
+
+func _is_scene_active() -> bool:
+	return _scene_active
+
+func _safe_get_tree() -> SceneTree:
+	if not _scene_active or not is_inside_tree():
+		return null
+	return get_tree()
 
 func _delayed_init() -> void:
-	GRoot.create(get_tree())
+	var tree = _safe_get_tree()
+	if tree == null:
+		return
+	GRoot.create(tree)
+	_deferred_attach_to_groot()
+
+func _deferred_attach_to_groot() -> void:
+	if not _is_scene_active():
+		return
 	_groot = GRoot.getInstance()
+	_prepare_groot_for_scene()
 	continue_init()
 	_add_close_button()
 
@@ -48,7 +68,7 @@ func _add_close_button() -> void:
 	close_btn.addRelation(_groot, GuiObject.RIGHT_RIGHT, false)
 	close_btn.addRelation(_groot, GuiObject.BOTTOM_BOTTOM, false)
 	close_btn.setSortingOrder(100000)
-	close_btn.addClickListener(_on_close)
+	close_btn.addClickListener(func(): call_deferred("_on_close"))
 	_groot.addChild(close_btn)
 
 func _cleanup_groot_overlays() -> void:
@@ -60,7 +80,6 @@ func _cleanup_groot_overlays() -> void:
 	_groot.hidePopup()
 	_groot.closeModalWait()
 	_groot.closeAllWindows()
-	# Remove any overlay nodes still parented to GRoot (popups, drag agent, etc.).
 	var i = _groot.numChildren() - 1
 	while i >= 0:
 		var child = _groot.getChildAt(i)
@@ -75,8 +94,23 @@ func _cleanup_groot_overlays() -> void:
 		else:
 			i -= 1
 
-func _on_close() -> void:
+func _request_scene_change(scene_path: String) -> void:
+	if not _is_scene_active():
+		return
+	_pending_scene_path = scene_path
+	call_deferred("_deferred_finish_scene_change")
+
+func _deferred_finish_scene_change() -> void:
+	var scene_path = _pending_scene_path
+	_pending_scene_path = ""
+	if scene_path.is_empty() or not _is_scene_active():
+		return
 	_cleanup_groot_overlays()
 	if _groot != null:
 		_groot.removeChildren()
-	get_tree().call_deferred("change_scene_to_file", "res://gd/Scenes/MainMenu.tscn")
+	var tree = _safe_get_tree()
+	if tree != null:
+		tree.call_deferred("change_scene_to_file", scene_path)
+
+func _on_close() -> void:
+	_request_scene_change("res://gd/Scenes/MainMenu.tscn")

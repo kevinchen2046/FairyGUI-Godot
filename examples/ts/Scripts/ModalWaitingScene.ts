@@ -22,7 +22,10 @@ export default class ModalWaitingScene extends DemoSceneBase {
 
         this._groot!.showModalWait();
         await this.waitSeconds(3.0);
-        this._groot!.closeModalWait();
+        if (!this.isSceneActive() || this._groot == null) {
+            return;
+        }
+        this._groot.closeModalWait();
     }
 
     private _onTestWinInit(): void {
@@ -39,7 +42,10 @@ export default class ModalWaitingScene extends DemoSceneBase {
                 Callable.create(async () => {
                     this._testWin!.showModalWait();
                     await this.waitSeconds(3.0);
-                    this._testWin!.closeModalWait();
+                    if (!this.isSceneActive() || this._testWin == null) {
+                        return;
+                    }
+                    this._testWin.closeModalWait();
                 }),
             );
         }

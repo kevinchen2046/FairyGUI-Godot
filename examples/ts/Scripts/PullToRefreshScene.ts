@@ -64,6 +64,10 @@ export default class PullToRefreshScene extends DemoSceneBase {
         }
 
         await this.waitSeconds(2.0);
+        if (!this.isSceneActive() || this._list1 == null) {
+            this._refreshing1 = false;
+            return;
+        }
 
         this._list1.setNumItems(this._list1.getNumItems() + 5);
 
@@ -74,6 +78,10 @@ export default class PullToRefreshScene extends DemoSceneBase {
         }
 
         await this.waitSeconds(2.0);
+        if (!this.isSceneActive() || this._list1 == null) {
+            this._refreshing1 = false;
+            return;
+        }
 
         if (header != null) {
             const c1 = header.getController("c1");
@@ -101,6 +109,10 @@ export default class PullToRefreshScene extends DemoSceneBase {
         }
 
         await this.waitSeconds(2.0);
+        if (!this.isSceneActive() || this._list2 == null) {
+            this._refreshing2 = false;
+            return;
+        }
 
         this._list2.setNumItems(this._list2.getNumItems() + 5);
 

@@ -318,6 +318,9 @@ export default class BasicsScene extends DemoSceneBase {
     }
 
     _process(_delta: number): void {
+        if (!this.isSceneActive()) {
+            return;
+        }
         if (!this._progressRunning) {
             return;
         }

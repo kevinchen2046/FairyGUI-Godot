@@ -1,7 +1,13 @@
 /// <reference path="../fairygui.d.ts" />
 
 import "./fgui-globals";
-import { Callable, Node } from "godot";
+import { Callable, Node, SceneTree } from "godot";
+
+type GodotNode = Node & {
+    isInsideTree(): boolean;
+    getTree(): SceneTree;
+    callDeferred(method: string, ...args: unknown[]): void;
+};
 
 export class DemoSceneBase extends Node {
     protected mainMenuScenePath = "res://ts/Scenes/MainMenu.tscn";
@@ -9,21 +15,52 @@ export class DemoSceneBase extends Node {
     protected _groot: GRoot | null = null;
     protected _view: GComponent | null = null;
 
+    private _sceneActive = false;
+    private _pendingScenePath: string | null = null;
+
     _ready(): void {
+        this._sceneActive = true;
         this._registerDefaultFonts();
         if (GRoot.getInstance() == null) {
-            (this as unknown as { callDeferred(method: string): void }).callDeferred("_delayedInit");
+            (this as unknown as GodotNode).callDeferred("_delayedInit");
         } else {
-            this._groot = GRoot.getInstance();
-            this._prepareGrootForScene();
-            void this.ContinueInit();
-            this._addCloseButton();
+            (this as unknown as GodotNode).callDeferred("_deferredAttachToGroot");
         }
     }
 
-    _delayedInit(): void {
-        GRoot.create(this.getTree()!);
+    _exit_tree(): void {
+        this._sceneActive = false;
+        this._pendingScenePath = null;
+    }
+
+    protected isSceneActive(): boolean {
+        return this._sceneActive;
+    }
+
+    /** GodotJS 在节点已离树时调用 getTree() 会报错，须先 isInsideTree()。 */
+    protected safeGetTree(): SceneTree | null {
+        const self = this as unknown as GodotNode;
+        if (!this._sceneActive || !self.isInsideTree()) {
+            return null;
+        }
+        return self.getTree();
+    }
+
+    protected _delayedInit(): void {
+        const tree = this.safeGetTree();
+        if (tree == null) {
+            return;
+        }
+        GRoot.create(tree);
+        this._deferredAttachToGroot();
+    }
+
+    protected _deferredAttachToGroot(): void {
+        if (!this.isSceneActive()) {
+            return;
+        }
         this._groot = GRoot.getInstance();
+        this._prepareGrootForScene();
         void this.ContinueInit();
         this._addCloseButton();
     }
@@ -55,8 +92,11 @@ export class DemoSceneBase extends Node {
     }
 
     protected async waitSeconds(seconds: number): Promise<void> {
-        const tree = this.getTree();
-        if (!tree) {
+        if (!this.isSceneActive()) {
+            return;
+        }
+        const tree = this.safeGetTree();
+        if (tree == null) {
             return;
         }
         const timer = tree.createTimer(seconds) as { timeout: { asPromise(): Promise<void> } };
@@ -78,7 +118,11 @@ export class DemoSceneBase extends Node {
         closeBtn.addRelation(this._groot, FguiRelationType.RightRight, false);
         closeBtn.addRelation(this._groot, FguiRelationType.BottomBottom, false);
         closeBtn.setSortingOrder(100000);
-        closeBtn.addClickListener(Callable.create(this._onClose.bind(this)));
+        closeBtn.addClickListener(
+            Callable.create(() => {
+                (this as unknown as GodotNode).callDeferred("_onClose");
+            }),
+        );
         this._groot.addChild(closeBtn);
     }
 
@@ -113,11 +157,29 @@ export class DemoSceneBase extends Node {
         }
     }
 
-    protected _onClose(): void {
+    /** 延迟清空 GRoot 并切场景，避免在输入/JS 回调栈内同步 removeChildren。 */
+    protected _requestSceneChange(scenePath: string): void {
+        if (!this.isSceneActive()) {
+            return;
+        }
+        this._pendingScenePath = scenePath;
+        (this as unknown as GodotNode).callDeferred("_deferredFinishSceneChange");
+    }
+
+    protected _deferredFinishSceneChange(): void {
+        const scenePath = this._pendingScenePath;
+        this._pendingScenePath = null;
+        if (scenePath == null || !this.isSceneActive()) {
+            return;
+        }
         this._cleanupGrootOverlays();
         if (this._groot != null) {
             this._groot.removeChildren();
         }
-        this.getTree()?.callDeferred("change_scene_to_file", this.mainMenuScenePath);
+        this.safeGetTree()?.callDeferred("change_scene_to_file", scenePath);
+    }
+
+    protected _onClose(): void {
+        this._requestSceneChange(this.mainMenuScenePath);
     }
 }

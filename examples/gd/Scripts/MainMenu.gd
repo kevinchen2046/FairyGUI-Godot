@@ -30,9 +30,9 @@ func _nav_btn(child_name: String, scene_path: String) -> void:
 		)
 
 func _navigate_to_scene(scene_path: String) -> void:
-	_cleanup_groot_overlays()
-	_groot.removeChildren()
-	get_tree().call_deferred("change_scene_to_file", scene_path)
+	_request_scene_change(scene_path)
 
 func _on_close() -> void:
-	get_tree().quit()
+	var tree = _safe_get_tree()
+	if tree != null:
+		tree.quit()

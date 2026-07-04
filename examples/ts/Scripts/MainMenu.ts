@@ -40,16 +40,11 @@ export default class MainMenu extends DemoSceneBase {
         }
     }
 
-    private _navigateToScene(scenePath: string): void {
-        this._cleanupGrootOverlays();
-        this._groot!.removeChildren();
-        (this.getTree() as unknown as { callDeferred(method: string, scenePath: string): void }).callDeferred(
-            "change_scene_to_file",
-            scenePath,
-        );
+    protected _navigateToScene(scenePath: string): void {
+        this._requestSceneChange(scenePath);
     }
 
     protected _onClose(): void {
-        this.getTree()?.quit();
+        this.safeGetTree()?.quit();
     }
 }
