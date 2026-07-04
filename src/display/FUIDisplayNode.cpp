@@ -8,6 +8,28 @@
 
 NS_FGUI_BEGIN
 
+static Callable fui_control_size_changed_callable(Control* self)
+{
+    return Callable(self, "_size_changed");
+}
+
+#ifdef DEBUG_ENABLED
+static Callable fui_control_clear_size_warning_callable(Control* self)
+{
+    return Callable(self, "_clear_size_warning");
+}
+#endif
+
+static bool fui_control_canvas_wired(Control* self)
+{
+    const Callable size_cb = fui_control_size_changed_callable(self);
+    if (CanvasItem* parent_item = self->get_parent_item())
+        return parent_item->is_connected(SNAME("item_rect_changed"), size_cb);
+    if (Viewport* viewport = self->get_viewport())
+        return viewport->is_connected(SNAME("size_changed"), size_cb);
+    return false;
+}
+
 bool fui_control_handle_notification(Control* self, int p_what, uint8_t& state)
 {
     if (self == nullptr)
@@ -17,13 +39,22 @@ bool fui_control_handle_notification(Control* self, int p_what, uint8_t& state)
     {
         if (state & 1)
             return true;
+        // Stale wiring when EXIT_CANVAS was skipped (e.g. state cleared on EXIT_TREE first).
+        if (fui_control_canvas_wired(self))
+        {
+            state |= 1;
+            return true;
+        }
         state |= 1;
         return false;
     }
     if (p_what == CanvasItem::NOTIFICATION_EXIT_CANVAS)
     {
         if (!(state & 1))
-            return true;
+        {
+            if (!fui_control_canvas_wired(self))
+                return true;
+        }
         state &= ~1;
         return false;
     }
@@ -32,6 +63,12 @@ bool fui_control_handle_notification(Control* self, int p_what, uint8_t& state)
     {
         if (state & 2)
             return true;
+        const Callable clear_cb = fui_control_clear_size_warning_callable(self);
+        if (self->is_connected(SNAME("ready"), clear_cb))
+        {
+            state |= 2;
+            return true;
+        }
         state |= 2;
         return false;
     }

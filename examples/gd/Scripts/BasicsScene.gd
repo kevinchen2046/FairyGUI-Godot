@@ -39,7 +39,7 @@ func continue_init() -> void:
 			obj.addClickListener(func(): call_deferred("_deferred_run_demo", obj))
 
 func _deferred_click_back() -> void:
-	if not _is_scene_active() or _groot == null:
+	if not _is_ui_active():
 		return
 	if _win_b != null and _win_b.isShowing():
 		_win_b.hideImmediately()
@@ -53,7 +53,7 @@ func _deferred_click_back() -> void:
 	_progress_running = false
 
 func _deferred_run_demo(sender: Object) -> void:
-	if not _is_scene_active() or _groot == null or sender == null:
+	if not _is_ui_active() or sender == null:
 		return
 	_cleanup_groot_overlays()
 	var type_name = String(sender.getName()).substr(4)

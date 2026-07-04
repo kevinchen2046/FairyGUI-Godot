@@ -21,6 +21,13 @@ func _exit_tree() -> void:
 func _is_scene_active() -> bool:
 	return _scene_active
 
+func _is_ui_active() -> bool:
+	if not _is_scene_active() or _groot == null or _view == null:
+		return false
+	if GRoot.getInstance() == null:
+		return false
+	return _view.onStage()
+
 func _get_engine_tree() -> SceneTree:
 	var loop = Engine.get_main_loop()
 	if loop == null:
@@ -127,6 +134,7 @@ func _deferred_detach_groot() -> void:
 		_pending_scene_path = ""
 		return
 	GRoot.cleanup()
+	_view = null
 	_groot = null
 	call_deferred("_deferred_change_scene")
 
