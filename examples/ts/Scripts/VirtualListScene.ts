@@ -40,7 +40,7 @@ export default class VirtualListScene extends DemoSceneBase {
 
         this._list = this._view.getChild("mailList") as GList | null;
         if (this._list != null) {
-            this._list.setItemRenderer(this._renderListItem.bind(this));
+            this._list.setItemRenderer(Callable.create(this._renderListItem.bind(this)));
             this._list.setVirtual();
             this._list.setNumItems(1000);
         }

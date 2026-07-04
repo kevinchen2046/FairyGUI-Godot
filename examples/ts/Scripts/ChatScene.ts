@@ -25,8 +25,8 @@ export default class ChatScene extends DemoSceneBase {
         this._list = this._view.getChild("list") as GList | null;
         if (this._list != null) {
             this._list.setVirtual();
-            this._list.setItemRenderer(this._renderListItem.bind(this));
-            this._list.setItemProvider(this._getListItemResource.bind(this));
+            this._list.setItemRenderer(Callable.create(this._renderListItem.bind(this)));
+            this._list.setItemProvider(Callable.create(this._getListItemResource.bind(this)));
         }
 
         this._inputField = this._view.getChild("input") as GTextField | null;

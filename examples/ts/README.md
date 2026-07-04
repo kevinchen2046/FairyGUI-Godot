@@ -95,6 +95,9 @@ FairyGUI 类在 GodotJS 运行时挂在 `godot` 模块上，不会自动成为 J
 - **`child_order_changed` disconnect 警告**：GRoot 跨场景复用时，同步 `removeChildren()` 可能触发引擎层 benign 警告；Demo 已改为延迟清空 GRoot 子节点。
 - FairyGUI 基类在 ClassDB 中注册为 **`GuiObject`**（C++ 内部仍可用 `GObject` 别名），避免与 GodotJS 引擎 `Object` 的 JS 名 `GObject` 冲突。
 - 若 `GComponent.addChild` 报 `not a function`：多为上述命名冲突导致继承链错误；重编含 `GuiObject` 的 FairyGUI 后应恢复正常。
+- **勿 `extends GWindow` 等原生 ClassDB 类**：GodotJS 下 ES6 `class X extends GWindow` 会报 `proxy: defineProperty exception`；Demo 用组合（`new GWindow()` + 回调属性 `onInitCallback` 等）。
+- **Callable**：凡 C++ 参数为 `Callable` 的 API（`addClickListener`、`setItemRenderer`、`setItemProvider`、`setTreeNodeRender` 等）须 `Callable.create(fn)`，不能直接传 `.bind(this)` 的裸函数。
+- **`callDeferred("method")`**：被延迟调用的方法不能是 `protected`/`private`，须为脚本类上的 public 方法（如 `_deferredAttachToGroot`）。
 
 ## 说明
 

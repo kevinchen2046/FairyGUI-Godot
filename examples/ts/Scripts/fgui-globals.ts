@@ -49,20 +49,28 @@ function ensureGuiObjectEnumAliases(GuiObject: Record<string, unknown>): void {
         }
         const gdKey = jsEnumKeyToGd(jsKey);
         if (!(gdKey in GuiObject)) {
-            Object.defineProperty(GuiObject, gdKey, {
-                value,
-                enumerable: true,
-                configurable: true,
-            });
+            try {
+                Object.defineProperty(GuiObject, gdKey, {
+                    value,
+                    enumerable: true,
+                    configurable: true,
+                });
+            } catch {
+                // GodotJS ClassDB 代理上 defineProperty 可能失败，忽略即可（用 FguiRelationType）。
+            }
         }
     }
 
     if (rt == null && !("RelationType" in GuiObject)) {
-        Object.defineProperty(GuiObject, "RelationType", {
-            value: { ...FguiRelationType },
-            enumerable: true,
-            configurable: true,
-        });
+        try {
+            Object.defineProperty(GuiObject, "RelationType", {
+                value: { ...FguiRelationType },
+                enumerable: true,
+                configurable: true,
+            });
+        } catch {
+            // 见上
+        }
     }
 }
 

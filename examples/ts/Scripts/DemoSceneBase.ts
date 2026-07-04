@@ -55,7 +55,7 @@ export class DemoSceneBase extends Node {
         this._deferredAttachToGroot();
     }
 
-    protected _deferredAttachToGroot(): void {
+    _deferredAttachToGroot(): void {
         if (!this.isSceneActive()) {
             return;
         }
@@ -166,7 +166,7 @@ export class DemoSceneBase extends Node {
         (this as unknown as GodotNode).callDeferred("_deferredFinishSceneChange");
     }
 
-    protected _deferredFinishSceneChange(): void {
+    _deferredFinishSceneChange(): void {
         const scenePath = this._pendingScenePath;
         this._pendingScenePath = null;
         if (scenePath == null || !this.isSceneActive()) {
@@ -179,7 +179,7 @@ export class DemoSceneBase extends Node {
         this.safeGetTree()?.callDeferred("change_scene_to_file", scenePath);
     }
 
-    protected _onClose(): void {
+    _onClose(): void {
         this._requestSceneChange(this.mainMenuScenePath);
     }
 }

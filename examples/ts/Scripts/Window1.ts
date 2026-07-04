@@ -3,21 +3,36 @@
 import "./fgui-globals";
 import { Callable } from "godot";
 
-export class Window1 extends GWindow {
+/** GodotJS 不可用 `extends GWindow`，用组合包装原生 GWindow 实例。 */
+export class Window1 {
+    private readonly _win: GWindow;
+
     constructor() {
-        super();
-        this.setupDisplay();
-        this.setOnInitCallback(Callable.create(this._onInit.bind(this)));
-        this.setOnShownCallback(Callable.create(this._onShown.bind(this)));
+        this._win = new GWindow();
+        this._win.setupDisplay();
+        this._win.onInitCallback = Callable.create(() => this._onInit());
+        this._win.onShownCallback = Callable.create(() => this._onShown());
+    }
+
+    show(): void {
+        this._win.show();
+    }
+
+    hideImmediately(): void {
+        this._win.hideImmediately();
+    }
+
+    isShowing(): boolean {
+        return this._win.isShowing();
     }
 
     private _onInit(): void {
-        this.setContentPane(UIPackage.createObject("Basics", "WindowA") as GComponent);
-        this.center();
+        this._win.contentPane = UIPackage.createObject("Basics", "WindowA") as GComponent;
+        this._win.center();
     }
 
     private _onShown(): void {
-        const pane = this.getContentPane();
+        const pane = this._win.getContentPane();
         if (pane == null) {
             return;
         }

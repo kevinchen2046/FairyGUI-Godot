@@ -17,7 +17,7 @@ export default class ModalWaitingScene extends DemoSceneBase {
 
         this._testWin = new GWindow();
         this._testWin.setupDisplay();
-        this._testWin.setOnInitCallback(Callable.create(this._onTestWinInit.bind(this)));
+        this._testWin.onInitCallback = Callable.create(this._onTestWinInit.bind(this));
         this._testWin.show();
 
         this._groot!.showModalWait();
@@ -29,9 +29,7 @@ export default class ModalWaitingScene extends DemoSceneBase {
     }
 
     private _onTestWinInit(): void {
-        this._testWin!.setContentPane(
-            UIPackage.createObject("ModalWaiting", "TestWin") as GComponent,
-        );
+        this._testWin!.contentPane = UIPackage.createObject("ModalWaiting", "TestWin") as GComponent;
         const pane = this._testWin!.getContentPane();
         if (pane == null) {
             return;

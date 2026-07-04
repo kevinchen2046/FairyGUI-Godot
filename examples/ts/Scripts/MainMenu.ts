@@ -40,11 +40,11 @@ export default class MainMenu extends DemoSceneBase {
         }
     }
 
-    protected _navigateToScene(scenePath: string): void {
+    _navigateToScene(scenePath: string): void {
         this._requestSceneChange(scenePath);
     }
 
-    protected _onClose(): void {
+    _onClose(): void {
         this.safeGetTree()?.quit();
     }
 }

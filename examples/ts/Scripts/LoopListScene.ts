@@ -13,7 +13,7 @@ export default class LoopListScene extends DemoSceneBase {
 
         this._list = this._view.getChild("list") as GList | null;
         if (this._list != null) {
-            this._list.setItemRenderer(this._renderListItem.bind(this));
+            this._list.setItemRenderer(Callable.create(this._renderListItem.bind(this)));
             this._list.setVirtualAndLoop();
             this._list.setNumItems(5);
             this._list.addEventListener(

@@ -208,6 +208,14 @@ declare global {
         hide(): void;
         hideImmediately(): void;
         isShowing(): boolean;
+        /** GodotJS：ADD_PROPERTY */
+        modal: boolean;
+        contentPane: GComponent | null;
+        onInitCallback: Callable;
+        onShownCallback: Callable;
+        onHideCallback: Callable;
+        doShowAnimationCallback: Callable;
+        doHideAnimationCallback: Callable;
         setModal(value: boolean): void;
         showModalWait(requestingCmd?: number): void;
         closeModalWait(requestingCmd?: number): boolean;
@@ -246,8 +254,8 @@ declare global {
     }
 
     class GList extends GComponent {
-        setItemRenderer(callable: (index: number, obj: GComponent) => void): void;
-        setItemProvider(callable: (index: number) => string): void;
+        setItemRenderer(callable: Callable): void;
+        setItemProvider(callable: Callable): void;
         setVirtual(): void;
         setVirtualAndLoop(): void;
         setNumItems(value: number): void;
@@ -260,7 +268,7 @@ declare global {
 
     class GTree extends GList {
         getRootNode(): GTreeNode | null;
-        setTreeNodeRender(callable: (node: GTreeNode, obj: GComponent) => void): void;
+        setTreeNodeRender(callable: Callable): void;
     }
 
     class GTreeNode extends RefCounted {

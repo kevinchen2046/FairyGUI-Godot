@@ -3,23 +3,37 @@
 import "./fgui-globals";
 import { Callable, Vector2 } from "godot";
 
-export class BagWindow extends GWindow {
+/** GodotJS 不可用 `extends GWindow`，用组合包装原生 GWindow 实例。 */
+export class BagWindow {
+    private readonly _win: GWindow;
     private _list: GList | null = null;
 
     constructor() {
-        super();
-        this.setupDisplay();
-        this.setOnInitCallback(Callable.create(this._onInit.bind(this)));
-        this.setDoShowAnimationCallback(Callable.create(this._doShowAnimation.bind(this)));
-        this.setDoHideAnimationCallback(Callable.create(this._doHideAnimation.bind(this)));
+        this._win = new GWindow();
+        this._win.setupDisplay();
+        this._win.onInitCallback = Callable.create(() => this._onInit());
+        this._win.doShowAnimationCallback = Callable.create(() => this._doShowAnimation());
+        this._win.doHideAnimationCallback = Callable.create(() => this._doHideAnimation());
+    }
+
+    show(): void {
+        this._win.show();
+    }
+
+    hideImmediately(): void {
+        this._win.hideImmediately();
+    }
+
+    isShowing(): boolean {
+        return this._win.isShowing();
     }
 
     private _onInit(): void {
-        this.setContentPane(UIPackage.createObject("Bag", "BagWin") as GComponent);
-        this.center();
-        this.setModal(true);
+        this._win.contentPane = UIPackage.createObject("Bag", "BagWin") as GComponent;
+        this._win.center();
+        this._win.modal = true;
 
-        const pane = this.getContentPane();
+        const pane = this._win.getContentPane();
         if (pane == null) {
             return;
         }
@@ -27,8 +41,8 @@ export class BagWindow extends GWindow {
         if (this._list == null) {
             return;
         }
-        this._list.addEventListener(UIEventDispatcher.CLICKITEM, Callable.create(this._onClickItem.bind(this)));
-        this._list.setItemRenderer(this._renderListItem.bind(this));
+        this._list.addEventListener(UIEventDispatcher.CLICKITEM, Callable.create(() => this._onClickItem()));
+        this._list.setItemRenderer(Callable.create(this._renderListItem.bind(this)));
         this._list.setNumItems(45);
     }
 
@@ -43,7 +57,7 @@ export class BagWindow extends GWindow {
         if (item == null) {
             return;
         }
-        const pane = this.getContentPane();
+        const pane = this._win.getContentPane();
         if (pane == null) {
             return;
         }
@@ -56,15 +70,15 @@ export class BagWindow extends GWindow {
     }
 
     private _doShowAnimation(): void {
-        this.setScale(0.1, 0.1);
-        this.setPivot(0.5, 0.5);
-        this.tweenScale(new Vector2(1.0, 1.0), 0.3);
+        this._win.setScale(0.1, 0.1);
+        this._win.setPivot(0.5, 0.5);
+        this._win.tweenScale(new Vector2(1.0, 1.0), 0.3);
     }
 
     private _doHideAnimation(): void {
-        GTweenHelper.getInstance().kill(this, false);
-        this.tweenScale(new Vector2(0.1, 0.1), 0.3).onComplete(
-            Callable.create(this.hideImmediately.bind(this)),
+        GTweenHelper.getInstance().kill(this._win, false);
+        this._win.tweenScale(new Vector2(0.1, 0.1), 0.3).onComplete(
+            Callable.create(() => this._win.hideImmediately()),
         );
     }
 }
