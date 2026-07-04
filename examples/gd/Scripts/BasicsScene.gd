@@ -27,7 +27,7 @@ func continue_init() -> void:
 
 	_back_btn = _view.getChild("btn_Back")
 	_back_btn.setVisible(false)
-	_back_btn.addClickListener(_on_click_back)
+	_back_btn.addClickListener(func(): call_deferred("_deferred_click_back"))
 
 	_demo_container = _view.getChild("container")
 	_cc = _view.getController("c1")
@@ -36,9 +36,11 @@ func continue_init() -> void:
 	for i in range(cnt):
 		var obj = _view.getChildAt(i)
 		if obj != null and obj.getGroup() != null and obj.getGroup().getName() == "btns":
-			obj.addClickListener(_run_demo)
+			obj.addClickListener(func(): call_deferred("_deferred_run_demo", obj))
 
-func _on_click_back() -> void:
+func _deferred_click_back() -> void:
+	if not _is_scene_active() or _groot == null:
+		return
 	if _win_b != null and _win_b.isShowing():
 		_win_b.hideImmediately()
 	if _win_a != null and _win_a.isShowing():
@@ -50,13 +52,10 @@ func _on_click_back() -> void:
 	_back_btn.setVisible(false)
 	_progress_running = false
 
-func _run_demo() -> void:
-	if not _is_scene_active():
+func _deferred_run_demo(sender: Object) -> void:
+	if not _is_scene_active() or _groot == null or sender == null:
 		return
 	_cleanup_groot_overlays()
-	var sender = _groot.getTouchTarget()
-	if sender == null:
-		return
 	var type_name = String(sender.getName()).substr(4)
 
 	var obj = UIPackage.createObject("Basics", "Demo_" + type_name)
@@ -221,7 +220,7 @@ func _play_progress(obj: Object) -> void:
 	)
 
 func _process(_delta: float) -> void:
-	if not _progress_running:
+	if not _progress_running or not _is_scene_active():
 		return
 	var obj = _demo_objects.get("ProgressBar")
 	if obj == null:

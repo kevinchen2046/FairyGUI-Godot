@@ -47,6 +47,11 @@ func _deferred_attach_to_groot() -> void:
 		return
 	_groot = GRoot.getInstance()
 	_prepare_groot_for_scene()
+	call_deferred("_finish_continue_init")
+
+func _finish_continue_init() -> void:
+	if not _is_scene_active() or _groot == null:
+		return
 	continue_init()
 	_add_close_button()
 
