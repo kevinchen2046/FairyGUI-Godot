@@ -40,7 +40,7 @@ export class Window2 {
     }
 
     private _onShown(): void {
-        const pane = this._win.getContentPane();
+        const pane = this._win.contentPane;
         if (pane == null) {
             return;
         }
@@ -58,7 +58,7 @@ export class Window2 {
     }
 
     private _onHide(): void {
-        const pane = this._win.getContentPane();
+        const pane = this._win.contentPane;
         if (pane == null) {
             return;
         }

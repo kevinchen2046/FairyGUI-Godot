@@ -45,6 +45,6 @@ export default class MainMenu extends DemoSceneBase {
     }
 
     _onClose(): void {
-        this.safeGetTree()?.quit();
+        this.getEngineTree()?.quit();
     }
 }

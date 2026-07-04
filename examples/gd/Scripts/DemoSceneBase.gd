@@ -8,10 +8,9 @@ var _pending_scene_path: String = ""
 func _ready() -> void:
 	_scene_active = true
 	_register_default_fonts()
-	if GRoot.getInstance() == null:
-		call_deferred("_delayed_init")
-	else:
-		call_deferred("_deferred_attach_to_groot")
+	if GRoot.getInstance() != null:
+		GRoot.cleanup()
+	call_deferred("_delayed_init")
 
 func _exit_tree() -> void:
 	_scene_active = false
@@ -20,16 +19,25 @@ func _exit_tree() -> void:
 func _is_scene_active() -> bool:
 	return _scene_active
 
+func _get_engine_tree() -> SceneTree:
+	var loop = Engine.get_main_loop()
+	if loop == null:
+		return null
+	return loop
+
 func _safe_get_tree() -> SceneTree:
 	if not _scene_active or not is_inside_tree():
 		return null
 	return get_tree()
 
 func _delayed_init() -> void:
+	if not _is_scene_active():
+		return
 	var tree = _safe_get_tree()
 	if tree == null:
 		return
-	GRoot.create(tree)
+	if GRoot.getInstance() == null:
+		GRoot.create(tree)
 	_deferred_attach_to_groot()
 
 func _deferred_attach_to_groot() -> void:
@@ -101,14 +109,26 @@ func _request_scene_change(scene_path: String) -> void:
 	call_deferred("_deferred_finish_scene_change")
 
 func _deferred_finish_scene_change() -> void:
-	var scene_path = _pending_scene_path
-	_pending_scene_path = ""
-	if scene_path.is_empty() or not _is_scene_active():
+	if _pending_scene_path.is_empty() or not _is_scene_active():
+		_pending_scene_path = ""
 		return
 	_cleanup_groot_overlays()
-	if _groot != null:
-		_groot.removeChildren()
-	var tree = _safe_get_tree()
+	call_deferred("_deferred_detach_groot")
+
+func _deferred_detach_groot() -> void:
+	if _pending_scene_path.is_empty() or not _is_scene_active():
+		_pending_scene_path = ""
+		return
+	GRoot.cleanup()
+	_groot = null
+	call_deferred("_deferred_change_scene")
+
+func _deferred_change_scene() -> void:
+	var scene_path = _pending_scene_path
+	_pending_scene_path = ""
+	if scene_path.is_empty():
+		return
+	var tree = _get_engine_tree()
 	if tree != null:
 		tree.call_deferred("change_scene_to_file", scene_path)
 

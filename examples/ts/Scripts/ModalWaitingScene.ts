@@ -30,7 +30,7 @@ export default class ModalWaitingScene extends DemoSceneBase {
 
     private _onTestWinInit(): void {
         this._testWin!.contentPane = UIPackage.createObject("ModalWaiting", "TestWin") as GComponent;
-        const pane = this._testWin!.getContentPane();
+        const pane = this._testWin!.contentPane;
         if (pane == null) {
             return;
         }

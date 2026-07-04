@@ -32,7 +32,7 @@ export class Window1 {
     }
 
     private _onShown(): void {
-        const pane = this._win.getContentPane();
+        const pane = this._win.contentPane;
         if (pane == null) {
             return;
         }

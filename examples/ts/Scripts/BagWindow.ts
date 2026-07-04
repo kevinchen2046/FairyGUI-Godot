@@ -33,7 +33,7 @@ export class BagWindow {
         this._win.center();
         this._win.modal = true;
 
-        const pane = this._win.getContentPane();
+        const pane = this._win.contentPane;
         if (pane == null) {
             return;
         }
@@ -57,7 +57,7 @@ export class BagWindow {
         if (item == null) {
             return;
         }
-        const pane = this._win.getContentPane();
+        const pane = this._win.contentPane;
         if (pane == null) {
             return;
         }

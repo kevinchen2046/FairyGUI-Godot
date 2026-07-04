@@ -188,6 +188,8 @@ declare global {
     class GRoot extends GComponent {
         static create(tree: import("godot").SceneTree, zOrder?: number): GRoot;
         static getInstance(): GRoot | null;
+        /** 从 Window 根节点卸载 GRoot 显示层，切 Demo 场景前应调用。 */
+        static cleanup(): void;
 
         getWidth(): number;
         getHeight(): number;

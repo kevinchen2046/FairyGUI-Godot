@@ -50,6 +50,9 @@ export default class TransitionDemoScene extends DemoSceneBase {
                         1,
                         0,
                         Callable.create(() => {
+                            if (!this.isSceneActive()) {
+                                return;
+                            }
                             this._btnGroup?.setVisible(true);
                             target.removeFromParent();
                         }),

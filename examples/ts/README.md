@@ -87,12 +87,12 @@ FairyGUI 类在 GodotJS 运行时挂在 `godot` 模块上，不会自动成为 J
 **GodotJS 与 GDScript 差异（常见）：**
 
 - `UIConfigHelper` 的配置项用**属性**（`ui.defaultFont = "..."`），不用 `setDefaultFont()`（GodotJS 对 `ADD_PROPERTY` 隐藏 setter 方法）。
-- 同理 `GuiObject.group` / `GuiObject.icon`、`GController.selectedIndex`、`GProgressBar.value` 等带 `ADD_PROPERTY` 的字段（勿用 `setSelectedIndex()` / `setIcon()` / `setValue()`）。
+- 同理 `GuiObject.group` / `GuiObject.icon`、`GController.selectedIndex`、`GProgressBar.value`、`GWindow.contentPane` / `modal` / `onShownCallback` 等带 `ADD_PROPERTY` 的字段（勿用 `getContentPane()` / `setOnShownCallback()` 等）。
 - **RelationType**：Demo 优先用全局 `FguiRelationType.RightRight` 等常量（不依赖 GodotJS 枚举加载时机）；也可写 `GuiObject.RelationType.RightRight` 或经 `fgui-globals` 延迟别名后的 `GuiObject.RIGHT_RIGHT`。
 - **GGroup 名称**：用 `fguiGroupName(obj)` 代替 `obj.group?.getName()`（GodotJS 上 `group` 属性返回的对象可能缺少 `getName` 方法）。
 - **GodotJS 点击回调**：不要在 `addClickListener` 回调里**同步** `removeChildren()` / 切场景（会触发 `JSCallable` 在 V8 栈内析构崩溃）。Demo 用 `_requestSceneChange()` / `callDeferred` 延迟清理与切场景；模块侧 `UIEventDispatcher` 也会延迟释放监听器项。
-- **`getTree()`**：节点离树后 GodotJS 调用 `getTree()` 会报错，须用 `safeGetTree()`（先 `isInsideTree()`）；`await waitSeconds()` 之后也要检查 `isSceneActive()`。
-- **`child_order_changed` disconnect 警告**：GRoot 跨场景复用时，同步 `removeChildren()` 可能触发引擎层 benign 警告；Demo 已改为延迟清空 GRoot 子节点。
+- **`child_order_changed` disconnect 警告**：GRoot 跨场景复用时同步 `removeChildren()` 可能触发；Demo 切场景前调用 **`GRoot.cleanup()`**（分帧执行），下一场景 `_ready` 再 `GRoot.create()` 重建。
+- **`getTree()`**：节点离树后 GodotJS 调用 `getTree()` 会报错；切场景用 **`Engine.getMainLoop()`**（Demo 中 `getEngineTree()`），勿在 `removeChildren`/`cleanup` 后再 `this.getTree()`。
 - FairyGUI 基类在 ClassDB 中注册为 **`GuiObject`**（C++ 内部仍可用 `GObject` 别名），避免与 GodotJS 引擎 `Object` 的 JS 名 `GObject` 冲突。
 - 若 `GComponent.addChild` 报 `not a function`：多为上述命名冲突导致继承链错误；重编含 `GuiObject` 的 FairyGUI 后应恢复正常。
 - **勿 `extends GWindow` 等原生 ClassDB 类**：GodotJS 下 ES6 `class X extends GWindow` 会报 `proxy: defineProperty exception`；Demo 用组合（`new GWindow()` + 回调属性 `onInitCallback` 等）。

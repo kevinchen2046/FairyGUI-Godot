@@ -33,6 +33,6 @@ func _navigate_to_scene(scene_path: String) -> void:
 	_request_scene_change(scene_path)
 
 func _on_close() -> void:
-	var tree = _safe_get_tree()
+	var tree = _get_engine_tree()
 	if tree != null:
 		tree.quit()

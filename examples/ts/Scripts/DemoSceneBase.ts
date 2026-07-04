@@ -1,7 +1,7 @@
 /// <reference path="../fairygui.d.ts" />
 
 import "./fgui-globals";
-import { Callable, Node, SceneTree } from "godot";
+import { Callable, Engine, Node, SceneTree } from "godot";
 
 type GodotNode = Node & {
     isInsideTree(): boolean;
@@ -21,11 +21,10 @@ export class DemoSceneBase extends Node {
     _ready(): void {
         this._sceneActive = true;
         this._registerDefaultFonts();
-        if (GRoot.getInstance() == null) {
-            (this as unknown as GodotNode).callDeferred("_delayedInit");
-        } else {
-            (this as unknown as GodotNode).callDeferred("_deferredAttachToGroot");
+        if (GRoot.getInstance() != null) {
+            GRoot.cleanup();
         }
+        (this as unknown as GodotNode).callDeferred("_delayedInit");
     }
 
     _exit_tree(): void {
@@ -37,6 +36,15 @@ export class DemoSceneBase extends Node {
         return this._sceneActive;
     }
 
+    /** 不依赖场景节点，切场景后仍可用。 */
+    protected getEngineTree(): SceneTree | null {
+        const loop = Engine.getMainLoop();
+        if (loop == null) {
+            return null;
+        }
+        return loop as SceneTree;
+    }
+
     /** GodotJS 在节点已离树时调用 getTree() 会报错，须先 isInsideTree()。 */
     protected safeGetTree(): SceneTree | null {
         const self = this as unknown as GodotNode;
@@ -46,12 +54,17 @@ export class DemoSceneBase extends Node {
         return self.getTree();
     }
 
-    protected _delayedInit(): void {
+    _delayedInit(): void {
+        if (!this.isSceneActive()) {
+            return;
+        }
         const tree = this.safeGetTree();
         if (tree == null) {
             return;
         }
-        GRoot.create(tree);
+        if (GRoot.getInstance() == null) {
+            GRoot.create(tree);
+        }
         this._deferredAttachToGroot();
     }
 
@@ -95,7 +108,7 @@ export class DemoSceneBase extends Node {
         if (!this.isSceneActive()) {
             return;
         }
-        const tree = this.safeGetTree();
+        const tree = this.safeGetTree() ?? this.getEngineTree();
         if (tree == null) {
             return;
         }
@@ -157,7 +170,7 @@ export class DemoSceneBase extends Node {
         }
     }
 
-    /** 延迟清空 GRoot 并切场景，避免在输入/JS 回调栈内同步 removeChildren。 */
+    /** 延迟清空 GRoot 并切场景，分帧 detach 避免 FUIContainer 信号断开警告。 */
     protected _requestSceneChange(scenePath: string): void {
         if (!this.isSceneActive()) {
             return;
@@ -167,16 +180,31 @@ export class DemoSceneBase extends Node {
     }
 
     _deferredFinishSceneChange(): void {
-        const scenePath = this._pendingScenePath;
-        this._pendingScenePath = null;
-        if (scenePath == null || !this.isSceneActive()) {
+        if (this._pendingScenePath == null || !this.isSceneActive()) {
+            this._pendingScenePath = null;
             return;
         }
         this._cleanupGrootOverlays();
-        if (this._groot != null) {
-            this._groot.removeChildren();
+        (this as unknown as GodotNode).callDeferred("_deferredDetachGroot");
+    }
+
+    _deferredDetachGroot(): void {
+        if (this._pendingScenePath == null || !this.isSceneActive()) {
+            this._pendingScenePath = null;
+            return;
         }
-        this.safeGetTree()?.callDeferred("change_scene_to_file", scenePath);
+        GRoot.cleanup();
+        this._groot = null;
+        (this as unknown as GodotNode).callDeferred("_deferredChangeScene");
+    }
+
+    _deferredChangeScene(): void {
+        const scenePath = this._pendingScenePath;
+        this._pendingScenePath = null;
+        if (scenePath == null) {
+            return;
+        }
+        this.getEngineTree()?.callDeferred("change_scene_to_file", scenePath);
     }
 
     _onClose(): void {
