@@ -80,7 +80,7 @@ FairyGUI 类在 GodotJS 运行时挂在 `godot` 模块上，不会自动成为 J
 
 各脚本在文件顶部 `import "./fgui-globals"`。单独编写的新脚本也需添加该行。
 
-`fairygui.d.ts` 的 `declare global` 仅用于 TypeScript 类型检查。
+`fairygui.d.ts` 的 `declare global` 仅用于 TypeScript 类型检查。注意 GodotJS 中 `UIConfigHelper` 的配置项是**属性**（如 `ui.defaultFont = "default"`），不是 GDScript 的 `setDefaultFont()` 方法；`registerFont` 等少数接口仍为方法。
 
 ## 说明
 

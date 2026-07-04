@@ -20,11 +20,12 @@ export default class BasicsScene extends DemoSceneBase {
     private _depthStartPos = new Vector2(0, 0);
 
     protected ContinueInit(): void {
-        UIConfigHelper.getInstance().setButtonSound("ui://Basics/click");
-        UIConfigHelper.getInstance().setVerticalScrollBar("ui://Basics/ScrollBar_VT");
-        UIConfigHelper.getInstance().setHorizontalScrollBar("ui://Basics/ScrollBar_HZ");
-        UIConfigHelper.getInstance().setTooltipsWin("ui://Basics/WindowFrame");
-        UIConfigHelper.getInstance().setPopupMenu("ui://Basics/PopupMenu");
+        const ui = UIConfigHelper.getInstance()!;
+        ui.buttonSound = "ui://Basics/click";
+        ui.verticalScrollBar = "ui://Basics/ScrollBar_VT";
+        ui.horizontalScrollBar = "ui://Basics/ScrollBar_HZ";
+        ui.tooltipsWin = "ui://Basics/WindowFrame";
+        ui.popupMenu = "ui://Basics/PopupMenu";
 
         UIPackage.addPackage("res://Resources/UI/Basics");
         this._view = UIPackage.createObject("Basics", "Main");

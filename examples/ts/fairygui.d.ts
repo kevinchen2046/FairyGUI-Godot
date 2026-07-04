@@ -281,14 +281,15 @@ declare global {
     class UIConfigHelper extends RefCounted {
         static getInstance(): UIConfigHelper;
         registerFont(aliasName: string, realName: string): void;
-        setDefaultFont(value: string): void;
-        setButtonSound(value: string): void;
-        setVerticalScrollBar(value: string): void;
-        setHorizontalScrollBar(value: string): void;
-        setTooltipsWin(value: string): void;
-        setPopupMenu(value: string): void;
-        setGlobalModalWaiting(value: string): void;
-        setWindowModalWaiting(value: string): void;
+        getRealFontName(aliasName: string): string;
+        defaultFont: string;
+        buttonSound: string;
+        verticalScrollBar: string;
+        horizontalScrollBar: string;
+        tooltipsWin: string;
+        popupMenu: string;
+        globalModalWaiting: string;
+        windowModalWaiting: string;
     }
 
     class UIPackage extends RefCounted {

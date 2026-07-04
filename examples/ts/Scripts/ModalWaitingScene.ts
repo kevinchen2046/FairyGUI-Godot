@@ -8,8 +8,9 @@ export default class ModalWaitingScene extends DemoSceneBase {
 
     protected async ContinueInit(): Promise<void> {
         UIPackage.addPackage("res://Resources/UI/ModalWaiting");
-        UIConfigHelper.getInstance().setGlobalModalWaiting("ui://ModalWaiting/GlobalModalWaiting");
-        UIConfigHelper.getInstance().setWindowModalWaiting("ui://ModalWaiting/WindowModalWaiting");
+        const ui = UIConfigHelper.getInstance()!;
+        ui.globalModalWaiting = "ui://ModalWaiting/GlobalModalWaiting";
+        ui.windowModalWaiting = "ui://ModalWaiting/WindowModalWaiting";
 
         this._view = UIPackage.createObject("ModalWaiting", "Main");
         this._groot!.addChild(this._view);

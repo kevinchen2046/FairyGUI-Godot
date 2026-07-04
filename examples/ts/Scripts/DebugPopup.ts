@@ -10,7 +10,7 @@ export default class DebugPopup extends SceneTree {
 
     private _run(): void {
         const groot = GRoot.create(this);
-        UIConfigHelper.getInstance().setPopupMenu("ui://Basics/PopupMenu");
+        UIConfigHelper.getInstance()!.popupMenu = "ui://Basics/PopupMenu";
         UIPackage.addPackage("res://Resources/UI/Basics");
         const view = UIPackage.createObject("Basics", "Demo_Popup");
         if (view != null) {

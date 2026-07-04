@@ -29,9 +29,10 @@ export default class DemoSceneBase extends Node {
 
     protected _registerDefaultFonts(): void {
         const fontPath = "res://Resources/fonts/DroidSansFallback.ttf";
-        UIConfigHelper.getInstance().registerFont("default", fontPath);
-        UIConfigHelper.getInstance().registerFont("微软雅黑", fontPath);
-        UIConfigHelper.getInstance().setDefaultFont("default");
+        const ui = UIConfigHelper.getInstance()!;
+        ui.registerFont("default", fontPath);
+        ui.registerFont("微软雅黑", fontPath);
+        ui.defaultFont = "default";
     }
 
     protected ContinueInit(): void | Promise<void> {
