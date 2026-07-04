@@ -92,23 +92,16 @@ public partial class BasicsScene : DemoSceneBase
         }
 
         _demoContainer.RemoveChildren();
-        _demoContainer.AddChild(obj);
-        CallDeferred(MethodName.ApplyDemoUi, typeName, obj);
-    }
-
-    private void ApplyDemoUi(string typeName, GuiObject obj)
-    {
-        if (!IsUiActive() || obj == null || !obj.OnStage())
-            return;
-        CallDeferred(MethodName.ApplyDemoController, typeName, obj);
-    }
-
-    private void ApplyDemoController(string typeName, GuiObject obj)
-    {
-        if (!IsUiActive() || obj == null || !obj.OnStage())
-            return;
         _cc.SetSelectedIndex(1);
         _backBtn.SetVisible(true);
+        _demoContainer.AddChild(obj);
+        CallDeferred(MethodName.ApplyDemoPlay, typeName, obj);
+    }
+
+    private void ApplyDemoPlay(string typeName, GuiObject obj)
+    {
+        if (!IsUiActive() || obj == null)
+            return;
 
         switch (typeName)
         {

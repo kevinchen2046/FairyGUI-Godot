@@ -74,19 +74,16 @@ func _deferred_run_demo(sender: Object) -> void:
 	_demo_objects[type_name] = obj
 
 	_demo_container.removeChildren()
-	_demo_container.addChild(obj)
-	call_deferred("_apply_demo_ui", type_name, obj)
-
-func _apply_demo_ui(type_name: String, obj: Object) -> void:
-	if not _is_ui_active() or obj == null or not obj.onStage():
-		return
-	call_deferred("_apply_demo_controller", type_name, obj)
-
-func _apply_demo_controller(type_name: String, obj: Object) -> void:
-	if not _is_ui_active() or obj == null or not obj.onStage():
-		return
+	# Switch controller before addChild: container uses gearDisplay on c1 page 1,
+	# so children are not on stage until the container is shown.
 	_cc.setSelectedIndex(1)
 	_back_btn.setVisible(true)
+	_demo_container.addChild(obj)
+	call_deferred("_apply_demo_play", type_name, obj)
+
+func _apply_demo_play(type_name: String, obj: Object) -> void:
+	if not _is_ui_active() or obj == null:
+		return
 
 	match type_name:
 		"Text": _play_text(obj)
