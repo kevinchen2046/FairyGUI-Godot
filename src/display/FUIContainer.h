@@ -22,7 +22,7 @@ public:
     static void _bind_methods() {}
 
 protected:
-    void _notification(int p_what);
+    void _process(double p_delta);
 };
 
 class FUIContainer : public Node2D

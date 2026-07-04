@@ -1,7 +1,7 @@
 /// <reference path="../fairygui.d.ts" />
 
 import { Callable, Rect2, Vector2 } from "godot";
-import { DemoSceneBase } from "./DemoSceneBase";
+import { DemoSceneBase, GodotNode } from "./DemoSceneBase";
 import { Window1 } from "./Window1";
 import { Window2 } from "./Window2";
 
@@ -33,7 +33,11 @@ export default class BasicsScene extends DemoSceneBase {
 
         this._backBtn = this._view.getChild("btn_Back");
         this._backBtn?.setVisible(false);
-        this._backBtn?.addClickListener(Callable.create(this._onClickBack.bind(this)));
+        this._backBtn?.addClickListener(
+            Callable.create(() => {
+                (this as unknown as GodotNode).callDeferred("_deferredClickBack");
+            }),
+        );
 
         this._demoContainer = this._view.getChild("container") as GComponent | null;
         this._cc = this._view.getController("c1");
@@ -44,14 +48,17 @@ export default class BasicsScene extends DemoSceneBase {
             if (obj != null && fguiGroupName(obj) === "btns") {
                 obj.addClickListener(
                     Callable.create(() => {
-                        (this as unknown as { callDeferred(method: string): void }).callDeferred("_runDemo");
+                        (this as unknown as GodotNode).callDeferred("_deferredRunDemo", obj);
                     }),
                 );
             }
         }
     }
 
-    private _onClickBack(): void {
+    _deferredClickBack(): void {
+        if (!this.isUiActive()) {
+            return;
+        }
         if (this._winB?.isShowing()) {
             this._winB.hideImmediately();
         }
@@ -60,17 +67,24 @@ export default class BasicsScene extends DemoSceneBase {
         }
         this._cleanupGrootOverlays();
         this._demoContainer?.removeChildren();
+        this._demoObjects.clear();
+        (this as unknown as GodotNode).callDeferred("_applyDemoMenu");
+    }
+
+    _applyDemoMenu(): void {
+        if (!this.isUiActive()) {
+            return;
+        }
         this._cc!.selectedIndex = 0;
         this._backBtn?.setVisible(false);
         this._progressRunning = false;
     }
 
-    _runDemo(): void {
-        this._cleanupGrootOverlays();
-        const sender = this._groot!.getTouchTarget();
-        if (sender == null) {
+    _deferredRunDemo(sender: GuiObject): void {
+        if (!this.isUiActive() || sender == null) {
             return;
         }
+        this._cleanupGrootOverlays();
         const typeName = String(sender.getName()).substring(4);
 
         let obj = this._demoObjects.get(typeName) ?? null;
@@ -84,6 +98,13 @@ export default class BasicsScene extends DemoSceneBase {
 
         this._demoContainer?.removeChildren();
         this._demoContainer?.addChild(obj);
+        (this as unknown as GodotNode).callDeferred("_applyDemoUi", typeName, obj);
+    }
+
+    _applyDemoUi(typeName: string, obj: GComponent): void {
+        if (!this.isUiActive() || obj == null || !obj.onStage()) {
+            return;
+        }
         this._cc!.selectedIndex = 1;
         this._backBtn?.setVisible(true);
 

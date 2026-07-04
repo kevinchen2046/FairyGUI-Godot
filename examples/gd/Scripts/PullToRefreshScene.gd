@@ -9,7 +9,11 @@ func continue_init() -> void:
 	UIPackage.addPackage("res://Resources/UI/PullToRefresh")
 	_view = UIPackage.createObject("PullToRefresh", "Main")
 	_groot.addChild(_view)
+	call_deferred("_setup_lists")
 
+func _setup_lists() -> void:
+	if not _is_ui_active():
+		return
 	_list1 = _view.getChild("list1")
 	if _list1 != null:
 		_list1.setItemRenderer(_render_list_item1)
@@ -31,8 +35,13 @@ func _render_list_item1(index: int, obj: Object) -> void:
 func _render_list_item2(index: int, obj: Object) -> void:
 	obj.setText("Item " + str(index))
 
-func _on_pull_down_to_refresh() -> void:
-	if _refreshing1:
+func _on_pull_down_to_refresh(_ctx = null) -> void:
+	if not _is_ui_active() or _refreshing1:
+		return
+	call_deferred("_begin_pull_down_refresh")
+
+func _begin_pull_down_refresh() -> void:
+	if not _is_ui_active() or _list1 == null:
 		return
 	_refreshing1 = true
 	var sp = _list1.getScrollPane()
@@ -46,7 +55,10 @@ func _on_pull_down_to_refresh() -> void:
 			c1.setSelectedIndex(2)
 		sp.lockHeader(header.getHeight())
 
-	await get_tree().create_timer(2.0).timeout
+	await _wait_seconds(2.0)
+	if not _is_ui_active() or _list1 == null:
+		_refreshing1 = false
+		return
 
 	_list1.setNumItems(_list1.getNumItems() + 5)
 
@@ -56,7 +68,10 @@ func _on_pull_down_to_refresh() -> void:
 			c1.setSelectedIndex(3)
 		sp.lockHeader(35)
 
-	await get_tree().create_timer(2.0).timeout
+	await _wait_seconds(2.0)
+	if not _is_ui_active() or _list1 == null:
+		_refreshing1 = false
+		return
 
 	if header != null:
 		var c1 = header.getController("c1")
@@ -65,8 +80,13 @@ func _on_pull_down_to_refresh() -> void:
 		sp.lockHeader(0)
 	_refreshing1 = false
 
-func _on_pull_up_to_refresh() -> void:
-	if _refreshing2:
+func _on_pull_up_to_refresh(_ctx = null) -> void:
+	if not _is_ui_active() or _refreshing2:
+		return
+	call_deferred("_begin_pull_up_refresh")
+
+func _begin_pull_up_refresh() -> void:
+	if not _is_ui_active() or _list2 == null:
 		return
 	_refreshing2 = true
 	var sp = _list2.getScrollPane()
@@ -80,7 +100,10 @@ func _on_pull_up_to_refresh() -> void:
 			c1.setSelectedIndex(1)
 		sp.lockFooter(footer.getHeight())
 
-	await get_tree().create_timer(2.0).timeout
+	await _wait_seconds(2.0)
+	if not _is_ui_active() or _list2 == null:
+		_refreshing2 = false
+		return
 
 	_list2.setNumItems(_list2.getNumItems() + 5)
 

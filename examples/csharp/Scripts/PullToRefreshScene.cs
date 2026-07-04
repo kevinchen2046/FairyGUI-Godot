@@ -1,4 +1,5 @@
 using Godot;
+using System.Threading.Tasks;
 
 namespace FairyGUI.Examples;
 
@@ -14,6 +15,13 @@ public partial class PullToRefreshScene : DemoSceneBase
         UIPackage.AddPackage("res://Resources/UI/PullToRefresh");
         _view = UIPackage.CreateObject("PullToRefresh", "Main");
         _groot.AddChild(_view);
+        CallDeferred(MethodName.SetupLists);
+    }
+
+    private void SetupLists()
+    {
+        if (!IsUiActive())
+            return;
 
         _list1 = _view.GetChild("list1");
         if (_list1 != null)
@@ -21,7 +29,7 @@ public partial class PullToRefreshScene : DemoSceneBase
             _list1.SetItemRenderer(new Callable(this, MethodName.RenderListItem1));
             _list1.SetVirtual();
             _list1.SetNumItems(1);
-            _list1.AddEventListener(FguiEvent.PullDownRelease, new Callable(this, MethodName.OnPullDownToRefresh));
+            _list1.AddEventListener(FguiEvent.PullDownRelease, new Callable(this, MethodName.OnPullDownRelease));
         }
 
         _list2 = _view.GetChild("list2");
@@ -30,7 +38,7 @@ public partial class PullToRefreshScene : DemoSceneBase
             _list2.SetItemRenderer(new Callable(this, MethodName.RenderListItem2));
             _list2.SetVirtual();
             _list2.SetNumItems(1);
-            _list2.AddEventListener(FguiEvent.PullUpRelease, new Callable(this, MethodName.OnPullUpToRefresh));
+            _list2.AddEventListener(FguiEvent.PullUpRelease, new Callable(this, MethodName.OnPullUpRelease));
         }
     }
 
@@ -45,9 +53,23 @@ public partial class PullToRefreshScene : DemoSceneBase
         obj.SetText("Item " + index);
     }
 
-    private async void OnPullDownToRefresh()
+    private void OnPullDownRelease()
     {
-        if (_refreshing1)
+        if (!IsUiActive() || _refreshing1)
+            return;
+        CallDeferred(MethodName.BeginPullDownRefresh);
+    }
+
+    private void OnPullUpRelease()
+    {
+        if (!IsUiActive() || _refreshing2)
+            return;
+        CallDeferred(MethodName.BeginPullUpRefresh);
+    }
+
+    private async void BeginPullDownRefresh()
+    {
+        if (_refreshing1 || !IsUiActive() || _list1 == null)
             return;
         _refreshing1 = true;
         var sp = _list1.GetScrollPane();
@@ -65,7 +87,12 @@ public partial class PullToRefreshScene : DemoSceneBase
             sp.LockHeader((int)header.GetHeight());
         }
 
-        await ToSignal(GetTree().CreateTimer(2.0), SceneTreeTimer.SignalName.Timeout);
+        await WaitSeconds(2.0);
+        if (!IsUiActive() || _list1 == null)
+        {
+            _refreshing1 = false;
+            return;
+        }
 
         _list1.SetNumItems(_list1.GetNumItems() + 5);
 
@@ -76,7 +103,12 @@ public partial class PullToRefreshScene : DemoSceneBase
             sp.LockHeader(35);
         }
 
-        await ToSignal(GetTree().CreateTimer(2.0), SceneTreeTimer.SignalName.Timeout);
+        await WaitSeconds(2.0);
+        if (!IsUiActive() || _list1 == null)
+        {
+            _refreshing1 = false;
+            return;
+        }
 
         if (header != null)
         {
@@ -87,9 +119,9 @@ public partial class PullToRefreshScene : DemoSceneBase
         _refreshing1 = false;
     }
 
-    private async void OnPullUpToRefresh()
+    private async void BeginPullUpRefresh()
     {
-        if (_refreshing2)
+        if (_refreshing2 || !IsUiActive() || _list2 == null)
             return;
         _refreshing2 = true;
         var sp = _list2.GetScrollPane();
@@ -107,7 +139,12 @@ public partial class PullToRefreshScene : DemoSceneBase
             sp.LockFooter((int)footer.GetHeight());
         }
 
-        await ToSignal(GetTree().CreateTimer(2.0), SceneTreeTimer.SignalName.Timeout);
+        await WaitSeconds(2.0);
+        if (!IsUiActive() || _list2 == null)
+        {
+            _refreshing2 = false;
+            return;
+        }
 
         _list2.SetNumItems(_list2.GetNumItems() + 5);
 

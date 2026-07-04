@@ -19,10 +19,10 @@ FUIClipContainer::FUIClipContainer()
     set_mouse_filter(MOUSE_FILTER_IGNORE);
 }
 
-void FUIClipContainer::_notification(int p_what)
+void FUIClipContainer::_process(double p_delta)
 {
-    if (p_what == NOTIFICATION_PROCESS && _processCallback)
-        _processCallback(get_process_delta_time());
+    if (_processCallback)
+        _processCallback((float)p_delta);
 }
 
 static void mark_input_handled(Node* node)

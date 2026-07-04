@@ -153,6 +153,7 @@ declare global {
         transformRect(rect: Rect2, targetSpace: GuiObject): Rect2;
         getInitSize(): Vector2;
         getParent(): GComponent | null;
+        onStage(): boolean;
         /** GodotJS：ADD_PROPERTY，用属性不用 getGroup() */
         group: GGroup | null;
         getGroup(): GGroup | null;

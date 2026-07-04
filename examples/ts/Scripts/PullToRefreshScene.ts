@@ -1,7 +1,7 @@
 /// <reference path="../fairygui.d.ts" />
 
 import { Callable } from "godot";
-import { DemoSceneBase } from "./DemoSceneBase";
+import { DemoSceneBase, GodotNode } from "./DemoSceneBase";
 
 export default class PullToRefreshScene extends DemoSceneBase {
     private _list1: GList | null = null;
@@ -13,26 +13,36 @@ export default class PullToRefreshScene extends DemoSceneBase {
         UIPackage.addPackage("res://Resources/UI/PullToRefresh");
         this._view = UIPackage.createObject("PullToRefresh", "Main");
         this._groot!.addChild(this._view);
+        (this as unknown as GodotNode).callDeferred("_setupLists");
+    }
 
-        this._list1 = this._view.getChild("list1") as GList | null;
+    _setupLists(): void {
+        if (!this.isUiActive()) {
+            return;
+        }
+        this._list1 = this._view!.getChild("list1") as GList | null;
         if (this._list1 != null) {
             this._list1.setItemRenderer(Callable.create(this._renderListItem1.bind(this)));
             this._list1.setVirtual();
             this._list1.setNumItems(1);
             this._list1.addEventListener(
                 UIEventDispatcher.PULLDOWNRELEASE,
-                Callable.create(this._onPullDownToRefresh.bind(this)),
+                Callable.create(() => {
+                    (this as unknown as GodotNode).callDeferred("_beginPullDownRefresh");
+                }),
             );
         }
 
-        this._list2 = this._view.getChild("list2") as GList | null;
+        this._list2 = this._view!.getChild("list2") as GList | null;
         if (this._list2 != null) {
             this._list2.setItemRenderer(Callable.create(this._renderListItem2.bind(this)));
             this._list2.setVirtual();
             this._list2.setNumItems(1);
             this._list2.addEventListener(
                 UIEventDispatcher.PULLUPRELEASE,
-                Callable.create(this._onPullUpToRefresh.bind(this)),
+                Callable.create(() => {
+                    (this as unknown as GodotNode).callDeferred("_beginPullUpRefresh");
+                }),
             );
         }
     }
@@ -46,8 +56,8 @@ export default class PullToRefreshScene extends DemoSceneBase {
         obj.setText(`Item ${String(index)}`);
     }
 
-    private async _onPullDownToRefresh(): Promise<void> {
-        if (this._refreshing1 || this._list1 == null) {
+    private async _beginPullDownRefresh(): Promise<void> {
+        if (this._refreshing1 || !this.isUiActive() || this._list1 == null) {
             return;
         }
         this._refreshing1 = true;
@@ -64,7 +74,7 @@ export default class PullToRefreshScene extends DemoSceneBase {
         }
 
         await this.waitSeconds(2.0);
-        if (!this.isSceneActive() || this._list1 == null) {
+        if (!this.isUiActive() || this._list1 == null) {
             this._refreshing1 = false;
             return;
         }
@@ -78,7 +88,7 @@ export default class PullToRefreshScene extends DemoSceneBase {
         }
 
         await this.waitSeconds(2.0);
-        if (!this.isSceneActive() || this._list1 == null) {
+        if (!this.isUiActive() || this._list1 == null) {
             this._refreshing1 = false;
             return;
         }
@@ -91,8 +101,8 @@ export default class PullToRefreshScene extends DemoSceneBase {
         this._refreshing1 = false;
     }
 
-    private async _onPullUpToRefresh(): Promise<void> {
-        if (this._refreshing2 || this._list2 == null) {
+    private async _beginPullUpRefresh(): Promise<void> {
+        if (this._refreshing2 || !this.isUiActive() || this._list2 == null) {
             return;
         }
         this._refreshing2 = true;
@@ -109,7 +119,7 @@ export default class PullToRefreshScene extends DemoSceneBase {
         }
 
         await this.waitSeconds(2.0);
-        if (!this.isSceneActive() || this._list2 == null) {
+        if (!this.isUiActive() || this._list2 == null) {
             this._refreshing2 = false;
             return;
         }

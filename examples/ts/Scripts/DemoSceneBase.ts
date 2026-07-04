@@ -3,7 +3,7 @@
 import "./fgui-globals";
 import { Callable, Engine, Node, SceneTree } from "godot";
 
-type GodotNode = Node & {
+export type GodotNode = Node & {
     isInsideTree(): boolean;
     getTree(): SceneTree;
     callDeferred(method: string, ...args: unknown[]): void;
@@ -28,12 +28,28 @@ export class DemoSceneBase extends Node {
     }
 
     _exit_tree(): void {
+        this._view = null;
+        this._groot = null;
         this._sceneActive = false;
         this._pendingScenePath = null;
     }
 
     protected isSceneActive(): boolean {
         return this._sceneActive;
+    }
+
+    protected isUiActive(): boolean {
+        const self = this as unknown as GodotNode;
+        if (!this._sceneActive || !self.isInsideTree()) {
+            return false;
+        }
+        if (this._groot == null || this._view == null) {
+            return false;
+        }
+        if (GRoot.getInstance() == null) {
+            return false;
+        }
+        return this._view.getParent() === this._groot && this._view.onStage();
     }
 
     /** 不依赖场景节点，切场景后仍可用。 */
@@ -74,6 +90,13 @@ export class DemoSceneBase extends Node {
         }
         this._groot = GRoot.getInstance();
         this._prepareGrootForScene();
+        (this as unknown as GodotNode).callDeferred("_finishContinueInit");
+    }
+
+    _finishContinueInit(): void {
+        if (!this.isSceneActive() || this._groot == null) {
+            return;
+        }
         void this.ContinueInit();
         this._addCloseButton();
     }
@@ -194,6 +217,7 @@ export class DemoSceneBase extends Node {
             return;
         }
         GRoot.cleanup();
+        this._view = null;
         this._groot = null;
         (this as unknown as GodotNode).callDeferred("_deferredChangeScene");
     }

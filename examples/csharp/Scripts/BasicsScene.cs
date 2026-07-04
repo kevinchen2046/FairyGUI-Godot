@@ -32,7 +32,7 @@ public partial class BasicsScene : DemoSceneBase
 
         _backBtn = _view.GetChild("btn_Back");
         _backBtn.SetVisible(false);
-        _backBtn.AddClickListener(new Callable(this, MethodName.OnClickBack));
+        _backBtn.AddClickListener(new Callable(this, MethodName.DeferredClickBack));
 
         _demoContainer = _view.GetChild("container");
         _cc = _view.GetController("c1");
@@ -42,29 +42,38 @@ public partial class BasicsScene : DemoSceneBase
         {
             var obj = _view.GetChildAt(i);
             if (obj?.GetGroup() != null && obj.GetGroup().GetName() == "btns")
-                obj.AddClickListener(new Callable(this, MethodName.RunDemo));
+                obj.AddClickListener(new Callable(this, MethodName.DeferredRunDemo).Bind(obj));
         }
     }
 
-    private void OnClickBack()
+    private void DeferredClickBack()
     {
+        if (!IsUiActive())
+            return;
         if (_winB != null && _winB.IsShowing())
             _winB.HideImmediately();
         if (_winA != null && _winA.IsShowing())
             _winA.HideImmediately();
         CleanupGrootOverlays();
         _demoContainer.RemoveChildren();
+        _demoObjects.Clear();
+        CallDeferred(MethodName.ApplyDemoMenu);
+    }
+
+    private void ApplyDemoMenu()
+    {
+        if (!IsUiActive())
+            return;
         _cc.SetSelectedIndex(0);
         _backBtn.SetVisible(false);
         _progressRunning = false;
     }
 
-    private void RunDemo()
+    private void DeferredRunDemo(GuiObject sender)
     {
-        CleanupGrootOverlays();
-        var sender = _groot.GetTouchTarget();
-        if (sender == null)
+        if (!IsUiActive() || sender == null)
             return;
+        CleanupGrootOverlays();
         var typeName = sender.GetName().ToString()[4..];
 
         if (!_demoObjects.TryGetValue(typeName, out var obj))
@@ -77,6 +86,13 @@ public partial class BasicsScene : DemoSceneBase
 
         _demoContainer.RemoveChildren();
         _demoContainer.AddChild(obj);
+        CallDeferred(MethodName.ApplyDemoUi, typeName, obj);
+    }
+
+    private void ApplyDemoUi(string typeName, GuiObject obj)
+    {
+        if (!IsUiActive() || obj == null || !obj.OnStage())
+            return;
         _cc.SetSelectedIndex(1);
         _backBtn.SetVisible(true);
 

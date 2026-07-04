@@ -22,11 +22,13 @@ func _is_scene_active() -> bool:
 	return _scene_active
 
 func _is_ui_active() -> bool:
-	if not _is_scene_active() or _groot == null or _view == null:
+	if not _is_scene_active() or not is_inside_tree():
+		return false
+	if _groot == null or _view == null:
 		return false
 	if GRoot.getInstance() == null:
 		return false
-	return _view.onStage()
+	return _view.getParent() == _groot and _view.onStage()
 
 func _get_engine_tree() -> SceneTree:
 	var loop = Engine.get_main_loop()
@@ -81,6 +83,16 @@ func _register_default_fonts() -> void:
 
 func continue_init() -> void:
 	pass
+
+func _wait_seconds(seconds: float) -> void:
+	if not _is_scene_active():
+		return
+	var tree := _safe_get_tree()
+	if tree == null:
+		tree = _get_engine_tree()
+	if tree == null:
+		return
+	await tree.create_timer(seconds).timeout
 
 func _add_close_button() -> void:
 	var close_btn = UIPackage.createObject("MainMenu", "CloseButton")

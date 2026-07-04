@@ -48,6 +48,11 @@ func _deferred_click_back() -> void:
 	_cleanup_groot_overlays()
 	_demo_container.removeChildren()
 	_demo_objects.clear()
+	call_deferred("_apply_demo_menu")
+
+func _apply_demo_menu() -> void:
+	if not _is_ui_active():
+		return
 	_cc.setSelectedIndex(0)
 	_back_btn.setVisible(false)
 	_progress_running = false
@@ -65,6 +70,11 @@ func _deferred_run_demo(sender: Object) -> void:
 
 	_demo_container.removeChildren()
 	_demo_container.addChild(obj)
+	call_deferred("_apply_demo_ui", type_name, obj)
+
+func _apply_demo_ui(type_name: String, obj: Object) -> void:
+	if not _is_ui_active() or obj == null or not obj.onStage():
+		return
 	_cc.setSelectedIndex(1)
 	_back_btn.setVisible(true)
 
