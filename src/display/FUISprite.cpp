@@ -1,4 +1,5 @@
 #include "FUISprite.h"
+#include "FUIDisplayNode.h"
 #include <cfloat>
 #include "scene/resources/shader.h"
 #include "servers/rendering_server.h"
@@ -149,8 +150,17 @@ void FUISprite::_notification(int p_what)
         return;
     }
     if (p_what == NOTIFICATION_ENTER_TREE)
+    {
+        fui_sync_child_order_changed(this, true);
         queue_redraw();
-    else if (p_what == NOTIFICATION_ENTER_CANVAS)
+        return;
+    }
+    if (p_what == NOTIFICATION_EXIT_TREE)
+    {
+        fui_sync_child_order_changed(this, false);
+        return;
+    }
+    if (p_what == NOTIFICATION_ENTER_CANVAS)
     {
         if (_fillMethod != FillMethod::None)
             setupFill();

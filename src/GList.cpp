@@ -248,15 +248,18 @@ void GList::removeChildAt(int index)
 
 void GList::removeChildToPoolAt(int index)
 {
-    GObject* child = getChildAt(index);
+    Ref<GObject> child = _children.at(index);
     removeChildAt(index);
-    returnToPool(child);
+    returnToPool(child.ptr());
 }
 
 void GList::removeChildToPool(GObject* child)
 {
-    returnToPool(child);
-    removeChild(child);
+    Ref<GObject> ref = child;
+    if (ref.is_null())
+        return;
+    returnToPool(ref.ptr());
+    removeChild(ref.ptr());
 }
 
 void GList::removeChildrenToPool()

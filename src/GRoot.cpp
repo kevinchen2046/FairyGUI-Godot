@@ -60,23 +60,28 @@ GRoot* GRoot::createDeferred(SceneTree* tree, int zOrder)
 
 void GRoot::cleanup()
 {
-    if (_inst != nullptr)
-    {
-        _inst->hideTooltips();
-        _inst->hidePopup();
-        _inst->closeModalWait();
-        _inst->closeAllWindows();
-        _inst->removeChildren();
+    GRoot* old = _inst;
+    if (old == nullptr)
+        return;
 
-        Node* displayNode = _inst->displayObject();
-        if (displayNode != nullptr)
-        {
-            Node* parent = displayNode->get_parent();
-            if (parent != nullptr)
-                parent->remove_child(displayNode);
-        }
-        _inst = nullptr;
+    old->hideTooltips();
+    old->hidePopup();
+    old->closeModalWait();
+    old->closeAllWindows();
+    old->removeChildren();
+
+    _inst = nullptr;
+
+    Node* displayNode = old->displayObject();
+    if (displayNode != nullptr)
+    {
+        Node* parent = displayNode->get_parent();
+        if (parent != nullptr)
+            parent->remove_child(displayNode);
     }
+
+    // Matches reference() in create(); frees stale GRoot/InputProcessor after scene teardown.
+    old->unreference();
 }
 
 GRoot::GRoot()

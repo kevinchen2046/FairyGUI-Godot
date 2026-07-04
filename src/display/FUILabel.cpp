@@ -1,4 +1,5 @@
 #include "FUILabel.h"
+#include "FUIDisplayNode.h"
 #include "BitmapFont.h"
 #include "GObject.h"
 #include "GRoot.h"
@@ -351,7 +352,13 @@ void FUILabel::_notification(int p_what) {
         return;
     }
     if (p_what == NOTIFICATION_ENTER_TREE) {
+        fui_sync_child_order_changed(this, true);
         queue_redraw();
+        return;
+    }
+    if (p_what == NOTIFICATION_EXIT_TREE) {
+        fui_sync_child_order_changed(this, false);
+        return;
     }
     Node2D::_notification(p_what);
 }

@@ -70,7 +70,11 @@ public:
 
     static void _bind_methods();
 
+protected:
+    void _notification(int p_what);
+
 private:
+    void ensureEditor();
     void rebuildEditor();
     void applyEditorTheme();
     bool isCharAllowed(char32_t ch) const;
@@ -101,6 +105,8 @@ private:
     TextFormat* _textFormat;
     std::function<void()> _submittedCallback;
     std::function<void()> _textChangedCallback;
+
+    uint8_t _fuiNotifyState = 0;
 };
 
 NS_FGUI_END

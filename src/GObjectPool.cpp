@@ -31,8 +31,9 @@ void GObjectPool::returnObject(GObject* obj)
 {
     if (obj == nullptr)
         return;
-    obj->setVisible(false);
-    _pool[obj->getResourceURL()].push_back(obj);
+    Ref<GObject> ref = obj;
+    ref->setVisible(false);
+    _pool[ref->getResourceURL()].push_back(ref);
 }
 
 NS_FGUI_END

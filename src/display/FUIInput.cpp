@@ -1,5 +1,6 @@
 #include "FUIInput.h"
 
+#include "FUIDisplayNode.h"
 #include "GObject.h"
 #include "UIPackage.h"
 #include "UIConfig.h"
@@ -15,6 +16,34 @@
 
 
 NS_FGUI_BEGIN
+
+class FUILineEdit : public LineEdit {
+    GDCLASS(FUILineEdit, LineEdit)
+
+protected:
+    void _notification(int p_what) {
+        if (fui_control_handle_notification(this, p_what, _fuiNotifyState))
+            return;
+        LineEdit::_notification(p_what);
+    }
+
+private:
+    uint8_t _fuiNotifyState = 0;
+};
+
+class FUITextEdit : public TextEdit {
+    GDCLASS(FUITextEdit, TextEdit)
+
+protected:
+    void _notification(int p_what) {
+        if (fui_control_handle_notification(this, p_what, _fuiNotifyState))
+            return;
+        TextEdit::_notification(p_what);
+    }
+
+private:
+    uint8_t _fuiNotifyState = 0;
+};
 
 FUIInput* FUIInput::_activeInput = nullptr;
 
@@ -46,7 +75,35 @@ FUIInput::FUIInput() :
 
     set_mouse_filter(MOUSE_FILTER_STOP);
 
-    rebuildEditor();
+}
+
+
+
+void FUIInput::_notification(int p_what)
+
+{
+
+    if (fui_control_handle_notification(this, p_what, _fuiNotifyState))
+
+        return;
+
+    if (p_what == NOTIFICATION_ENTER_TREE)
+
+        ensureEditor();
+
+    Control::_notification(p_what);
+
+}
+
+
+
+void FUIInput::ensureEditor()
+
+{
+
+    if (!_editor)
+
+        rebuildEditor();
 
 }
 
@@ -166,7 +223,7 @@ void FUIInput::rebuildEditor()
 
     {
 
-        LineEdit* lineEdit = memnew(LineEdit);
+        FUILineEdit* lineEdit = memnew(FUILineEdit);
 
         lineEdit->set_anchors_preset(Control::PRESET_FULL_RECT);
 
@@ -186,7 +243,7 @@ void FUIInput::rebuildEditor()
 
     {
 
-        TextEdit* textEdit = memnew(TextEdit);
+        FUITextEdit* textEdit = memnew(FUITextEdit);
 
         textEdit->set_anchors_preset(Control::PRESET_FULL_RECT);
 
@@ -655,6 +712,8 @@ void FUIInput::applyEditorTheme()
 void FUIInput::applyTextFormat()
 
 {
+
+    ensureEditor();
 
     applyEditorTheme();
 

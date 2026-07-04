@@ -17,21 +17,15 @@ class FUIClipContainer : public Control
 public:
     std::function<void(float)> _processCallback;
 
-    FUIClipContainer()
-    {
-        set_clip_contents(true);
-        set_mouse_filter(MOUSE_FILTER_IGNORE);
-    }
+    FUIClipContainer();
 
     static void _bind_methods() {}
 
 protected:
-    void _notification(int p_what)
-    {
-        if (p_what == NOTIFICATION_PROCESS && _processCallback)
-            _processCallback(get_process_delta_time());
-        Control::_notification(p_what);
-    }
+    void _notification(int p_what);
+
+private:
+    uint8_t _fuiNotifyState = 0;
 };
 
 class FUIContainer : public Node2D

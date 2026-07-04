@@ -1,4 +1,5 @@
 #include "FUIContainer.h"
+#include "FUIDisplayNode.h"
 #include "GComponent.h"
 #include "GGraph.h"
 #include "GRoot.h"
@@ -12,23 +13,19 @@
 
 NS_FGUI_BEGIN
 
-static void fui_sync_child_order_changed(FUIContainer* self, bool p_connect)
+FUIClipContainer::FUIClipContainer()
 {
-    Viewport* viewport = self->get_viewport();
-    Node* parent = self->get_parent();
-    if (!viewport || !parent)
-        return;
+    set_clip_contents(true);
+    set_mouse_filter(MOUSE_FILTER_IGNORE);
+}
 
-    Callable callable = callable_mp(viewport, &Viewport::gui_set_root_order_dirty);
-    if (p_connect)
-    {
-        if (!parent->is_connected(SNAME("child_order_changed"), callable))
-            parent->connect(SNAME("child_order_changed"), callable, Object::CONNECT_REFERENCE_COUNTED);
-    }
-    else if (parent->is_connected(SNAME("child_order_changed"), callable))
-    {
-        parent->disconnect(SNAME("child_order_changed"), callable);
-    }
+void FUIClipContainer::_notification(int p_what)
+{
+    if (p_what == NOTIFICATION_PROCESS && _processCallback)
+        _processCallback(get_process_delta_time());
+    if (fui_control_handle_notification(this, p_what, _fuiNotifyState))
+        return;
+    Control::_notification(p_what);
 }
 
 static void mark_input_handled(Node* node)

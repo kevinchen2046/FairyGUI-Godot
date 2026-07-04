@@ -1,4 +1,5 @@
 #include "FUIRichText.h"
+#include "FUIDisplayNode.h"
 #include "utils/html/HtmlElement.h"
 #include "utils/html/HtmlObject.h"
 #include "FUILabel.h"
@@ -241,6 +242,7 @@ void FUIRichText::_notification(int p_what)
     }
     if (p_what == NOTIFICATION_ENTER_TREE)
     {
+        fui_sync_child_order_changed(this, true);
         if (_clipContainer)
         {
             for (int i = 0; i < _clipContainer->get_child_count(); i++)
@@ -250,6 +252,11 @@ void FUIRichText::_notification(int p_what)
             }
         }
         queue_redraw();
+        return;
+    }
+    if (p_what == NOTIFICATION_EXIT_TREE)
+    {
+        fui_sync_child_order_changed(this, false);
         return;
     }
     Node2D::_notification(p_what);

@@ -1,5 +1,6 @@
 #include "GGraph.h"
 #include "display/FUIContainer.h"
+#include "display/FUIDisplayNode.h"
 #include "utils/ByteBuffer.h"
 #include "utils/ToolSet.h"
 
@@ -123,6 +124,14 @@ class DrawNode : public Node2D {
         void _notification(int p_what) {
             if (p_what == NOTIFICATION_DRAW) {
                 _draw();
+                return;
+            }
+            if (p_what == NOTIFICATION_ENTER_TREE) {
+                fui_sync_child_order_changed(this, true);
+                return;
+            }
+            if (p_what == NOTIFICATION_EXIT_TREE) {
+                fui_sync_child_order_changed(this, false);
                 return;
             }
             Node2D::_notification(p_what);
