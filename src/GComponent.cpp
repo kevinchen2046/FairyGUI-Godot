@@ -13,15 +13,22 @@
 #include "utils/ByteBuffer.h"
 #include "utils/ToolSet.h"
 #include <cfloat>
+#include "servers/rendering_server.h"
 
 NS_FGUI_BEGIN
 using namespace std;
 
+static int sorting_order_to_canvas_z(int sortingOrder, int siblingIndex)
+{
+    const int z = sortingOrder != 0 ? sortingOrder : siblingIndex;
+    return CLAMP(z, RS::CANVAS_ITEM_Z_MIN, RS::CANVAS_ITEM_Z_MAX);
+}
+
 static int get_display_child_z_order(GObject* child, int siblingIndex)
 {
     if (child->getSortingOrder() != 0)
-        return child->getSortingOrder();
-    return siblingIndex;
+        return sorting_order_to_canvas_z(child->getSortingOrder(), siblingIndex);
+    return sorting_order_to_canvas_z(0, siblingIndex);
 }
 
 static void set_display_child_z_order(GObject* child, int siblingIndex)

@@ -17,6 +17,7 @@
 #include "utils/WeakPtr.h"
 #include <sstream>
 #include <cfloat>
+#include "servers/rendering_server.h"
 
 NS_FGUI_BEGIN
 GuiObject* GuiObject::_draggingObject = nullptr;
@@ -29,7 +30,7 @@ static int apply_absolute_overlay_z_order(Node* node, int baseZ, int localZ)
     if (CanvasItem* ci = Object::cast_to<CanvasItem>(node))
     {
         ci->set_z_as_relative(false);
-        ci->set_z_index(baseZ + localZ);
+        ci->set_z_index(CLAMP(baseZ + localZ, RS::CANVAS_ITEM_Z_MIN, RS::CANVAS_ITEM_Z_MAX));
         localZ++;
     }
 
