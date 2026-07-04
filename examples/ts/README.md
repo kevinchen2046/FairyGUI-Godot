@@ -84,6 +84,8 @@ FairyGUI 类在 GodotJS 运行时挂在 `godot` 模块上，不会自动成为 J
 
 各脚本在文件顶部 `import "./fgui-globals"`。单独编写的新脚本也需添加该行。
 
+GodotJS 与 FairyGUI 联用时需应用 [GodotJS 补丁](../../README.zh.md#godotjs-补丁)（`jsb_check` 断言修正）。补丁生效后，`FGUIEventContext.getData()` 可正常返回 `GuiObject`；`getItemText()` 仍可作为仅取文本的便捷 API。
+
 **GodotJS 与 GDScript 差异（常见）：**
 
 - `UIConfigHelper` 的配置项用**属性**（`ui.defaultFont = "..."`），不用 `setDefaultFont()`（GodotJS 对 `ADD_PROPERTY` 隐藏 setter 方法）。

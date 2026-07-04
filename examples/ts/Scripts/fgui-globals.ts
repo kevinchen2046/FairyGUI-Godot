@@ -99,50 +99,6 @@ function fguiGroupName(obj: GuiObject | null | undefined): string {
     return String(group.name ?? "");
 }
 
-/**
- * 启动时预加载 Godot / FairyGUI 类，避免 post_bind 嵌套期间懒加载 GObject 等导致 dev 崩溃。
- * 仅 touch 类型，实例 API 仍通过 godot.lib.api 使用。
- */
-function warmupGodotJsClasses(
-    getMod: () => Record<string, unknown>,
-    fguiNames: readonly string[],
-): void {
-    const godotMod = require("godot") as Record<string, unknown>;
-    const engineTypes = ["GObject", "RefCounted", "Signal", "Callable"] as const;
-    for (const name of engineTypes) {
-        try {
-            void godotMod[name];
-        } catch (e) {
-            console.warn(`fgui-globals: warmup godot.${name} failed`, e);
-        }
-    }
-
-    const fguiBase = ["UIEventDispatcher", "GuiObject"] as const;
-    for (const name of fguiBase) {
-        try {
-            void getMod()[name];
-        } catch (e) {
-            console.warn(`fgui-globals: warmup ${name} failed`, e);
-        }
-    }
-
-    for (const name of fguiNames) {
-        if ((fguiBase as readonly string[]).includes(name)) {
-            continue;
-        }
-        try {
-            void getMod()[name];
-        } catch (e) {
-            console.warn(`fgui-globals: warmup ${name} failed`, e);
-        }
-    }
-
-    const guiObject = getMod().GuiObject as Record<string, unknown> | undefined;
-    if (guiObject != null) {
-        ensureGuiObjectEnumAliases(guiObject);
-    }
-}
-
 if (!g[flag]) {
     g[flag] = true;
     g.FguiRelationType = FguiRelationType;
@@ -206,8 +162,6 @@ if (!g[flag]) {
         enumerable: true,
         configurable: true,
     });
-
-    warmupGodotJsClasses(getMod, names);
 }
 
 export {};
