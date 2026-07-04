@@ -11,6 +11,12 @@ NS_FGUI_BEGIN
 
 using namespace std;
 
+static GObject* normalize_input_target(GObject* target, GComponent* owner)
+{
+    GObject* resolved = resolve_live_gobject(target);
+    return resolved != nullptr ? resolved : owner;
+}
+
 InputProcessor* InputProcessor::_activeProcessor = nullptr;
 bool InputProcessor::_touchOnUI = false;
 unsigned int InputProcessor::_touchOnUIFlagFrameId = 0;
@@ -128,16 +134,20 @@ void InputProcessor::updateRecentInput(TouchInfo* ti, GObject* target)
 
 void InputProcessor::handleRollOver(TouchInfo* touch, GObject* target)
 {
+    target = resolve_live_gobject(target);
+    if (target == nullptr)
+        target = _owner;
+
     if (touch->lastRollOver == target)
         return;
 
     std::vector<WeakPtr> rollOutChain;
     std::vector<WeakPtr> rollOverChain;
-    GObject* element = touch->lastRollOver.ptr();
+    GObject* element = resolve_live_gobject(touch->lastRollOver.ptr());
     while (element != nullptr)
     {
         rollOutChain.push_back(WeakPtr(element));
-        element = element->findParent();
+        element = resolve_live_gobject(element->findParent());
     }
 
     element = target;
@@ -150,7 +160,7 @@ void InputProcessor::handleRollOver(TouchInfo* touch, GObject* target)
             break;
         }
         rollOverChain.push_back(WeakPtr(element));
-        element = element->findParent();
+        element = resolve_live_gobject(element->findParent());
     }
 
     touch->lastRollOver = target;
@@ -236,8 +246,12 @@ void InputProcessor::setBegin(TouchInfo* touch, GObject* target)
     touch->downPos = touch->pos;
 
     touch->downTargets.clear();
-    GObject* obj = target;
-    while (obj != nullptr)
+    GObject* obj = resolve_live_gobject(target);
+    if (obj == nullptr)
+        obj = _owner;
+
+    int depth = 0;
+    while (obj != nullptr && depth++ < 512)
     {
         touch->downTargets.push_back(WeakPtr(obj));
         obj = obj->findParent();
@@ -274,8 +288,9 @@ GObject* InputProcessor::clickTest(TouchInfo* touch, GObject* target)
     if (obj && obj->onStage())
         return obj;
 
-    obj = target;
-    while (obj != nullptr)
+    obj = resolve_live_gobject(target);
+    int depth = 0;
+    while (obj != nullptr && depth++ < 512)
     {
         auto it = std::find(touch->downTargets.cbegin(), touch->downTargets.cend(), obj);
         if (it != touch->downTargets.cend() && it->onStage())
@@ -287,7 +302,7 @@ GObject* InputProcessor::clickTest(TouchInfo* touch, GObject* target)
         obj = obj->findParent();
     }
 
-    return obj;
+    return resolve_live_gobject(obj);
 }
 
 bool InputProcessor::isTouchOnUI()
@@ -310,9 +325,7 @@ bool InputProcessor::onTouchBegin(const Vector2& screenPos, int touchId)
         return false;
 
     Vector2 pt = GRoot::getInstance()->worldToRoot(screenPos);
-    GObject* target = _owner->hitTest(pt, nullptr);
-    if (!target)
-        target = _owner;
+    GObject* target = normalize_input_target(_owner->hitTest(pt, nullptr), _owner);
 
     TouchInfo* ti = getTouch(touchId);
     ti->pos = pt;
@@ -329,6 +342,8 @@ bool InputProcessor::onTouchBegin(const Vector2& screenPos, int touchId)
     WeakPtr wptr(target);
     target->bubbleEvent(UIEventType::TouchBegin);
     target = wptr.ptr();
+    if (target == nullptr)
+        target = _owner;
 
     handleRollOver(ti, target);
 
@@ -339,9 +354,7 @@ bool InputProcessor::onTouchBegin(const Vector2& screenPos, int touchId)
 void InputProcessor::onTouchMove(const Vector2& screenPos, int touchId)
 {
     Vector2 pt = GRoot::getInstance()->worldToRoot(screenPos);
-    GObject* target = _owner->hitTest(pt, nullptr);
-    if (!target)
-        target = _owner;
+    GObject* target = normalize_input_target(_owner->hitTest(pt, nullptr), _owner);
 
     TouchInfo* ti = getTouch(touchId);
     ti->pos = pt;
@@ -385,9 +398,7 @@ void InputProcessor::onTouchEnd(const Vector2& screenPos, int touchId)
     if (!ti) return;
 
     Vector2 pt = GRoot::getInstance()->worldToRoot(screenPos);
-    GObject* target = _owner->hitTest(pt, nullptr);
-    if (!target)
-        target = _owner;
+    GObject* target = normalize_input_target(_owner->hitTest(pt, nullptr), _owner);
 
     ti->pos = pt;
     ti->button = (int)MouseButton::LEFT;
@@ -444,9 +455,7 @@ void InputProcessor::onTouchCancel(const Vector2& screenPos, int touchId)
     if (!ti) return;
 
     Vector2 pt = GRoot::getInstance()->worldToRoot(screenPos);
-    GObject* target = _owner->hitTest(pt, nullptr);
-    if (!target)
-        target = _owner;
+    GObject* target = normalize_input_target(_owner->hitTest(pt, nullptr), _owner);
 
     ti->pos = pt;
     setEnd(ti, target);
@@ -469,9 +478,7 @@ bool InputProcessor::onMouseDown(const Vector2& screenPos, int button)
         return false;
 
     Vector2 pt = GRoot::getInstance()->worldToRoot(screenPos);
-    GObject* target = _owner->hitTest(pt, nullptr);
-    if (!target)
-        target = _owner;
+    GObject* target = normalize_input_target(_owner->hitTest(pt, nullptr), _owner);
 
     TouchInfo* ti = getTouch(-1);
     ti->pos = pt;
@@ -497,9 +504,7 @@ void InputProcessor::onMouseUp(const Vector2& screenPos, int button)
 {
     TouchInfo* ti = getTouch(-1);
     Vector2 pt = GRoot::getInstance()->worldToRoot(screenPos);
-    GObject* target = _owner->hitTest(pt, nullptr);
-    if (!target)
-        target = _owner;
+    GObject* target = normalize_input_target(_owner->hitTest(pt, nullptr), _owner);
 
     ti->pos = pt;
     ti->button = button;
@@ -529,9 +534,7 @@ void InputProcessor::onMouseMove(const Vector2& screenPos)
         ti->button = 0;
     }
 
-    GObject* target = _owner->hitTest(pt, nullptr);
-    if (!target)
-        target = _owner;
+    GObject* target = normalize_input_target(_owner->hitTest(pt, nullptr), _owner);
 
     ti->pos = pt;
     updateRecentInput(ti, target);
@@ -544,9 +547,7 @@ void InputProcessor::onMouseScroll(const Vector2& screenPos, int delta)
 {
     TouchInfo* ti = getTouch(-1);
     Vector2 pt = GRoot::getInstance()->worldToRoot(screenPos);
-    GObject* target = _owner->hitTest(pt, nullptr);
-    if (!target)
-        target = _owner;
+    GObject* target = normalize_input_target(_owner->hitTest(pt, nullptr), _owner);
 
     ti->pos = pt;
     ti->mouseWheelDelta = delta;

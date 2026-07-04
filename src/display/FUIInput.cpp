@@ -62,6 +62,7 @@ void FUIInput::_notification(int p_what)
 {
     if (p_what == NOTIFICATION_ENTER_TREE)
         ensureEditor();
+    // Do not call Control::_notification: GDCLASS already forwards base notifications.
 }
 
 

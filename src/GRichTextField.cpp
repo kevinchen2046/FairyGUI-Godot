@@ -2,6 +2,7 @@
 #include "utils/UBBParser.h"
 #include "utils/ByteBuffer.h"
 #include "utils/html/HtmlObject.h"
+#include "utils/WeakPtr.h"
 #include "display/FUILabel.h"
 
 NS_FGUI_BEGIN
@@ -178,9 +179,12 @@ GObject* GRichTextField::hitTest(const Vector2& worldPoint, const Camera2D* came
     const std::vector<HtmlObject*>& objs = _richText->getControls();
     for (auto &obj : objs)
     {
-        GObject* target = obj->getUI()->hitTest(worldPoint, camera);
+        GObject* ui = obj->getUI();
+        if (ui == nullptr)
+            continue;
+        GObject* target = ui->hitTest(worldPoint, camera);
         if (target)
-            return target;
+            return resolve_live_gobject(target);
     }
 
     return GTextField::hitTest(worldPoint, camera);

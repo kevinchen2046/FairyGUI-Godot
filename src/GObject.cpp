@@ -85,15 +85,20 @@ GuiObject::GuiObject() : _scale{1, 1},
 
     for (int i = 0; i < 10; i++)
         _gears[i] = nullptr;
+
+    register_live_gobject(this);
 }
 
 GuiObject::~GuiObject()
 {
+    unregister_live_gobject(this);
     GTween::kill(this, false);
     removeFromParent();
 
     if (_displayObject)
     {
+        if (FUIContainer* fc = Object::cast_to<FUIContainer>(_displayObject))
+            fc->gOwner = nullptr;
         _displayObject->queue_free();
         // // CC_SAFE_RELEASE removed - _displayObject managed by Godot ref counting;
     }
@@ -720,15 +725,24 @@ void GuiObject::checkGearDisplay()
 
 bool GuiObject::onStage() const
 {
-    return _displayObject->get_tree() != nullptr;
+    if (!_displayObject)
+        return false;
+    return _displayObject->is_inside_tree();
 }
 
 GObject* GuiObject::findParent() const
 {
-    if (_parent != nullptr)
-        return _parent;
+    GObject* self = resolve_live_gobject(const_cast<GuiObject*>(this));
+    if (self == nullptr)
+        return nullptr;
 
-    Node* pn = _displayObject->get_parent();
+    if (self->_parent != nullptr)
+        return resolve_live_gobject(self->_parent);
+
+    if (self->_displayObject == nullptr)
+        return nullptr;
+
+    Node* pn = self->_displayObject->get_parent();
     if (pn == nullptr)
         return nullptr;
 
@@ -736,7 +750,10 @@ GObject* GuiObject::findParent() const
     {
         FUIContainer* fc = dynamic_cast<FUIContainer*>(pn);
         if (fc != nullptr && fc->gOwner)
-            return fc->gOwner;
+        {
+            if (GObject* owner = resolve_live_gobject(fc->gOwner))
+                return owner;
+        }
 
         pn = pn->get_parent();
     }

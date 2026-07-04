@@ -114,6 +114,7 @@ public:
 
     void cancelDragging();
     static ScrollPane* getDraggingPane() { return _draggingPane; }
+    static void updateAllTweens(float dt);
 
 private:
     void onOwnerSizeChanged();

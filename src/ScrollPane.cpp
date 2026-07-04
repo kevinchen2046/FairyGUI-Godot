@@ -10,11 +10,46 @@
 #include "utils/ByteBuffer.h"
 #include "utils/ToolSet.h"
 #include "scene/main/viewport.h"
+#include <algorithm>
+#include <vector>
 
 NS_FGUI_BEGIN
 
 ScrollPane* ScrollPane::_draggingPane = nullptr;
 int ScrollPane::_gestureFlag = 0;
+
+static std::vector<ScrollPane*>& scroll_pane_tweening()
+{
+    static std::vector<ScrollPane*> panes;
+    return panes;
+}
+
+static void register_scroll_pane_tween(ScrollPane* pane)
+{
+    if (pane == nullptr)
+        return;
+    std::vector<ScrollPane*>& panes = scroll_pane_tweening();
+    for (ScrollPane* p : panes)
+        if (p == pane)
+            return;
+    panes.push_back(pane);
+}
+
+static void unregister_scroll_pane_tween(ScrollPane* pane)
+{
+    std::vector<ScrollPane*>& panes = scroll_pane_tweening();
+    panes.erase(std::remove(panes.begin(), panes.end(), pane), panes.end());
+}
+
+void ScrollPane::updateAllTweens(float dt)
+{
+    std::vector<ScrollPane*> panes = scroll_pane_tweening();
+    for (ScrollPane* pane : panes)
+    {
+        if (pane != nullptr && pane->_tweening != 0)
+            pane->tweenUpdate(dt);
+    }
+}
 
 static const float TWEEN_TIME_GO = 0.5f;      //tween time for SetPos(ani)
 static const float TWEEN_TIME_DEFAULT = 0.3f; //min tween time for inertial scroll
@@ -116,9 +151,13 @@ ScrollPane::ScrollPane(GComponent* owner)
     // Use the container already created in GComponent::handleInit()
     _container = _owner->_container;
     if (_container)
-        _container->get_parent()->remove_child(_container);
-    if (_container)
+    {
+        // Clear pivot/margin offset applied before setupScroll(); scroll owns container position.
+        _container->set_position(Vector2(0, 0));
+        if (_container->get_parent())
+            _container->get_parent()->remove_child(_container);
         _maskContainer->add_child(_container);
+    }
 
     _owner->addEventListener(UIEventType::MouseWheel, [this](EventContext* ctx) { onMouseWheel(ctx); });
     _owner->addEventListener(UIEventType::TouchBegin, [this](EventContext* ctx) { onTouchBegin(ctx); });
@@ -133,6 +172,7 @@ ScrollPane::ScrollPane(GComponent* owner)
 ScrollPane::~ScrollPane()
 {
     _deferredCallsCancelled = true;
+    unregister_scroll_pane_tween(this);
 
     if (_draggingPane == this)
         _draggingPane = nullptr;
@@ -659,7 +699,7 @@ void ScrollPane::adjustMaskContainer()
     mx += _owner->_alignOffset.x;
     my += _owner->_alignOffset.y;
 
-    _maskContainer->set_position(Vector2(mx, my));
+    _maskContainer->applyClipRect(Vector2(mx, my), Vector2(_viewSize.width, _viewSize.height));
 }
 
 void ScrollPane::onOwnerSizeChanged()
@@ -835,8 +875,7 @@ void ScrollPane::handleSizeChanged()
     }
     // MaskContainer is a Control with clip_contents=true.
     // The clip region is the Control's rect (position + size).
-    _maskContainer->set_position(maskRect.position);
-    _maskContainer->set_size(maskRect.size);
+    _maskContainer->applyClipRect(maskRect.position, maskRect.size);
 
     if (_vtScrollBar.is_valid())
         _vtScrollBar->handlePositionChanged();
@@ -860,17 +899,17 @@ void ScrollPane::handleSizeChanged()
 
     _xPos = std::clamp(_xPos, 0.0f, _overlapSize.width);
     _yPos = std::clamp(_yPos, 0.0f, _overlapSize.height);
-    // Only adjust container position when it exists (may not during construction)
-    if (_container != nullptr)
+    // Only adjust container position when it exists (may not during construction).
+    if (_container != nullptr && _container->get_parent() != nullptr)
     {
-        float max = sp_getField(_overlapSize, _refreshBarAxis);
-        if (max == 0)
-            max = std::max(sp_getField(_contentSize, _refreshBarAxis) + _footerLockedSize - sp_getField(_viewSize, _refreshBarAxis), 0.0f);
-        else
-            max += _footerLockedSize;
-        if (_container->get_parent() != nullptr)
+        Vector2 containerPos = _container->get_position();
+        if (!_dragged && _tweening == 0)
         {
-            Vector2 containerPos = _container->get_position();
+            float max = sp_getField(_overlapSize, _refreshBarAxis);
+            if (max == 0)
+                max = std::max(sp_getField(_contentSize, _refreshBarAxis) + _footerLockedSize - sp_getField(_viewSize, _refreshBarAxis), 0.0f);
+            else
+                max += _footerLockedSize;
             if (_refreshBarAxis == 0)
                 _container->set_position(Vector2(
                     std::clamp(containerPos.x, -max, (float)_headerLockedSize),
@@ -879,6 +918,21 @@ void ScrollPane::handleSizeChanged()
                 _container->set_position(Vector2(
                     std::clamp(containerPos.x, -_overlapSize.width, 0.0f),
                     std::clamp(containerPos.y, -max, (float)_headerLockedSize)));
+        }
+        else
+        {
+            // While dragging/inertia, keep bounce/pull offsets but fix scroll past new content edge.
+            Vector2 newPos = containerPos;
+            if (_overlapSize.width > 0 && containerPos.x < -_overlapSize.width)
+                newPos.x = -_overlapSize.width;
+            if (_overlapSize.height > 0 && containerPos.y < -_overlapSize.height)
+                newPos.y = -_overlapSize.height;
+            if (newPos != containerPos)
+            {
+                _container->set_position(newPos);
+                _xPos = std::clamp(-newPos.x, 0.0f, _overlapSize.width);
+                _yPos = std::clamp(-newPos.y, 0.0f, _overlapSize.height);
+            }
         }
     }
 
@@ -934,15 +988,22 @@ GObject* ScrollPane::hitTest(const Vector2& pt, const Camera2D* camera)
     }
     if (_maskContainer->is_clipping_contents())
     {
-        Vector2 canvasPoint = GRoot::getInstance()->rootToWorld(pt);
-        Vector2 localPoint = _maskContainer->get_global_transform_with_canvas().affine_inverse().xform(canvasPoint);
-        if (Rect2(Vector2(), _maskContainer->get_size()).has_point(localPoint))
-            return _owner;
+        float mx, my;
+        if (_displayOnLeft && _vtScrollBar.is_valid() && !_floating)
+            mx = floor(_owner->_margin.left + _vtScrollBar->getWidth());
         else
+            mx = floor(_owner->_margin.left);
+        my = floor(_owner->_margin.top);
+        mx += _owner->_alignOffset.x;
+        my += _owner->_alignOffset.y;
+
+        const Vector2 localPt = _owner->globalToLocal(pt);
+        const Rect2 viewRect(mx, my, _viewSize.width, _viewSize.height);
+        if (!viewRect.has_point(localPt))
             return nullptr;
     }
-    else
-        return _owner;
+
+    return _owner;
 }
 
 void ScrollPane::posChanged(bool ani)
@@ -1023,10 +1084,13 @@ void ScrollPane::refresh2()
     }
     else
     {
-        if (_tweening != 0)
-            killTween();
+        if (_tweening != 2)
+        {
+            if (_tweening != 0)
+                killTween();
 
-        _container->set_position(Vector2((int)-_xPos, (int)-_yPos));
+            _container->set_position(Vector2((int)-_xPos, (int)-_yPos));
+        }
 
         loopCheckingCurrent();
     }
@@ -1390,9 +1454,7 @@ void ScrollPane::startTween(int type)
 {
     _tweenTime = Vector2();
     _tweening = type;
-    // Drive tweenUpdate via _maskContainer's _process callback.
-    _maskContainer->set_process(true);
-    _maskContainer->_processCallback = [this](float dt) { tweenUpdate(dt); };
+    register_scroll_pane_tween(this);
     updateScrollBarVisible();
 }
 
@@ -1406,8 +1468,7 @@ void ScrollPane::killTween()
     }
 
     _tweening = 0;
-    _maskContainer->set_process(false);
-    _maskContainer->_processCallback = nullptr;
+    unregister_scroll_pane_tween(this);
     _owner->dispatchEvent(UIEventType::ScrollEnd);
 }
 
@@ -1481,8 +1542,7 @@ void ScrollPane::tweenUpdate(float dt)
     if (_tweenChange.x == 0 && _tweenChange.y == 0)
     {
         _tweening = 0;
-        _maskContainer->set_process(false);
-        _maskContainer->_processCallback = nullptr;
+        unregister_scroll_pane_tween(this);
 
         loopCheckingCurrent();
 

@@ -8,6 +8,11 @@ NS_FGUI_BEGIN
 
 #include "../GuiObjectFwd.h"
 
+// Returns obj if it is still a live Godot GObject instance, otherwise nullptr.
+GObject* resolve_live_gobject(GObject* obj);
+void register_live_gobject(GObject* obj);
+void unregister_live_gobject(GObject* obj);
+
 class WeakPtr
 {
 public:

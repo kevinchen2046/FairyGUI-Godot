@@ -203,6 +203,7 @@ Ref<GObject> GList::getFromPool(const std::string& url)
     {
         if (ref->getParent() != nullptr)
             ref->removeFromParent();
+        ref->setPosition(0, 0);
         ref->setVisible(true);
     }
     return ref;
@@ -1331,6 +1332,14 @@ void GList::doRefreshVirtualList()
     handleAlign(cw, ch);
     _scrollPane->setContentSize(cw, ch);
 
+    if (layoutChanged)
+    {
+        removeChildrenToPool();
+        for (int i = 0; i < (int)_virtualItems.size(); i++)
+            _virtualItems[i].obj = nullptr;
+        _firstIndex = -1;
+    }
+
     _eventLocked = false;
 
     handleScroll(true);
@@ -1351,41 +1360,45 @@ int GList::getIndexOnPos1(float& pos, bool forceUpdate)
 
     if (numChildren() > 0 && !forceUpdate && _firstIndex >= 0)
     {
-        float pos2 = getChildAt(0)->getY();
-        if (pos2 + (_lineGap > 0 ? 0 : -_lineGap) > pos)
+        GObject* firstChild = getChildAt(0);
+        if (_firstIndex < _realNumItems && _virtualItems[_firstIndex].obj.ptr() == firstChild)
         {
-            for (int i = _firstIndex - _curLineItemCount; i >= 0; i -= _curLineItemCount)
+            float pos2 = firstChild->getY();
+            if (pos2 + (_lineGap > 0 ? 0 : -_lineGap) > pos)
             {
-                pos2 -= (_virtualItems[i].size.y + _lineGap);
-                if (pos2 <= pos)
+                for (int i = _firstIndex - _curLineItemCount; i >= 0; i -= _curLineItemCount)
                 {
-                    pos = pos2;
-                    return i;
+                    pos2 -= (_virtualItems[i].size.y + _lineGap);
+                    if (pos2 <= pos)
+                    {
+                        pos = pos2;
+                        return i;
+                    }
                 }
-            }
 
-            pos = 0;
-            return 0;
-        }
-        else
-        {
-            float testGap = _lineGap > 0 ? _lineGap : 0;
-            for (int i = _firstIndex; i < _realNumItems; i += _curLineItemCount)
+                pos = 0;
+                return 0;
+            }
+            else
             {
-                float pos3 = pos2 + _virtualItems[i].size.y;
-                if (pos3 + testGap > pos)
+                float testGap = _lineGap > 0 ? _lineGap : 0;
+                for (int i = _firstIndex; i < _realNumItems; i += _curLineItemCount)
                 {
-                    pos = pos2;
-                    return i;
+                    float pos3 = pos2 + _virtualItems[i].size.y;
+                    if (pos3 + testGap > pos)
+                    {
+                        pos = pos2;
+                        return i;
+                    }
+                    pos2 = pos3 + _lineGap;
                 }
-                pos2 = pos3 + _lineGap;
-            }
 
-            pos = pos2;
-            return _realNumItems - _curLineItemCount;
+                pos = pos2;
+                return _realNumItems - _curLineItemCount;
+            }
         }
     }
-    else
+
     {
         float pos2 = 0;
         float testGap = _lineGap > 0 ? _lineGap : 0;
@@ -1415,41 +1428,45 @@ int GList::getIndexOnPos2(float& pos, bool forceUpdate)
 
     if (numChildren() > 0 && !forceUpdate && _firstIndex >= 0)
     {
-        float pos2 = getChildAt(0)->getX();
-        if (pos2 + (_columnGap > 0 ? 0 : -_columnGap) > pos)
+        GObject* firstChild = getChildAt(0);
+        if (_firstIndex < _realNumItems && _virtualItems[_firstIndex].obj.ptr() == firstChild)
         {
-            for (int i = _firstIndex - _curLineItemCount; i >= 0; i -= _curLineItemCount)
+            float pos2 = firstChild->getX();
+            if (pos2 + (_columnGap > 0 ? 0 : -_columnGap) > pos)
             {
-                pos2 -= (_virtualItems[i].size.x + _columnGap);
-                if (pos2 <= pos)
+                for (int i = _firstIndex - _curLineItemCount; i >= 0; i -= _curLineItemCount)
                 {
-                    pos = pos2;
-                    return i;
+                    pos2 -= (_virtualItems[i].size.x + _columnGap);
+                    if (pos2 <= pos)
+                    {
+                        pos = pos2;
+                        return i;
+                    }
                 }
-            }
 
-            pos = 0;
-            return 0;
-        }
-        else
-        {
-            float testGap = _columnGap > 0 ? _columnGap : 0;
-            for (int i = _firstIndex; i < _realNumItems; i += _curLineItemCount)
+                pos = 0;
+                return 0;
+            }
+            else
             {
-                float pos3 = pos2 + _virtualItems[i].size.x;
-                if (pos3 + testGap > pos)
+                float testGap = _columnGap > 0 ? _columnGap : 0;
+                for (int i = _firstIndex; i < _realNumItems; i += _curLineItemCount)
                 {
-                    pos = pos2;
-                    return i;
+                    float pos3 = pos2 + _virtualItems[i].size.x;
+                    if (pos3 + testGap > pos)
+                    {
+                        pos = pos2;
+                        return i;
+                    }
+                    pos2 = pos3 + _columnGap;
                 }
-                pos2 = pos3 + _columnGap;
-            }
 
-            pos = pos2;
-            return _realNumItems - _curLineItemCount;
+                pos = pos2;
+                return _realNumItems - _curLineItemCount;
+            }
         }
     }
-    else
+
     {
         float pos2 = 0;
         float testGap = _columnGap > 0 ? _columnGap : 0;
@@ -1545,8 +1562,9 @@ void GList::handleScroll(bool forceUpdate)
 
 bool GList::handleScroll1(bool forceUpdate)
 {
-    float pos = _scrollPane->getScrollingPosY();
-    float max = pos + _scrollPane->getViewSize().height;
+    const float scrollPos = _scrollPane->getScrollingPosY();
+    float pos = scrollPos;
+    float max = scrollPos + _scrollPane->getViewSize().height;
     bool end = max == _scrollPane->getContentSize().height;
 
     int newFirstIndex = getIndexOnPos1(pos, forceUpdate);
@@ -1641,13 +1659,17 @@ bool GList::handleScroll1(bool forceUpdate)
 
             if (ii.obj != nullptr)
             {
+                ii.obj->setVisible(true);
                 setChildIndex(ii.obj.ptr(), forward ? curIndex - newFirstIndex : numChildren());
             }
             else
             {
-                ii.obj = _pool->getObject(url);
+                ii.obj = getFromPool(url);
                 if (ii.obj.is_null())
+                {
+                    curIndex++;
                     continue;
+                }
                 if (forward)
                     addChildAt(ii.obj, curIndex - newFirstIndex);
                 else
@@ -1660,6 +1682,20 @@ bool GList::handleScroll1(bool forceUpdate)
         }
         else
             needRender = forceUpdate;
+
+        if (ii.obj.is_valid() && !needRender)
+        {
+            const float nh = ceil(ii.obj->getHeight());
+            const float nw = ceil(ii.obj->getWidth());
+            if (_curLineItemCount > 0 && curIndex % _curLineItemCount == 0 && nh != ii.size.y)
+            {
+                deltaSize += nh - ii.size.y;
+                if (curIndex == newFirstIndex && oldFirstIndex > newFirstIndex)
+                    firstItemDeltaSize = nh - ii.size.y;
+            }
+            ii.size.x = nw;
+            ii.size.y = nh;
+        }
 
         if (needRender && ii.obj.is_valid())
         {
@@ -1680,12 +1716,6 @@ bool GList::handleScroll1(bool forceUpdate)
             ii.size.y = ceil(ii.obj->getHeight());
         }
 
-        if (!ii.obj.is_valid())
-        {
-            curIndex++;
-            continue;
-        }
-
         ii.updateFlag = _itemInfoVer;
         ii.obj->setPosition(curX, curY);
         if (curIndex == newFirstIndex)
@@ -1701,18 +1731,21 @@ bool GList::handleScroll1(bool forceUpdate)
         curIndex++;
     }
 
-    for (int i = 0; i < childCount; i++)
+    if (oldFirstIndex >= 0)
     {
-        const int itemIndex = oldFirstIndex + i;
-        if (!isVirtualIndexInRange(itemIndex, _realNumItems))
-            continue;
-        ItemInfo& ii = _virtualItems[itemIndex];
-        if (ii.updateFlag != _itemInfoVer && ii.obj != nullptr)
+        for (int i = 0; i < childCount; i++)
         {
-            if (dynamic_cast<GButton*>(ii.obj.ptr()))
-                ii.selected = ((GButton*)ii.obj.ptr())->isSelected();
-            removeChildToPool(ii.obj.ptr());
-            ii.obj = nullptr;
+            const int itemIndex = oldFirstIndex + i;
+            if (!isVirtualIndexInRange(itemIndex, _realNumItems))
+                continue;
+            ItemInfo& ii = _virtualItems[itemIndex];
+            if (ii.updateFlag != _itemInfoVer && ii.obj != nullptr)
+            {
+                if (dynamic_cast<GButton*>(ii.obj.ptr()))
+                    ii.selected = ((GButton*)ii.obj.ptr())->isSelected();
+                removeChildToPool(ii.obj.ptr());
+                ii.obj = nullptr;
+            }
         }
     }
 
@@ -1740,8 +1773,9 @@ bool GList::handleScroll1(bool forceUpdate)
 
 bool GList::handleScroll2(bool forceUpdate)
 {
-    float pos = _scrollPane->getScrollingPosX();
-    float max = pos + _scrollPane->getViewSize().width;
+    const float scrollPos = _scrollPane->getScrollingPosX();
+    float pos = scrollPos;
+    float max = scrollPos + _scrollPane->getViewSize().width;
     bool end = pos == _scrollPane->getContentSize().width;
 
     int newFirstIndex = getIndexOnPos2(pos, forceUpdate);
@@ -1836,13 +1870,17 @@ bool GList::handleScroll2(bool forceUpdate)
 
             if (ii.obj != nullptr)
             {
+                ii.obj->setVisible(true);
                 setChildIndex(ii.obj.ptr(), forward ? curIndex - newFirstIndex : numChildren());
             }
             else
             {
-                ii.obj = _pool->getObject(url);
+                ii.obj = getFromPool(url);
                 if (ii.obj.is_null())
+                {
+                    curIndex++;
                     continue;
+                }
                 if (forward)
                     addChildAt(ii.obj, curIndex - newFirstIndex);
                 else
@@ -1855,6 +1893,20 @@ bool GList::handleScroll2(bool forceUpdate)
         }
         else
             needRender = forceUpdate;
+
+        if (ii.obj.is_valid() && !needRender)
+        {
+            const float nw = ceil(ii.obj->getWidth());
+            const float nh = ceil(ii.obj->getHeight());
+            if (_curLineItemCount > 0 && curIndex % _curLineItemCount == 0 && nw != ii.size.x)
+            {
+                deltaSize += nw - ii.size.x;
+                if (curIndex == newFirstIndex && oldFirstIndex > newFirstIndex)
+                    firstItemDeltaSize = nw - ii.size.x;
+            }
+            ii.size.x = nw;
+            ii.size.y = nh;
+        }
 
         if (needRender && ii.obj.is_valid())
         {
@@ -1875,12 +1927,6 @@ bool GList::handleScroll2(bool forceUpdate)
             ii.size.y = ceil(ii.obj->getHeight());
         }
 
-        if (!ii.obj.is_valid())
-        {
-            curIndex++;
-            continue;
-        }
-
         ii.updateFlag = _itemInfoVer;
         ii.obj->setPosition(curX, curY);
         if (curIndex == newFirstIndex)
@@ -1896,18 +1942,21 @@ bool GList::handleScroll2(bool forceUpdate)
         curIndex++;
     }
 
-    for (int i = 0; i < childCount; i++)
+    if (oldFirstIndex >= 0)
     {
-        const int itemIndex = oldFirstIndex + i;
-        if (!isVirtualIndexInRange(itemIndex, _realNumItems))
-            continue;
-        ItemInfo& ii = _virtualItems[itemIndex];
-        if (ii.updateFlag != _itemInfoVer && ii.obj != nullptr)
+        for (int i = 0; i < childCount; i++)
         {
-            if (dynamic_cast<GButton*>(ii.obj.ptr()))
-                ii.selected = ((GButton*)ii.obj.ptr())->isSelected();
-            removeChildToPool(ii.obj.ptr());
-            ii.obj = nullptr;
+            const int itemIndex = oldFirstIndex + i;
+            if (!isVirtualIndexInRange(itemIndex, _realNumItems))
+                continue;
+            ItemInfo& ii = _virtualItems[itemIndex];
+            if (ii.updateFlag != _itemInfoVer && ii.obj != nullptr)
+            {
+                if (dynamic_cast<GButton*>(ii.obj.ptr()))
+                    ii.selected = ((GButton*)ii.obj.ptr())->isSelected();
+                removeChildToPool(ii.obj.ptr());
+                ii.obj = nullptr;
+            }
         }
     }
 
@@ -2002,6 +2051,7 @@ void GList::handleScroll3(bool forceUpdate)
                         ii2.selected = ((GButton*)ii2.obj.ptr())->isSelected();
                     ii.obj = ii2.obj;
                     ii2.obj = nullptr;
+                    ii.obj->setVisible(true);
                     break;
                 }
                 reuseIndex++;
@@ -2020,11 +2070,12 @@ void GList::handleScroll3(bool forceUpdate)
                     url = UIPackage::normalizeURL(url);
                 }
 
-                ii.obj = _pool->getObject(url);
+                ii.obj = getFromPool(url);
                 addChildAt(ii.obj, insertIndex);
             }
             else
             {
+                ii.obj->setVisible(true);
                 insertIndex = setChildIndexBefore(ii.obj.ptr(), insertIndex);
             }
             insertIndex++;

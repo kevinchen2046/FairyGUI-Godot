@@ -39,6 +39,7 @@ protected:
     void createButton();
     void createInput();
     void createSelect();
+    void prepareEmbedUI();
 
     HtmlElement* _element;
     FUIRichText* _owner;

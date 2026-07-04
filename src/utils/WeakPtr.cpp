@@ -1,10 +1,41 @@
 ﻿#include "WeakPtr.h"
 #include "GObject.h"
+#include "core/object/object.h"
+#include "core/templates/hash_map.h"
 
 NS_FGUI_BEGIN
 using namespace std;
 
 std::unordered_map<uint64_t, GObject*> _weakPointers;
+static HashMap<GObject *, ObjectID> _live_gobject_ids;
+
+void register_live_gobject(GObject *obj)
+{
+    if (obj == nullptr)
+        return;
+    ObjectID id = obj->get_instance_id();
+    if (id.is_valid())
+        _live_gobject_ids[obj] = id;
+}
+
+void unregister_live_gobject(GObject *obj)
+{
+    if (obj != nullptr)
+        _live_gobject_ids.erase(obj);
+}
+
+GObject* resolve_live_gobject(GObject* obj)
+{
+    if (obj == nullptr)
+        return nullptr;
+
+    const ObjectID *id = _live_gobject_ids.getptr(obj);
+    if (id == nullptr || !id->is_valid())
+        return nullptr;
+
+    Object *o = ObjectDB::get_instance(*id);
+    return Object::cast_to<GObject>(o);
+}
 
 WeakPtr::WeakPtr() :_id(0)
 {
@@ -94,7 +125,7 @@ GObject * WeakPtr::ptr() const
 
     auto it = _weakPointers.find(_id);
     if (it != _weakPointers.end())
-        return it->second;
+        return resolve_live_gobject(it->second);
     else
         return nullptr;
 }
@@ -107,15 +138,14 @@ bool WeakPtr::onStage() const
 
 uint64_t WeakPtr::add(GObject * obj)
 {
-    if (obj)
-    {
-        if (obj->_weakPtrRef == 0)
-            _weakPointers[obj->_uid] = obj;
-        obj->_weakPtrRef++;
-        return obj->_uid;
-    }
-    else
+    obj = resolve_live_gobject(obj);
+    if (obj == nullptr)
         return 0;
+
+    if (obj->_weakPtrRef == 0)
+        _weakPointers[obj->_uid] = obj;
+    obj->_weakPtrRef++;
+    return obj->_uid;
 }
 
 GObject* WeakPtr::remove(uint64_t id)
@@ -126,9 +156,14 @@ GObject* WeakPtr::remove(uint64_t id)
     auto it = _weakPointers.find(id);
     if (it != _weakPointers.end())
     {
-        GObject* obj = it->second;
-        obj->_weakPtrRef--;
-        if (obj->_weakPtrRef == 0)
+        GObject* obj = resolve_live_gobject(it->second);
+        if (obj != nullptr)
+        {
+            obj->_weakPtrRef--;
+            if (obj->_weakPtrRef == 0)
+                _weakPointers.erase(it);
+        }
+        else
             _weakPointers.erase(it);
         return obj;
     }

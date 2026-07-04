@@ -4,12 +4,13 @@
 #include "FairyGUIMacros.h"
 #include "TextFormat.h"
 #include "utils/html/HtmlParser.h"
-#include "scene/gui/control.h"
+#include "core/templates/hash_map.h"
 
 NS_FGUI_BEGIN
 
 class HtmlElement;
 class HtmlObject;
+class FUIClipContainer;
 
 class FUIRichText : public Node2D
 {
@@ -52,6 +53,8 @@ public:
 
     void applyGrayedToLabels(bool grayed);
 
+    Rect2 get_anchorable_rect() const override;
+
     static void _bind_methods();
 
 protected:
@@ -66,6 +69,10 @@ private:
     int findSplitPositionForWord(Node* label, const std::string& text);
     void doHorizontalAlignment(const std::vector<Node*>& row, float rowWidth);
     void updateClipping();
+    void resetRendererChildren();
+    void bindRendererElement(Node *p_node, HtmlElement *p_element);
+    HtmlElement *getRendererElement(Node *p_node) const;
+    Vector2 measureRendererNode(Node *p_node) const;
 
     std::vector<HtmlElement*> _elements;
     std::vector<HtmlObject*> _objects;
@@ -89,7 +96,8 @@ private:
     int _numLines;
     std::string _text;
 
-    Control* _clipContainer;
+    FUIClipContainer* _clipContainer;
+    HashMap<Node *, HtmlElement *> _rendererElements;
 };
 
 NS_FGUI_END

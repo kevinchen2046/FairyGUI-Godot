@@ -76,6 +76,9 @@ FUILabel::FUILabel() :
 
 FUILabel::~FUILabel()
 {
+    _drawFont = Ref<Font>();
+    _bmFont = Ref<Font>();
+    _bmAtlasTexture = Ref<Texture2D>();
     delete _textFormat;
 }
 
@@ -358,6 +361,12 @@ void FUILabel::_notification(int p_what) {
     }
     if (p_what == NOTIFICATION_EXIT_TREE) {
         fui_sync_child_order_changed(this, false);
+        return;
+    }
+    if (p_what == NOTIFICATION_PREDELETE) {
+        _drawFont = Ref<Font>();
+        _bmFont = Ref<Font>();
+        _bmAtlasTexture = Ref<Texture2D>();
         return;
     }
     Node2D::_notification(p_what);

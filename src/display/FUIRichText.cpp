@@ -1,10 +1,11 @@
 #include "FUIRichText.h"
 #include "FUIContainer.h"
 #include "FUIDisplayNode.h"
-#include "utils/html/HtmlElement.h"
-#include "utils/html/HtmlObject.h"
 #include "FUILabel.h"
 #include "GObject.h"
+#include "utils/html/HtmlElement.h"
+#include "utils/html/HtmlObject.h"
+#include "utils/WeakPtr.h"
 #include "UIPackage.h"
 #include "godot_types.h"
 #include "core/string/char_utils.h"
@@ -94,19 +95,6 @@ static std::string getSubStringOfUTF8String(const std::string& str, int start, i
     return godotStrToStd(s.substr(start, length));
 }
 
-static void setNodeElement(Node* node, HtmlElement* element)
-{
-    node->set_meta("_html_element", Variant((int64_t)(uintptr_t)element));
-}
-
-static HtmlElement* getNodeElement(Node* node)
-{
-    Variant v = node->get_meta("_html_element", Variant());
-    if (v.get_type() == Variant::INT || v.get_type() == Variant::FLOAT)
-        return (HtmlElement*)(uintptr_t)(int64_t)v;
-    return nullptr;
-}
-
 static Vector2 getNodePosition(Node* node)
 {
     if (Node2D* n2d = Object::cast_to<Node2D>(node))
@@ -129,23 +117,18 @@ static void offsetNodePosition(Node* node, const Vector2& offset)
     setNodePosition(node, getNodePosition(node) + offset);
 }
 
-static Vector2 getNodeSize(Node* node)
+// FUILabel renderers are owned by layout; GObject displays (GLoader etc.) stay alive in HtmlObject pool.
+static void attachRendererToClip(FUIClipContainer* clip, Node* node)
 {
-    if (FUILabel* label = Object::cast_to<FUILabel>(node))
-        return Vector2(label->getTextWidth(), label->getTextHeight());
-    HtmlElement* element = getNodeElement(node);
-    if (element && element->obj)
-    {
-        GObject* ui = element->obj->getUI();
-        if (ui != nullptr)
-            return Vector2(ui->getWidth(), ui->getHeight());
-    }
-    if (Control* ctrl = Object::cast_to<Control>(node))
-        return ctrl->get_size();
-    return Vector2();
+    if (!clip || !node)
+        return;
+    if (node->get_parent() == clip)
+        return;
+    if (Node* parent = node->get_parent())
+        parent->remove_child(node);
+    clip->add_child(node);
 }
 
-// FUILabel renderers are owned by layout; GObject displays (GLoader etc.) stay alive in HtmlObject pool.
 static void releaseRendererChild(Node* node)
 {
     if (!node)
@@ -155,15 +138,6 @@ static void releaseRendererChild(Node* node)
         parent->remove_child(node);
     if (Object::cast_to<FUILabel>(node))
         node->queue_free();
-}
-
-static void resetClipContainer(Control* clipContainer)
-{
-    if (!clipContainer)
-        return;
-    clipContainer->set_position(Vector2());
-    for (int i = clipContainer->get_child_count() - 1; i >= 0; i--)
-        releaseRendererChild(clipContainer->get_child(i));
 }
 
 HtmlObject* createHtmlObject(HtmlElement* element)
@@ -195,8 +169,64 @@ FUIRichText::FUIRichText() :
     add_child(_clipContainer);
 }
 
+void FUIRichText::bindRendererElement(Node *p_node, HtmlElement *p_element)
+{
+    if (p_node != nullptr && p_element != nullptr)
+        _rendererElements[p_node] = p_element;
+}
+
+HtmlElement *FUIRichText::getRendererElement(Node *p_node) const
+{
+    if (p_node == nullptr)
+        return nullptr;
+    const HtmlElement *const *found = _rendererElements.getptr(p_node);
+    return found ? const_cast<HtmlElement *>(*found) : nullptr;
+}
+
+Vector2 FUIRichText::measureRendererNode(Node *p_node) const
+{
+    if (FUILabel *label = Object::cast_to<FUILabel>(p_node))
+        return Vector2(label->getTextWidth(), label->getTextHeight());
+    if (HtmlElement *element = getRendererElement(p_node))
+    {
+        if (element->obj != nullptr)
+        {
+            if (GObject *ui = element->obj->getUI())
+                return Vector2(ui->getWidth(), ui->getHeight());
+        }
+    }
+    if (Control *ctrl = Object::cast_to<Control>(p_node))
+        return ctrl->get_size();
+    return Vector2();
+}
+
+void FUIRichText::resetRendererChildren()
+{
+    if (!_clipContainer)
+        return;
+
+    _rendererElements.clear();
+
+    const float w = _dimensionsX > 0 ? _dimensionsX : std::max(_contentWidth, 1.0f);
+    const float h = _dimensionsY > 0 ? _dimensionsY : std::max(_contentHeight, 1.0f);
+    _clipContainer->applyClipRect(Vector2(), Vector2(w, h));
+
+    for (int i = _clipContainer->get_child_count() - 1; i >= 0; i--)
+        releaseRendererChild(_clipContainer->get_child(i));
+}
+
+Rect2 FUIRichText::get_anchorable_rect() const
+{
+    if (_dimensionsX > 0 && _dimensionsY > 0)
+        return Rect2(0, 0, _dimensionsX, _dimensionsY);
+    if (_contentWidth > 0 && _contentHeight > 0)
+        return Rect2(0, 0, _contentWidth, _contentHeight);
+    return CanvasItem::get_anchorable_rect();
+}
+
 FUIRichText::~FUIRichText()
 {
+    resetRendererChildren();
     if (_parser) delete _parser;
     for (auto& obj : _objects)
         delete obj;
@@ -276,11 +306,11 @@ const char* FUIRichText::hitTestLink(const Vector2& worldPoint)
     for (int i = 0; i < _clipContainer->get_child_count(); i++)
     {
         Node* child = _clipContainer->get_child(i);
-        HtmlElement* element = getNodeElement(child);
+        HtmlElement* element = getRendererElement(child);
         if (!element || !element->link)
             continue;
 
-        Vector2 sz = getNodeSize(child);
+        Vector2 sz = measureRendererNode(child);
         Rect2 rect(Vector2(0, 0), sz);
         if (rect.has_point(localPt - getNodePosition(child)))
             return element->link->text.c_str();
@@ -358,7 +388,7 @@ void FUIRichText::setText(const std::string& value)
     _numLines = 0;
 
     if (_clipContainer)
-        resetClipContainer(_clipContainer);
+        resetRendererChildren();
 
     if (value.empty())
     {
@@ -418,7 +448,7 @@ void FUIRichText::formatText()
     _dirty = false;
 
     if (_clipContainer)
-        resetClipContainer(_clipContainer);
+        resetRendererChildren();
 
     _renderers.clear();
 
@@ -470,9 +500,14 @@ void FUIRichText::formatText()
         case HtmlElement::Type::BR:
             addNewLine();
             break;
-        default:
+        case HtmlElement::Type::IMAGE:
+        case HtmlElement::Type::INPUT:
+        case HtmlElement::Type::SELECT:
+        case HtmlElement::Type::OBJECT:
             element->space = (int)floor(_leftSpaceWidth);
             handleRichRenderer(element, _objects[i]);
+            break;
+        default:
             break;
         }
     }
@@ -495,13 +530,13 @@ void FUIRichText::handleTextRenderer(HtmlElement* element, const std::string& te
     if (_parseOptions.linkColor.a > 0.0f)
         textRenderer->setUnderlineColor(_parseOptions.linkColor);
     textRenderer->setText(text);
-    setNodeElement(textRenderer, element);
+    bindRendererElement(textRenderer, element);
 
     float textRendererWidth = textRenderer->getTextWidth();
 
     float rowUsedWidth = 0.0f;
     for (Node* node : _renderers.back())
-        rowUsedWidth += getNodeSize(node).x;
+        rowUsedWidth += measureRendererNode(node).x;
     if (!_renderers.back().empty()
             && rowUsedWidth + textRendererWidth > _textRectWidth - LINE_WIDTH_FUDGE)
     {
@@ -536,7 +571,7 @@ void FUIRichText::handleTextRenderer(HtmlElement* element, const std::string& te
         if (_parseOptions.linkColor.a > 0.0f)
             leftRenderer->setUnderlineColor(_parseOptions.linkColor);
         leftRenderer->setText(leftWords);
-        setNodeElement(leftRenderer, element);
+        bindRendererElement(leftRenderer, element);
         _renderers.back().push_back(leftRenderer);
     }
 
@@ -609,17 +644,23 @@ void FUIRichText::handleRichRenderer(HtmlElement* element, HtmlObject* obj)
     if (obj->isHidden())
         return;
 
-    GObject* ui = obj->getUI();
-    if (ui == nullptr)
+    GObject* uiObj = resolve_live_gobject(obj->getUI());
+    if (uiObj == nullptr || uiObj->getParent() != nullptr)
         return;
 
-    Node* display = ui->displayObject();
+    Node* display = uiObj->displayObject();
     if (display == nullptr)
         return;
 
-    setNodeElement(display, element);
+    Object* display_obj = ObjectDB::get_instance(display->get_instance_id());
+    Node* display_node = Object::cast_to<Node>(display_obj);
+    if (display_node == nullptr)
+        return;
+    display = display_node;
 
-    float width = ui->getWidth();
+    bindRendererElement(display, element);
+
+    float width = uiObj->getWidth();
     _leftSpaceWidth -= (width + 4);
     if (_leftSpaceWidth < 0.0f)
     {
@@ -646,17 +687,17 @@ void FUIRichText::formarRenderers()
         float lineTextHeight = 0.0f;
         for (auto& node : row)
         {
-            Vector2 sz = getNodeSize(node);
+            Vector2 sz = measureRendererNode(node);
             lineHeight = MAX(sz.y, lineHeight);
-            HtmlElement* element = getNodeElement(node);
+            HtmlElement* element = getRendererElement(node);
             if (!element || element->obj == nullptr)
                 lineTextHeight = MAX(sz.y, lineTextHeight);
         }
 
         for (auto& node : row)
         {
-            HtmlElement* element = getNodeElement(node);
-            Vector2 sz = getNodeSize(node);
+            HtmlElement* element = getRendererElement(node);
+            Vector2 sz = measureRendererNode(node);
             if (element && element->obj != nullptr)
             {
                 nextPosX += 2;
@@ -671,7 +712,7 @@ void FUIRichText::formarRenderers()
                 nextPosX += sz.x;
             }
             if (node->get_parent() != _clipContainer)
-                _clipContainer->add_child(node);
+                attachRendererToClip(_clipContainer, node);
             if (FUILabel* label = Object::cast_to<FUILabel>(node))
                 label->queue_redraw();
             else if (CanvasItem* ci = Object::cast_to<CanvasItem>(node))
@@ -738,7 +779,7 @@ void FUIRichText::updateClipping()
 {
     if (_clipContainer)
     {
-        _clipContainer->set_size(Vector2(_dimensionsX, _dimensionsY));
+        _clipContainer->applyClipRect(Vector2(), Vector2(_dimensionsX, _dimensionsY));
         _clipContainer->set_clip_contents(_overflow == 1 || _overflow == 2);
     }
     set_clip_children_mode(CanvasItem::CLIP_CHILDREN_DISABLED);

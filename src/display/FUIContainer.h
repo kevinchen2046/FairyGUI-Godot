@@ -15,14 +15,13 @@ class FUIClipContainer : public Control
     GDCLASS(FUIClipContainer, Control)
 
 public:
-    std::function<void(float)> _processCallback;
-
     FUIClipContainer();
 
-    static void _bind_methods() {}
+    // ScrollPane / overflow clip set rect manually; bypass Control anchor math on Node2D parent.
+    void applyClipRect(const Vector2 &p_pos, const Vector2 &p_size);
+    void applyClipPosition(const Vector2 &p_pos);
 
-protected:
-    void _process(double p_delta);
+    static void _bind_methods() {}
 };
 
 class FUIContainer : public Node2D
@@ -51,6 +50,8 @@ public:
     GObject* gOwner;
 
     std::function<void(float)> _processCallback;
+
+    Rect2 get_anchorable_rect() const override;
 
 protected:
     static void _bind_methods();

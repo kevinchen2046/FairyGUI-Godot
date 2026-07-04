@@ -1,5 +1,6 @@
 #include "GRoot.h"
 #include "GGraph.h"
+#include "ScrollPane.h"
 #include "UIConfig.h"
 #include "UIPackage.h"
 #include "display/FUIContainer.h"
@@ -1031,6 +1032,7 @@ void GRoot::onInitWithParent(Node* parent, int zOrder, bool deferAdd)
         fc->set_process(true);
         fc->_processCallback = [](float dt) {
             TweenManager::update(dt);
+            ScrollPane::updateAllTweens(dt);
             GRoot* root = GRoot::getInstance();
             if (root && root->getInputProcessor())
                 root->getInputProcessor()->onFrameUpdate();

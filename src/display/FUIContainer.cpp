@@ -8,7 +8,6 @@
 #include "scene/resources/shader.h"
 #include "scene/resources/material.h"
 #include "scene/main/viewport.h"
-#include "core/object/callable_method_pointer.h"
 #include "servers/rendering_server.h"
 
 NS_FGUI_BEGIN
@@ -17,12 +16,30 @@ FUIClipContainer::FUIClipContainer()
 {
     set_clip_contents(true);
     set_mouse_filter(MOUSE_FILTER_IGNORE);
+    for (int i = 0; i < 4; ++i)
+        set_anchor((Side)i, 0.0f, true, false);
 }
 
-void FUIClipContainer::_process(double p_delta)
+void FUIClipContainer::applyClipRect(const Vector2 &p_pos, const Vector2 &p_size)
 {
-    if (_processCallback)
-        _processCallback((float)p_delta);
+    const real_t w = MAX(p_size.x, 1.0f);
+    const real_t h = MAX(p_size.y, 1.0f);
+    set_offset(SIDE_LEFT, p_pos.x);
+    set_offset(SIDE_TOP, p_pos.y);
+    set_offset(SIDE_RIGHT, p_pos.x + w);
+    set_offset(SIDE_BOTTOM, p_pos.y + h);
+}
+
+void FUIClipContainer::applyClipPosition(const Vector2 &p_pos)
+{
+    applyClipRect(p_pos, get_size());
+}
+
+Rect2 FUIContainer::get_anchorable_rect() const
+{
+    if (gOwner)
+        return Rect2(0, 0, gOwner->getWidth(), gOwner->getHeight());
+    return CanvasItem::get_anchorable_rect();
 }
 
 static void mark_input_handled(Node* node)

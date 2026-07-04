@@ -1258,9 +1258,10 @@ void GComponent::applyPivotOffset()
         pos.y += _margin.top;
     }
 
-    if (_container)
+    if (_container && !_scrollPane.is_valid())
         _container->set_position(pos);
 
+    // When ScrollPane is active it owns _container position via scroll offset.
     // Sync in-window overlay only (GRoot overlay lives in a separate CanvasLayer).
     if (FUIInnerContainer* overlay = getOverlayContainer())
     {
@@ -1278,8 +1279,7 @@ void GComponent::updateOverflowClipRect()
     const float my = floor(_margin.top + _alignOffset.y);
     const float w = std::max(1.0f, _size.width - _margin.left - _margin.right);
     const float h = std::max(1.0f, _size.height - _margin.top - _margin.bottom);
-    _overflowClipContainer->set_position(Vector2(mx, my));
-    _overflowClipContainer->set_size(Vector2(w, h));
+    _overflowClipContainer->applyClipRect(Vector2(mx, my), Vector2(w, h));
 }
 
 void GComponent::setupOverflow(OverflowType overflow)

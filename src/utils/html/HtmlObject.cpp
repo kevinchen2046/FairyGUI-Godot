@@ -81,6 +81,24 @@ void HtmlObject::create(FUIRichText* owner, HtmlElement* element)
             createCommon();
         break;
     }
+
+    prepareEmbedUI();
+}
+
+void HtmlObject::prepareEmbedUI()
+{
+    if (!_ui.is_valid())
+        return;
+
+    // Never reparent objects that still belong to a GComponent tree (e.g. list item icons).
+    if (_ui->getParent() != nullptr)
+        return;
+
+    if (Node* display = _ui->displayObject())
+    {
+        if (Node* parent = display->get_parent())
+            parent->remove_child(display);
+    }
 }
 
 void HtmlObject::destroy()
@@ -91,6 +109,8 @@ void HtmlObject::destroy()
         ((GLoader*)_ui.ptr())->setURL("");
         break;
     }
+
+    prepareEmbedUI();
 }
 
 void HtmlObject::createCommon()
