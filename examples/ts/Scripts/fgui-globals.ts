@@ -1,8 +1,9 @@
 /// <reference path="../fairygui.d.ts" />
 
 /**
- * GodotJS 运行时：FairyGUI ClassDB 类型在 godot 模块上，注册到 globalThis。
- * 与 fairygui.d.ts 的 declare global 配套；勿使用 import * as godot（会生成 __importStar）。
+ * GodotJS 运行时：FairyGUI 类型经 godot.lib.api 代理后注册到 globalThis。
+ * 勿用 require("godot") 直接拷贝（实例方法会报 not a function）；
+ * 勿用 import * as godot（会生成 __importStar / __esModule 冲突）。
  */
 const flag = "__fguiGlobalsRegistered";
 const g = globalThis as Record<string, unknown>;
@@ -10,7 +11,9 @@ const g = globalThis as Record<string, unknown>;
 if (!g[flag]) {
     g[flag] = true;
 
-    const mod = require("godot") as Record<string, unknown>;
+    const getMod = (): Record<string, unknown> =>
+        require("godot.lib.api") as Record<string, unknown>;
+
     const names = [
         "DragDropManagerHelper",
         "FguiEventContext",
@@ -40,9 +43,22 @@ if (!g[flag]) {
     ] as const;
 
     for (const name of names) {
-        g[name] = mod[name];
+        Object.defineProperty(g, name, {
+            get(): unknown {
+                return getMod()[name];
+            },
+            enumerable: true,
+            configurable: true,
+        });
     }
-    g.FGUIEventContext = mod.FguiEventContext;
+
+    Object.defineProperty(g, "FGUIEventContext", {
+        get(): unknown {
+            return getMod().FguiEventContext;
+        },
+        enumerable: true,
+        configurable: true,
+    });
 }
 
 export {};

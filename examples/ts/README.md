@@ -76,9 +76,9 @@ camel_case_bindings_enabled=true
 
 GDScript 可直接写 `GRoot.getInstance()`；GodotJS 中 ClassDB 类型在 **`godot` 模块**上，不会自动成为 JS 全局变量。
 
-FairyGUI 类在 GodotJS 运行时挂在 `godot` 模块上，不会自动成为 JS 全局变量。侧效模块 `ts/Scripts/fgui-globals.ts` 在加载时用 `require("godot")` 注册 `globalThis`（**不要**写 `import * as godot from "godot"`，tsc 会生成 `__importStar`，GodotJS 会把 `__esModule` 当成 ClassDB 类名而报错）。
+FairyGUI 类在 GodotJS 运行时挂在 `godot` 模块上，不会自动成为 JS 全局变量。侧效模块 `ts/Scripts/fgui-globals.ts` 通过 **`require("godot.lib.api")`** 取带 proxy 的 API，再注册到 `globalThis`（直接用 `require("godot")` 拷贝会导致 `getInstance().xxx()` 报 `not a function`）。
 
-`DemoSceneBase` 及不继承它的脚本（`BagWindow` / `Window1` / `Window2` / `DebugPopup`）在文件顶部 `import "./fgui-globals"` 即可。单独编写的新脚本也需添加该行。
+各脚本在文件顶部 `import "./fgui-globals"`。单独编写的新脚本也需添加该行。
 
 `fairygui.d.ts` 的 `declare global` 仅用于 TypeScript 类型检查。
 
