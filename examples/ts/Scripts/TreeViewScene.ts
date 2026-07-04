@@ -73,9 +73,9 @@ export default class TreeViewScene extends DemoSceneBase {
     }
 
     private _onClickNode(ctx: FGUIEventContext | null = null): void {
-        let item: GObject | null = null;
+        let item: GuiObject | null = null;
         if (ctx != null) {
-            item = ctx.getData() as GObject | null;
+            item = ctx.getData() as GuiObject | null;
         }
         if (item == null) {
             item = this._groot!.getTouchTarget();

@@ -81,9 +81,9 @@ export default class ChatScene extends DemoSceneBase {
     }
 
     private _onClickEmoji(ctx: FGUIEventContext | null = null): void {
-        let item: GObject | null = null;
+        let item: GuiObject | null = null;
         if (ctx != null) {
-            item = ctx.getData() as GObject | null;
+            item = ctx.getData() as GuiObject | null;
         }
         if (item == null) {
             item = this._groot!.getTouchTarget();
