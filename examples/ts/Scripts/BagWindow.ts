@@ -1,7 +1,9 @@
 /// <reference path="../fairygui.d.ts" />
 
-import "./fgui-bootstrap";
+import DemoSceneBase from "./DemoSceneBase";
 import { Callable, Vector2 } from "godot";
+
+void DemoSceneBase;
 
 export default class BagWindow extends GWindow {
     private _list: GList | null = null;
