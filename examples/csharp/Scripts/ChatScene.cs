@@ -70,12 +70,19 @@ public partial class ChatScene : DemoSceneBase
         _groot.ShowPopupSimple(_emojiSelectUi);
     }
 
-    private void OnClickEmoji()
+    private void OnClickEmoji(FGUIEventContext ctx = null)
     {
-        var item = _groot.GetTouchTarget();
+        GuiObject item = null;
+        if (ctx != null)
+            item = ctx.GetData().As<GuiObject>();
+        if (item == null)
+            item = _groot.GetTouchTarget();
         if (item == null || _input == null)
             return;
-        _input.SetText(_input.GetText() + "[: " + item.GetText() + "]");
+        var tag = item.GetText();
+        if (string.IsNullOrEmpty(tag))
+            return;
+        _input.SetText(_input.GetText() + "[:" + tag + "]");
     }
 
     private void OnSubmit()
@@ -87,11 +94,15 @@ public partial class ChatScene : DemoSceneBase
     {
         var regex = new RegEx();
         regex.Compile("\\[:\\s*(\\w+)\\]");
-        var result = regex.Search(text);
-        if (result == null)
-            return text;
-        var tag = result.GetString(1);
-        return text.Replace(result.GetString(0), $"<img src='ui://Emoji/{tag}'/>");
+        while (true)
+        {
+            var result = regex.Search(text);
+            if (result == null)
+                break;
+            var tag = result.GetString(1);
+            text = text.Replace(result.GetString(0), $"<img src='ui://Emoji/{tag}'/>");
+        }
+        return text;
     }
 
     private void RenderListItem(int index, GodotObject obj)

@@ -68,12 +68,16 @@ public partial class TreeViewScene : DemoSceneBase
         rootNode.AddChild(anotherTop);
     }
 
-    private void OnClickNode()
+    private void OnClickNode(FGUIEventContext ctx = null)
     {
-        var obj = _groot.GetTouchTarget();
-        if (obj == null)
+        GuiObject item = null;
+        if (ctx != null)
+            item = ctx.GetData().As<GuiObject>();
+        if (item == null)
+            item = _groot.GetTouchTarget();
+        if (item == null)
             return;
-        var node = obj.GetTreeNode();
+        var node = item.GetTreeNode();
         if (node != null)
             GD.Print("click node ", node.GetText());
     }

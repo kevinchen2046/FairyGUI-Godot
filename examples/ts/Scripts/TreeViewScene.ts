@@ -72,13 +72,20 @@ export default class TreeViewScene extends DemoSceneBase {
         rootNode.addChild(anotherTop);
     }
 
-    private _onClickNode(): void {
-        const obj = this._groot!.getTouchTarget();
-        if (obj != null) {
-            const node = obj.getTreeNode();
-            if (node != null) {
-                console.log("click node ", node.getText());
-            }
+    private _onClickNode(ctx: FGUIEventContext | null = null): void {
+        let item: GObject | null = null;
+        if (ctx != null) {
+            item = ctx.getData() as GObject | null;
+        }
+        if (item == null) {
+            item = this._groot!.getTouchTarget();
+        }
+        if (item == null) {
+            return;
+        }
+        const node = item.getTreeNode();
+        if (node != null) {
+            console.log("click node ", node.getText());
         }
     }
 

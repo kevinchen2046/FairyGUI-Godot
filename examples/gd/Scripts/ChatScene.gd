@@ -51,24 +51,33 @@ func _on_click_emoji_btn() -> void:
 		return
 	_groot.showPopupSimple(_emoji_select_ui)
 
-func _on_click_emoji() -> void:
-	var item = _groot.getTouchTarget()
+func _on_click_emoji(ctx = null) -> void:
+	var item: Object = null
+	if ctx != null:
+		item = ctx.getData()
+	if item == null:
+		item = _groot.getTouchTarget()
 	if item == null or _input == null:
 		return
-	_input.setText(_input.getText() + "[: " + item.getText() + "]")
+	var tag = item.getText()
+	if tag.is_empty():
+		return
+	_input.setText(_input.getText() + "[:" + tag + "]")
 
 func _on_submit() -> void:
 	_on_click_send_btn()
 
 func _parse_emoji(text: String) -> String:
-	# Simple emoji tag parser: [:xxx] -> <img src='ui://Emoji/xxx'/>
+	# [:xxx] -> <img src='ui://Emoji/xxx'/>
 	var regex = RegEx.new()
 	regex.compile("\\[:\\s*(\\w+)\\]")
-	var result = regex.search(text)
-	if result == null:
-		return text
-	var tag = result.get_string(1)
-	return text.replace(result.get_string(0), "<img src='ui://Emoji/" + tag + "'/>")
+	while true:
+		var result = regex.search(text)
+		if result == null:
+			break
+		var tag = result.get_string(1)
+		text = text.replace(result.get_string(0), "<img src='ui://Emoji/" + tag + "'/>")
+	return text
 
 func _render_list_item(index: int, obj: Object) -> void:
 	if index >= _messages.size():

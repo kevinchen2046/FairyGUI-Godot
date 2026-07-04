@@ -52,12 +52,17 @@ func _build_tree2() -> void:
 	another_top.setText("I'm a top node too")
 	root_node.addChild(another_top)
 
-func _on_click_node() -> void:
-	var obj = _groot.getTouchTarget()
-	if obj != null:
-		var node = obj.getTreeNode()
-		if node != null:
-			print("click node ", node.getText())
+func _on_click_node(ctx = null) -> void:
+	var item: Object = null
+	if ctx != null:
+		item = ctx.getData()
+	if item == null:
+		item = _groot.getTouchTarget()
+	if item == null:
+		return
+	var node = item.getTreeNode()
+	if node != null:
+		print("click node ", node.getText())
 
 func _render_tree_node(node: Object, obj: Object) -> void:
 	var btn = obj.getChild("btn")

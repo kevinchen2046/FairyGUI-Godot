@@ -80,12 +80,22 @@ export default class ChatScene extends DemoSceneBase {
         this._groot!.showPopupSimple(this._emojiSelectUi);
     }
 
-    private _onClickEmoji(): void {
-        const item = this._groot!.getTouchTarget();
+    private _onClickEmoji(ctx: FGUIEventContext | null = null): void {
+        let item: GObject | null = null;
+        if (ctx != null) {
+            item = ctx.getData() as GObject | null;
+        }
+        if (item == null) {
+            item = this._groot!.getTouchTarget();
+        }
         if (item == null || this._inputField == null) {
             return;
         }
-        this._inputField.setText(`${this._inputField.getText()}[: ${item.getText()}]`);
+        const tag = item.getText();
+        if (tag.length === 0) {
+            return;
+        }
+        this._inputField.setText(`${this._inputField.getText()}[:${tag}]`);
     }
 
     private _onSubmit(): void {
@@ -95,12 +105,15 @@ export default class ChatScene extends DemoSceneBase {
     private _parseEmoji(text: string): string {
         const regex = new RegEx();
         regex.compile("\\[:\\s*(\\w+)\\]");
-        const result = regex.search(text);
-        if (result == null) {
-            return text;
+        while (true) {
+            const result = regex.search(text);
+            if (result == null) {
+                break;
+            }
+            const tag = result.getString(1);
+            text = text.replace(result.getString(0), `<img src='ui://Emoji/${tag}'/>`);
         }
-        const tag = result.getString(1);
-        return text.replace(result.getString(0), `<img src='ui://Emoji/${tag}'/>`);
+        return text;
     }
 
     private _renderListItem(index: number, obj: GComponent): void {
