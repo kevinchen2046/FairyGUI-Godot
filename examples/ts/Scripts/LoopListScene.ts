@@ -29,7 +29,7 @@ export default class LoopListScene extends DemoSceneBase {
         obj.icon = `ui://LoopList/n${String(index + 1)}`;
     }
 
-    private _doSpecialEffect(): void {
+    private _doSpecialEffect(_ctx: FGUIEventContext | null = null): void {
         if (this._list == null) {
             return;
         }

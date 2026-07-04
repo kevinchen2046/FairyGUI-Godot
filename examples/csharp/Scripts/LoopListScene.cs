@@ -29,7 +29,7 @@ public partial class LoopListScene : DemoSceneBase
         obj.SetIcon("ui://LoopList/n" + (index + 1));
     }
 
-    private void DoSpecialEffect()
+    private void DoSpecialEffect(FguiEventContext ctx = null)
     {
         if (_list == null)
             return;

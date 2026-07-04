@@ -19,7 +19,7 @@ func _render_list_item(index: int, obj: Object) -> void:
 	obj.setPivot(0.5, 0.5, false)
 	obj.setIcon("ui://LoopList/n" + str(index + 1))
 
-func _do_special_effect() -> void:
+func _do_special_effect(_ctx = null) -> void:
 	if _list == null:
 		return
 	var sp = _list.getScrollPane()
