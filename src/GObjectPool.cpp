@@ -31,6 +31,8 @@ void GObjectPool::returnObject(GObject* obj)
 {
     if (obj == nullptr)
         return;
+    if (obj->getParent() != nullptr)
+        obj->removeFromParent();
     Ref<GObject> ref = obj;
     ref->setVisible(false);
     _pool[ref->getResourceURL()].push_back(ref);

@@ -258,8 +258,8 @@ void GList::removeChildToPool(GObject* child)
     Ref<GObject> ref = child;
     if (ref.is_null())
         return;
-    returnToPool(ref.ptr());
     removeChild(ref.ptr());
+    returnToPool(ref.ptr());
 }
 
 void GList::removeChildrenToPool()

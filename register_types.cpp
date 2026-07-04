@@ -99,6 +99,7 @@ void initialize_fairygui_module(ModuleInitializationLevel p_level)
 
         // Display
         GDREGISTER_CLASS(fairygui::FUIContainer);
+        GDREGISTER_CLASS(fairygui::FUIClipContainer);
         GDREGISTER_CLASS(fairygui::FUIInnerContainer);
         GDREGISTER_CLASS(fairygui::FUIInput);
         GDREGISTER_CLASS(fairygui::FUILabel);

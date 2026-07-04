@@ -105,8 +105,6 @@ private:
     TextFormat* _textFormat;
     std::function<void()> _submittedCallback;
     std::function<void()> _textChangedCallback;
-
-    uint8_t _fuiNotifyState = 0;
 };
 
 NS_FGUI_END

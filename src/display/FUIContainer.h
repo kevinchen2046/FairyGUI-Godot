@@ -23,9 +23,6 @@ public:
 
 protected:
     void _notification(int p_what);
-
-private:
-    uint8_t _fuiNotifyState = 0;
 };
 
 class FUIContainer : public Node2D
