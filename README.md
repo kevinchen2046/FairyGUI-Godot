@@ -208,6 +208,42 @@ When `module_spine_godot_enabled=yes`, Spine support is provided by the `spine_g
 > `#../spine_godot/spine-cpp/include` to `#modules/spine_godot/spine-cpp/include`
 > to match the new module directory layout.
 
+## GodotJS patch
+
+When running the TypeScript demos (`examples/ts/`) with **GodotJS**, both items below are required.
+
+### 1. Register the FairyGUI base class as `GuiObject` (required)
+
+GodotJS exposes engine `Object` in JavaScript as **`GObject`** (to avoid clashing with the JS built-in `Object`; see `GodotJS/internal/jsb_naming_util.cpp`).
+
+If the FairyGUI base were still registered as ClassDB `GObject`, it would collide with that JS name and break inheritance / type lookup (e.g. `GComponent.addChild is not a function`).
+
+This module therefore registers the UI base as **`GuiObject`**, with `using GObject = GuiObject` in C++ for Cocos-source compatibility. **This rename is separate from the GodotJS patch below; you need both.**
+
+### 2. Fix `jsb_godot_module_loader` assertion (required for dev builds)
+
+GodotJS lazily loads ClassDB types via the `godot` module Proxy. For renamed engine types (`Object` → `GObject`), `NativeClassInfo::name` stores the **ClassDB name** while JS requests the **display name**. In dev builds the assertion below compares the wrong names and crashes when loading `GObject` or binding FairyGUI types:
+
+**File:** `modules/GodotJS/bridge/jsb_godot_module_loader.cpp`
+
+```diff
+             if (const NativeClassInfoPtr class_info = env->expose_godot_object_class(ClassDB::classes.getptr(original_name)))
+             {
+-                jsb_check(class_info->name == p_type_name);
++                // class_info->name is ClassDB original name (e.g. "Object"), not JS display name (e.g. "GObject").
++                jsb_check(class_info->name == original_name);
+                 jsb_check(!class_info->clazz.IsEmpty());
+                 info.GetReturnValue().Set(class_info->clazz.Get(isolate));
+                 return;
+             }
+```
+
+Do **not** change line 97–99 (`expose_class` path for types like `Signal`) — there `class_info->name` matches the JS display name.
+
+Rebuild Godot (including GodotJS) after applying the patch. Then `FGUIEventContext.getData()` can return `GuiObject` to JS normally; `getItemText()` remains available when you only need ClickItem text.
+
+> **Note:** Eager-loading `godot.GObject` at startup in `fgui-globals.ts` was tried and still hits this assertion in dev builds; it cannot replace this patch.
+
 ## Usage
 
 ### 1. Initialize GRoot and Load UI Packages

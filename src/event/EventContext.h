@@ -51,6 +51,8 @@ public:
 
     void preventDefault();
     Variant getData() const;
+    /** ClickItem 等事件的列表项文本；不返回 GuiObject，供 GodotJS 等避免对象绑定崩溃。 */
+    String getItemText() const;
     int getTouchId() const;
 
 protected:

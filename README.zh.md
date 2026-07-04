@@ -206,6 +206,42 @@ Godot 构建系统通过 `config.py` 自动发现模块。
 > `#../spine_godot/spine-cpp/include` 改为 `#modules/spine_godot/spine-cpp/include`
 > 以适配新的模块目录布局。
 
+## GodotJS 补丁
+
+使用 **GodotJS** 运行 TypeScript Demo（`examples/ts/`）时，需同时满足下列两点。
+
+### 1. FairyGUI 基类须注册为 `GuiObject`（必须）
+
+GodotJS 将引擎 `Object` 在 JavaScript 中暴露为 **`GObject`**（避免与 JS 内置 `Object` 冲突，见 `GodotJS/internal/jsb_naming_util.cpp`）。
+
+若 FairyGUI 基类 ClassDB 名仍为 `GObject`，会与引擎 `Object` 的 JS 名混淆，导致继承链、类型查找错误（例如 `GComponent.addChild is not a function`）。
+
+因此本模块将 UI 基类注册为 **`GuiObject`**；C++ 内保留 `using GObject = GuiObject` 别名，与 Cocos 源码命名兼容。**此改名与下方 GodotJS 补丁是两件事，都需要。**
+
+### 2. 修正 `jsb_godot_module_loader` 断言（dev 构建必须）
+
+GodotJS 通过 `godot` 模块 Proxy **懒加载** ClassDB 类。对改名映射的引擎类型（如 `Object` → `GObject`），`NativeClassInfo::name` 存 **ClassDB 原名**，而 JS 请求的是 **显示名**。dev 构建中下列断言用错了比较对象，会在懒加载 `GObject` 或绑定 FairyGUI 继承链时崩溃：
+
+**文件：** `modules/GodotJS/bridge/jsb_godot_module_loader.cpp`
+
+```diff
+             if (const NativeClassInfoPtr class_info = env->expose_godot_object_class(ClassDB::classes.getptr(original_name)))
+             {
+-                jsb_check(class_info->name == p_type_name);
++                // class_info->name is ClassDB original name (e.g. "Object"), not JS display name (e.g. "GObject").
++                jsb_check(class_info->name == original_name);
+                 jsb_check(!class_info->clazz.IsEmpty());
+                 info.GetReturnValue().Set(class_info->clazz.Get(isolate));
+                 return;
+             }
+```
+
+同文件第 97–99 行 `expose_class` 路径（如 `Signal`）的 `jsb_check(class_info->name == p_type_name)` **不要改**——该路径的 `class_info->name` 即为 JS 显示名。
+
+修改后需**重新编译 Godot**（含 GodotJS 模块）。补丁生效后，`FGUIEventContext.getData()` 可正常向 JS 返回 `GuiObject`；`getItemText()` 仍可用于仅需 ClickItem 文本的场景。
+
+> **说明：** 曾尝试在 `fgui-globals.ts` 启动时预加载 `godot.GObject`，会在 dev 下直接触发上述断言，无法替代此补丁。
+
 ## 使用
 
 ### 1. 初始化 GRoot 并加载 UI 包
