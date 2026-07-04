@@ -23,7 +23,7 @@ static void fui_sync_child_order_changed(FUIContainer* self, bool p_connect)
     if (p_connect)
     {
         if (!parent->is_connected(SNAME("child_order_changed"), callable))
-            parent->connect(SNAME("child_order_changed"), callable, CONNECT_REFERENCE_COUNTED);
+            parent->connect(SNAME("child_order_changed"), callable, Object::CONNECT_REFERENCE_COUNTED);
     }
     else if (parent->is_connected(SNAME("child_order_changed"), callable))
     {
