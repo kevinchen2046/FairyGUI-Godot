@@ -1,4 +1,4 @@
-﻿#ifndef __RELATIONITEM_H__
+#ifndef __RELATIONITEM_H__
 #define __RELATIONITEM_H__
 
 // cocos2d.h removed - see godot_types.h
@@ -7,7 +7,7 @@
 
 NS_FGUI_BEGIN
 
-class GObject;
+#include "GuiObjectFwd.h"
 class EventContext;
 
 enum class RelationType

@@ -1,4 +1,4 @@
-﻿#ifndef __HITTEST_H__
+#ifndef __HITTEST_H__
 #define __HITTEST_H__
 
 #include "FairyGUIMacros.h"
@@ -7,7 +7,7 @@
 NS_FGUI_BEGIN
 
 class GComponent;
-class GObject;
+#include "../GuiObjectFwd.h"
 class ByteBuffer;
 
 class IHitTest

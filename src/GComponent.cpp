@@ -1687,7 +1687,6 @@ void GComponent::_bind_methods()
     ClassDB::bind_method(D_METHOD("applyController", "controller"), &GComponent::applyController);
     ClassDB::bind_method(D_METHOD("applyAllControllers"), &GComponent::applyAllControllers);
 
-    ClassDB::bind_method(D_METHOD("addChild", "child"), &GComponent::gd_addChild);
     ClassDB::bind_method(D_METHOD("addChildAt", "child", "index"), &GComponent::gd_addChildAt);
     ClassDB::bind_method(D_METHOD("removeChildAt", "index"), &GComponent::gd_removeChildAt);
     ClassDB::bind_method(D_METHOD("removeChildren", "begin_index", "end_index"), &GComponent::gd_removeChildren, DEFVAL(0), DEFVAL(-1));
@@ -1717,12 +1716,6 @@ void GComponent::_bind_methods()
 }
 
 void GComponent::gd_removeChildAt(int index) { removeChildAt(index); }
-void GComponent::gd_addChild(Object* child) {
-    GObject* go = Object::cast_to<GObject>(child);
-    if (go) {
-        addChild(Ref<GObject>(go));
-    }
-}
 void GComponent::gd_addChildAt(Object* child, int index) {
     GObject* go = Object::cast_to<GObject>(child);
     if (go) addChildAt(Ref<GObject>(go), index);

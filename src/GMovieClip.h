@@ -11,7 +11,7 @@ class FUISprite;
 
 class GMovieClip : public GObject
 {
-    GDCLASS(GMovieClip, GObject)
+    GDCLASS(GMovieClip, GuiObject)
 
 public:
     GMovieClip();

@@ -69,15 +69,15 @@ void GWindow::_bind_methods()
 
     ClassDB::bind_method(D_METHOD("setCloseButton", "button"), &GWindow::setCloseButton);
     ClassDB::bind_method(D_METHOD("getCloseButton"), &GWindow::gd_getCloseButton);
-    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "closeButton", PROPERTY_HINT_RESOURCE_TYPE, "GObject"), "setCloseButton", "getCloseButton");
+    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "closeButton", PROPERTY_HINT_RESOURCE_TYPE, "GuiObject"), "setCloseButton", "getCloseButton");
 
     ClassDB::bind_method(D_METHOD("setDragArea", "area"), &GWindow::setDragArea);
     ClassDB::bind_method(D_METHOD("getDragArea"), &GWindow::gd_getDragArea);
-    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "dragArea", PROPERTY_HINT_RESOURCE_TYPE, "GObject"), "setDragArea", "getDragArea");
+    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "dragArea", PROPERTY_HINT_RESOURCE_TYPE, "GuiObject"), "setDragArea", "getDragArea");
 
     ClassDB::bind_method(D_METHOD("setContentArea", "area"), &GWindow::setContentArea);
     ClassDB::bind_method(D_METHOD("getContentArea"), &GWindow::gd_getContentArea);
-    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "contentArea", PROPERTY_HINT_RESOURCE_TYPE, "GObject"), "setContentArea", "getContentArea");
+    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "contentArea", PROPERTY_HINT_RESOURCE_TYPE, "GuiObject"), "setContentArea", "getContentArea");
 
     ClassDB::bind_method(D_METHOD("getModalWaitingPane"), &GWindow::gd_getModalWaitingPane);
 

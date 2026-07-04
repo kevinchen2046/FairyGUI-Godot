@@ -1,4 +1,4 @@
-﻿#ifndef __GEARTEXT_H__
+#ifndef __GEARTEXT_H__
 #define __GEARTEXT_H__
 
 #include "FairyGUIMacros.h"
@@ -7,7 +7,7 @@
 
 NS_FGUI_BEGIN
 
-class GObject;
+#include "../GuiObjectFwd.h"
 
 class GearText : public GearBase
 {

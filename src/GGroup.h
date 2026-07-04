@@ -9,7 +9,7 @@ NS_FGUI_BEGIN
 
 class GGroup : public GObject
 {
-    GDCLASS(GGroup, GObject)
+    GDCLASS(GGroup, GuiObject)
 
 public:
     GGroup();

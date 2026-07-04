@@ -1,4 +1,4 @@
-﻿#ifndef __EVENTCONTEXT_H__
+#ifndef __EVENTCONTEXT_H__
 #define __EVENTCONTEXT_H__
 
 #include "FairyGUIMacros.h"
@@ -7,7 +7,7 @@
 
 NS_FGUI_BEGIN
 
-class GObject;
+#include "../GuiObjectFwd.h"
 class InputProcessor;
 
 class EventContext

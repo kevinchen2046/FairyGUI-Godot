@@ -11,7 +11,7 @@ NS_FGUI_BEGIN
 
 class GTextField : public GObject
 {
-    GDCLASS(GTextField, GObject)
+    GDCLASS(GTextField, GuiObject)
 
 public:
     GTextField();

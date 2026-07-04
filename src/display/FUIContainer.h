@@ -6,7 +6,7 @@
 
 NS_FGUI_BEGIN
 
-class GObject;
+#include "../GuiObjectFwd.h"
 
 // Control-based clip container (ScrollPane / overflow:hidden).
 // Uses clip_contents instead of Node2D CLIP_CHILDREN_AND_DRAW, which is unreliable.

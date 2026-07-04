@@ -1,4 +1,4 @@
-﻿#ifndef __TWEENPROPTYPE_H__
+#ifndef __TWEENPROPTYPE_H__
 #define __TWEENPROPTYPE_H__
 
 #include "FairyGUIMacros.h"
@@ -7,7 +7,7 @@
 NS_FGUI_BEGIN
 
 class TweenValue;
-class GObject;
+#include "../GuiObjectFwd.h"
 
 enum class TweenPropType
 {

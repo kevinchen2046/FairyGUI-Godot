@@ -1,4 +1,4 @@
-﻿#ifndef __GEARLOOK_H__
+#ifndef __GEARLOOK_H__
 #define __GEARLOOK_H__
 
 #include "FairyGUIMacros.h"
@@ -7,7 +7,7 @@
 
 NS_FGUI_BEGIN
 
-class GObject;
+#include "../GuiObjectFwd.h"
 class GTweener;
 
 class GearLook : public GearBase

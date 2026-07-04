@@ -6,7 +6,7 @@
 
 NS_FGUI_BEGIN
 
-class GObject;
+#include "../GuiObjectFwd.h"
 class InputProcessor;
 
 enum class MouseButton

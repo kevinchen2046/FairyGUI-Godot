@@ -16,7 +16,7 @@ class PackageItem;
 
 class GLoader3D : public GObject
 {
-    GDCLASS(GLoader3D, GObject)
+    GDCLASS(GLoader3D, GuiObject)
 
 public:
     GLoader3D();

@@ -7,7 +7,7 @@
 
 NS_FGUI_BEGIN
 
-class GObject;
+#include "GuiObjectFwd.h"
 class GComponent;
 class GScrollBar;
 class FUIContainer;

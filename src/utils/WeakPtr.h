@@ -1,4 +1,4 @@
-﻿#ifndef __WEAKPTR_H__
+#ifndef __WEAKPTR_H__
 #define __WEAKPTR_H__
 
 // cocos2d.h removed - see godot_types.h
@@ -6,7 +6,7 @@
 
 NS_FGUI_BEGIN
 
-class GObject;
+#include "../GuiObjectFwd.h"
 
 class WeakPtr
 {
@@ -37,7 +37,7 @@ private:
     static GObject* remove(uint64_t id);
     static void markDisposed(GObject* obj);
 
-    friend class GObject;
+    friend class GuiObject;
 };
 
 NS_FGUI_END

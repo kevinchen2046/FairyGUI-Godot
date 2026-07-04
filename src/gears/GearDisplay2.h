@@ -1,4 +1,4 @@
-﻿#ifndef __GEARDISPLAY2_H__
+#ifndef __GEARDISPLAY2_H__
 #define __GEARDISPLAY2_H__
 
 #include "FairyGUIMacros.h"
@@ -7,7 +7,7 @@
 
 NS_FGUI_BEGIN
 
-class GObject;
+#include "../GuiObjectFwd.h"
 
 class GearDisplay2 : public GearBase
 {

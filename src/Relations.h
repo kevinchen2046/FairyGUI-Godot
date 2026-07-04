@@ -1,4 +1,4 @@
-﻿#ifndef __RELATIONS_H__
+#ifndef __RELATIONS_H__
 #define __RELATIONS_H__
 
 // cocos2d.h removed - see godot_types.h
@@ -7,7 +7,7 @@
 
 NS_FGUI_BEGIN
 
-class GObject;
+#include "GuiObjectFwd.h"
 class ByteBuffer;
 
 class Relations

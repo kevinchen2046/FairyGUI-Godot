@@ -6,7 +6,7 @@
 
 NS_FGUI_BEGIN
 
-class GObject;
+#include "GuiObjectFwd.h"
 class GComponent;
 class TransitionItem;
 class GTweener;

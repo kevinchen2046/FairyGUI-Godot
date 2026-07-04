@@ -12,7 +12,7 @@ class FUISprite;
 
 class GImage : public GObject
 {
-    GDCLASS(GImage, GObject)
+    GDCLASS(GImage, GuiObject)
 
 public:
     GImage();

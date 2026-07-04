@@ -14,7 +14,7 @@ class FUISprite;
 
 class GLoader : public GObject
 {
-    GDCLASS(GLoader, GObject)
+    GDCLASS(GLoader, GuiObject)
 
 public:
     GLoader();

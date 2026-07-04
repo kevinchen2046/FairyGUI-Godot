@@ -19,7 +19,7 @@
 #include <cfloat>
 
 NS_FGUI_BEGIN
-GObject* GObject::_draggingObject = nullptr;
+GuiObject* GuiObject::_draggingObject = nullptr;
 
 static int apply_absolute_overlay_z_order(Node* node, int baseZ, int localZ)
 {
@@ -43,7 +43,7 @@ static Vector2 sGlobalDragStart;
 static Rect sGlobalRect;
 static bool sUpdateInDragging;
 
-GObject::GObject() : _scale{1, 1},
+GuiObject::GuiObject() : _scale{1, 1},
                      _sizePercentInGroup(0.0f),
                      _pivotAsAnchor(false),
                      _alpha(1.0f),
@@ -86,7 +86,7 @@ GObject::GObject() : _scale{1, 1},
         _gears[i] = nullptr;
 }
 
-GObject::~GObject()
+GuiObject::~GuiObject()
 {
     GTween::kill(this, false);
     removeFromParent();
@@ -105,7 +105,7 @@ GObject::~GObject()
         WeakPtr::markDisposed(this);
 }
 
-bool GObject::init()
+bool GuiObject::init()
 {
     if (_displayObject != nullptr)
         return true;
@@ -114,23 +114,23 @@ bool GObject::init()
 
     if (_displayObject != nullptr)
     {
-        _displayObject->connect("tree_entered", callable_mp(this, &GObject::onDisplayTreeEntered), CONNECT_REFERENCE_COUNTED);
-        _displayObject->connect("tree_exiting", callable_mp(this, &GObject::onDisplayTreeExiting), CONNECT_REFERENCE_COUNTED);
+        _displayObject->connect("tree_entered", callable_mp(this, &GuiObject::onDisplayTreeEntered), CONNECT_REFERENCE_COUNTED);
+        _displayObject->connect("tree_exiting", callable_mp(this, &GuiObject::onDisplayTreeExiting), CONNECT_REFERENCE_COUNTED);
     }
     return true;
 }
 
-void GObject::setX(float value)
+void GuiObject::setX(float value)
 {
     setPosition(value, _position.y);
 }
 
-void GObject::setY(float value)
+void GuiObject::setY(float value)
 {
     setPosition(_position.x, value);
 }
 
-void GObject::setPosition(float xv, float yv)
+void GuiObject::setPosition(float xv, float yv)
 {
     if (_position.x != xv || _position.y != yv)
     {
@@ -161,12 +161,12 @@ void GObject::setPosition(float xv, float yv)
     }
 }
 
-float GObject::getXMin() const
+float GuiObject::getXMin() const
 {
     return _pivotAsAnchor ? (_position.x - _size.width * _pivot.x) : _position.x;
 }
 
-void GObject::setXMin(float value)
+void GuiObject::setXMin(float value)
 {
     if (_pivotAsAnchor)
         setPosition(value + _size.width * _pivot.x, _position.y);
@@ -174,12 +174,12 @@ void GObject::setXMin(float value)
         setPosition(value, _position.y);
 }
 
-float GObject::getYMin() const
+float GuiObject::getYMin() const
 {
     return _pivotAsAnchor ? (_position.y - _size.height * _pivot.y) : _position.y;
 }
 
-void GObject::setYMin(float value)
+void GuiObject::setYMin(float value)
 {
     if (_pivotAsAnchor)
         setPosition(_position.x, value + _size.height * _pivot.y);
@@ -187,7 +187,7 @@ void GObject::setYMin(float value)
         setPosition(_position.x, value);
 }
 
-void GObject::setPixelSnapping(bool value)
+void GuiObject::setPixelSnapping(bool value)
 {
     if (_pixelSnapping != value)
     {
@@ -196,7 +196,7 @@ void GObject::setPixelSnapping(bool value)
     }
 }
 
-void GObject::setSize(float wv, float hv, bool ignorePivot /*= false*/)
+void GuiObject::setSize(float wv, float hv, bool ignorePivot /*= false*/)
 {
     if (_rawSize.width != wv || _rawSize.height != hv)
     {
@@ -250,7 +250,7 @@ void GObject::setSize(float wv, float hv, bool ignorePivot /*= false*/)
     }
 }
 
-void GObject::setSizeDirectly(float wv, float hv)
+void GuiObject::setSizeDirectly(float wv, float hv)
 {
     _rawSize.width = wv;
     _rawSize.height = hv;
@@ -262,7 +262,7 @@ void GObject::setSizeDirectly(float wv, float hv)
     _size.height = hv;
 }
 
-void GObject::center(bool restraint /*= false*/)
+void GuiObject::center(bool restraint /*= false*/)
 {
     GComponent* r;
     if (_parent != nullptr)
@@ -278,12 +278,12 @@ void GObject::center(bool restraint /*= false*/)
     }
 }
 
-void GObject::makeFullScreen()
+void GuiObject::makeFullScreen()
 {
     setSize(GRoot::getInstance()->getWidth(), GRoot::getInstance()->getHeight());
 }
 
-void GObject::setPivot(float xv, float yv, bool asAnchor)
+void GuiObject::setPivot(float xv, float yv, bool asAnchor)
 {
     if (_pivot.x != xv || _pivot.y != yv || _pivotAsAnchor != asAnchor)
     {
@@ -294,7 +294,7 @@ void GObject::setPivot(float xv, float yv, bool asAnchor)
     }
 }
 
-void GObject::setScale(float xv, float yv)
+void GuiObject::setScale(float xv, float yv)
 {
     if (_scale.x != xv || _scale.y != yv)
     {
@@ -306,17 +306,17 @@ void GObject::setScale(float xv, float yv)
     }
 }
 
-GTweener* GObject::tweenScale(const Vector2& endValue, float duration)
+GTweener* GuiObject::tweenScale(const Vector2& endValue, float duration)
 {
     return GTween::to(_scale, endValue, duration)->setTarget(this, TweenPropType::Scale);
 }
 
-Ref<GTweener> GObject::gd_tweenScale(const Vector2& endValue, float duration)
+Ref<GTweener> GuiObject::gd_tweenScale(const Vector2& endValue, float duration)
 {
     return Ref<GTweener>(tweenScale(endValue, duration));
 }
 
-void GObject::setSkewX(float value)
+void GuiObject::setSkewX(float value)
 {
     if (_skewX != value)
     {
@@ -337,7 +337,7 @@ void GObject::setSkewX(float value)
     }
 }
 
-void GObject::setSkewY(float value)
+void GuiObject::setSkewY(float value)
 {
     if (_skewY != value)
     {
@@ -358,7 +358,7 @@ void GObject::setSkewY(float value)
     }
 }
 
-void GObject::setRotation(float value)
+void GuiObject::setRotation(float value)
 {
     if (_rotation != value)
     {
@@ -376,7 +376,7 @@ void GObject::setRotation(float value)
     }
 }
 
-void GObject::setAlpha(float value)
+void GuiObject::setAlpha(float value)
 {
     if (_alpha != value)
     {
@@ -386,7 +386,7 @@ void GObject::setAlpha(float value)
     }
 }
 
-void GObject::setGrayed(bool value)
+void GuiObject::setGrayed(bool value)
 {
     if (_grayed != value || _finalGrayed != value)
     {
@@ -396,7 +396,7 @@ void GObject::setGrayed(bool value)
     }
 }
 
-void GObject::setVisible(bool value)
+void GuiObject::setVisible(bool value)
 {
     if (_visible != value)
     {
@@ -409,27 +409,27 @@ void GObject::setVisible(bool value)
     }
 }
 
-bool GObject::internalVisible() const
+bool GuiObject::internalVisible() const
 {
     return _internalVisible && (_group == nullptr || _group->internalVisible());
 }
 
-bool GObject::internalVisible2() const
+bool GuiObject::internalVisible2() const
 {
     return _visible && (_group == nullptr || _group->internalVisible2());
 }
 
-bool GObject::internalVisible3() const
+bool GuiObject::internalVisible3() const
 {
     return _visible && _internalVisible;
 }
 
-void GObject::setTouchable(bool value)
+void GuiObject::setTouchable(bool value)
 {
     _touchable = value;
 }
 
-void GObject::setSortingOrder(int value)
+void GuiObject::setSortingOrder(int value)
 {
     if (value < 0)
         value = 0;
@@ -443,13 +443,13 @@ void GObject::setSortingOrder(int value)
     }
 }
 
-void GObject::applyAbsoluteOverlayZOrder(int baseZ)
+void GuiObject::applyAbsoluteOverlayZOrder(int baseZ)
 {
     if (_displayObject)
         apply_absolute_overlay_z_order(_displayObject, baseZ, 0);
 }
 
-void GObject::setGroup(GGroup* value)
+void GuiObject::setGroup(GGroup* value)
 {
     if (_group != value)
     {
@@ -464,47 +464,47 @@ void GObject::setGroup(GGroup* value)
     }
 }
 
-const std::string& GObject::getText() const
+const std::string& GuiObject::getText() const
 {
     static const std::string empty;
     return empty;
 }
 
-void GObject::setText(const std::string& text)
+void GuiObject::setText(const std::string& text)
 {
 }
 
-const std::string& GObject::getIcon() const
+const std::string& GuiObject::getIcon() const
 {
     static const std::string empty;
     return empty;
 }
 
-void GObject::setIcon(const std::string& text)
+void GuiObject::setIcon(const std::string& text)
 {
 }
 
-void GObject::setTooltips(const std::string& value)
+void GuiObject::setTooltips(const std::string& value)
 {
     _tooltips = value;
     if (!_tooltips.empty())
     {
-        addEventListener(UIEventType::RollOver, [this](EventContext* ctx) { GObject::onRollOver(ctx); }, EventTag(this));
-        addEventListener(UIEventType::RollOut, [this](EventContext* ctx) { GObject::onRollOut(ctx); }, EventTag(this));
+        addEventListener(UIEventType::RollOver, [this](EventContext* ctx) { GuiObject::onRollOver(ctx); }, EventTag(this));
+        addEventListener(UIEventType::RollOut, [this](EventContext* ctx) { GuiObject::onRollOut(ctx); }, EventTag(this));
     }
 }
 
-void GObject::onRollOver(EventContext* context)
+void GuiObject::onRollOver(EventContext* context)
 {
     getRoot()->showTooltips(_tooltips);
 }
 
-void GObject::onRollOut(EventContext* context)
+void GuiObject::onRollOut(EventContext* context)
 {
     getRoot()->hideTooltips();
 }
 
-void GObject::setDraggable(bool value)
+void GuiObject::setDraggable(bool value)
 {
     if (_draggable != value)
     {
@@ -513,24 +513,24 @@ void GObject::setDraggable(bool value)
     }
 }
 
-void GObject::setDragBounds(const Rect2& value)
+void GuiObject::setDragBounds(const Rect2& value)
 {
     if (_dragBounds == nullptr)
         _dragBounds = new Rect();
     *_dragBounds = value;
 }
 
-void GObject::startDrag(int touchId)
+void GuiObject::startDrag(int touchId)
 {
     dragBegin(touchId);
 }
 
-void GObject::stopDrag()
+void GuiObject::stopDrag()
 {
     dragEnd();
 }
 
-std::string GObject::getResourceURL() const
+std::string GuiObject::getResourceURL() const
 {
     if (_packageItem != nullptr)
         return "ui://" + _packageItem->owner->getId() + _packageItem->id;
@@ -538,12 +538,12 @@ std::string GObject::getResourceURL() const
         return "";
 }
 
-Vector2 GObject::localToGlobal(const Vector2& pt)
+Vector2 GuiObject::localToGlobal(const Vector2& pt)
 {
     return GRoot::getInstance()->worldToRoot(localPointToCanvas(pt));
 }
 
-Rect2 GObject::localToGlobal(const Rect2& rect)
+Rect2 GuiObject::localToGlobal(const Rect2& rect)
 {
     Rect ret;
     Vector2 v = localToGlobal(rect.position);
@@ -555,7 +555,7 @@ Rect2 GObject::localToGlobal(const Rect2& rect)
     return ret;
 }
 
-Vector2 GObject::localPointToCanvas(const Vector2& pt) const
+Vector2 GuiObject::localPointToCanvas(const Vector2& pt) const
 {
     Vector2 pt2 = pt;
     if (_pivot.x != 0.0f || _pivot.y != 0.0f)
@@ -565,21 +565,21 @@ Vector2 GObject::localPointToCanvas(const Vector2& pt) const
     return Object::cast_to<CanvasItem>(_displayObject)->get_global_transform_with_canvas().xform(pt2);
 }
 
-Vector2 GObject::globalToLocal(const Vector2& pt)
+Vector2 GuiObject::globalToLocal(const Vector2& pt)
 {
     Vector2 pt2 = GRoot::getInstance()->rootToWorld(pt);
     pt2 = ((CanvasItem*)_displayObject)->get_global_transform_with_canvas().affine_inverse().xform(pt2);
     return displayLocalToLogical(pt2);
 }
 
-Vector2 GObject::displayLocalToLogical(const Vector2& displayLocal) const
+Vector2 GuiObject::displayLocalToLogical(const Vector2& displayLocal) const
 {
     if (_pivot.x != 0.0f || _pivot.y != 0.0f)
         return displayLocal - computeContentPivotOffset();
     return displayLocal;
 }
 
-Rect2 GObject::globalToLocal(const Rect2& rect)
+Rect2 GuiObject::globalToLocal(const Rect2& rect)
 {
     Rect ret;
     Vector2 v = globalToLocal(rect.position);
@@ -591,7 +591,7 @@ Rect2 GObject::globalToLocal(const Rect2& rect)
     return ret;
 }
 
-Rect2 GObject::transformRect(const Rect2& rect, GObject* targetSpace)
+Rect2 GuiObject::transformRect(const Rect2& rect, GObject* targetSpace)
 {
     if (targetSpace == this)
         return rect;
@@ -616,7 +616,7 @@ Rect2 GObject::transformRect(const Rect2& rect, GObject* targetSpace)
     }
 }
 
-void GObject::transformRectPoint(const Vector2& pt, float rect[], GObject* targetSpace)
+void GuiObject::transformRectPoint(const Vector2& pt, float rect[], GObject* targetSpace)
 {
     Vector2 v = localToGlobal(pt);
     if (targetSpace != nullptr)
@@ -632,17 +632,17 @@ void GObject::transformRectPoint(const Vector2& pt, float rect[], GObject* targe
         rect[3] = v.y;
 }
 
-void GObject::addRelation(GObject* target, RelationType relationType, bool usePercent)
+void GuiObject::addRelation(GObject* target, RelationType relationType, bool usePercent)
 {
     _relations->add(target, relationType, usePercent);
 }
 
-void GObject::removeRelation(GObject* target, RelationType relationType)
+void GuiObject::removeRelation(GObject* target, RelationType relationType)
 {
     _relations->remove(target, relationType);
 }
 
-GearBase* GObject::getGear(int index)
+GearBase* GuiObject::getGear(int index)
 {
     GearBase* gear = _gears[index];
     if (gear == nullptr)
@@ -653,7 +653,7 @@ GearBase* GObject::getGear(int index)
     return gear;
 }
 
-void GObject::updateGear(int index)
+void GuiObject::updateGear(int index)
 {
     if (_underConstruct || _gearLocked)
         return;
@@ -663,18 +663,18 @@ void GObject::updateGear(int index)
         gear->updateState();
 }
 
-bool GObject::checkGearController(int index, GController* c)
+bool GuiObject::checkGearController(int index, GController* c)
 {
     return _gears[index] != nullptr && _gears[index]->getController() == c;
 }
 
-void GObject::updateGearFromRelations(int index, float dx, float dy)
+void GuiObject::updateGearFromRelations(int index, float dx, float dy)
 {
     if (_gears[index] != nullptr)
         _gears[index]->updateFromRelations(dx, dy);
 }
 
-uint32_t GObject::addDisplayLock()
+uint32_t GuiObject::addDisplayLock()
 {
     GearDisplay* gearDisplay = (GearDisplay*)_gears[0];
     if (gearDisplay != nullptr && gearDisplay->getController() != nullptr)
@@ -688,7 +688,7 @@ uint32_t GObject::addDisplayLock()
         return 0;
 }
 
-void GObject::releaseDisplayLock(uint32_t token)
+void GuiObject::releaseDisplayLock(uint32_t token)
 {
     GearDisplay* gearDisplay = (GearDisplay*)_gears[0];
     if (gearDisplay != nullptr && gearDisplay->getController() != nullptr)
@@ -698,7 +698,7 @@ void GObject::releaseDisplayLock(uint32_t token)
     }
 }
 
-void GObject::checkGearDisplay()
+void GuiObject::checkGearDisplay()
 {
     if (_handlingController)
         return;
@@ -717,12 +717,12 @@ void GObject::checkGearDisplay()
     }
 }
 
-bool GObject::onStage() const
+bool GuiObject::onStage() const
 {
     return _displayObject->get_tree() != nullptr;
 }
 
-GObject* GObject::findParent() const
+GObject* GuiObject::findParent() const
 {
     if (_parent != nullptr)
         return _parent;
@@ -743,7 +743,7 @@ GObject* GObject::findParent() const
     return nullptr;
 }
 
-GRoot* GObject::getRoot() const
+GRoot* GuiObject::getRoot() const
 {
     GObject* p = (GObject*)this;
     while (p->_parent != nullptr)
@@ -756,13 +756,13 @@ GRoot* GObject::getRoot() const
         return GRoot::getInstance();
 }
 
-void GObject::removeFromParent()
+void GuiObject::removeFromParent()
 {
     if (_parent != nullptr)
         _parent->removeChild(this);
 }
 
-Variant GObject::getProp(ObjectPropID propId)
+Variant GuiObject::getProp(ObjectPropID propId)
 {
     switch (propId)
     {
@@ -775,7 +775,7 @@ Variant GObject::getProp(ObjectPropID propId)
     }
 }
 
-void GObject::setProp(ObjectPropID propId, const Variant& value)
+void GuiObject::setProp(ObjectPropID propId, const Variant& value)
 {
     switch (propId)
     {
@@ -788,11 +788,11 @@ void GObject::setProp(ObjectPropID propId, const Variant& value)
     }
 }
 
-void GObject::constructFromResource()
+void GuiObject::constructFromResource()
 {
 }
 
-GObject* GObject::hitTest(const Vector2& worldPoint, const Camera2D* camera)
+GObject* GuiObject::hitTest(const Vector2& worldPoint, const Camera2D* camera)
 {
     if (_touchDisabled || !_touchable || !((CanvasItem*)_displayObject)->is_visible() || !_displayObject->get_parent())
         return nullptr;
@@ -805,82 +805,82 @@ GObject* GObject::hitTest(const Vector2& worldPoint, const Camera2D* camera)
         return nullptr;
 }
 
-void GObject::handleInit()
+void GuiObject::handleInit()
 {
     _displayObject = memnew(FUISprite);
 
 }
 
-void GObject::onDisplayTreeEntered()
+void GuiObject::onDisplayTreeEntered()
 {
     _enter_tree();
     if (FUISprite* sp = Object::cast_to<FUISprite>(_displayObject))
         sp->queue_redraw();
 }
 
-void GObject::onDisplayTreeExiting()
+void GuiObject::onDisplayTreeExiting()
 {
     _exit_tree();
 }
 
-void GObject::_enter_tree()
+void GuiObject::_enter_tree()
 {
     dispatchEvent(UIEventType::Enter);
 }
 
-void GObject::_exit_tree()
+void GuiObject::_exit_tree()
 {
     dispatchEvent(UIEventType::Exit);
 }
 
-void GObject::_ready()
+void GuiObject::_ready()
 {
 }
 
-void GObject::_process(double delta)
+void GuiObject::_process(double delta)
 {
 }
 
-void GObject::dispose()
+void GuiObject::dispose()
 {
 }
 
-void GObject::addChild(Node* node)
+void GuiObject::addChild(Node* node)
 {
     if (_displayObject)
         _displayObject->add_child(node);
 }
 
-void GObject::removeChild(Node* node)
+void GuiObject::removeChild(Node* node)
 {
     if (_displayObject)
         _displayObject->remove_child(node);
 }
 
-GObject* GObject::addChild(const Ref<GObject>& child)
+GObject* GuiObject::addChild(const Ref<GObject>& child)
 {
     addChild(child->displayObject());
     return child.ptr();
 }
 
-void GObject::removeChild(GObject* child)
+void GuiObject::removeChild(GObject* child)
 {
     removeChild(child->displayObject());
 }
 
-void GObject::gd_addChild(Object* node)
+void GuiObject::gd_addChild(Object* node)
 {
     GObject* go = Object::cast_to<GObject>(node);
     if (go) addChild(Ref<GObject>(go));
 }
 
-void GObject::gd_removeChild(Object* node)
+void GuiObject::gd_removeChild(Object* node)
 {
     GObject* go = Object::cast_to<GObject>(node);
     if (go) removeChild(go);
 }
 
-Vector2 GObject::computeDisplayPosition() const
+Vector2 GuiObject::computeDisplayPosition() const
 {
     Vector2 pt = _position;
     if (!_pivotAsAnchor)
@@ -897,7 +897,7 @@ Vector2 GObject::computeDisplayPosition() const
     return pt;
 }
 
-void GObject::syncControlDisplay()
+void GuiObject::syncControlDisplay()
 {
     Control* ctrl = Object::cast_to<Control>(_displayObject);
     if (!ctrl)
@@ -907,14 +907,14 @@ void GObject::syncControlDisplay()
     ctrl->set_scale(computeDisplayScale());
 }
 
-Vector2 GObject::computeContentPivotOffset() const
+Vector2 GuiObject::computeContentPivotOffset() const
 {
     // Cocos: setAnchorPoint(pivot.x, 1 - pivot.y) on Y-up engine.
     // Godot Y-down: shift content so node origin sits on the pivot (rotation/scale center).
     return Vector2(-_size.width * _pivot.x, -_size.height * _pivot.y);
 }
 
-void GObject::applyPivotOffset()
+void GuiObject::applyPivotOffset()
 {
     if (!_displayObject)
         return;
@@ -923,14 +923,14 @@ void GObject::applyPivotOffset()
         sp->set_offset(computeContentPivotOffset());
 }
 
-Vector2 GObject::computeDisplayScale() const
+Vector2 GuiObject::computeDisplayScale() const
 {
     if (_sizeImplType == 0 || sourceSize.width == 0 || sourceSize.height == 0)
         return Vector2(_scale.x, _scale.y);
     return Vector2(_scale.x * _size.width / sourceSize.width, _scale.y * _size.height / sourceSize.height);
 }
 
-void GObject::rebuildSkewedTransform()
+void GuiObject::rebuildSkewedTransform()
 {
     if (!_displayObject)
         return;
@@ -974,7 +974,7 @@ void GObject::rebuildSkewedTransform()
     node->set_transform(xf);
 }
 
-void GObject::handlePositionChanged()
+void GuiObject::handlePositionChanged()
 {
     if (!_displayObject)
         return;
@@ -987,7 +987,7 @@ void GObject::handlePositionChanged()
         syncControlDisplay();
 }
 
-void GObject::handleSizeChanged()
+void GuiObject::handleSizeChanged()
 {
     if (!_displayObject)
         return;
@@ -1005,7 +1005,7 @@ void GObject::handleSizeChanged()
     applyPivotOffset();
 }
 
-void GObject::handleScaleChanged()
+void GuiObject::handleScaleChanged()
 {
     if (!_displayObject)
         return;
@@ -1018,7 +1018,7 @@ void GObject::handleScaleChanged()
         syncControlDisplay();
 }
 
-void GObject::handleAlphaChanged()
+void GuiObject::handleAlphaChanged()
 {
     if (!_displayObject)
         return;
@@ -1026,23 +1026,23 @@ void GObject::handleAlphaChanged()
     ((CanvasItem*)_displayObject)->set_self_modulate(Color(1, 1, 1, _alpha));
 }
 
-void GObject::handleGrayedChanged()
+void GuiObject::handleGrayedChanged()
 {
     _finalGrayed = (_parent && _parent->_finalGrayed) || _grayed;
 }
 
-void GObject::refreshGrayedVisual()
+void GuiObject::refreshGrayedVisual()
 {
     handleGrayedChanged();
 }
 
-void GObject::handleVisibleChanged()
+void GuiObject::handleVisibleChanged()
 {
     if (_displayObject)
         ((CanvasItem*)_displayObject)->set_visible(internalVisible2());
 }
 
-void GObject::handleControllerChanged(GController* c)
+void GuiObject::handleControllerChanged(GController* c)
 {
     _handlingController = true;
     for (int i = 0; i < 10; i++)
@@ -1056,7 +1056,7 @@ void GObject::handleControllerChanged(GController* c)
     checkGearDisplay();
 }
 
-void GObject::setup_beforeAdd(ByteBuffer* buffer, int beginPos)
+void GuiObject::setup_beforeAdd(ByteBuffer* buffer, int beginPos)
 {
     buffer->seek(beginPos, 0);
     buffer->skip(5);
@@ -1126,7 +1126,7 @@ void GObject::setup_beforeAdd(ByteBuffer* buffer, int beginPos)
         _customData = Variant(str.c_str());
 }
 
-void GObject::setup_afterAdd(ByteBuffer* buffer, int beginPos)
+void GuiObject::setup_afterAdd(ByteBuffer* buffer, int beginPos)
 {
     buffer->seek(beginPos, 1);
 
@@ -1153,13 +1153,13 @@ void GObject::setup_afterAdd(ByteBuffer* buffer, int beginPos)
     }
 }
 
-void GObject::initDrag()
+void GuiObject::initDrag()
 {
     if (_draggable)
     {
-        addEventListener(UIEventType::TouchBegin, [this](EventContext* ctx) { GObject::onTouchBegin(ctx); }, EventTag(this));
-        addEventListener(UIEventType::TouchMove, [this](EventContext* ctx) { GObject::onTouchMove(ctx); }, EventTag(this));
-        addEventListener(UIEventType::TouchEnd, [this](EventContext* ctx) { GObject::onTouchEnd(ctx); }, EventTag(this));
+        addEventListener(UIEventType::TouchBegin, [this](EventContext* ctx) { GuiObject::onTouchBegin(ctx); }, EventTag(this));
+        addEventListener(UIEventType::TouchMove, [this](EventContext* ctx) { GuiObject::onTouchMove(ctx); }, EventTag(this));
+        addEventListener(UIEventType::TouchEnd, [this](EventContext* ctx) { GuiObject::onTouchEnd(ctx); }, EventTag(this));
     }
     else
     {
@@ -1170,7 +1170,7 @@ void GObject::initDrag()
     }
 }
 
-void GObject::dragBegin(int touchId)
+void GuiObject::dragBegin(int touchId)
 {
     if (_draggingObject != nullptr)
     {
@@ -1187,25 +1187,25 @@ void GObject::dragBegin(int touchId)
     _dragTesting = true;
     GRoot::getInstance()->getInputProcessor()->addTouchMonitor(touchId, this);
 
-    addEventListener(UIEventType::TouchMove, [this](EventContext* ctx) { GObject::onTouchMove(ctx); }, EventTag(this));
-    addEventListener(UIEventType::TouchEnd, [this](EventContext* ctx) { GObject::onTouchEnd(ctx); }, EventTag(this));
+    addEventListener(UIEventType::TouchMove, [this](EventContext* ctx) { GuiObject::onTouchMove(ctx); }, EventTag(this));
+    addEventListener(UIEventType::TouchEnd, [this](EventContext* ctx) { GuiObject::onTouchEnd(ctx); }, EventTag(this));
 }
 
-void GObject::dragEnd()
+void GuiObject::dragEnd()
 {
     if (_draggingObject == this) {
         _draggingObject = nullptr;
     }
 }
 
-void GObject::onTouchBegin(EventContext* context)
+void GuiObject::onTouchBegin(EventContext* context)
 {
     _dragTouchStartPos = context->getInput()->getPosition();
     _dragTesting = true;
     context->captureTouch();
 }
 
-void GObject::onTouchMove(EventContext* context)
+void GuiObject::onTouchMove(EventContext* context)
 {
     InputEvent* evt = context->getInput();
 
@@ -1264,7 +1264,7 @@ void GObject::onTouchMove(EventContext* context)
     }
 }
 
-void GObject::onTouchEnd(EventContext* context)
+void GuiObject::onTouchEnd(EventContext* context)
 {
     if (_draggingObject == this)
     {
@@ -1273,71 +1273,71 @@ void GObject::onTouchEnd(EventContext* context)
     }
 }
 
-void GObject::gd_addClickListener(const Callable& callable)
+void GuiObject::gd_addClickListener(const Callable& callable)
 {
     addEventListener(UIEventType::Click, [callable](EventContext* ctx) {
         callable.call();
     });
 }
 
-void GObject::gd_removeClickListener()
+void GuiObject::gd_removeClickListener()
 {
     removeEventListener(UIEventType::Click, EventTag::None);
 }
 
-void GObject::gd_setIcon(const String& icon)
+void GuiObject::gd_setIcon(const String& icon)
 {
     setIcon(icon.utf8().get_data());
 }
 
-String GObject::gd_getIcon() const
+String GuiObject::gd_getIcon() const
 {
     return toGodotStr(getIcon());
 }
 
-void GObject::gd_setPivot(float xv, float yv, bool asAnchor)
+void GuiObject::gd_setPivot(float xv, float yv, bool asAnchor)
 {
     setPivot(xv, yv, asAnchor);
 }
 
-Vector2 GObject::gd_getPivot() const
+Vector2 GuiObject::gd_getPivot() const
 {
     return getPivot();
 }
 
-Rect2 GObject::gd_transformRect(const Rect2& rect, GObject* target_space)
+Rect2 GuiObject::gd_transformRect(const Rect2& rect, GObject* target_space)
 {
     return transformRect(rect, target_space);
 }
 
-void GObject::gd_setDragBounds(const Rect2& bounds)
+void GuiObject::gd_setDragBounds(const Rect2& bounds)
 {
     setDragBounds(bounds);
 }
 
-Ref<GGroup> GObject::gd_getGroup() const
+Ref<GGroup> GuiObject::gd_getGroup() const
 {
     return Ref<GGroup>(_group);
 }
 
-Ref<GObject> GObject::gd_getParent() const
+Ref<GObject> GuiObject::gd_getParent() const
 {
     return Ref<GObject>(_parent);
 }
 
-Ref<GTreeNode> GObject::gd_getTreeNode() const
+Ref<GTreeNode> GuiObject::gd_getTreeNode() const
 {
     return Ref<GTreeNode>(treeNode());
 }
 
-void GObject::gd_addRelation(Object* target, int relation_type, bool use_percent)
+void GuiObject::gd_addRelation(Object* target, int relation_type, bool use_percent)
 {
     GObject* go = Object::cast_to<GObject>(target);
     if (go)
         addRelation(go, (RelationType)relation_type, use_percent);
 }
 
-void GObject::_bind_methods()
+void GuiObject::_bind_methods()
 {
     ClassDB::bind_integer_constant(get_class_static(), "RelationType", "LEFT_LEFT", static_cast<int64_t>(RelationType::Left_Left));
     ClassDB::bind_integer_constant(get_class_static(), "RelationType", "LEFT_CENTER", static_cast<int64_t>(RelationType::Left_Center));
@@ -1356,118 +1356,118 @@ void GObject::_bind_methods()
     ClassDB::bind_integer_constant(get_class_static(), "RelationType", "WIDTH", static_cast<int64_t>(RelationType::Width));
     ClassDB::bind_integer_constant(get_class_static(), "RelationType", "HEIGHT", static_cast<int64_t>(RelationType::Height));
 
-    ClassDB::bind_method(D_METHOD("setX", "value"), &GObject::setX);
-    ClassDB::bind_method(D_METHOD("getX"), &GObject::getX);
+    ClassDB::bind_method(D_METHOD("setX", "value"), &GuiObject::setX);
+    ClassDB::bind_method(D_METHOD("getX"), &GuiObject::getX);
 
-    ClassDB::bind_method(D_METHOD("setY", "value"), &GObject::setY);
-    ClassDB::bind_method(D_METHOD("getY"), &GObject::getY);
+    ClassDB::bind_method(D_METHOD("setY", "value"), &GuiObject::setY);
+    ClassDB::bind_method(D_METHOD("getY"), &GuiObject::getY);
 
-    ClassDB::bind_method(D_METHOD("setPosition", "x", "y"), &GObject::setPosition);
-    ClassDB::bind_method(D_METHOD("getPosition"), &GObject::getPosition);
+    ClassDB::bind_method(D_METHOD("setPosition", "x", "y"), &GuiObject::setPosition);
+    ClassDB::bind_method(D_METHOD("getPosition"), &GuiObject::getPosition);
 
-    ClassDB::bind_method(D_METHOD("setWidth", "value"), &GObject::setWidth);
-    ClassDB::bind_method(D_METHOD("getWidth"), &GObject::getWidth);
+    ClassDB::bind_method(D_METHOD("setWidth", "value"), &GuiObject::setWidth);
+    ClassDB::bind_method(D_METHOD("getWidth"), &GuiObject::getWidth);
 
-    ClassDB::bind_method(D_METHOD("setHeight", "value"), &GObject::setHeight);
-    ClassDB::bind_method(D_METHOD("getHeight"), &GObject::getHeight);
+    ClassDB::bind_method(D_METHOD("setHeight", "value"), &GuiObject::setHeight);
+    ClassDB::bind_method(D_METHOD("getHeight"), &GuiObject::getHeight);
 
-    ClassDB::bind_method(D_METHOD("setSize", "width", "height", "ignore_pivot"), &GObject::setSize, DEFVAL(false));
-    ClassDB::bind_method(D_METHOD("getSize"), &GObject::getSize);
+    ClassDB::bind_method(D_METHOD("setSize", "width", "height", "ignore_pivot"), &GuiObject::setSize, DEFVAL(false));
+    ClassDB::bind_method(D_METHOD("getSize"), &GuiObject::getSize);
 
-    ClassDB::bind_method(D_METHOD("setPixelSnapping", "value"), &GObject::setPixelSnapping);
-    ClassDB::bind_method(D_METHOD("isPixelSnapping"), &GObject::isPixelSnapping);
+    ClassDB::bind_method(D_METHOD("setPixelSnapping", "value"), &GuiObject::setPixelSnapping);
+    ClassDB::bind_method(D_METHOD("isPixelSnapping"), &GuiObject::isPixelSnapping);
 
-    ClassDB::bind_method(D_METHOD("setScale", "x", "y"), &GObject::setScale);
-    ClassDB::bind_method(D_METHOD("getScale"), &GObject::getScale);
-    ClassDB::bind_method(D_METHOD("setScaleX", "value"), &GObject::setScaleX);
-    ClassDB::bind_method(D_METHOD("getScaleX"), &GObject::getScaleX);
-    ClassDB::bind_method(D_METHOD("setScaleY", "value"), &GObject::setScaleY);
-    ClassDB::bind_method(D_METHOD("getScaleY"), &GObject::getScaleY);
-    ClassDB::bind_method(D_METHOD("tweenScale", "end_value", "duration"), &GObject::gd_tweenScale);
+    ClassDB::bind_method(D_METHOD("setScale", "x", "y"), &GuiObject::setScale);
+    ClassDB::bind_method(D_METHOD("getScale"), &GuiObject::getScale);
+    ClassDB::bind_method(D_METHOD("setScaleX", "value"), &GuiObject::setScaleX);
+    ClassDB::bind_method(D_METHOD("getScaleX"), &GuiObject::getScaleX);
+    ClassDB::bind_method(D_METHOD("setScaleY", "value"), &GuiObject::setScaleY);
+    ClassDB::bind_method(D_METHOD("getScaleY"), &GuiObject::getScaleY);
+    ClassDB::bind_method(D_METHOD("tweenScale", "end_value", "duration"), &GuiObject::gd_tweenScale);
 
-    ClassDB::bind_method(D_METHOD("setSkewX", "value"), &GObject::setSkewX);
-    ClassDB::bind_method(D_METHOD("getSkewX"), &GObject::getSkewX);
-    ClassDB::bind_method(D_METHOD("setSkewY", "value"), &GObject::setSkewY);
-    ClassDB::bind_method(D_METHOD("getSkewY"), &GObject::getSkewY);
+    ClassDB::bind_method(D_METHOD("setSkewX", "value"), &GuiObject::setSkewX);
+    ClassDB::bind_method(D_METHOD("getSkewX"), &GuiObject::getSkewX);
+    ClassDB::bind_method(D_METHOD("setSkewY", "value"), &GuiObject::setSkewY);
+    ClassDB::bind_method(D_METHOD("getSkewY"), &GuiObject::getSkewY);
 
-    ClassDB::bind_method(D_METHOD("setRotation", "value"), &GObject::setRotation);
-    ClassDB::bind_method(D_METHOD("getRotation"), &GObject::getRotation);
+    ClassDB::bind_method(D_METHOD("setRotation", "value"), &GuiObject::setRotation);
+    ClassDB::bind_method(D_METHOD("getRotation"), &GuiObject::getRotation);
 
-    ClassDB::bind_method(D_METHOD("setAlpha", "value"), &GObject::setAlpha);
-    ClassDB::bind_method(D_METHOD("getAlpha"), &GObject::getAlpha);
+    ClassDB::bind_method(D_METHOD("setAlpha", "value"), &GuiObject::setAlpha);
+    ClassDB::bind_method(D_METHOD("getAlpha"), &GuiObject::getAlpha);
 
-    ClassDB::bind_method(D_METHOD("setGrayed", "value"), &GObject::setGrayed);
-    ClassDB::bind_method(D_METHOD("isGrayed"), &GObject::isGrayed);
+    ClassDB::bind_method(D_METHOD("setGrayed", "value"), &GuiObject::setGrayed);
+    ClassDB::bind_method(D_METHOD("isGrayed"), &GuiObject::isGrayed);
 
-    ClassDB::bind_method(D_METHOD("setVisible", "value"), &GObject::setVisible);
-    ClassDB::bind_method(D_METHOD("isVisible"), &GObject::isVisible);
+    ClassDB::bind_method(D_METHOD("setVisible", "value"), &GuiObject::setVisible);
+    ClassDB::bind_method(D_METHOD("isVisible"), &GuiObject::isVisible);
 
-    ClassDB::bind_method(D_METHOD("setTouchable", "value"), &GObject::setTouchable);
-    ClassDB::bind_method(D_METHOD("isTouchable"), &GObject::isTouchable);
+    ClassDB::bind_method(D_METHOD("setTouchable", "value"), &GuiObject::setTouchable);
+    ClassDB::bind_method(D_METHOD("isTouchable"), &GuiObject::isTouchable);
 
-    ClassDB::bind_method(D_METHOD("setSortingOrder", "value"), &GObject::setSortingOrder);
-    ClassDB::bind_method(D_METHOD("getSortingOrder"), &GObject::getSortingOrder);
+    ClassDB::bind_method(D_METHOD("setSortingOrder", "value"), &GuiObject::setSortingOrder);
+    ClassDB::bind_method(D_METHOD("getSortingOrder"), &GuiObject::getSortingOrder);
 
-    ClassDB::bind_method(D_METHOD("center"), &GObject::center, DEFVAL(false));
-    ClassDB::bind_method(D_METHOD("makeFullScreen"), &GObject::makeFullScreen);
+    ClassDB::bind_method(D_METHOD("center"), &GuiObject::center, DEFVAL(false));
+    ClassDB::bind_method(D_METHOD("makeFullScreen"), &GuiObject::makeFullScreen);
 
-    ClassDB::bind_method(D_METHOD("setText", "text"), &GObject::gd_setText);
-    ClassDB::bind_method(D_METHOD("getText"), &GObject::gd_getText);
+    ClassDB::bind_method(D_METHOD("setText", "text"), &GuiObject::gd_setText);
+    ClassDB::bind_method(D_METHOD("getText"), &GuiObject::gd_getText);
 
-    ClassDB::bind_method(D_METHOD("setName", "name"), &GObject::gd_setName);
-    ClassDB::bind_method(D_METHOD("getName"), &GObject::gd_getName);
+    ClassDB::bind_method(D_METHOD("setName", "name"), &GuiObject::gd_setName);
+    ClassDB::bind_method(D_METHOD("getName"), &GuiObject::gd_getName);
 
-    ClassDB::bind_method(D_METHOD("setTooltips", "text"), &GObject::gd_setTooltips);
-    ClassDB::bind_method(D_METHOD("getTooltips"), &GObject::gd_getTooltips);
+    ClassDB::bind_method(D_METHOD("setTooltips", "text"), &GuiObject::gd_setTooltips);
+    ClassDB::bind_method(D_METHOD("getTooltips"), &GuiObject::gd_getTooltips);
 
-    ClassDB::bind_method(D_METHOD("setDraggable", "value"), &GObject::setDraggable);
-    ClassDB::bind_method(D_METHOD("isDraggable"), &GObject::isDraggable);
+    ClassDB::bind_method(D_METHOD("setDraggable", "value"), &GuiObject::setDraggable);
+    ClassDB::bind_method(D_METHOD("isDraggable"), &GuiObject::isDraggable);
 
-    ClassDB::bind_method(D_METHOD("startDrag", "touch_id"), &GObject::startDrag, DEFVAL(-1));
-    ClassDB::bind_method(D_METHOD("stopDrag"), &GObject::stopDrag);
+    ClassDB::bind_method(D_METHOD("startDrag", "touch_id"), &GuiObject::startDrag, DEFVAL(-1));
+    ClassDB::bind_method(D_METHOD("stopDrag"), &GuiObject::stopDrag);
 
-    ClassDB::bind_method(D_METHOD("getResourceURL"), &GObject::gd_getResourceURL);
+    ClassDB::bind_method(D_METHOD("getResourceURL"), &GuiObject::gd_getResourceURL);
 
     // get_parent returns GComponent* which can't be bound directly
-    ClassDB::bind_method(D_METHOD("removeFromParent"), &GObject::removeFromParent);
-    ClassDB::bind_method(D_METHOD("onStage"), &GObject::onStage);
+    ClassDB::bind_method(D_METHOD("removeFromParent"), &GuiObject::removeFromParent);
+    ClassDB::bind_method(D_METHOD("onStage"), &GuiObject::onStage);
 
-    ClassDB::bind_method(D_METHOD("localToGlobal", "pt"), &GObject::gd_localToGlobal);
-    ClassDB::bind_method(D_METHOD("globalToLocal", "pt"), &GObject::gd_globalToLocal);
+    ClassDB::bind_method(D_METHOD("localToGlobal", "pt"), &GuiObject::gd_localToGlobal);
+    ClassDB::bind_method(D_METHOD("globalToLocal", "pt"), &GuiObject::gd_globalToLocal);
 
-    ClassDB::bind_method(D_METHOD("addChild", "node"), &GObject::gd_addChild);
-    ClassDB::bind_method(D_METHOD("removeChild", "node"), &GObject::gd_removeChild);
+    ClassDB::bind_method(D_METHOD("addChild", "node"), &GuiObject::gd_addChild);
+    ClassDB::bind_method(D_METHOD("removeChild", "node"), &GuiObject::gd_removeChild);
 
     // GDScript extensions
-    ClassDB::bind_method(D_METHOD("setupDisplay"), &GObject::init);
+    ClassDB::bind_method(D_METHOD("setupDisplay"), &GuiObject::init);
 
-    ClassDB::bind_method(D_METHOD("addClickListener", "callable"), &GObject::gd_addClickListener);
-    ClassDB::bind_method(D_METHOD("removeClickListener"), &GObject::gd_removeClickListener);
-    ClassDB::bind_method(D_METHOD("setIcon", "icon"), &GObject::gd_setIcon);
-    ClassDB::bind_method(D_METHOD("getIcon"), &GObject::gd_getIcon);
+    ClassDB::bind_method(D_METHOD("addClickListener", "callable"), &GuiObject::gd_addClickListener);
+    ClassDB::bind_method(D_METHOD("removeClickListener"), &GuiObject::gd_removeClickListener);
+    ClassDB::bind_method(D_METHOD("setIcon", "icon"), &GuiObject::gd_setIcon);
+    ClassDB::bind_method(D_METHOD("getIcon"), &GuiObject::gd_getIcon);
     ADD_PROPERTY(PropertyInfo(Variant::STRING, "icon"), "setIcon", "getIcon");
-    ClassDB::bind_method(D_METHOD("setPivot", "x", "y", "as_anchor"), &GObject::gd_setPivot, DEFVAL(false));
-    ClassDB::bind_method(D_METHOD("getPivot"), &GObject::gd_getPivot);
-    ClassDB::bind_method(D_METHOD("transformRect", "rect", "target_space"), &GObject::gd_transformRect);
-    ClassDB::bind_method(D_METHOD("setDragBounds", "bounds"), &GObject::gd_setDragBounds);
-    ClassDB::bind_method(D_METHOD("getParent"), &GObject::gd_getParent);
+    ClassDB::bind_method(D_METHOD("setPivot", "x", "y", "as_anchor"), &GuiObject::gd_setPivot, DEFVAL(false));
+    ClassDB::bind_method(D_METHOD("getPivot"), &GuiObject::gd_getPivot);
+    ClassDB::bind_method(D_METHOD("transformRect", "rect", "target_space"), &GuiObject::gd_transformRect);
+    ClassDB::bind_method(D_METHOD("setDragBounds", "bounds"), &GuiObject::gd_setDragBounds);
+    ClassDB::bind_method(D_METHOD("getParent"), &GuiObject::gd_getParent);
 
-    ClassDB::bind_method(D_METHOD("setGroup", "group"), &GObject::setGroup);
-    ClassDB::bind_method(D_METHOD("getGroup"), &GObject::gd_getGroup);
+    ClassDB::bind_method(D_METHOD("setGroup", "group"), &GuiObject::setGroup);
+    ClassDB::bind_method(D_METHOD("getGroup"), &GuiObject::gd_getGroup);
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "group", PROPERTY_HINT_RESOURCE_TYPE, "GGroup"), "setGroup", "getGroup");
 
-    ClassDB::bind_method(D_METHOD("getInitSize"), &GObject::getSize);
-    ClassDB::bind_method(D_METHOD("addRelation", "target", "relation_type", "use_percent"), &GObject::gd_addRelation, DEFVAL(false));
-    ClassDB::bind_method(D_METHOD("getTreeNode"), &GObject::gd_getTreeNode);
+    ClassDB::bind_method(D_METHOD("getInitSize"), &GuiObject::getSize);
+    ClassDB::bind_method(D_METHOD("addRelation", "target", "relation_type", "use_percent"), &GuiObject::gd_addRelation, DEFVAL(false));
+    ClassDB::bind_method(D_METHOD("getTreeNode"), &GuiObject::gd_getTreeNode);
 }
 
-void GObject::gd_setText(const String& text) { setText(text.utf8().get_data()); }
-String GObject::gd_getText() const { return toGodotStr(getText()); }
+void GuiObject::gd_setText(const String& text) { setText(text.utf8().get_data()); }
+String GuiObject::gd_getText() const { return toGodotStr(getText()); }
 
-void GObject::gd_setName(const String& v) { name = v.utf8().get_data(); }
-String GObject::gd_getName() const { return toGodotStr(name); }
-void GObject::gd_setTooltips(const String& value) { setTooltips(value.utf8().get_data()); }
-String GObject::gd_getTooltips() const { return toGodotStr(getTooltips()); }
-String GObject::gd_getResourceURL() const { return toGodotStr(getResourceURL()); }
+void GuiObject::gd_setName(const String& v) { name = v.utf8().get_data(); }
+String GuiObject::gd_getName() const { return toGodotStr(name); }
+void GuiObject::gd_setTooltips(const String& value) { setTooltips(value.utf8().get_data()); }
+String GuiObject::gd_getTooltips() const { return toGodotStr(getTooltips()); }
+String GuiObject::gd_getResourceURL() const { return toGodotStr(getResourceURL()); }
 
 NS_FGUI_END

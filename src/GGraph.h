@@ -11,7 +11,7 @@ class DrawNode;
 
 class GGraph : public GObject
 {
-    GDCLASS(GGraph, GObject)
+    GDCLASS(GGraph, GuiObject)
 
 public:
     GGraph();

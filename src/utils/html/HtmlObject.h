@@ -9,7 +9,7 @@ NS_FGUI_BEGIN
 
 class FUIRichText;
 class HtmlElement;
-class GObject;
+#include "../../GuiObjectFwd.h"
 
 class HtmlObject
 {

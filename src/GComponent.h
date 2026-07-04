@@ -16,7 +16,7 @@ class GWindow;
 
 class GComponent : public GObject
 {
-    GDCLASS(GComponent, GObject)
+    GDCLASS(GComponent, GuiObject)
 
 public:
     GComponent();
@@ -30,7 +30,6 @@ public:
     virtual GObject* addChildAt(const Ref<GObject>& child, int index);
 
     void gd_addChildAt(Object* child, int index);
-    void gd_addChild(Object* child);
     void gd_removeChildren(int beginIndex, int endIndex);
 
     void removeChild(GObject* child) override;

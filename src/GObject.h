@@ -10,6 +10,8 @@
 
 NS_FGUI_BEGIN
 
+#include "GuiObjectFwd.h"
+
 class GComponent;
 class GGroup;
 class GTreeNode;
@@ -19,17 +21,17 @@ class PackageItem;
 class GTreeNode;
 class GTweener;
 
-class GObject : public UIEventDispatcher
+class GuiObject : public UIEventDispatcher
 {
-    GDCLASS(GObject, UIEventDispatcher)
+    GDCLASS(GuiObject, UIEventDispatcher)
 
 public:
-    static GObject* getDraggingObject() { return _draggingObject; }
+    static GuiObject* getDraggingObject() { return _draggingObject; }
 
-    GObject();
-    virtual ~GObject();
+    GuiObject();
+    virtual ~GuiObject();
 
-    FAIRYGUI_CREATE(GObject)
+    FAIRYGUI_CREATE(GuiObject)
 
     static void _bind_methods();
 
@@ -316,7 +318,7 @@ private:
     uint64_t _uid;
     size_t _weakPtrRef;
 
-    static GObject* _draggingObject;
+    static GuiObject* _draggingObject;
 
     friend class GComponent;
     friend class GGroup;
@@ -328,7 +330,7 @@ private:
 };
 
 template <typename T>
-inline T* GObject::as()
+inline T* GuiObject::as()
 {
     return dynamic_cast<T*>(this);
 }
