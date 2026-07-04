@@ -149,6 +149,7 @@ declare global {
         addClickListener(callable: Callable): void;
         addRelation(target: GuiObject, relationType: number, usePercent?: boolean): void;
         removeFromParent(): void;
+        localToGlobal(pt: Vector2): Vector2;
         globalToLocal(pt: Vector2): Vector2;
         transformRect(rect: Rect2, targetSpace: GuiObject): Rect2;
         getInitSize(): Vector2;
