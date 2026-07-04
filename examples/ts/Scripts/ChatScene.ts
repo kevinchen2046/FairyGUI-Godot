@@ -1,7 +1,7 @@
 /// <reference path="../fairygui.d.ts" />
 
 import { Callable, RegEx } from "godot";
-import DemoSceneBase from "./DemoSceneBase";
+import { DemoSceneBase } from "./DemoSceneBase";
 
 interface ChatMessage {
     sender: string;

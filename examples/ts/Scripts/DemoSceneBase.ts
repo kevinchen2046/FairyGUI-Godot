@@ -3,7 +3,7 @@
 import "./fgui-globals";
 import { Callable, Node } from "godot";
 
-export default class DemoSceneBase extends Node {
+export class DemoSceneBase extends Node {
     protected mainMenuScenePath = "res://ts/Scenes/MainMenu.tscn";
 
     protected _groot: GRoot | null = null;

@@ -1,6 +1,6 @@
 /// <reference path="../fairygui.d.ts" />
 
-import DemoSceneBase from "./DemoSceneBase";
+import { DemoSceneBase } from "./DemoSceneBase";
 
 export default class CooldownScene extends DemoSceneBase {
     protected ContinueInit(): void {

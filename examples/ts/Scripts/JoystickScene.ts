@@ -1,7 +1,7 @@
 /// <reference path="../fairygui.d.ts" />
 
-import DemoSceneBase from "./DemoSceneBase";
-import JoystickModule from "./JoystickModule";
+import { DemoSceneBase } from "./DemoSceneBase";
+import { JoystickModule } from "./JoystickModule";
 
 export default class JoystickScene extends DemoSceneBase {
     private _joystick: JoystickModule | null = null;

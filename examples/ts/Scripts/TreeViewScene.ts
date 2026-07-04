@@ -1,7 +1,7 @@
 /// <reference path="../fairygui.d.ts" />
 
 import { Callable } from "godot";
-import DemoSceneBase from "./DemoSceneBase";
+import { DemoSceneBase } from "./DemoSceneBase";
 
 export default class TreeViewScene extends DemoSceneBase {
     private _tree1: GTree | null = null;

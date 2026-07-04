@@ -56,12 +56,14 @@ npx -p typescript tsc
 
 | 项目 | GDScript (`gd/`) | GodotJS (`ts/`) |
 |------|------------------|-----------------|
-| 基类继承 | `class_name` + `extends` | `import` + `extends`（ES Module） |
+| 基类继承 | `class_name` + `extends` | 场景脚本 `export default class`；**基类/辅助类用命名导出**（勿 `export default`，见 GodotJS 脚本解析） |
 | 场景挂载 | `.gd` 源文件 | `.ts` 源文件（非 `.js`） |
 | 编译输出 | 无 | `.godot/GodotJS/` |
 | tsc module | — | `node16`（CommonJS，GodotJS 要求） |
 
-**不需要** 做 GDScript 那套 `DemoSceneBase` 全局类 / 路径继承修改；TypeScript 用 `import DemoSceneBase from "./DemoSceneBase"` 即可。
+**不需要** 做 GDScript 那套 `DemoSceneBase` 全局类 / 路径继承修改；TypeScript 用 `import { DemoSceneBase } from "./DemoSceneBase"` 即可。
+
+**GodotJS 脚本解析：** 只有挂到场景节点的脚本才应 `export default class X extends Node`。`DemoSceneBase`、`Window1`、`BagWindow`、`JoystickModule` 等基类/辅助类须 **`export class`（命名导出）**，否则 `_parse_script_class` 会把它们当 Godot 脚本类解析，切场景 `require` 时可能在 debug 构建里触发断言崩溃。
 
 **注意：** `gd/` 与 `ts/` 同仓共存时，勿在 GDScript 里对 `DemoSceneBase`、`BagWindow` 等写 `class_name`（与 TS 的 `export default class` 全局注册重名）。GD 子场景已用 `extends "res://gd/Scripts/..."` 或 `load(...).new()`，不依赖 `class_name`。
 

@@ -1,5 +1,6 @@
 /// <reference path="../fairygui.d.ts" />
 
+import "./fgui-globals";
 import { Callable } from "godot";
 
 type MoveChangedListener = (degree: number) => void;
@@ -19,7 +20,7 @@ class SimpleSignal<T extends (...args: never[]) => void> {
     }
 }
 
-export default class JoystickModule {
+export class JoystickModule {
     readonly move_changed = new SimpleSignal<MoveChangedListener>();
     readonly ended = new SimpleSignal<EndedListener>();
 

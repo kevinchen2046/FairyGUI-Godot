@@ -3,7 +3,7 @@
 import "./fgui-globals";
 import { Callable, Vector2 } from "godot";
 
-export default class BagWindow extends GWindow {
+export class BagWindow extends GWindow {
     private _list: GList | null = null;
 
     constructor() {

@@ -3,7 +3,7 @@
 import "./fgui-globals";
 import { Callable, Vector2 } from "godot";
 
-export default class Window2 extends GWindow {
+export class Window2 extends GWindow {
     constructor() {
         super();
         this.setupDisplay();

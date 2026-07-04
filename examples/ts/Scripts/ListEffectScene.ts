@@ -1,7 +1,7 @@
 /// <reference path="../fairygui.d.ts" />
 
 import { Callable } from "godot";
-import DemoSceneBase from "./DemoSceneBase";
+import { DemoSceneBase } from "./DemoSceneBase";
 
 export default class ListEffectScene extends DemoSceneBase {
     private _list: GList | null = null;

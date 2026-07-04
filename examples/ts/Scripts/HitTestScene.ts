@@ -1,6 +1,6 @@
 /// <reference path="../fairygui.d.ts" />
 
-import DemoSceneBase from "./DemoSceneBase";
+import { DemoSceneBase } from "./DemoSceneBase";
 
 export default class HitTestScene extends DemoSceneBase {
     protected ContinueInit(): void {

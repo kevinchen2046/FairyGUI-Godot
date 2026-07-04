@@ -1,8 +1,8 @@
 /// <reference path="../fairygui.d.ts" />
 
 import { Callable } from "godot";
-import DemoSceneBase from "./DemoSceneBase";
-import BagWindow from "./BagWindow";
+import { DemoSceneBase } from "./DemoSceneBase";
+import { BagWindow } from "./BagWindow";
 
 export default class BagScene extends DemoSceneBase {
     private _bagWindow: BagWindow | null = null;

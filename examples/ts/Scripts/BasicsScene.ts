@@ -1,9 +1,9 @@
 /// <reference path="../fairygui.d.ts" />
 
 import { Callable, Rect2, Vector2 } from "godot";
-import DemoSceneBase from "./DemoSceneBase";
-import Window1 from "./Window1";
-import Window2 from "./Window2";
+import { DemoSceneBase } from "./DemoSceneBase";
+import { Window1 } from "./Window1";
+import { Window2 } from "./Window2";
 
 export default class BasicsScene extends DemoSceneBase {
     private _backBtn: GuiObject | null = null;
