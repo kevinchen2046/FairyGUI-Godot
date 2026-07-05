@@ -116,7 +116,7 @@ export class DemoSceneBase extends Node {
     }
 
     protected _registerDefaultFonts(): void {
-        const fontPath = "res://Resources/fonts/DroidSansFallback.ttf";
+        const fontPath = "res://Resources/fonts/NotoSansSC-Regular.ttf";
         const ui = UIConfigHelper.getInstance()!;
         ui.registerFont("default", fontPath);
         ui.registerFont("en", fontPath);
