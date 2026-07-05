@@ -1,7 +1,7 @@
 /// <reference path="../fairygui.d.ts" />
 
 import "./fgui-globals";
-import { Callable, Engine, Node, OS, SceneTree } from "godot";
+import { Callable, Engine, Node, SceneTree } from "godot";
 
 export type GodotNode = Node & {
     isInsideTree(): boolean;
@@ -116,29 +116,12 @@ export class DemoSceneBase extends Node {
     }
 
     protected _registerDefaultFonts(): void {
-        const cjkFont = "res://Resources/fonts/DroidSansFallback.ttf";
-        const latinFont = "res://Resources/fonts/arial.ttf";
+        const fontPath = "res://Resources/fonts/DroidSansFallback.ttf";
         const ui = UIConfigHelper.getInstance()!;
-        // 全部走 res://*.ttf，不用 SystemFont（Web 未实现；且系统回退会导致字距/缺字不一致）。
-        ui.registerFont("default", cjkFont);
-        ui.registerFont("en", latinFont);
-        ui.registerFont("微软雅黑", cjkFont);
-        ui.registerFont("Consolas", latinFont);
-        ui.registerFont("Comic Sans MS", latinFont);
-        ui.registerFont("Arial", latinFont);
+        ui.registerFont("default", fontPath);
+        ui.registerFont("en", fontPath);
+        ui.registerFont("微软雅黑", fontPath);
         ui.defaultFont = "default";
-    }
-
-    /** Web：Basics 主菜单按钮用拉丁字体，避免 DroidSansFallback 的 T/t 字距异常。 */
-    protected _useLatinDefaultFontOnWeb(): void {
-        if (!OS.hasFeature("web")) {
-            return;
-        }
-        UIConfigHelper.getInstance()!.defaultFont = "en";
-    }
-
-    protected _restoreCjkDefaultFont(): void {
-        UIConfigHelper.getInstance()!.defaultFont = "default";
     }
 
     protected ContinueInit(): void | Promise<void> {
