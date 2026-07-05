@@ -49,7 +49,7 @@ public partial class ListEffectScene : DemoSceneBase
         }
 
         _list.EnsureBoundsCorrect();
-        CallDeferred(MethodName.PlayListEffects);
+        PlayListEffects();
     }
 
     private void PlayListEffects()
@@ -57,7 +57,7 @@ public partial class ListEffectScene : DemoSceneBase
         if (!IsUiActive() || _list == null)
             return;
 
-        var delay = 1.0f;
+        var delay = 0.0f;
         for (var i = 0; i < 10; i++)
         {
             var item = _list.GetChildAt(i);
