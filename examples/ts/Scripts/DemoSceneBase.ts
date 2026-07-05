@@ -1,7 +1,7 @@
 /// <reference path="../fairygui.d.ts" />
 
 import "./fgui-globals";
-import { Callable, Engine, Node, OS, SceneTree } from "godot";
+import { Callable, Engine, Node, SceneTree } from "godot";
 
 export type GodotNode = Node & {
     isInsideTree(): boolean;
@@ -116,16 +116,10 @@ export class DemoSceneBase extends Node {
     }
 
     protected _registerDefaultFonts(): void {
+        const fontPath = "res://Resources/fonts/DroidSansFallback.ttf";
         const ui = UIConfigHelper.getInstance()!;
-        if (OS.hasFeature("web")) {
-            const webFont = "Noto Sans SC,Microsoft YaHei,PingFang SC,sans-serif";
-            ui.registerFont("default", webFont);
-            ui.registerFont("微软雅黑", webFont);
-        } else {
-            const fontPath = "res://Resources/fonts/DroidSansFallback.ttf";
-            ui.registerFont("default", fontPath);
-            ui.registerFont("微软雅黑", fontPath);
-        }
+        ui.registerFont("default", fontPath);
+        ui.registerFont("微软雅黑", fontPath);
         ui.defaultFont = "default";
     }
 

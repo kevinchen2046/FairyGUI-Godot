@@ -74,16 +74,10 @@ func _prepare_groot_for_scene() -> void:
 	_groot.removeChildren()
 
 func _register_default_fonts() -> void:
+	var font_path := "res://Resources/fonts/DroidSansFallback.ttf"
 	var ui := UIConfigHelper.getInstance()
-	if OS.has_feature("web"):
-		# Web：FairyGUI 包内字体名仍为「微软雅黑」，映射到浏览器 CJK 字体栈（无需打包 TTF）
-		var web_font := "Noto Sans SC,Microsoft YaHei,PingFang SC,sans-serif"
-		ui.registerFont("default", web_font)
-		ui.registerFont("微软雅黑", web_font)
-	else:
-		var font_path := "res://Resources/fonts/DroidSansFallback.ttf"
-		ui.registerFont("default", font_path)
-		ui.registerFont("微软雅黑", font_path)
+	ui.registerFont("default", font_path)
+	ui.registerFont("微软雅黑", font_path)
 	ui.setDefaultFont("default")
 
 func continue_init() -> void:

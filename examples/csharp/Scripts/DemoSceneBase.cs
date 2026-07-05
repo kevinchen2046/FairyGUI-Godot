@@ -98,19 +98,10 @@ public partial class DemoSceneBase : Node
 
     private void RegisterDefaultFonts()
     {
+        const string fontPath = "res://Resources/fonts/DroidSansFallback.ttf";
         var ui = UIConfigHelper.GetInstance();
-        if (OS.HasFeature("web"))
-        {
-            const string webFont = "Noto Sans SC,Microsoft YaHei,PingFang SC,sans-serif";
-            ui.RegisterFont("default", webFont);
-            ui.RegisterFont("微软雅黑", webFont);
-        }
-        else
-        {
-            const string fontPath = "res://Resources/fonts/DroidSansFallback.ttf";
-            ui.RegisterFont("default", fontPath);
-            ui.RegisterFont("微软雅黑", fontPath);
-        }
+        ui.RegisterFont("default", fontPath);
+        ui.RegisterFont("微软雅黑", fontPath);
         ui.SetDefaultFont("default");
     }
 

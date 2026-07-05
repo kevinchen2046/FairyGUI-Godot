@@ -112,7 +112,7 @@ GodotJS 与 FairyGUI 联用时需应用 [GodotJS 补丁](../../README.zh.md#godo
 Web 导出时须在预设 **资源 → Include Filters** 中填写：
 
 ```text
-*.fui, Resources/UI/*
+*.fui, Resources/UI/*, Resources/fonts/*
 ```
 
 否则运行时会报 `FairyGUI: cannot load package` / `package not found`。完整说明（多线程 COOP/COEP、字体、C# 不支持 Web 等）见根目录 [`README.md`](../README.md#web-导出)。

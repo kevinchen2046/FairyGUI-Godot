@@ -36,12 +36,13 @@ FairyGUI 的 UI 包（`.fui`）与图集等资源**不会**随「导出选定场
 | 项 | 建议值 |
 |----|--------|
 | **导出模式** | 「导出项目中的全部资源」；若仍用「选定场景」，必须配置下方过滤器 |
-| **过滤器 / 非资源文件（Include Filters）** | `*.fui, Resources/UI/*` |
+| **过滤器 / 非资源文件（Include Filters）** | `*.fui, Resources/UI/*, Resources/fonts/*` |
 
 说明：
 
 - `*.fui`：FairyGUI 包描述文件（`UIPackage` 通过 `FileAccess` 读取，非 Godot `Resource`）
 - `Resources/UI/*`：各包图集 PNG、音频等（同样多在代码里按路径加载，不一定出现在场景依赖链里）
+- `Resources/fonts/*`：中文字体 `DroidSansFallback.ttf`（Demo 将 UI 包内「微软雅黑」映射到此文件；**Web 不支持 SystemFont，必须打包 TTF**）
 
 可选：在 **编辑器 → 编辑器设置 → 文件系统 → Other File Extensions** 追加 `fui`，便于在文件系统面板看到 `.fui`，并在「导出全部资源」时被扫描。
 
@@ -56,8 +57,8 @@ python D:\Source\godot\platform\web\serve.py -r "你的导出目录" -p 8060
 
 ### 中文与字体
 
-- UI 包内字体名多为「微软雅黑」；`DemoSceneBase` 在桌面端映射到 `Resources/fonts/DroidSansFallback.ttf`。
-- Web 端已改为浏览器 CJK 字体栈（`Noto Sans SC, Microsoft YaHei, ...`），无需单独打包 TTF；若 Web 仍乱码，先确认 `.fui` 与 `Resources/UI/*` 已按上表进包。
+- UI 包内字体名多为「微软雅黑」；`DemoSceneBase` 将其映射到 `Resources/fonts/DroidSansFallback.ttf`。
+- **Web 端不能使用浏览器系统字体**（Godot Web 未实现 `SystemFont`），须与 `.fui` 一样通过 Include Filters 把 `Resources/fonts/*` 打进包。
 
 ### 语言说明
 
