@@ -54,7 +54,12 @@ public static class FguiExtensions
     public static int GetFirstChildInView(this GuiObject self) => List(self).GetFirstChildInView();
     public static float GetViewWidth(this GuiObject self) => List(self).GetViewWidth();
     public static void EnsureBoundsCorrect(this GuiObject self) => List(self).EnsureBoundsCorrect();
-    public static GuiObject AddItemFromPool(this GuiObject self, string url = null) => List(self).AddItemFromPool(url);
+    public static GuiObject AddItemFromPool(this GuiObject self, string url = null)
+    {
+        var list = List(self);
+        // glue 仅暴露无参 addItemFromPool()；传 url 时也走默认项
+        return list.AddItemFromPool();
+    }
     public static void RemoveChildrenToPool(this GuiObject self) => List(self).RemoveChildrenToPool();
 
     public static void SetTreeNodeRender(this GuiObject self, Callable callable) => Tree(self).SetTreeNodeRender(callable);

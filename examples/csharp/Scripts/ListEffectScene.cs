@@ -4,7 +4,7 @@ namespace FairyGUI.Examples;
 
 public partial class ListEffectScene : DemoSceneBase
 {
-    private GuiObject _list;
+    private GList _list;
 
     protected override void ContinueInit()
     {
@@ -12,15 +12,30 @@ public partial class ListEffectScene : DemoSceneBase
         _view = UIPackage.CreateObject("Extension", "Main");
         _groot.AddChild(_view);
 
-        _list = _view.GetChild("mailList");
+        _list = ((GComponent)_view).GetChild("mailList") as GList;
         if (_list == null)
+        {
+            GD.PushError("ListEffectScene: mailList is missing or not a GList.");
             return;
+        }
+
+        // 等 Main 视图挂到 GRoot 并完成首帧布局后再填充，避免 addItemFromPool 内同步 updateBounds 卡死
+        CallDeferred(MethodName.PopulateList);
+    }
+
+    private void PopulateList()
+    {
+        if (!IsUiActive() || _list == null)
+            return;
+
+        _list.RemoveChildrenToPool();
 
         for (var i = 0; i < 10; i++)
         {
             var item = _list.AddItemFromPool();
             if (item == null)
                 continue;
+
             var timeText = item.GetChild("timeText");
             timeText?.SetText("5 Nov 2015 16:24:33");
 
@@ -34,7 +49,6 @@ public partial class ListEffectScene : DemoSceneBase
         }
 
         _list.EnsureBoundsCorrect();
-        // 等布局更新后再判断可见项并播放入场动画（与 GD/TS 一致，避免 isChildInView 误判）
         CallDeferred(MethodName.PlayListEffects);
     }
 
@@ -54,7 +68,7 @@ public partial class ListEffectScene : DemoSceneBase
 
             // 与 Unity MailItem.PlayEffect 一致：先隐藏，再由 transition 的 Visible 关键帧显示并滑入
             item.SetVisible(false);
-            item.GetTransition("t0")?.Play(1, delay);
+            ((GComponent)item).GetTransition("t0")?.Play(1, delay);
             delay += 0.2f;
         }
     }
