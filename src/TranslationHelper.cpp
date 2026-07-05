@@ -81,7 +81,7 @@ void TranslationHelper::translateComponent(PackageItem* item)
     if (col == strings.end())
         return;
 
-    std::unordered_map<std::string, std::string>& strings = col->second;
+    std::unordered_map<std::string, std::string>& itemStrings = col->second;
 
     ByteBuffer* buffer = item->rawData;
 
@@ -109,8 +109,8 @@ void TranslationHelper::translateComponent(PackageItem* item)
 
         buffer->seek(curPos, 1);
 
-        auto it = strings.find(elementId + "-tips");
-        if (it != strings.end())
+        auto it = itemStrings.find(elementId + "-tips");
+        if (it != itemStrings.end())
             buffer->writeS(it->second);
 
         buffer->seek(curPos, 2);
@@ -130,14 +130,14 @@ void TranslationHelper::translateComponent(PackageItem* item)
                     const string& page = buffer->readS();
                     if (!page.empty())
                     {
-                        if ((it = strings.find(elementId + "-texts_" + intToStr(k))) != strings.end())
+                        if ((it = itemStrings.find(elementId + "-texts_" + intToStr(k))) != itemStrings.end())
                             buffer->writeS(it->second);
                         else
                             buffer->skip(2);
                     }
                 }
 
-                if (buffer->readBool() && (it = strings.find(elementId + "-texts_def")) != strings.end())
+                if (buffer->readBool() && (it = itemStrings.find(elementId + "-texts_def")) != itemStrings.end())
                     buffer->writeS(it->second);
             }
 
@@ -157,7 +157,7 @@ void TranslationHelper::translateComponent(PackageItem* item)
             {
                 std::string target = buffer->readS();
                 int propertyId = buffer->readShort();
-                if (propertyId == 0 && (it = strings.find(elementId + "-cp-" + target)) != strings.end())
+                if (propertyId == 0 && (it = itemStrings.find(elementId + "-cp-" + target)) != itemStrings.end())
                     buffer->writeS(it->second);
                 else
                     buffer->skip(2);
@@ -170,12 +170,12 @@ void TranslationHelper::translateComponent(PackageItem* item)
         case ObjectType::RICHTEXT:
         case ObjectType::INPUTTEXT:
         {
-            if ((it = strings.find(elementId)) != strings.end())
+            if ((it = itemStrings.find(elementId)) != itemStrings.end())
             {
                 buffer->seek(curPos, 6);
                 buffer->writeS(it->second);
             }
-            if ((it = strings.find(elementId + "-prompt")) != strings.end())
+            if ((it = itemStrings.find(elementId + "-prompt")) != itemStrings.end())
             {
                 buffer->seek(curPos, 4);
                 buffer->writeS(it->second);
@@ -198,13 +198,13 @@ void TranslationHelper::translateComponent(PackageItem* item)
                     buffer->skip(2);
 
                 //title
-                if ((it = strings.find(elementId + "-" + intToStr(j))) != strings.end())
+                if ((it = itemStrings.find(elementId + "-" + intToStr(j))) != itemStrings.end())
                     buffer->writeS(it->second);
                 else
                     buffer->skip(2);
 
                 //selected title
-                if ((it = strings.find(elementId + "-" + intToStr(j) + "-0")) != strings.end())
+                if ((it = itemStrings.find(elementId + "-" + intToStr(j) + "-0")) != itemStrings.end())
                     buffer->writeS(it->second);
                 else
                     buffer->skip(2);
@@ -219,7 +219,7 @@ void TranslationHelper::translateComponent(PackageItem* item)
                     {
                         std::string target = buffer->readS();
                         int propertyId = buffer->readShort();
-                        if (propertyId == 0 && (it = strings.find(elementId + "-" + intToStr(j) + "-" + target)) != strings.end())
+                        if (propertyId == 0 && (it = itemStrings.find(elementId + "-" + intToStr(j) + "-" + target)) != itemStrings.end())
                             buffer->writeS(it->second);
                         else
                             buffer->skip(2);
@@ -235,7 +235,7 @@ void TranslationHelper::translateComponent(PackageItem* item)
         {
             if (buffer->seek(curPos, 6) && (ObjectType)buffer->readByte() == type)
             {
-                if ((it = strings.find(elementId)) != strings.end())
+                if ((it = itemStrings.find(elementId)) != itemStrings.end())
                     buffer->writeS(it->second);
                 else
                     buffer->skip(2);
@@ -244,7 +244,7 @@ void TranslationHelper::translateComponent(PackageItem* item)
                 if (buffer->readBool())
                     buffer->skip(4);
                 buffer->skip(4);
-                if (buffer->readBool() && (it = strings.find(elementId + "-prompt")) != strings.end())
+                if (buffer->readBool() && (it = itemStrings.find(elementId + "-prompt")) != itemStrings.end())
                     buffer->writeS(it->second);
             }
             break;
@@ -254,11 +254,11 @@ void TranslationHelper::translateComponent(PackageItem* item)
         {
             if (buffer->seek(curPos, 6) && (ObjectType)buffer->readByte() == type)
             {
-                if ((it = strings.find(elementId)) != strings.end())
+                if ((it = itemStrings.find(elementId)) != itemStrings.end())
                     buffer->writeS(it->second);
                 else
                     buffer->skip(2);
-                if ((it = strings.find(elementId + "-0")) != strings.end())
+                if ((it = itemStrings.find(elementId + "-0")) != itemStrings.end())
                     buffer->writeS(it->second);
             }
             break;
@@ -274,13 +274,13 @@ void TranslationHelper::translateComponent(PackageItem* item)
                     int nextPos = buffer->readUshort();
                     nextPos += buffer->getPos();
 
-                    if ((it = strings.find(elementId + "-" + intToStr(j))) != strings.end())
+                    if ((it = itemStrings.find(elementId + "-" + intToStr(j))) != itemStrings.end())
                         buffer->writeS(it->second);
 
                     buffer->setPos(nextPos);
                 }
 
-                if ((it = strings.find(elementId)) != strings.end())
+                if ((it = itemStrings.find(elementId)) != itemStrings.end())
                     buffer->writeS(it->second);
             }
 
