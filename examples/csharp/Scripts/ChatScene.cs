@@ -70,7 +70,7 @@ public partial class ChatScene : DemoSceneBase
         _groot.ShowPopupSimple(_emojiSelectUi);
     }
 
-    private void OnClickEmoji(FGUIEventContext ctx = null)
+    private void OnClickEmoji(FguiEventContext ctx = null)
     {
         GuiObject item = null;
         if (ctx != null)

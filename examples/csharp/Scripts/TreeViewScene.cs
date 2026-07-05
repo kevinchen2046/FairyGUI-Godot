@@ -68,7 +68,7 @@ public partial class TreeViewScene : DemoSceneBase
         rootNode.AddChild(anotherTop);
     }
 
-    private void OnClickNode(FGUIEventContext ctx = null)
+    private void OnClickNode(FguiEventContext ctx = null)
     {
         GuiObject item = null;
         if (ctx != null)

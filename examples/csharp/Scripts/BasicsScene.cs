@@ -42,7 +42,10 @@ public partial class BasicsScene : DemoSceneBase
         {
             var obj = _view.GetChildAt(i);
             if (obj?.GetGroup() != null && obj.GetGroup().GetName() == "btns")
-                obj.AddClickListener(new Callable(this, MethodName.DeferredRunDemo).Bind(obj));
+            {
+                var sender = obj;
+                obj.AddClickListener(Callable.From(() => CallDeferred(MethodName.DeferredRunDemo, sender)));
+            }
         }
     }
 
