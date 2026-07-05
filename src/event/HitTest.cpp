@@ -9,10 +9,10 @@
 NS_FGUI_BEGIN
 
 PixelHitTestData::PixelHitTestData() :
-    pixels(nullptr),
-    pixelsLength(0),
     pixelWidth(0),
-    scale(1)
+    scale(1),
+    pixels(nullptr),
+    pixelsLength(0)
 {
 }
 

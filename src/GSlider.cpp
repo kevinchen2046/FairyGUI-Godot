@@ -11,6 +11,7 @@ GSlider::GSlider()
       _max(100),
       _value(0),
       _titleType(ProgressTitleType::PERCENT),
+      _wholeNumbers(false),
       _titleObject(nullptr),
       _barObjectH(nullptr),
       _barObjectV(nullptr),
@@ -21,8 +22,7 @@ GSlider::GSlider()
       _gripObject(nullptr),
       _clickPercent(0),
       _barStartX(0),
-      _barStartY(0),
-      _wholeNumbers(false)
+      _barStartY(0)
 {
 }
 

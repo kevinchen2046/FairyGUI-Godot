@@ -39,10 +39,10 @@ public:
     void removeChildren(int beginIndex, int endIndex);
 
     GObject* getChildAt(int index) const;
-    GObject* getChild(const std::string& name) const;
+    GObject* getChild(const std::string& pName) const;
     GObject* getChildByPath(const std::string& path) const;
-    GObject* getChildInGroup(const GGroup* group, const std::string& name) const;
-    GObject* getChildById(const std::string& id) const;
+    GObject* getChildInGroup(const GGroup* group, const std::string& pName) const;
+    GObject* getChildById(const std::string& pId) const;
     const std::vector<Ref<GObject>>& getChildren() const { return _children; }
 
     Ref<GObject> gd_getChild(const String& child_name) const;
@@ -65,9 +65,9 @@ public:
 
     void addController(GController* c);
     GController* getControllerAt(int index) const;
-    GController* getController(const std::string& name) const;
+    GController* getController(const std::string& pName) const;
 
-    Ref<GController> gd_getController(const String& name) const;
+    Ref<GController> gd_getController(const String& pName) const;
     Ref<GController> gd_getControllerAt(int index) const;
 
     void removeController(GController* c);
@@ -78,10 +78,10 @@ public:
     void applyController(GController* c);
     void applyAllControllers();
 
-    Transition* getTransition(const std::string& name) const;
+    Transition* getTransition(const std::string& pName) const;
     Transition* getTransitionAt(int index) const;
 
-    Ref<Transition> gd_getTransition(const String& name) const;
+    Ref<Transition> gd_getTransition(const String& pName) const;
     Ref<Transition> gd_getTransitionAt(int index) const;
 
     const std::vector<Ref<Transition>>& getTransitions() const { return _transitions; }

@@ -41,7 +41,7 @@ void GController::setSelectedIndex(int value, bool triggerEvent)
 const std::string& GController::getSelectedPage() const
 {
     if (_selectedIndex == -1)
-        return "";
+        return EMPTY_STRING;
     else
         return _pageNames[_selectedIndex];
 }
@@ -57,7 +57,7 @@ void GController::setSelectedPage(const std::string& value, bool triggerEvent)
 const std::string& GController::getSelectedPageId() const
 {
     if (_selectedIndex == -1)
-        return "";
+        return EMPTY_STRING;
     else
         return _pageIds[_selectedIndex];
 }
@@ -72,7 +72,7 @@ void GController::setSelectedPageId(const std::string& value, bool triggerEvent)
 const std::string& GController::getPreviousPage() const
 {
     if (_previousIndex == -1)
-        return "";
+        return EMPTY_STRING;
     else
         return _pageNames[_previousIndex];
 }
@@ -80,7 +80,7 @@ const std::string& GController::getPreviousPage() const
 const std::string& GController::getPreviousPageId() const
 {
     if (_previousIndex == -1)
-        return "";
+        return EMPTY_STRING;
     else
         return _pageIds[_previousIndex];
 }
@@ -106,7 +106,7 @@ const std::string& GController::getPageNameById(const std::string& value) const
     if (i != -1)
         return _pageNames[i];
     else
-        return "";
+        return EMPTY_STRING;
 }
 
 const std::string& GController::getPageId(int index) const

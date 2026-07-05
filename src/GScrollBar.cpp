@@ -5,7 +5,8 @@
 
 NS_FGUI_BEGIN
 GScrollBar::GScrollBar()
-    : _grip(nullptr),
+    : _gripDragging(false),
+      _grip(nullptr),
       _arrowButton1(nullptr),
       _arrowButton2(nullptr),
       _bar(nullptr),
@@ -13,8 +14,7 @@ GScrollBar::GScrollBar()
       _vertical(false),
       _scrollPerc(0),
       _displayPerc(0),
-      _fixedGripSize(false),
-      _gripDragging(false)
+      _fixedGripSize(false)
 {
 }
 

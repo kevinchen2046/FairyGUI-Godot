@@ -32,7 +32,7 @@ class FastSplitter
 {
 public:
     FastSplitter();
-    void start(const char* data, ssize_t dataLength, char delimiter);
+    void start(const char* pData, ssize_t pDataLength, char pDelimiter);
     bool next();
     const char* getText();
     ssize_t getTextLength();

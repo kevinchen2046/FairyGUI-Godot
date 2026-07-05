@@ -59,17 +59,17 @@ Color FUILabel::toGrayed(const Color& source)
 }
 
 FUILabel::FUILabel() :
-    _fontSize(-1),
-    _bmFontCanTint(false),
+    _contentSize(0, 0),
     _textFormat(new TextFormat()),
+    _fontSize(-1),
     _grayed(false),
     _wrapEnabled(false),
     _hasUnderlineColor(false),
     _drawFontSize(0),
+    _drawOffset(0, 0),
     _bmFontSize(0),
     _bmfontScale(1.0f),
-    _contentSize(0, 0),
-    _drawOffset(0, 0)
+    _bmFontCanTint(false)
 {
     item_rect_changed(); // enable NOTIFICATION_DRAW for Node2D
 }

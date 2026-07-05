@@ -53,9 +53,8 @@ GList::ItemInfo::ItemInfo()
     selected = false;
 }
 
-GList::GList() : foldInvisibleItems(false),
-                 _selectionMode(ListSelectionMode::SINGLE),
-                 scrollItemToViewOnClick(true),
+GList::GList() : scrollItemToViewOnClick(true),
+                 foldInvisibleItems(false),
                  _layout(ListLayoutType::SINGLE_COLUMN),
                  _lineCount(0),
                  _columnCount(0),
@@ -64,6 +63,7 @@ GList::GList() : foldInvisibleItems(false),
                  _align(AlignType::LEFT),
                  _verticalAlign(VertAlignType::TOP),
                  _autoResizeItem(true),
+                 _selectionMode(ListSelectionMode::SINGLE),
                  _pool(nullptr),
                  _selectionHandled(false),
                  _lastSelectedIndex(-1),
@@ -72,11 +72,11 @@ GList::GList() : foldInvisibleItems(false),
                  _numItems(0),
                  _realNumItems(0),
                  _firstIndex(-1),
+                 _curLineItemCount(1),
+                 _curLineItemCount2(1),
                  _virtualListChanged(false),
                  _eventLocked(false),
-                 _itemInfoVer(0),
-                 _curLineItemCount(1),
-                 _curLineItemCount2(1)
+                 _itemInfoVer(0)
 {
     _trackBounds = true;
     setOpaque(true);
@@ -824,7 +824,7 @@ void GList::setSelectionOnEvent(GObject* item, InputEvent* evt)
         updateSelectionController(index);
 }
 
-void GList::resizeToFit(int itemCount, int minSize)
+void GList::resizeToFit(int itemCount, int pMinSize)
 {
     ensureBoundsCorrect();
 
@@ -843,9 +843,9 @@ void GList::resizeToFit(int itemCount, int minSize)
     else if (itemCount == 0)
     {
         if (_layout == ListLayoutType::SINGLE_COLUMN || _layout == ListLayoutType::FLOW_HORIZONTAL)
-            setViewHeight(minSize);
+            setViewHeight(pMinSize);
         else
-            setViewWidth(minSize);
+            setViewWidth(pMinSize);
     }
     else
     {
@@ -861,9 +861,9 @@ void GList::resizeToFit(int itemCount, int minSize)
         if (i < 0)
         {
             if (_layout == ListLayoutType::SINGLE_COLUMN || _layout == ListLayoutType::FLOW_HORIZONTAL)
-                setViewHeight(minSize);
+                setViewHeight(pMinSize);
             else
-                setViewWidth(minSize);
+                setViewWidth(pMinSize);
         }
         else
         {
@@ -871,15 +871,15 @@ void GList::resizeToFit(int itemCount, int minSize)
             if (_layout == ListLayoutType::SINGLE_COLUMN || _layout == ListLayoutType::FLOW_HORIZONTAL)
             {
                 size = obj->getY() + obj->getHeight();
-                if (size < minSize)
-                    size = minSize;
+                if (size < pMinSize)
+                    size = pMinSize;
                 setViewHeight(size);
             }
             else
             {
                 size = obj->getX() + obj->getWidth();
-                if (size < minSize)
-                    size = minSize;
+                if (size < pMinSize)
+                    size = pMinSize;
                 setViewWidth(size);
             }
         }

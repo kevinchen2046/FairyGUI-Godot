@@ -18,19 +18,19 @@
 NS_FGUI_BEGIN
 
 GLoader::GLoader()
-    : _autoSize(false),
-    _align(AlignType::LEFT),
+    : _align(AlignType::LEFT),
     _verticalAlign(VertAlignType::TOP),
+    _autoSize(false),
     _fill(LoaderFillType::NONE),
     _shrinkOnly(false),
     _updatingLayout(false),
     _contentItem(nullptr),
     _contentStatus(0),
+    _playing(true),
+    _frame(0),
     _content(nullptr),
     _content2(nullptr),
     _playAction(nullptr),
-    _playing(true),
-    _frame(0),
     _externalFrame(nullptr)
 {
 	_touchable = false; // icon, not independently interactive

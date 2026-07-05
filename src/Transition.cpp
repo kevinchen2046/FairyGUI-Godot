@@ -186,8 +186,8 @@ public:
 TransitionItem::TransitionItem(TransitionActionType aType)
     : time(0),
     type(aType),
-    hook(nullptr),
     tweenConfig(nullptr),
+    hook(nullptr),
     tweener(nullptr),
     target(nullptr),
     displayLockToken(0)

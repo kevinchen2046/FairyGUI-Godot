@@ -43,7 +43,7 @@ public:
     const std::unordered_map<unsigned short, FontLetterDefinition>& getLetterDefinitions() const { return _letterDefinitions; }
 
 private:
-    BitmapFont& _font;
+    [[maybe_unused]] BitmapFont& _font;
     std::unordered_map<unsigned short, FontLetterDefinition> _letterDefinitions;
     std::vector<Ref<Texture2D>> _textures;
     float _lineHeight;

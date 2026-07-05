@@ -81,6 +81,9 @@ void HtmlObject::create(FUIRichText* owner, HtmlElement* element)
         if (!_ui.is_valid())
             createCommon();
         break;
+
+    default:
+        break;
     }
 
     prepareEmbedUI();
@@ -108,6 +111,9 @@ void HtmlObject::destroy()
     {
     case HtmlElement::Type::IMAGE:
         ((GLoader*)_ui.ptr())->setURL("");
+        break;
+
+    default:
         break;
     }
 

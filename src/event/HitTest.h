@@ -13,6 +13,8 @@ class ByteBuffer;
 class IHitTest
 {
 public:
+    virtual ~IHitTest() = default;
+
     virtual bool hitTest(GComponent* obj, const Vector2& localPoint)
     {
         return true;

@@ -33,7 +33,7 @@ public:
         TweenManager::update(dt);
     }
 };
-static TweenEngine tweenEngine;
+[[maybe_unused]] static TweenEngine tweenEngine;
 
 void TweenManager::flushKilledTweeners()
 {

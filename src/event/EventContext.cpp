@@ -6,8 +6,8 @@ NS_FGUI_BEGIN
 
 EventContext::EventContext() :
     _sender(nullptr),
-    _data(nullptr),
     _inputEvent(nullptr),
+    _data(nullptr),
     _isStopped(false),
     _defaultPrevented(false),
     _touchCapture(0),

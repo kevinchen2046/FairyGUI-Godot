@@ -11,11 +11,11 @@ GGroup::GGroup() : _layout(GroupLayoutType::NONE),
                    _autoSizeDisabled(false),
                    _mainGridIndex(-1),
                    _mainGridMinSize(10),
+                   _percentReady(false),
+                   _boundsChanged(false),
                    _mainChildIndex(-1),
                    _totalSize(0),
                    _numChildren(0),
-                   _percentReady(false),
-                   _boundsChanged(false),
                    _updating(false)
 {
     _touchDisabled = true;

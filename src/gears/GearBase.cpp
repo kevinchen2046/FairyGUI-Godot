@@ -63,8 +63,8 @@ GearTweenConfig::GearTweenConfig()
       easeType(EaseType::QuadOut),
       duration(0.3f),
       delay(0),
-      _tweener(nullptr),
-      _displayLockToken(0)
+      _displayLockToken(0),
+      _tweener(nullptr)
 {
 }
 

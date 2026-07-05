@@ -120,9 +120,9 @@ void GRichTextField::updateSize()
     _updatingSize = false;
 }
 
-HtmlObject* GRichTextField::getControl(const std::string& name) const
+HtmlObject* GRichTextField::getControl(const std::string& pName) const
 {
-    return _richText->getControl(name);
+    return _richText->getControl(pName);
 }
 
 Vector2 GRichTextField::getTextSize()

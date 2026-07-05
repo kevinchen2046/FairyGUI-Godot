@@ -5,27 +5,33 @@
 NS_FGUI_BEGIN
 using namespace std;
 
+static int hex_pair_to_int(const char* src)
+{
+    char temp[3];
+    temp[0] = src[0];
+    temp[1] = src[1];
+    temp[2] = '\0';
+    return (int)strtol(temp, nullptr, 16);
+}
+
 Color ToolSet::hexToColor(const char* str)
 {
     ssize_t len = strlen(str);
     if (len < 7 || str[0] != '#')
         return Color(0, 0, 0, 1);
 
-    char temp[3];
-    memset(temp, 0, 3);
-
     if (len == 9)
     {
-        return Color(strtol(strncpy(temp, str + 3, 2), NULL, 16) / 255.0f,
-            strtol(strncpy(temp, str + 5, 2), NULL, 16) / 255.0f,
-            strtol(strncpy(temp, str + 7, 2), NULL, 16) / 255.0f,
-            strtol(strncpy(temp, str + 1, 2), NULL, 16) / 255.0f);
+        return Color(hex_pair_to_int(str + 3) / 255.0f,
+            hex_pair_to_int(str + 5) / 255.0f,
+            hex_pair_to_int(str + 7) / 255.0f,
+            hex_pair_to_int(str + 1) / 255.0f);
     }
     else
     {
-        return Color(strtol(strncpy(temp, str + 1, 2), NULL, 16) / 255.0f,
-            strtol(strncpy(temp, str + 3, 2), NULL, 16) / 255.0f,
-            strtol(strncpy(temp, str + 5, 2), NULL, 16) / 255.0f,
+        return Color(hex_pair_to_int(str + 1) / 255.0f,
+            hex_pair_to_int(str + 3) / 255.0f,
+            hex_pair_to_int(str + 5) / 255.0f,
             1.0f);
     }
 }
@@ -82,12 +88,12 @@ FastSplitter::FastSplitter() : data(nullptr), dataLength(-1), delimiter('\0')
 {
 }
 
-void FastSplitter::start(const char* data, ssize_t dataLength, char delimiter)
+void FastSplitter::start(const char* pData, ssize_t pDataLength, char pDelimiter)
 {
-    this->data = data;
-    this->dataLength = dataLength;
-    this->delimiter = delimiter;
-    this->textLength = -1;
+    data = pData;
+    dataLength = pDataLength;
+    delimiter = pDelimiter;
+    textLength = -1;
 }
 
 bool FastSplitter::next()

@@ -715,8 +715,7 @@ void FUIInput::syncTextFromEditor()
 
         _on_line_edit_changed(lineEdit->get_text());
 
-    else if (TextEdit* textEdit = Object::cast_to<TextEdit>(_editor))
-
+    else if (Object::cast_to<TextEdit>(_editor))
         _on_text_edit_changed();
 
 }

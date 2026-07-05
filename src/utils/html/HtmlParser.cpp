@@ -90,7 +90,9 @@ void HtmlParser::finishTextBlock()
     }
 }
 
+#if defined(_MSC_VER)
 #pragma warning(once:4307)
+#endif
 void HtmlParser::startElement(void* /*ctx*/, const char *elementName, const char **atts)
 {
     if (_skipText == 0)
@@ -243,7 +245,9 @@ void HtmlParser::endElement(void* /*ctx*/, const char *elementName)
         _skipText--;
     }
 }
+#if defined(_MSC_VER)
 #pragma warning(default:4307)
+#endif
 
 void HtmlParser::textHandler(void* /*ctx*/, const char *str, size_t len)
 {

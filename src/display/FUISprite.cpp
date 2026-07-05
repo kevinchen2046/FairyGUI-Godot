@@ -47,12 +47,12 @@ FUISprite::FUISprite() :
     _fillAmount(0),
     _fillClockwise(false),
     _scaleByTile(false),
-    _tileDisplaySize(0, 0),
     _grayed(false),
     _rotated(false),
     _tintColor(1, 1, 1, 1),
     _scale9Enabled(false),
-    _trimOffset()
+    _trimOffset(),
+    _tileDisplaySize(0, 0)
 {
     set_centered(false); // FairyGUI uses top-left origin, NOT center origin
     item_rect_changed(); // enable NOTIFICATION_DRAW for Node2D
@@ -592,7 +592,6 @@ void FUISprite::drawFillRadial()
                 edgePtA = edgePtA.lerp(edgePtB, 1.0f - midpoint.x);
 
             // Line intersection: midpoint->percentagePt vs edgePtA->edgePtB
-            float s = 0, t = 0;
             // Solve: midpoint + t*(percentagePt-midpoint) = edgePtA + s*(edgePtB-edgePtA)
             Vector2 pv = percentagePt - midpoint;
             Vector2 ev = edgePtB - edgePtA;

@@ -247,16 +247,18 @@ static void drawRoundedFill(DrawNode* shape, float x, float y, float w, float h,
         shape->drawPolygon(pts.data(), (int)pts.size(), color, 0, Color(0, 0, 0, 0));
 }
 
-GGraph::GGraph() : _shape(nullptr),
-                   _type(0),
-                   _lineSize(1),
+GGraph::GGraph() : _type(0),
                    _lineColor(Color(0, 0, 0, 1)),
                    _fillColor(Color(1, 1, 1, 1)),
+                   _lineSize(1),
                    _cornerRadius(nullptr),
                    _polygonPoints(nullptr),
                    _polygonBaseWidth(0),
                    _polygonPointOffset(0),
-                   _distances(nullptr)
+                   _sides(0),
+                   _startAngle(0),
+                   _distances(nullptr),
+                   _shape(nullptr)
 {
     _touchDisabled = true;
 }

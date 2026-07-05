@@ -93,12 +93,12 @@ static Ref<ShaderMaterial> create_mask_material(float threshold, bool inverted)
 }
 
 FUIContainer::FUIContainer() :
+    gOwner(nullptr),
     _clippingEnabled(false),
+    _clipMode(CanvasItem::CLIP_CHILDREN_AND_DRAW),
     _stencil(nullptr),
     _alphaThreshold(1.0f),
-    _inverted(false),
-    _clipMode(CanvasItem::CLIP_CHILDREN_AND_DRAW),
-    gOwner(nullptr)
+    _inverted(false)
 {
     item_rect_changed();
     set_process_unhandled_input(true);

@@ -99,7 +99,7 @@ public:
     void handleArrowKey(int dir);
 
     void resizeToFit(int itemCount) { resizeToFit(itemCount, 0); }
-    void resizeToFit(int itemCount, int minSize);
+    void resizeToFit(int itemCount, int pMinSize);
 
     virtual int getFirstChildInView() override;
 

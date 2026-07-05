@@ -21,7 +21,7 @@ const std::string& GLabel::getText() const
     if (_titleObject != nullptr)
         return _titleObject->getText();
     else
-        return "";
+        return EMPTY_STRING;
 }
 
 void GLabel::setText(const std::string & value)
@@ -36,7 +36,7 @@ const std::string& GLabel::getIcon() const
     if (_iconObject != nullptr)
         return _iconObject->getIcon();
     else
-        return "";
+        return EMPTY_STRING;
 }
 
 void GLabel::setIcon(const std::string & value)

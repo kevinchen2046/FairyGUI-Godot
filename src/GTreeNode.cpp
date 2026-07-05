@@ -68,7 +68,7 @@ const std::string& GTreeNode::getText() const
     if (_cell != nullptr)
         return _cell->getText();
     else
-        return "";
+        return EMPTY_STRING;
 }
 
 void GTreeNode::setText(const std::string& value)
@@ -82,7 +82,7 @@ const std::string& GTreeNode::getIcon() const
     if (_cell != nullptr)
         return _cell->getIcon();
     else
-        return "";
+        return EMPTY_STRING;
 }
 
 void GTreeNode::setIcon(const std::string& value)

@@ -20,23 +20,23 @@ public:
 
     GTweener();
     ~GTweener();
-    GTweener* setDelay(float value);
+    GTweener* setDelay(float pValue);
     float getDelay() const { return _delay; }
-    GTweener* setDuration(float value);
+    GTweener* setDuration(float pValue);
     float getDuration() const { return _duration; }
-    GTweener* setBreakpoint(float value);
-    GTweener* setEase(EaseType value);
-    GTweener* setEasePeriod(float value);
-    GTweener* setEaseOvershootOrAmplitude(float value);
+    GTweener* setBreakpoint(float pValue);
+    GTweener* setEase(EaseType pValue);
+    GTweener* setEasePeriod(float pValue);
+    GTweener* setEaseOvershootOrAmplitude(float pValue);
     GTweener* setRepeat(int repeat, bool yoyo = false);
     int getRepeat() const { return _repeat; }
-    GTweener* setTimeScale(float value);
-    GTweener* setSnapping(bool value);
-    GTweener* setTargetAny(void* value);
+    GTweener* setTimeScale(float pValue);
+    GTweener* setSnapping(bool pValue);
+    GTweener* setTargetAny(void* pValue);
     GTweener* setTarget(RefCounted* target);
     GTweener* setTarget(RefCounted* target, TweenPropType propType);
     void* getTarget() const { return _target; }
-    GTweener* setGtUserData(const Variant& value);
+    GTweener* setGtUserData(const Variant& pValue);
     GTweener* setPath(GPath* path);
     const Variant& getUserData() const { return _userData; }
     GTweener* onUpdate(GTweenCallback callback);
@@ -61,16 +61,16 @@ public:
     static void _bind_methods();
 
     // GDScript callback setters (Callable wrappers)
-    Ref<GTweener> gd_setDelay(float value);
-    Ref<GTweener> gd_setDuration(float value);
+    Ref<GTweener> gd_setDelay(float pValue);
+    Ref<GTweener> gd_setDuration(float pValue);
     Ref<GTweener> gd_setRepeat(int repeat, bool yoyo);
-    Ref<GTweener> gd_setTimeScale(float value);
-    Ref<GTweener> gd_setSnapping(bool value);
+    Ref<GTweener> gd_setTimeScale(float pValue);
+    Ref<GTweener> gd_setSnapping(bool pValue);
     Ref<GTweener> gd_setPaused(bool paused);
     Ref<GTweener> gd_onUpdate(const Callable& callable);
     Ref<GTweener> gd_onStart(const Callable& callable);
     Ref<GTweener> gd_onComplete(const Callable& callable);
-    Ref<GTweener> gd_setEase(int value);
+    Ref<GTweener> gd_setEase(int pValue);
     Ref<GTweener> gd_setTarget(Object* target, int prop_type);
 
 private:
@@ -89,7 +89,7 @@ private:
     void callUpdateCallback();
     void callCompleteCallback();
     void clearScriptBindings();
-    static void abandonVariant(Variant& value);
+    static void abandonVariant(Variant& pVariant);
     static void abandonCallable(Callable& callable, ObjectID& id);
     static void abandonCallback(GTweenCallback& callback);
     static void abandonCallback0(GTweenCallback0& callback);

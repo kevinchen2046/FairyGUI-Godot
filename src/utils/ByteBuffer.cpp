@@ -4,14 +4,14 @@ NS_FGUI_BEGIN
 using namespace std;
 
 ByteBuffer::ByteBuffer(char* buffer, int offset, int len, bool transferOwnerShip = false)
-    : _buffer(buffer),
-      _position(0),
+    : version(0),
+      _buffer(buffer),
       _offset(offset),
       _length(len),
       _littleEndian(false),
       _ownsBuffer(transferOwnerShip),
-      _stringTable(nullptr),
-      version(0)
+      _position(0),
+      _stringTable(nullptr)
 {
 }
 

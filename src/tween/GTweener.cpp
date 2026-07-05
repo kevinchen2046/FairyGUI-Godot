@@ -34,14 +34,14 @@ GTweener::GTweener() : _target(nullptr),
                        _refTarget(nullptr),
                        _refTargetId(),
                        _userData(),
-                       _onStart(nullptr),
+                       _path(nullptr),
                        _onUpdate(nullptr),
+                       _onStart(nullptr),
                        _onComplete(nullptr),
                        _onComplete0(nullptr),
                        _scriptOnStartId(),
                        _scriptOnUpdateId(),
-                       _scriptOnCompleteId(),
-                       _path(nullptr)
+                       _scriptOnCompleteId()
 {
 }
 
@@ -49,39 +49,39 @@ GTweener::~GTweener()
 {
 }
 
-GTweener* GTweener::setDelay(float value)
+GTweener* GTweener::setDelay(float pValue)
 {
-    _delay = value;
+    _delay = pValue;
     return this;
 }
 
-GTweener* GTweener::setDuration(float value)
+GTweener* GTweener::setDuration(float pValue)
 {
-    _duration = value;
+    _duration = pValue;
     return this;
 }
 
-GTweener* GTweener::setBreakpoint(float value)
+GTweener* GTweener::setBreakpoint(float pValue)
 {
-    _breakpoint = value;
+    _breakpoint = pValue;
     return this;
 }
 
-GTweener* GTweener::setEase(EaseType value)
+GTweener* GTweener::setEase(EaseType pValue)
 {
-    _easeType = value;
+    _easeType = pValue;
     return this;
 }
 
-GTweener* GTweener::setEasePeriod(float value)
+GTweener* GTweener::setEasePeriod(float pValue)
 {
-    _easePeriod = value;
+    _easePeriod = pValue;
     return this;
 }
 
-GTweener* GTweener::setEaseOvershootOrAmplitude(float value)
+GTweener* GTweener::setEaseOvershootOrAmplitude(float pValue)
 {
-    _easeOvershootOrAmplitude = value;
+    _easeOvershootOrAmplitude = pValue;
     return this;
 }
 
@@ -92,28 +92,28 @@ GTweener* GTweener::setRepeat(int repeat, bool yoyo)
     return this;
 }
 
-GTweener* GTweener::setTimeScale(float value)
+GTweener* GTweener::setTimeScale(float pValue)
 {
-    _timeScale = value;
+    _timeScale = pValue;
     return this;
 }
 
-GTweener* GTweener::setSnapping(bool value)
+GTweener* GTweener::setSnapping(bool pValue)
 {
-    _snapping = value;
+    _snapping = pValue;
     return this;
 }
 
-GTweener* GTweener::setTargetAny(void* value)
+GTweener* GTweener::setTargetAny(void* pValue)
 {
     clearRefTarget();
-    _target = value;
+    _target = pValue;
     return this;
 }
 
-GTweener* GTweener::setTarget(RefCounted* value)
+GTweener* GTweener::setTarget(RefCounted* target)
 {
-    return setTarget(value, TweenPropType::None);
+    return setTarget(target, TweenPropType::None);
 }
 
 GTweener* GTweener::setTarget(RefCounted* target, TweenPropType propType)
@@ -130,9 +130,9 @@ GTweener* GTweener::setTarget(RefCounted* target, TweenPropType propType)
     return this;
 }
 
-GTweener* GTweener::setGtUserData(const Variant& value)
+GTweener* GTweener::setGtUserData(const Variant& pValue)
 {
-    _userData = value;
+    _userData = pValue;
     return this;
 }
 
@@ -308,11 +308,11 @@ void GTweener::_init()
     deltaValue.setZero();
 }
 
-void GTweener::abandonVariant(Variant& value)
+void GTweener::abandonVariant(Variant& pVariant)
 {
     // Never run ~Variant() or operator=; the stored value may hold dangling refs.
-    memset(static_cast<void*>(&value), 0, sizeof(Variant));
-    new (&value) Variant();
+    memset(static_cast<void*>(&pVariant), 0, sizeof(Variant));
+    new (&pVariant) Variant();
 }
 
 void GTweener::abandonCallable(Callable& callable, ObjectID& id)
@@ -481,8 +481,8 @@ void GTweener::update()
         if (_ended == 0)
         {
             float r = startValue.w * (1 - _normalizedTime);
-            float rx = (((float)rand() / RAND_MAX) * 2 - 1) * r;
-            float ry = (((float)rand() / RAND_MAX) * 2 - 1) * r;
+            float rx = (((float)rand() / (float)((unsigned)RAND_MAX + 1u)) * 2 - 1) * r;
+            float ry = (((float)rand() / (float)((unsigned)RAND_MAX + 1u)) * 2 - 1) * r;
             rx = rx > 0 ? ceil(rx) : floor(rx);
             ry = ry > 0 ? ceil(ry) : floor(ry);
 
@@ -567,14 +567,14 @@ void GTweener::callCompleteCallback()
     TweenManager::endCallback();
 }
 
-Ref<GTweener> GTweener::gd_setDelay(float value)
+Ref<GTweener> GTweener::gd_setDelay(float pValue)
 {
-    return Ref<GTweener>(setDelay(value));
+    return Ref<GTweener>(setDelay(pValue));
 }
 
-Ref<GTweener> GTweener::gd_setDuration(float value)
+Ref<GTweener> GTweener::gd_setDuration(float pValue)
 {
-    return Ref<GTweener>(setDuration(value));
+    return Ref<GTweener>(setDuration(pValue));
 }
 
 Ref<GTweener> GTweener::gd_setRepeat(int repeat, bool yoyo)
@@ -582,14 +582,14 @@ Ref<GTweener> GTweener::gd_setRepeat(int repeat, bool yoyo)
     return Ref<GTweener>(setRepeat(repeat, yoyo));
 }
 
-Ref<GTweener> GTweener::gd_setTimeScale(float value)
+Ref<GTweener> GTweener::gd_setTimeScale(float pValue)
 {
-    return Ref<GTweener>(setTimeScale(value));
+    return Ref<GTweener>(setTimeScale(pValue));
 }
 
-Ref<GTweener> GTweener::gd_setSnapping(bool value)
+Ref<GTweener> GTweener::gd_setSnapping(bool pValue)
 {
-    return Ref<GTweener>(setSnapping(value));
+    return Ref<GTweener>(setSnapping(pValue));
 }
 
 Ref<GTweener> GTweener::gd_setPaused(bool paused)
@@ -648,9 +648,9 @@ Ref<GTweener> GTweener::gd_onComplete(const Callable& callable)
     return Ref<GTweener>(this);
 }
 
-Ref<GTweener> GTweener::gd_setEase(int value)
+Ref<GTweener> GTweener::gd_setEase(int pValue)
 {
-    return Ref<GTweener>(setEase((EaseType)value));
+    return Ref<GTweener>(setEase((EaseType)pValue));
 }
 
 Ref<GTweener> GTweener::gd_setTarget(Object* target, int prop_type)

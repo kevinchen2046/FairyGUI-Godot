@@ -26,7 +26,7 @@ public:
 
     static void _bind_methods();
 
-    void dispose();
+    void dispose() override;
 
     const std::string& getURL() const { return _url; }
     void setURL(const std::string& value);

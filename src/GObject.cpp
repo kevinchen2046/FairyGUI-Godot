@@ -44,38 +44,38 @@ static Vector2 sGlobalDragStart;
 static Rect sGlobalRect;
 static bool sUpdateInDragging;
 
-GuiObject::GuiObject() : _scale{1, 1},
-                     _sizePercentInGroup(0.0f),
+GuiObject::GuiObject() : _underConstruct(false),
+                     _gearLocked(false),
+                     _alignToBL(false),
+                     _parent(nullptr),
+                     _displayObject(nullptr),
+                     _packageItem(nullptr),
+                     _sizeImplType(0),
+                     _touchDisabled(false),
+                     _scale{1, 1},
                      _pivotAsAnchor(false),
                      _alpha(1.0f),
                      _rotation(0.0f),
                      _skewX(0.0f),
                      _skewY(0.0f),
                      _visible(true),
-                     _internalVisible(true),
-                     _handlingController(false),
                      _touchable(true),
                      _grayed(false),
                      _finalGrayed(false),
+                     _deferredCallsCancelled(false),
+                     _internalVisible(true),
+                     _handlingController(false),
                      _draggable(false),
-                     _dragBounds(nullptr),
-                     _dragTesting(false),
                      _sortingOrder(0),
                      _focusable(false),
                      _pixelSnapping(false),
                      _group(nullptr),
-                     _parent(nullptr),
-                     _displayObject(nullptr),
-                     _sizeImplType(0),
-                     _underConstruct(false),
-                     _gearLocked(false),
-                     _packageItem(nullptr),
+                     _sizePercentInGroup(0.0f),
                      _data(nullptr),
-                     _touchDisabled(false),
-                     _alignToBL(false),
+                     _dragBounds(nullptr),
+                     _dragTesting(false),
                      _treeNode(nullptr),
-                     _weakPtrRef(0),
-                     _deferredCallsCancelled(false)
+                     _weakPtrRef(0)
 {
     static uint64_t _gInstanceCounter = 1;
     _uid = _gInstanceCounter++;
@@ -995,7 +995,7 @@ void GuiObject::rebuildSkewedTransform()
     }
     xf.set_origin(origin);
 
-    if (Control* ctrl = Object::cast_to<Control>(_displayObject))
+    if (Object::cast_to<Control>(_displayObject))
     {
         syncControlDisplay();
         return;

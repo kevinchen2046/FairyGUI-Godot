@@ -4,7 +4,7 @@
 #include "utils/ByteBuffer.h"
 
 NS_FGUI_BEGIN
-GearAnimation::GearAnimationValue::GearAnimationValue() : frame(0), playing(false)
+GearAnimation::GearAnimationValue::GearAnimationValue() : playing(false), frame(0)
 {
 }
 

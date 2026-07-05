@@ -91,13 +91,13 @@ GRoot::GRoot()
       _modalWaitPane(nullptr),
       _tooltipWin(nullptr),
       _defaultTooltipWin(nullptr),
-      _contentCanvasLayer(nullptr),
-      _overlayCanvasLayer(nullptr),
-      _overlayContainer(nullptr),
+      _soundPlayerCount(0),
+      _soundPoolIndex(0),
       _hasDesignResolution(false),
       _viewportSizeConnected(false),
-      _soundPlayerCount(0),
-      _soundPoolIndex(0)
+      _contentCanvasLayer(nullptr),
+      _overlayCanvasLayer(nullptr),
+      _overlayContainer(nullptr)
 {
     for (int i = 0; i < SOUND_POOL_MAX; i++)
         _soundPlayers[i] = nullptr;

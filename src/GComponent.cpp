@@ -152,18 +152,18 @@ void GComponent::refreshDisplayChildrenZOrder()
     }
 }
 
-GComponent::GComponent() : _container(nullptr),
+GComponent::GComponent() : _buildingDisplayList(false),
+_container(nullptr),
 _overflowClipContainer(nullptr),
 _childrenRenderOrder(ChildrenRenderOrder::ASCENT),
 _apexIndex(0),
 _boundsChanged(false),
 _trackBounds(false),
+_maskOwner(nullptr),
+_hitArea(nullptr),
 _opaque(false),
 _sortingChildCount(0),
-_applyingController(nullptr),
-_buildingDisplayList(false),
-_maskOwner(nullptr),
-_hitArea(nullptr)
+_applyingController(nullptr)
 {
 }
 
@@ -302,11 +302,11 @@ GObject* GComponent::getChildAt(int index) const
     return _children.at(index).ptr();
 }
 
-GObject* GComponent::getChild(const std::string& name) const
+GObject* GComponent::getChild(const std::string& pName) const
 {
     for (const auto& child : _children)
     {
-        if (child->name.compare(name) == 0)
+        if (child->name.compare(pName) == 0)
             return child.ptr();
     }
 
@@ -344,24 +344,24 @@ GObject* GComponent::getChildByPath(const std::string& path) const
     return obj;
 }
 
-GObject* GComponent::getChildInGroup(const GGroup* group, const std::string& name) const
+GObject* GComponent::getChildInGroup(const GGroup* group, const std::string& pName) const
 {
     // CCASSERT(group != nullptr, "Argument must be non-nil")
 
     for (const auto& child : _children)
     {
-        if (child->_group == group && child->name.compare(name) == 0)
+        if (child->_group == group && child->name.compare(pName) == 0)
             return child.ptr();
     }
 
     return nullptr;
 }
 
-GObject* GComponent::getChildById(const std::string& id) const
+GObject* GComponent::getChildById(const std::string& pId) const
 {
     for (const auto& child : _children)
     {
-        if (child->id.compare(id) == 0)
+        if (child->id.compare(pId) == 0)
             return child.ptr();
     }
 
@@ -537,11 +537,11 @@ int GComponent::getFirstChildInView()
     return -1;
 }
 
-GController* GComponent::getController(const std::string& name) const
+GController* GComponent::getController(const std::string& pName) const
 {
     for (auto& c : _controllers)
     {
-        if (c->name.compare(name) == 0)
+        if (c->name.compare(pName) == 0)
             return c.ptr();
     }
 
@@ -580,7 +580,7 @@ void GComponent::applyController(GController* c)
 {
     _applyingController = c;
 
-    for (ssize_t i = 0; i < _children.size(); i++)
+    for (size_t i = 0; i < _children.size(); i++)
         _children.at(i)->handleControllerChanged(c);
 
     _applyingController = nullptr;
@@ -594,11 +594,11 @@ void GComponent::applyAllControllers()
         applyController(c.ptr());
 }
 
-Transition* GComponent::getTransition(const std::string& name) const
+Transition* GComponent::getTransition(const std::string& pName) const
 {
     for (const auto& c : _transitions)
     {
-        if (c->name.compare(name) == 0)
+        if (c->name.compare(pName) == 0)
             return c.ptr();
     }
 
@@ -1740,9 +1740,9 @@ Ref<GObject> GComponent::gd_getChildById(const String& child_id) const { return 
 Ref<GObject> GComponent::gd_getChildAt(int index) const { return Ref<GObject>(getChildAt(index)); }
 Ref<ScrollPane> GComponent::gd_getScrollPane() { return Ref<ScrollPane>(getScrollPane()); }
 
-Ref<GController> GComponent::gd_getController(const String& name) const { return Ref<GController>(getController(name.utf8().get_data())); }
+Ref<GController> GComponent::gd_getController(const String& pName) const { return Ref<GController>(getController(pName.utf8().get_data())); }
 Ref<GController> GComponent::gd_getControllerAt(int index) const { return Ref<GController>(getControllerAt(index)); }
-Ref<Transition> GComponent::gd_getTransition(const String& name) const { return Ref<Transition>(getTransition(name.utf8().get_data())); }
+Ref<Transition> GComponent::gd_getTransition(const String& pName) const { return Ref<Transition>(getTransition(pName.utf8().get_data())); }
 Ref<Transition> GComponent::gd_getTransitionAt(int index) const { return Ref<Transition>(getTransitionAt(index)); }
 
 NS_FGUI_END

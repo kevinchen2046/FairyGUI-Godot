@@ -1,4 +1,4 @@
-#include "window.h"
+#include "Window.h"
 #include "GRoot.h"
 #include "UIPackage.h"
 #include "UIConfig.h"
@@ -10,9 +10,9 @@ NS_FGUI_BEGIN
 static const int kWindowOverlayLayerOffset = 1;
 
 GWindow::GWindow() :
+    _contentPane(nullptr),
     _requestingCmd(0),
     _frame(nullptr),
-    _contentPane(nullptr),
     _closeButton(nullptr),
     _dragArea(nullptr),
     _contentArea(nullptr),

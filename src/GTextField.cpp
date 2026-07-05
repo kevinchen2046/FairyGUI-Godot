@@ -7,9 +7,9 @@
 
 NS_FGUI_BEGIN
 GTextField::GTextField()
-    : _templateVars(nullptr),
-      _ubbEnabled(false),
-      _autoSize(AutoSizeType::BOTH)
+    : _ubbEnabled(false),
+      _autoSize(AutoSizeType::BOTH),
+      _templateVars(nullptr)
 {
 }
 

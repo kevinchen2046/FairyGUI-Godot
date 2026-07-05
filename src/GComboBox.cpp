@@ -9,14 +9,14 @@
 
 NS_FGUI_BEGIN
 GComboBox::GComboBox()
-    : _dropdown(nullptr),
+    : popupDirection(PopupDirection::AUTO),
+      _dropdown(nullptr),
       _titleObject(nullptr),
       _iconObject(nullptr),
       _list(nullptr),
       _selectionController(nullptr),
       _itemsUpdated(true),
-      _selectedIndex(-1),
-      popupDirection(PopupDirection::AUTO)
+      _selectedIndex(-1)
 {
     visibleItemCount = UIConfig::defaultComboBoxVisibleItemCount;
 }
@@ -31,7 +31,7 @@ const std::string& GComboBox::getTitle() const
     if (_titleObject != nullptr)
         return _titleObject->getText();
     else
-        return "";
+        return EMPTY_STRING;
 }
 
 void GComboBox::setTitle(const std::string& value)
@@ -78,7 +78,7 @@ const std::string& GComboBox::getIcon() const
     if (_iconObject != nullptr)
         return _iconObject->getIcon();
     else
-        return "";
+        return EMPTY_STRING;
 }
 
 void GComboBox::setIcon(const std::string& value)
@@ -93,7 +93,7 @@ const std::string& GComboBox::getValue() const
     if (_selectedIndex >= 0 && _selectedIndex < (int)_values.size())
         return _values[_selectedIndex];
     else
-        return "";
+        return EMPTY_STRING;
 }
 
 void GComboBox::setValue(const std::string& value)

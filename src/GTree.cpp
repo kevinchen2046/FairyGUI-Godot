@@ -5,8 +5,8 @@
 
 NS_FGUI_BEGIN
 GTree::GTree()
-    : _rootNode(nullptr),
-      _indent(30),
+    : _indent(30),
+      _rootNode(nullptr),
       _clickToExpand(0),
       _expandedStatusInEvt(false)
 {

@@ -5,8 +5,8 @@
 NS_FGUI_BEGIN
 GearDisplay2::GearDisplay2(GObject* owner)
     : GearBase(owner),
-      _visible(0),
-      condition(0)
+      condition(0),
+      _visible(0)
 {
 }
 

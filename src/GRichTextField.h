@@ -30,7 +30,7 @@ public:
 
     virtual Vector2 getTextSize() override;
 
-    HtmlObject* getControl(const std::string& name) const;
+    HtmlObject* getControl(const std::string& pName) const;
 
     bool isAnchorTextUnderline() const;
     void setAnchorTextUnderline(bool value);

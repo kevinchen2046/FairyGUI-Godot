@@ -78,31 +78,31 @@ static inline float sp_EaseFunc(float t, float d)
 }
 
 ScrollPane::ScrollPane()
-    : _vtScrollBar(nullptr),
-    _hzScrollBar(nullptr),
-    _header(nullptr),
-    _footer(nullptr),
-    _pageController(nullptr),
+    : _vScrollNone(false),
+    _hScrollNone(false),
     _needRefresh(false),
     _refreshBarAxis(0),
-    _aniFlag(0),
-    _loop(0),
-    _headerLockedSize(0),
-    _footerLockedSize(0),
-    _vScrollNone(false),
-    _hScrollNone(false),
-    _tweening(0),
-    _xPos(0),
-    _yPos(0),
+    _mouseWheelEnabled(true),
     _floating(false),
     _dontClipMargin(false),
-    _mouseWheelEnabled(true),
-    _hover(false),
+    _xPos(0),
+    _yPos(0),
     _dragged(false),
+    _aniFlag(0),
+    _loop(0),
+    _hover(false),
+    _deferredCallsCancelled(false),
+    _headerLockedSize(0),
+    _footerLockedSize(0),
+    _tweening(0),
     _owner(nullptr),
     _maskContainer(nullptr),
     _container(nullptr),
-    _deferredCallsCancelled(false)
+    _hzScrollBar(nullptr),
+    _vtScrollBar(nullptr),
+    _header(nullptr),
+    _footer(nullptr),
+    _pageController(nullptr)
 {
     _scrollStep = UIConfig::defaultScrollStep;
     _mouseWheelStep = _scrollStep * 2;
@@ -113,28 +113,28 @@ ScrollPane::ScrollPane()
 }
 
 ScrollPane::ScrollPane(GComponent* owner)
-    : _vtScrollBar(nullptr),
-    _hzScrollBar(nullptr),
-    _header(nullptr),
-    _footer(nullptr),
-    _pageController(nullptr),
+    : _vScrollNone(false),
+    _hScrollNone(false),
     _needRefresh(false),
     _refreshBarAxis(0),
-    _aniFlag(0),
-    _loop(0),
-    _headerLockedSize(0),
-    _footerLockedSize(0),
-    _vScrollNone(false),
-    _hScrollNone(false),
-    _tweening(0),
-    _xPos(0),
-    _yPos(0),
+    _mouseWheelEnabled(true),
     _floating(false),
     _dontClipMargin(false),
-    _mouseWheelEnabled(true),
-    _hover(false),
+    _xPos(0),
+    _yPos(0),
     _dragged(false),
-    _deferredCallsCancelled(false)
+    _aniFlag(0),
+    _loop(0),
+    _hover(false),
+    _deferredCallsCancelled(false),
+    _headerLockedSize(0),
+    _footerLockedSize(0),
+    _tweening(0),
+    _hzScrollBar(nullptr),
+    _vtScrollBar(nullptr),
+    _header(nullptr),
+    _footer(nullptr),
+    _pageController(nullptr)
 {
     _owner = owner;
 
@@ -232,10 +232,9 @@ void ScrollPane::setup(ByteBuffer* buffer)
             {
                 Ref<GObject> obj = UIPackage::createObjectFromURL(res);
                 _vtScrollBar = Object::cast_to<GScrollBar>(obj.ptr());
-                if (_vtScrollBar == nullptr)
-                    // CCLOGWARN("FairyGUI: cannot create scrollbar from %s", res.c_str());
-                ;
+                if (_vtScrollBar != nullptr)
                 {
+                    // CCLOGWARN when null: "FairyGUI: cannot create scrollbar from %s"
                     _vtScrollBar->setScrollPane(this, true);
                     _vtScrollBar->_alignToBL = true;
                     _owner->displayObject()->add_child(_vtScrollBar->displayObject());
@@ -249,10 +248,9 @@ void ScrollPane::setup(ByteBuffer* buffer)
             {
                 Ref<GObject> obj = UIPackage::createObjectFromURL(res);
                 _hzScrollBar = Object::cast_to<GScrollBar>(obj.ptr());
-                if (_hzScrollBar == nullptr)
-                    // CCLOGWARN("FairyGUI: cannot create scrollbar from %s", res.c_str());
-                ;
+                if (_hzScrollBar != nullptr)
                 {
+                    // CCLOGWARN when null: "FairyGUI: cannot create scrollbar from %s"
                     _hzScrollBar->setScrollPane(this, false);
                     _hzScrollBar->_alignToBL = true;
                     _owner->displayObject()->add_child(_hzScrollBar->displayObject());
@@ -279,10 +277,9 @@ void ScrollPane::setup(ByteBuffer* buffer)
     {
         Ref<GObject> obj = UIPackage::createObjectFromURL(headerRes);
         _header = Object::cast_to<GComponent>(obj.ptr());
-        if (_header == nullptr)
-            // CCLOGWARN("FairyGUI: cannot create scrollPane header from %s", headerRes.c_str());
-            ;
+        if (_header != nullptr)
         {
+            // CCLOGWARN when null: "FairyGUI: cannot create scrollPane header from %s"
             _header->setVisible(false);
             _header->_alignToBL = true;
             _owner->displayObject()->add_child(_header->displayObject());
@@ -293,10 +290,9 @@ void ScrollPane::setup(ByteBuffer* buffer)
     {
         Ref<GObject> obj = UIPackage::createObjectFromURL(footerRes);
         _footer = Object::cast_to<GComponent>(obj.ptr());
-        if (_footer == nullptr)
-            // CCLOGWARN("FairyGUI: cannot create scrollPane footer from %s", footerRes.c_str());
-            ;
+        if (_footer != nullptr)
         {
+            // CCLOGWARN when null: "FairyGUI: cannot create scrollPane footer from %s"
             _footer->setVisible(false);
             _footer->_alignToBL = true;
             _owner->displayObject()->add_child(_footer->displayObject());
@@ -928,7 +924,7 @@ void ScrollPane::handleSizeChanged()
         _vtScrollBar->handlePositionChanged();
     if (_hzScrollBar.is_valid())
         _hzScrollBar->handlePositionChanged();
-	if (_header.is_valid())
+    if (_header.is_valid())
         _header->handlePositionChanged();
     if (_footer.is_valid())
         _footer->handlePositionChanged();
