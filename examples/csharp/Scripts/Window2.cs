@@ -32,7 +32,7 @@ public partial class Window2 : GWindow
         if (pane == null)
             return;
         var trans = pane.GetTransition("t1");
-        trans?.Play(1, 0, Callable.From(() => { }));
+        trans?.Play(1, 0);
     }
 
     private void DoHideAnimation()

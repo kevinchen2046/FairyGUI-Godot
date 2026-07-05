@@ -34,22 +34,28 @@ public partial class ListEffectScene : DemoSceneBase
         }
 
         _list.EnsureBoundsCorrect();
+        // 等布局更新后再判断可见项并播放入场动画（与 GD/TS 一致，避免 isChildInView 误判）
+        CallDeferred(MethodName.PlayListEffects);
+    }
+
+    private void PlayListEffects()
+    {
+        if (!IsUiActive() || _list == null)
+            return;
+
         var delay = 1.0f;
         for (var i = 0; i < 10; i++)
         {
             var item = _list.GetChildAt(i);
             if (item == null)
                 break;
-            if (_list.IsChildInView(item))
-            {
-                var trans = item.GetTransition("t0");
-                trans?.Play(1, delay, Callable.From(() => { }));
-                delay += 0.2f;
-            }
-            else
-            {
+            if (!_list.IsChildInView(item))
                 break;
-            }
+
+            // 与 Unity MailItem.PlayEffect 一致：先隐藏，再由 transition 的 Visible 关键帧显示并滑入
+            item.SetVisible(false);
+            item.GetTransition("t0")?.Play(1, delay);
+            delay += 0.2f;
         }
     }
 }
