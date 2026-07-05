@@ -107,6 +107,16 @@ GodotJS 与 FairyGUI 联用时需应用 [GodotJS 补丁](../../README.zh.md#godo
 - UI 资源与 `gd/` 共用 `res://Resources/UI/`。
 - CloseButton 返回 `res://ts/Scenes/MainMenu.tscn`。
 
+## Web 导出
+
+Web 导出时须在预设 **资源 → Include Filters** 中填写：
+
+```text
+*.fui, Resources/UI/*
+```
+
+否则运行时会报 `FairyGUI: cannot load package` / `package not found`。完整说明（多线程 COOP/COEP、字体、C# 不支持 Web 等）见根目录 [`README.md`](../README.md#web-导出)。
+
 ## 首次配置（可选）
 
 在 Godot 编辑器中可通过 GodotJS 插件菜单 **Install TS Project** 生成/更新 `tsconfig.json` 与类型文件；本仓库已包含适配后的配置，一般直接 `tsc` 即可。

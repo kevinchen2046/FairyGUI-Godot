@@ -26,3 +26,40 @@
 ## Demo 列表
 
 Basics、Transition、VirtualList、LoopList、HitTest、PullToRefresh、ModalWaiting、Joystick、Bag、Chat、ListEffect、ScrollPane、TreeView、Guide、Cooldown
+
+## Web 导出
+
+FairyGUI 的 UI 包（`.fui`）与图集等资源**不会**随「导出选定场景及依赖」自动打进 `.pck`：`UIPackage.addPackage("res://Resources/UI/...")` 是运行时字符串，Godot 导出器不会把它当作资源依赖。
+
+### 导出预设（项目 → 导出 → Web → 资源）
+
+| 项 | 建议值 |
+|----|--------|
+| **导出模式** | 「导出项目中的全部资源」；若仍用「选定场景」，必须配置下方过滤器 |
+| **过滤器 / 非资源文件（Include Filters）** | `*.fui, Resources/UI/*` |
+
+说明：
+
+- `*.fui`：FairyGUI 包描述文件（`UIPackage` 通过 `FileAccess` 读取，非 Godot `Resource`）
+- `Resources/UI/*`：各包图集 PNG、音频等（同样多在代码里按路径加载，不一定出现在场景依赖链里）
+
+可选：在 **编辑器 → 编辑器设置 → 文件系统 → Other File Extensions** 追加 `fui`，便于在文件系统面板看到 `.fui`，并在「导出全部资源」时被扫描。
+
+### 多线程与本地测试
+
+- 若启用 **Variant → Thread Support**，托管服务器须返回 COOP/COEP 头（`Cross-Origin-Opener-Policy: same-origin`、`Cross-Origin-Embedder-Policy: require-corp`），否则浏览器报 `SharedArrayBuffer` / `crossOriginIsolated` 错误。
+- 本地测试可用 Godot 自带脚本（已含上述头）：
+
+```powershell
+python D:\Source\godot\platform\web\serve.py -r "你的导出目录" -p 8060
+```
+
+### 中文与字体
+
+- UI 包内字体名多为「微软雅黑」；`DemoSceneBase` 在桌面端映射到 `Resources/fonts/DroidSansFallback.ttf`。
+- Web 端已改为浏览器 CJK 字体栈（`Noto Sans SC, Microsoft YaHei, ...`），无需单独打包 TTF；若 Web 仍乱码，先确认 `.fui` 与 `Resources/UI/*` 已按上表进包。
+
+### 语言说明
+
+- **GDScript / TypeScript** 可导出 Web；**C# / Mono 不支持 Web 导出**，Web 请用 `gd/` 或 `ts/` 主场景。
+- TypeScript 另见 [`ts/README.md`](ts/README.md) 中的编译与 GodotJS 说明。
