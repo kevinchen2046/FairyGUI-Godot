@@ -11,7 +11,6 @@
     </image>
     <text id="n1" name="title" xy="22,3" size="50,16" fontSize="12" autoSize="none" singleLine="true" demoText="">
       <relation target="" sidePair="width-width,height-height"/>
-      <gearColor controller="button" pages="0,1,2,3" values="-|#ffffff|#ffffff|#ffffff" default="#000000"/>
     </text>
     <loader id="n3" name="icon" xy="1,1" size="16,20" align="center" vAlign="middle"/>
     <image id="n13" name="n13" src="l6f472" xy="3,7" aspect="true">

@@ -62,7 +62,7 @@ python D:\Source\godot\platform\web\serve.py -r "你的导出目录" -p 8060
 
 ### PopupMenu 悬停文字
 
-- 若悬停菜单项时文字被背景盖住，需**重新编译 Godot**（`GComponent` 显示列表顺序修复）并在 FairyGUI 编辑器中**重导 `Basics` 包**（`PopupMenuItem.xml` 已调整 `gearColor` 与 title 层级）。
+- 若悬停菜单项时文字颜色不对（高亮时有时白有时黑）或文字被背景盖住，需**重新编译 Godot**（`GButton`/`GComponent` 修复）并在 FairyGUI 编辑器中**重导 `Basics` 包**（`PopupMenuItem.xml`：`selected=\"0\"`、显式 `gearColor`、title 置于 displayList 末尾）。
 
 ### 滚动条（ScrollBar）
 
