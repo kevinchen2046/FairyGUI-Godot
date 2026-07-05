@@ -90,6 +90,7 @@ GodotJS 与 FairyGUI 联用时需应用 [GodotJS 补丁](../../README.zh.md#godo
 
 - `UIConfigHelper` 的配置项用**属性**（`ui.defaultFont = "..."`），不用 `setDefaultFont()`（GodotJS 对 `ADD_PROPERTY` 隐藏 setter 方法）。
 - 同理 `GuiObject.group` / `GuiObject.icon`、`GController.selectedIndex`、`GProgressBar.value`、`GWindow.contentPane` / `modal` / `onShownCallback` 等带 `ADD_PROPERTY` 的字段（勿用 `getContentPane()` / `setOnShownCallback()` 等）。
+- **`GComponent.viewWidth` / `viewHeight`**：GodotJS 用属性，勿写 `getViewWidth()`（会报 `not a function`）。`ScrollPane.getScrollingPosX()` 若旧引擎 typings 未生成，可回退 `getPosX()`（见 `LoopListScene.ts`）。
 - **RelationType**：Demo 优先用全局 `FguiRelationType.RightRight` 等常量（不依赖 GodotJS 枚举加载时机）；也可写 `GuiObject.RelationType.RightRight` 或经 `fgui-globals` 延迟别名后的 `GuiObject.RIGHT_RIGHT`。
 - **GGroup 名称**：用 `fguiGroupName(obj)` 代替 `obj.group?.getName()`（GodotJS 上 `group` 属性返回的对象可能缺少 `getName` 方法）。
 - **GodotJS 点击回调**：不要在 `addClickListener` 回调里**同步** `removeChildren()` / 切场景（会触发 `JSCallable` 在 V8 栈内析构崩溃）。Demo 用 `_requestSceneChange()` / `callDeferred` 延迟清理与切场景；模块侧 `UIEventDispatcher` 也会延迟释放监听器项。

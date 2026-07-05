@@ -182,7 +182,9 @@ declare global {
         addChildAt(child: GuiObject, index: number): GuiObject;
         removeChildAt(index: number): void;
         removeChildren(beginIndex?: number, endIndex?: number): void;
-        getViewWidth(): number;
+        /** GodotJS：ADD_PROPERTY，用 viewWidth 而非 getViewWidth() */
+        readonly viewWidth: number;
+        readonly viewHeight: number;
         ensureBoundsCorrect(): void;
         isChildInView(child: GuiObject): boolean;
         isAncestorOf(obj: GuiObject): boolean;

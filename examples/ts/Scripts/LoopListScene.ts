@@ -29,6 +29,23 @@ export default class LoopListScene extends DemoSceneBase {
         obj.icon = `ui://LoopList/n${String(index + 1)}`;
     }
 
+    /** GodotJS：viewWidth 为 ADD_PROPERTY，无 getViewWidth()；ScrollPane 旧绑定可能缺 getScrollingPosX。 */
+    private _scrollPosX(sp: ScrollPane): number {
+        const ext = sp as ScrollPane & { getScrollingPosX?: () => number };
+        if (typeof ext.getScrollingPosX === "function") {
+            return ext.getScrollingPosX();
+        }
+        return sp.getPosX();
+    }
+
+    private _viewWidth(comp: GComponent): number {
+        const ext = comp as GComponent & { viewWidth?: number; getViewWidth?: () => number };
+        if (typeof ext.viewWidth === "number") {
+            return ext.viewWidth;
+        }
+        return ext.getViewWidth?.() ?? 0;
+    }
+
     private _doSpecialEffect(_ctx: FGUIEventContext | null = null): void {
         if (this._list == null) {
             return;
@@ -37,7 +54,7 @@ export default class LoopListScene extends DemoSceneBase {
         if (sp == null) {
             return;
         }
-        const midX = sp.getScrollingPosX() + this._list.getViewWidth() / 2.0;
+        const midX = this._scrollPosX(sp) + this._viewWidth(this._list) / 2.0;
         const cnt = this._list.numChildren();
         for (let i = 0; i < cnt; i++) {
             const obj = this._list.getChildAt(i);
