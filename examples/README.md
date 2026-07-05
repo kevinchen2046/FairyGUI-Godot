@@ -20,7 +20,7 @@
 
 在项目设置 → 应用 → 运行 → **主场景** 中选择对应语言的 `MainMenu.tscn`。
 
-- **C#**：需启用 `module_mono`/C# 支持，打开工程后生成 `.sln`；见 `FairyGUI.Godot.Examples.csproj`
+- **C#**：需 Mono + 自编译 GodotSharp（含 FairyGUI glue）；工程文件 `FairyGUI.Godot.Examples.csproj`，详细步骤见 [`csharp/README.md`](csharp/README.md)（含 `GODOT_BIN` 环境变量与 `assembly_name` 配置）
 - **TypeScript**：需 Godot TypeScript 脚本支持；见 `tsconfig.json` 与 `ts/fairygui.d.ts`
 
 ## Demo 列表

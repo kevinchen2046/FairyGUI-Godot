@@ -5,8 +5,11 @@
     <RootNamespace>FairyGUI.Examples</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
-    <!-- 自编译 Godot（含 FairyGUI glue）的 API 程序集 -->
-    <GodotSharpApiDir>$(MSBuildThisFileDirectory)../../../bin/GodotSharp/Api/Debug</GodotSharpApiDir>
+    <!-- 程序集名默认与 csproj 文件名一致；须与 project.godot 的 dotnet/project/assembly_name 相同 -->
+    <!-- 自编译 Godot（含 FairyGUI glue）的 API 程序集；优先 GODOT_BIN 环境变量 -->
+    <GodotSharpApiDir Condition="'$(GodotSharpApiDir)' != ''">$(GodotSharpApiDir)</GodotSharpApiDir>
+    <GodotSharpApiDir Condition="'$(GodotSharpApiDir)' == '' and '$(GODOT_BIN)' != ''">$(GODOT_BIN)/GodotSharp/Api/Debug</GodotSharpApiDir>
+    <GodotSharpApiDir Condition="'$(GodotSharpApiDir)' == ''">$(MSBuildThisFileDirectory)../../../bin/GodotSharp/Api/Debug</GodotSharpApiDir>
   </PropertyGroup>
 
   <!-- 使用本地 GodotSharp，不要用 NuGet 官方包（不含 FairyGUI 类型） -->
