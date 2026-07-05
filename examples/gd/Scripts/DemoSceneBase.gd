@@ -75,13 +75,23 @@ func _prepare_groot_for_scene() -> void:
 
 func _register_default_fonts() -> void:
 	var cjk_font := "res://Resources/fonts/DroidSansFallback.ttf"
-	# Latin UI labels. DroidSansFallback has broken T/t advances on Web.
-	var latin_font := "res://Resources/fonts/Marker Felt.ttf"
+	var latin_font := "res://Resources/fonts/arial.ttf"
 	var ui := UIConfigHelper.getInstance()
-	ui.registerFont("default", latin_font)
+	ui.registerFont("default", cjk_font)
 	ui.registerFont("en", latin_font)
 	ui.registerFont("微软雅黑", cjk_font)
+	ui.registerFont("Consolas", latin_font)
+	ui.registerFont("Comic Sans MS", latin_font)
+	ui.registerFont("Arial", latin_font)
 	ui.setDefaultFont("default")
+
+func _use_latin_default_font_on_web() -> void:
+	if not Engine.has_feature("web"):
+		return
+	UIConfigHelper.getInstance().setDefaultFont("en")
+
+func _restore_cjk_default_font() -> void:
+	UIConfigHelper.getInstance().setDefaultFont("default")
 
 func continue_init() -> void:
 	pass

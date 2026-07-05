@@ -20,6 +20,7 @@ public partial class BasicsScene : DemoSceneBase
 
     protected override void ContinueInit()
     {
+        UseLatinDefaultFontOnWeb();
         UIConfigHelper.GetInstance().SetButtonSound("ui://Basics/click");
         UIConfigHelper.GetInstance().SetVerticalScrollBar("ui://Basics/ScrollBar_VT");
         UIConfigHelper.GetInstance().SetHorizontalScrollBar("ui://Basics/ScrollBar_HZ");
@@ -74,6 +75,7 @@ public partial class BasicsScene : DemoSceneBase
     {
         if (!IsUiActive())
             return;
+        UseLatinDefaultFontOnWeb();
         _cc.SetSelectedIndex(0);
         _backBtn.SetVisible(false);
         _progressRunning = false;
@@ -83,6 +85,7 @@ public partial class BasicsScene : DemoSceneBase
     {
         if (!IsUiActive() || sender == null)
             return;
+        RestoreCjkDefaultFont();
         CleanupGrootOverlays();
         var typeName = sender.GetName().ToString()[4..];
 

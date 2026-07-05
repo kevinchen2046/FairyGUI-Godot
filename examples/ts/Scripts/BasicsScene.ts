@@ -20,6 +20,7 @@ export default class BasicsScene extends DemoSceneBase {
     private _depthStartPos = new Vector2(0, 0);
 
     protected ContinueInit(): void {
+        this._useLatinDefaultFontOnWeb();
         const ui = UIConfigHelper.getInstance()!;
         ui.buttonSound = "ui://Basics/click";
         ui.verticalScrollBar = "ui://Basics/ScrollBar_VT";
@@ -82,6 +83,7 @@ export default class BasicsScene extends DemoSceneBase {
         if (!this.isUiActive()) {
             return;
         }
+        this._useLatinDefaultFontOnWeb();
         this._cc!.selectedIndex = 0;
         this._backBtn?.setVisible(false);
         this._progressRunning = false;
@@ -91,6 +93,7 @@ export default class BasicsScene extends DemoSceneBase {
         if (!this.isUiActive() || sender == null) {
             return;
         }
+        this._restoreCjkDefaultFont();
         this._cleanupGrootOverlays();
         const typeName = String(sender.getName()).substring(4);
 

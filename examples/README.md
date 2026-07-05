@@ -42,7 +42,7 @@ FairyGUI 的 UI 包（`.fui`）与图集等资源**不会**随「导出选定场
 
 - `*.fui`：FairyGUI 包描述文件（`UIPackage` 通过 `FileAccess` 读取，非 Godot `Resource`）
 - `Resources/UI/*`：各包图集 PNG、音频等（同样多在代码里按路径加载，不一定出现在场景依赖链里）
-- `Resources/fonts/*`：拉丁字体 `Marker Felt.ttf`（默认 UI 字体）+ 中文字体 `DroidSansFallback.ttf`（「微软雅黑」别名；**Web 不支持 SystemFont，必须打包 TTF**）
+- `Resources/fonts/*`：内嵌 TTF（`DroidSansFallback.ttf`、`arial.ttf` 等；**Web 不支持 SystemFont，必须打包**）
 
 可选：在 **编辑器 → 编辑器设置 → 文件系统 → Other File Extensions** 追加 `fui`，便于在文件系统面板看到 `.fui`，并在「导出全部资源」时被扫描。
 
@@ -55,11 +55,20 @@ FairyGUI 的 UI 包（`.fui`）与图集等资源**不会**随「导出选定场
 python D:\Source\godot\platform\web\serve.py -r "你的导出目录" -p 8060
 ```
 
-### 中文与字体
+### 中文与字体（内嵌 TTF，不用 SystemFont）
 
-- `default` / `en` → `Resources/fonts/Marker Felt.ttf`（英文 UI 标签；Web 上 DroidSansFallback 对部分拉丁字母字距异常，如含 **T/t** 的 Button、Text）。
-- UI 包内「微软雅黑」→ `Resources/fonts/DroidSansFallback.ttf`（中文标题等显式指定该字体名的控件）。
-- **Web 端不能使用浏览器系统字体**（Godot Web 未实现 `SystemFont`），须与 `.fui` 一样通过 Include Filters 把 `Resources/fonts/*` 打进包。
+- **Web 端没有 SystemFont**，FUI 里写 `font="Consolas"` 这类系统字体名若未注册，会回退到 `defaultFont`；仍建议用 `registerFont` 显式映射到 `res://*.ttf`。
+- Demo 在 `_registerDefaultFonts()` 中**只注册内嵌路径**（`.ttf` / `.otf`），例如 `default`、`en`、`微软雅黑`、`Consolas` → 项目内 TTF。
+- 引擎加载内嵌字体时会关闭 `allow_system_fallback`（见 `UIConfig::loadFont`），避免缺字时混用系统字形导致 Web 字距异常。
+- 字体 `.import` 中 `allow_system_fallback=false`，与运行时一致。
+- 导出 Include Filters 须包含 `Resources/fonts/*`。
+
+| 别名 | 内嵌文件 |
+|------|----------|
+| `default` / `微软雅黑` | `DroidSansFallback.ttf`（中文 + 默认） |
+| `en` / `Consolas` / `Arial` 等 | `arial.ttf`（拉丁 UI） |
+
+- **不要**写 `registerFont("SimHei", "SimHei")`（无扩展名会走 `SystemFont`）。若需某字体，把 TTF 放进 `Resources/fonts/` 再注册别名。
 
 ### 语言说明
 

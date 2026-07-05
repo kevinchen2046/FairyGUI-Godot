@@ -15,6 +15,7 @@ var _depth_start_pos: Vector2 = Vector2.ZERO
 
 func continue_init() -> void:
 	super.continue_init()
+	_use_latin_default_font_on_web()
 	UIConfigHelper.getInstance().setButtonSound("ui://Basics/click")
 	UIConfigHelper.getInstance().setVerticalScrollBar("ui://Basics/ScrollBar_VT")
 	UIConfigHelper.getInstance().setHorizontalScrollBar("ui://Basics/ScrollBar_HZ")
@@ -58,6 +59,7 @@ func _apply_demo_menu() -> void:
 func _apply_demo_menu_controller() -> void:
 	if not _is_ui_active():
 		return
+	_use_latin_default_font_on_web()
 	_cc.setSelectedIndex(0)
 	_back_btn.setVisible(false)
 	_progress_running = false
@@ -65,6 +67,7 @@ func _apply_demo_menu_controller() -> void:
 func _deferred_run_demo(sender: Object) -> void:
 	if not _is_ui_active() or sender == null:
 		return
+	_restore_cjk_default_font()
 	_cleanup_groot_overlays()
 	var type_name = String(sender.getName()).substr(4)
 

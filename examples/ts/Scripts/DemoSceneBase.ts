@@ -117,13 +117,28 @@ export class DemoSceneBase extends Node {
 
     protected _registerDefaultFonts(): void {
         const cjkFont = "res://Resources/fonts/DroidSansFallback.ttf";
-        // Latin UI labels (Basics menu buttons, etc.). DroidSansFallback has broken T/t advances on Web.
         const latinFont = "res://Resources/fonts/arial.ttf";
         const ui = UIConfigHelper.getInstance()!;
-        ui.registerFont("default", latinFont);
+        // 全部走 res://*.ttf，不用 SystemFont（Web 未实现；且系统回退会导致字距/缺字不一致）。
+        ui.registerFont("default", cjkFont);
         ui.registerFont("en", latinFont);
         ui.registerFont("微软雅黑", cjkFont);
+        ui.registerFont("Consolas", latinFont);
+        ui.registerFont("Comic Sans MS", latinFont);
+        ui.registerFont("Arial", latinFont);
         ui.defaultFont = "default";
+    }
+
+    /** Web：Basics 主菜单按钮用拉丁字体，避免 DroidSansFallback 的 T/t 字距异常。 */
+    protected _useLatinDefaultFontOnWeb(): void {
+        if (!Engine.hasFeature("web")) {
+            return;
+        }
+        UIConfigHelper.getInstance()!.defaultFont = "en";
+    }
+
+    protected _restoreCjkDefaultFont(): void {
+        UIConfigHelper.getInstance()!.defaultFont = "default";
     }
 
     protected ContinueInit(): void | Promise<void> {

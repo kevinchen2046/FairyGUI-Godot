@@ -99,13 +99,27 @@ public partial class DemoSceneBase : Node
     private void RegisterDefaultFonts()
     {
         const string cjkFont = "res://Resources/fonts/DroidSansFallback.ttf";
-        // Latin UI labels. DroidSansFallback has broken T/t advances on Web.
-        const string latinFont = "res://Resources/fonts/Marker Felt.ttf";
+        const string latinFont = "res://Resources/fonts/arial.ttf";
         var ui = UIConfigHelper.GetInstance();
-        ui.RegisterFont("default", latinFont);
+        ui.RegisterFont("default", cjkFont);
         ui.RegisterFont("en", latinFont);
         ui.RegisterFont("微软雅黑", cjkFont);
+        ui.RegisterFont("Consolas", latinFont);
+        ui.RegisterFont("Comic Sans MS", latinFont);
+        ui.RegisterFont("Arial", latinFont);
         ui.SetDefaultFont("default");
+    }
+
+    protected void UseLatinDefaultFontOnWeb()
+    {
+        if (!Engine.HasFeature("web"))
+            return;
+        UIConfigHelper.GetInstance().SetDefaultFont("en");
+    }
+
+    protected void RestoreCjkDefaultFont()
+    {
+        UIConfigHelper.GetInstance().SetDefaultFont("default");
     }
 
     protected virtual void ContinueInit()
