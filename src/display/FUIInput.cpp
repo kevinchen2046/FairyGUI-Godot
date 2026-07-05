@@ -625,21 +625,7 @@ void FUIInput::applyEditorTheme()
     else
     {
         const std::string& fontName = UIConfig::getRealFontName(_textFormat->face, &ttf);
-
-        if (ttf)
-        {
-            Ref<FontFile> fontFile;
-            fontFile.instantiate();
-            if (fontFile->load_dynamic_font(GObject::toGodotStr(fontName)) == OK)
-                font = fontFile;
-        }
-        else
-        {
-            Ref<SystemFont> sysFont;
-            sysFont.instantiate();
-            sysFont->set_font_names(PackedStringArray(GObject::toGodotStr(fontName).split(",")));
-            font = sysFont;
-        }
+        font = UIConfig::loadFont(fontName, ttf);
     }
 
 

@@ -3,6 +3,7 @@
 
 // cocos2d.h removed - see godot_types.h
 #include "FairyGUIMacros.h"
+#include "scene/resources/font.h"
 
 NS_FGUI_BEGIN
 
@@ -33,8 +34,10 @@ public:
 
     static void registerFont(const std::string& aliasName, const std::string& realName);
     static const std::string& getRealFontName(const std::string& aliasName, bool* isTTF = nullptr);
+    static Ref<Font> loadFont(const std::string& resolvedName, bool is_file);
 
 private:
+    static bool isFontFilePath(const std::string& path);
     struct FontNameItem
     {
         std::string name;

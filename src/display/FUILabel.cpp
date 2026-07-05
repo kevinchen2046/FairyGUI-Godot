@@ -140,26 +140,9 @@ void FUILabel::applyTextFormat()
             _bmFontPath.clear();
             bool ttf = false;
             const std::string& fontName = UIConfig::getRealFontName(_fontName, &ttf);
-            if (ttf)
-            {
-                // Load TTF/OTF font from file path
-                Ref<FontFile> fontFile;
-                fontFile.instantiate();
-                Error err = fontFile->load_dynamic_font(GObject::toGodotStr(fontName));
-                if (err == OK)
-                    _bmFont = fontFile;
-                else
-                    _bmFont.instantiate(); // fallback to empty
-            }
-            else
-            {
-                // Use system font by name
-                Ref<SystemFont> sysFont;
-                sysFont.instantiate();
-                Vector<String> names = GObject::toGodotStr(fontName).split(",");
-                sysFont->set_font_names(PackedStringArray(names));
-                _bmFont = sysFont;
-            }
+            _bmFont = UIConfig::loadFont(fontName, ttf);
+            if (_bmFont.is_null())
+                _bmFont.instantiate(); // fallback to empty
         }
     }
 
