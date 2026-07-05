@@ -1,7 +1,7 @@
 /// <reference path="../fairygui.d.ts" />
 
 import "./fgui-globals";
-import { Callable, Engine, Node, SceneTree } from "godot";
+import { Callable, Engine, Node, OS, SceneTree } from "godot";
 
 export type GodotNode = Node & {
     isInsideTree(): boolean;
@@ -131,7 +131,7 @@ export class DemoSceneBase extends Node {
 
     /** Web：Basics 主菜单按钮用拉丁字体，避免 DroidSansFallback 的 T/t 字距异常。 */
     protected _useLatinDefaultFontOnWeb(): void {
-        if (!Engine.hasFeature("web")) {
+        if (!OS.hasFeature("web")) {
             return;
         }
         UIConfigHelper.getInstance()!.defaultFont = "en";
