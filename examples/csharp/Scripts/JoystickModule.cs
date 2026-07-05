@@ -40,12 +40,12 @@ public class JoystickModule
             _initY = _center.GetY() + _center.GetHeight() / 2.0f;
         }
 
-        _touchArea?.AddEventListener(FguiEvent.TouchBegin, Callable.From(OnTouchBegin));
-        _touchArea?.AddEventListener(FguiEvent.TouchMove, Callable.From(OnTouchMove));
-        _touchArea?.AddEventListener(FguiEvent.TouchEnd, Callable.From(OnTouchEnd));
+        _touchArea?.AddEventListener(FguiEvent.TouchBegin, Callable.From<FguiEventContext>(OnTouchBegin));
+        _touchArea?.AddEventListener(FguiEvent.TouchMove, Callable.From<FguiEventContext>(OnTouchMove));
+        _touchArea?.AddEventListener(FguiEvent.TouchEnd, Callable.From<FguiEventContext>(OnTouchEnd));
     }
 
-    private void OnTouchBegin()
+    private void OnTouchBegin(FguiEventContext ctx)
     {
         if (_touchId != -1)
             return;
@@ -78,7 +78,7 @@ public class JoystickModule
         _thumb.SetRotation(degrees + 90);
     }
 
-    private void OnTouchMove()
+    private void OnTouchMove(FguiEventContext ctx)
     {
         if (_touchId == -1)
             return;
@@ -115,7 +115,7 @@ public class JoystickModule
         MoveChanged?.Invoke(degree);
     }
 
-    private void OnTouchEnd()
+    private void OnTouchEnd(FguiEventContext ctx)
     {
         if (_touchId == -1)
             return;

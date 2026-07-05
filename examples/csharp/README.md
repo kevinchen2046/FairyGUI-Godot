@@ -152,3 +152,5 @@ Mono glue 生成的命名与 GDScript 不完全一致，Demo 通过 `Scripts/Fgu
 | `obj.getChild()` 在任意 GuiObject 上 | 仅 `GComponent`/`GList` 等有 | `FguiExtensions` 扩展方法 |
 | `add_relation(..., RelationType.X)` | 第二参数为 `int` | `AddRelation(..., RelationType.X)` 扩展自动转换 |
 | 继承 `GWindow` 的类 | 须 `partial class` | `BagWindow`、`Window1`、`Window2` |
+
+**C# `addEventListener` 回调**：FairyGUI 会传入 `FguiEventContext`。须用 `Callable.From<FguiEventContext>(ctx => ...)` 或方法签名 `void Handler(FguiEventContext ctx)`；0 参数 lambda / 可选参数会导致 `Invalid argument count` 运行时错误。`addClickListener` 无参数，不受影响。

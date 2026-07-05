@@ -27,7 +27,7 @@ public partial class BagWindow : GWindow
         _list = pane.GetChild("list") as GList;
         if (_list == null)
             return;
-        _list.AddEventListener(FguiEvent.ClickItem, Callable.From(OnClickItem));
+        _list.AddEventListener(FguiEvent.ClickItem, Callable.From<FguiEventContext>(OnClickItem));
         _list.SetItemRenderer(Callable.From(new Action<int, GodotObject>(RenderListItem)));
         _list.SetNumItems(45);
     }
@@ -39,7 +39,7 @@ public partial class BagWindow : GWindow
         obj.SetText(((int)(GD.Randi() % 100)).ToString());
     }
 
-    private void OnClickItem()
+    private void OnClickItem(FguiEventContext ctx)
     {
         var item = GRoot.GetInstance().GetTouchTarget();
         if (item == null)

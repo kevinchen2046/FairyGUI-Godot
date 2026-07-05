@@ -53,14 +53,14 @@ public partial class PullToRefreshScene : DemoSceneBase
         obj.SetText("Item " + index);
     }
 
-    private void OnPullDownRelease()
+    private void OnPullDownRelease(FguiEventContext ctx)
     {
         if (!IsUiActive() || _refreshing1)
             return;
         CallDeferred(MethodName.BeginPullDownRefresh);
     }
 
-    private void OnPullUpRelease()
+    private void OnPullUpRelease(FguiEventContext ctx)
     {
         if (!IsUiActive() || _refreshing2)
             return;

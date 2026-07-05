@@ -70,11 +70,9 @@ public partial class ChatScene : DemoSceneBase
         _groot.ShowPopupSimple(_emojiSelectUi);
     }
 
-    private void OnClickEmoji(FguiEventContext ctx = null)
+    private void OnClickEmoji(FguiEventContext ctx)
     {
-        GuiObject item = null;
-        if (ctx != null)
-            item = ctx.GetData().As<GuiObject>();
+        GuiObject item = ctx?.GetData().As<GuiObject>();
         if (item == null)
             item = _groot.GetTouchTarget();
         if (item == null || _input == null)
@@ -85,7 +83,7 @@ public partial class ChatScene : DemoSceneBase
         _input.SetText(_input.GetText() + "[:" + tag + "]");
     }
 
-    private void OnSubmit()
+    private void OnSubmit(FguiEventContext ctx)
     {
         OnClickSendBtn();
     }

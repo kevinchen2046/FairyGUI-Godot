@@ -134,7 +134,7 @@ public partial class BasicsScene : DemoSceneBase
         var n12 = obj.GetChild("n12");
         if (n12 != null)
         {
-            n12.AddEventListener(FguiEvent.ClickLink, Callable.From(() =>
+            n12.AddEventListener(FguiEvent.ClickLink, Callable.From<FguiEventContext>(_ =>
             {
                 n12.SetText("[img]ui://Basics/pet[/img][color=#FF0000]You click the link[/color]:clicked");
             }));
@@ -180,7 +180,7 @@ public partial class BasicsScene : DemoSceneBase
         var n1 = obj.GetChild("n1");
         n1?.AddClickListener(Callable.From(() => _groot.ShowPopupSimple(_popupCom)));
 
-        obj.AddEventListener(FguiEvent.RightClick, Callable.From(() => _pm.Show()));
+        obj.AddEventListener(FguiEvent.RightClick, Callable.From<FguiEventContext>(_ => _pm.Show()));
     }
 
     private void PlayWindow(GuiObject obj)
@@ -295,7 +295,7 @@ public partial class BasicsScene : DemoSceneBase
     private void PlayProgress(GuiObject obj)
     {
         _progressRunning = true;
-        obj.AddEventListener(FguiEvent.Exit, Callable.From(() => _progressRunning = false));
+        obj.AddEventListener(FguiEvent.Exit, Callable.From<FguiEventContext>(_ => _progressRunning = false));
     }
 
     public override void _Process(double delta)

@@ -19,8 +19,8 @@ public partial class LoopListScene : DemoSceneBase
         _list.SetItemRenderer(new Callable(this, MethodName.RenderListItem));
         _list.SetVirtualAndLoop();
         _list.SetNumItems(5);
-        _list.AddEventListener(FguiEvent.Scroll, new Callable(this, MethodName.DoSpecialEffect));
-        DoSpecialEffect();
+        _list.AddEventListener(FguiEvent.Scroll, new Callable(this, MethodName.OnScroll));
+        UpdateSpecialEffect();
     }
 
     private void RenderListItem(int index, GodotObject obj)
@@ -29,7 +29,12 @@ public partial class LoopListScene : DemoSceneBase
         obj.SetIcon("ui://LoopList/n" + (index + 1));
     }
 
-    private void DoSpecialEffect(FguiEventContext ctx = null)
+    private void OnScroll(FguiEventContext ctx)
+    {
+        UpdateSpecialEffect();
+    }
+
+    private void UpdateSpecialEffect()
     {
         if (_list == null)
             return;

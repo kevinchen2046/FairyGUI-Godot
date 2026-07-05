@@ -29,21 +29,21 @@ public partial class ScrollPaneScene : DemoSceneBase
         sp?.SetPosX(0, false);
 
         var b0 = obj.GetChild("b0");
-        b0?.AddEventListener(FguiEvent.Click, Callable.From(() =>
+        b0?.AddEventListener(FguiEvent.Click, Callable.From<FguiEventContext>(_ =>
         {
             var txt = _view.GetChild("txt");
             txt?.SetText("Stick " + obj.GetText());
         }));
 
         var b1 = obj.GetChild("b1");
-        b1?.AddEventListener(FguiEvent.Click, Callable.From(() =>
+        b1?.AddEventListener(FguiEvent.Click, Callable.From<FguiEventContext>(_ =>
         {
             var txt = _view.GetChild("txt");
             txt?.SetText("Delete " + obj.GetText());
         }));
     }
 
-    private void OnClickList()
+    private void OnClickList(FguiEventContext ctx)
     {
         if (_list == null)
             return;
