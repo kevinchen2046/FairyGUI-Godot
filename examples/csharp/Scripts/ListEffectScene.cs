@@ -19,7 +19,6 @@ public partial class ListEffectScene : DemoSceneBase
             return;
         }
 
-        // 等 Main 视图挂到 GRoot 并完成首帧布局后再填充，避免 addItemFromPool 内同步 updateBounds 卡死
         CallDeferred(MethodName.PopulateList);
     }
 
@@ -46,16 +45,11 @@ public partial class ListEffectScene : DemoSceneBase
             fetchCtrl?.SetSelectedIndex(i % 3 != 0 ? 0 : 1);
 
             item.SetTitle("Mail title here");
+            // 与 Unity MailItem.PlayEffect 一致：配置完立刻隐藏，避免先显示再播 transition
+            item.SetVisible(false);
         }
 
         _list.EnsureBoundsCorrect();
-        PlayListEffects();
-    }
-
-    private void PlayListEffects()
-    {
-        if (!IsUiActive() || _list == null)
-            return;
 
         var delay = 0.0f;
         for (var i = 0; i < 10; i++)
@@ -66,8 +60,6 @@ public partial class ListEffectScene : DemoSceneBase
             if (!_list.IsChildInView(item))
                 break;
 
-            // 与 Unity MailItem.PlayEffect 一致：先隐藏，再由 transition 的 Visible 关键帧显示并滑入
-            item.SetVisible(false);
             ((GComponent)item).GetTransition("t0")?.Play(1, delay);
             delay += 0.2f;
         }
