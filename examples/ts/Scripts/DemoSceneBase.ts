@@ -116,10 +116,13 @@ export class DemoSceneBase extends Node {
     }
 
     protected _registerDefaultFonts(): void {
-        const fontPath = "res://Resources/fonts/DroidSansFallback.ttf";
+        const cjkFont = "res://Resources/fonts/DroidSansFallback.ttf";
+        // Latin UI labels (Basics menu buttons, etc.). DroidSansFallback has broken T/t advances on Web.
+        const latinFont = "res://Resources/fonts/arial.ttf";
         const ui = UIConfigHelper.getInstance()!;
-        ui.registerFont("default", fontPath);
-        ui.registerFont("微软雅黑", fontPath);
+        ui.registerFont("default", latinFont);
+        ui.registerFont("en", latinFont);
+        ui.registerFont("微软雅黑", cjkFont);
         ui.defaultFont = "default";
     }
 

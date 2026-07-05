@@ -74,10 +74,13 @@ func _prepare_groot_for_scene() -> void:
 	_groot.removeChildren()
 
 func _register_default_fonts() -> void:
-	var font_path := "res://Resources/fonts/DroidSansFallback.ttf"
+	var cjk_font := "res://Resources/fonts/DroidSansFallback.ttf"
+	# Latin UI labels. DroidSansFallback has broken T/t advances on Web.
+	var latin_font := "res://Resources/fonts/Marker Felt.ttf"
 	var ui := UIConfigHelper.getInstance()
-	ui.registerFont("default", font_path)
-	ui.registerFont("微软雅黑", font_path)
+	ui.registerFont("default", latin_font)
+	ui.registerFont("en", latin_font)
+	ui.registerFont("微软雅黑", cjk_font)
 	ui.setDefaultFont("default")
 
 func continue_init() -> void:
