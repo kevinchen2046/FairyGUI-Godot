@@ -5,6 +5,7 @@
 #include "GRoot.h"
 #include "display/FUISprite.h"
 #include "event/InputProcessor.h"
+#include "utils/ToolSet.h"
 #include "scene/resources/shader.h"
 #include "scene/resources/material.h"
 #include "scene/main/viewport.h"
@@ -365,6 +366,13 @@ void FUIContainer::unhandled_input(const Ref<::InputEvent>& event)
             mark_input_handled(this);
             return;
         }
+        // Mobile Web emits emulated mouse events alongside ScreenTouch. Processing
+        // both runs GRoot::checkPopups twice on the same tap and closes ComboBox
+        // popups immediately after TouchBegin opens them.
+        if (!ToolSet::isDesktopInput() && btn == (int)MouseButton::LEFT) {
+            mark_input_handled(this);
+            return;
+        }
         if (mb->is_pressed()) {
             if (btn == (int)MouseButton::WHEEL_UP) {
                 ip->onMouseScroll(mb->get_position(), -1);
@@ -395,6 +403,10 @@ void FUIContainer::unhandled_input(const Ref<::InputEvent>& event)
     Ref<InputEventMouseMotion> mm = event;
     if (mm.is_valid()) {
         if (mm->get_button_mask().has_flag(::MouseButtonMask::LEFT)) {
+            if (!ToolSet::isDesktopInput()) {
+                mark_input_handled(this);
+                return;
+            }
             ip->onTouchMove(mm->get_position(), 0);
         } else {
             ip->onMouseMove(mm->get_position());

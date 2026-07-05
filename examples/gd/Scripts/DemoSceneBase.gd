@@ -75,7 +75,7 @@ func _prepare_groot_for_scene() -> void:
 	_groot.removeChildren()
 
 func _register_default_fonts() -> void:
-	var font_path := "res://Resources/fonts/DroidSansFallback.ttf"
+	var font_path := "res://Resources/fonts/NotoSansSC-Regular.ttf"
 	var ui := UIConfigHelper.getInstance()
 	ui.registerFont("default", font_path)
 	ui.registerFont("en", font_path)

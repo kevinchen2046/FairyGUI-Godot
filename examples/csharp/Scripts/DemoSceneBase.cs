@@ -99,7 +99,7 @@ public partial class DemoSceneBase : Node
 
     private void RegisterDefaultFonts()
     {
-        const string fontPath = "res://Resources/fonts/NotoSansSC-Black.ttf";
+        const string fontPath = "res://Resources/fonts/NotoSansSC-Regular.ttf";
         var ui = UIConfigHelper.GetInstance();
         ui.RegisterFont("default", fontPath);
         ui.RegisterFont("en", fontPath);
