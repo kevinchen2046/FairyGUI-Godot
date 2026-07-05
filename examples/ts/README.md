@@ -107,6 +107,7 @@ GodotJS 与 FairyGUI 联用时需应用 [GodotJS 补丁](../../README.zh.md#godo
 - Godot 内置类型与 FairyGUI 运行时类均从 `"godot"` 模块获取（见上）。
 - UI 资源与 `gd/` 共用 `res://Resources/UI/`。
 - CloseButton 返回 `res://ts/Scenes/MainMenu.tscn`。
+- **滚动条**：须在运行时注册 ScrollBar URL 并加载含 ScrollBar 组件的包（Demo 在 `DemoSceneBase._registerDefaultScrollBars()` 中统一处理）。AUTO 模式、与 item pool 无关等说明见 [`../README.md`](../README.md#滚动条scrollbar)。
 
 ## Web 导出
 

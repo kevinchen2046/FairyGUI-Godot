@@ -64,6 +64,47 @@ python D:\Source\godot\platform\web\serve.py -r "你的导出目录" -p 8060
 
 - 若悬停菜单项时文字被背景盖住，需**重新编译 Godot**（`GComponent` 显示列表顺序修复）并在 FairyGUI 编辑器中**重导 `Basics` 包**（`PopupMenuItem.xml` 已调整 `gearColor` 与 title 层级）。
 
+### 滚动条（ScrollBar）
+
+FairyGUI 的 ScrollPane **不会**自动从 `UIProject/settings/Common.json` 里的 `scrollBars` 配置加载滚动条组件。编辑器里的「默认滚动条 / 水平 / 垂直」URL 会写入各组件的 `.fui` 二进制；运行时若 URL 为空，则回退到 **`UIConfig::horizontalScrollBar` / `verticalScrollBar`**（进程内静态变量，需代码注册）。
+
+#### Demo 中的注册方式
+
+三套 Demo 在 `DemoSceneBase` 的 `_registerDefaultScrollBars()`（GD：` _register_default_scroll_bars()`）里统一：
+
+1. `UIPackage.addPackage("res://Resources/UI/Basics")` — 滚动条组件资源在 **Basics** 包（`ScrollBar_HZ` / `ScrollBar_VT`），**Bag 等包本身不含 ScrollBar**。
+2. 设置 `UIConfigHelper` 的 `horizontalScrollBar` / `verticalScrollBar` 为 `ui://Basics/ScrollBar_HZ` 等。
+
+若只加载 `Bag` 包、未注册上述 URL，ScrollPane 创建时 `_hzScrollBar == null`，表现为**完全没有滚动条**（悬停、滚轮、拖动均无条可显）。先打开过 **Basics → List** 等 demo 后行为「突然正常」，是因为 `BasicsScene` 曾写入全局 `UIConfig`，**与 GList 的 item pool 无关**（pool 只回收列表格子，不创建 ScrollBar）。
+
+#### 「滚动时显示」（编辑器 = `scrollBar="auto"`）
+
+与 Cocos2dx 原版一致：AUTO 模式下初始隐藏；**桌面悬停**、拖动、惯性滚动、拖 grip 时显示；无上述条件时延迟淡出。
+
+| 条件 | 行为 |
+|------|------|
+| 初始 | 滚动条隐藏 |
+| 鼠标悬停（桌面） | 显示 |
+| 触摸/鼠标拖动滚动 | 显示 |
+| 惯性滚动 | 显示 |
+| 滚轮滚动 | 不触发显示（与 Cocos 一致） |
+| 无上述条件 | 延迟 0.5s 后淡出隐藏 |
+
+悬停移入移出时的闪烁为 AUTO 模式正常淡出/重显。
+
+#### 自有工程注意
+
+在创建任何带 `overflow="scroll"` 的 UI **之前**完成包加载与 URL 注册，例如：
+
+```typescript
+UIPackage.addPackage("res://Resources/UI/Basics");
+const ui = UIConfigHelper.getInstance()!;
+ui.horizontalScrollBar = "ui://Basics/ScrollBar_HZ";
+ui.verticalScrollBar = "ui://Basics/ScrollBar_VT";
+```
+
+也可把 ScrollBar 组件做到自己的 UI 包中，再注册对应 `ui://YourPkg/ScrollBar_HZ` URL。
+
 ### 语言说明
 
 - **GDScript / TypeScript** 可导出 Web；**C# / Mono 不支持 Web 导出**，Web 请用 `gd/` 或 `ts/` 主场景。

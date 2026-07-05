@@ -140,6 +140,7 @@ dotnet build FairyGUI.Godot.Examples.csproj -c Debug `
 - 脚本命名空间：`FairyGUI.Examples`
 - UI 资源与 `gd/` 共用 `res://Resources/UI/`
 - CloseButton 返回 `res://csharp/Scenes/MainMenu.tscn`
+- **滚动条**：Demo 在 `DemoSceneBase.RegisterDefaultScrollBars()` 中统一注册 ScrollBar URL 并加载 Basics 包。AUTO 模式、首次进背包无滚动条等与 pool 无关的说明见 [`../README.md`](../README.md#滚动条scrollbar)。
 
 ## C# 与 GDScript API 差异
 

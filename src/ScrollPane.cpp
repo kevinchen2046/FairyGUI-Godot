@@ -1212,7 +1212,7 @@ void ScrollPane::updateScrollBarVisible2(GScrollBar* bar)
 
     if (_scrollBarDisplayAuto && !_hover && _tweening == 0 && !_dragged && !bar->_gripDragging)
     {
-        if (((CanvasItem*)bar->displayObject())->is_visible())
+        if (bar->isVisible())
             GTween::to(1, 0, 0.5f)
             ->setDelay(0.5f)
             ->onComplete1([this](GTweener* tweener) { ScrollPane::onBarTweenComplete(tweener); })

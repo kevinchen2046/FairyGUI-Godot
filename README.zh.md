@@ -345,6 +345,16 @@ UIPackage.setDefaultFont("SimHei")
 2. 如果解析后的名称以 `.ttf` / `.otf` 结尾 → `FontFile::load_dynamic_font()` 加载文件
 3. 否则 → `SystemFont` 按名称匹配系统已安装字体
 
+#### 滚动条（ScrollBar）
+
+ScrollPane 使用的水平/垂直滚动条是**独立 UI 组件**，须通过 `UIConfig` 注册 URL，且对应包已 `UIPackage.addPackage` 加载。编辑器 `Common.json` 里的 `scrollBars` 不会自动在运行时生效。
+
+- Demo 在 `examples/*/Scripts/DemoSceneBase` 的 `_registerDefaultScrollBars()` 中加载 **Basics** 包并设置 `horizontalScrollBar` / `verticalScrollBar`。
+- `scrollBar="auto"`（编辑器「滚动时显示」）：与 Cocos 一致，桌面悬停/拖动/惯性滚动时显示，滚轮不触发。
+- GList **item pool** 只回收列表项，与 ScrollBar 组件无关。
+
+完整说明（含「先开 Bag 无条、去过 List demo 后才有」等现象）见 [`examples/README.md`](examples/README.md#滚动条scrollbar)。
+
 ### 3. 常见 Widget 操作
 
 ```gdscript
