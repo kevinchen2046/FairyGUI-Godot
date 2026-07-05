@@ -361,6 +361,13 @@ void GButton::handleControllerChanged(GController* c)
         setSelected(_relatedPageId.compare(c->getSelectedPageId()) == 0);
 }
 
+void GButton::resetListItemState()
+{
+    _over = false;
+    _down = false;
+    syncButtonControllerState();
+}
+
 void GButton::onRollOver(EventContext* context)
 {
     if (_buttonController.is_null() || !_buttonController->hasPage(OVER))
@@ -373,7 +380,7 @@ void GButton::onRollOver(EventContext* context)
     if (isGrayed() && _buttonController->hasPage(DISABLED))
         return;
 
-    setState(_selected ? SELECTED_OVER : OVER);
+    syncButtonControllerState();
 }
 
 void GButton::onRollOut(EventContext* context)
@@ -388,7 +395,7 @@ void GButton::onRollOut(EventContext* context)
     if (isGrayed() && _buttonController->hasPage(DISABLED))
         return;
 
-    setState(_selected ? DOWN : UP);
+    syncButtonControllerState();
 }
 
 void GButton::onTouchBegin(EventContext* context)

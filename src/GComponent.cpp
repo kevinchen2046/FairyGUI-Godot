@@ -9,10 +9,13 @@
 #include "UIPackage.h"
 #include "display/FUIContainer.h"
 #include "display/FUISprite.h"
+#include "display/FUILabel.h"
 #include "event/HitTest.h"
 #include "utils/ByteBuffer.h"
 #include "utils/ToolSet.h"
 #include <cfloat>
+#include <unordered_map>
+#include <vector>
 #include "servers/rendering_server.h"
 
 NS_FGUI_BEGIN
@@ -38,6 +41,28 @@ static void set_display_child_z_order(GObject* child, int siblingIndex)
         Object::cast_to<CanvasItem>(display)->set_z_index(get_display_child_z_order(child, siblingIndex));
 }
 
+static void sync_container_tree_order(FUIInnerContainer* container, const std::vector<Node*>& ordered)
+{
+    if (container == nullptr)
+        return;
+    for (int i = 0; i < (int)ordered.size(); i++)
+    {
+        Node* n = ordered[i];
+        if (n == nullptr || n->get_parent() != container)
+            continue;
+        if (n->get_index() != i)
+            container->move_child(n, i);
+    }
+}
+
+static void queue_display_redraw(Node* display)
+{
+    if (FUISprite* sp = Object::cast_to<FUISprite>(display))
+        sp->queue_redraw();
+    else if (FUILabel* label = Object::cast_to<FUILabel>(display))
+        label->queue_redraw();
+}
+
 void GComponent::ensure_display_child_added(FUIInnerContainer* container, GObject* child)
 {
     Node* display = child->displayObject();
@@ -47,8 +72,21 @@ void GComponent::ensure_display_child_added(FUIInnerContainer* container, GObjec
         child->handlePositionChanged();
         child->handleAlphaChanged();
         child->handleVisibleChanged();
-        if (FUISprite* sp = Object::cast_to<FUISprite>(display))
-            sp->queue_redraw();
+        queue_display_redraw(display);
+
+        // gearDisplay may re-add a background child on hover; fix z-order immediately
+        // (Web can draw before deferred buildNativeDisplayList, leaving text covered).
+        switch (_childrenRenderOrder)
+        {
+        case ChildrenRenderOrder::ASCENT:
+            set_display_child_z_order(child, getDisplaySiblingIndex(child));
+            break;
+        case ChildrenRenderOrder::DESCENT:
+            set_display_child_z_order(child, getDisplaySiblingIndexDescent(child));
+            break;
+        default:
+            break;
+        }
     }
 }
 
@@ -880,21 +918,13 @@ void GComponent::childStateChanged(GObject* child)
             ensure_display_child_added(dc, child);
         }
 
-        if (_childrenRenderOrder == ChildrenRenderOrder::ASCENT || _childrenRenderOrder == ChildrenRenderOrder::DESCENT)
-            refreshDisplayChildrenZOrder();
-        else
-            CALL_LATER(GComponent, buildNativeDisplayList);
+        buildNativeDisplayList();
     }
     else
     {
         if (child->_displayObject->get_parent() != nullptr)
-        {
             child->_displayObject->get_parent()->remove_child(child->_displayObject);
-            if (_childrenRenderOrder == ChildrenRenderOrder::ARCH)
-            {
-                CALL_LATER(GComponent, buildNativeDisplayList);
-            }
-        }
+        buildNativeDisplayList();
     }
 }
 
@@ -965,6 +995,7 @@ void GComponent::buildNativeDisplayList()
     {
     case ChildrenRenderOrder::ASCENT:
     {
+        std::unordered_map<FUIInnerContainer*, std::vector<Node*>> treeOrders;
         for (int i = 0; i < cnt; i++)
         {
             GObject* child = _children.at(i).ptr();
@@ -973,12 +1004,17 @@ void GComponent::buildNativeDisplayList()
                 FUIInnerContainer* dc = getDisplayContainerFor(child);
                 ensure_display_child_added(dc, child);
                 set_display_child_z_order(child, getDisplaySiblingIndex(child));
+                treeOrders[dc].push_back(child->_displayObject);
+                queue_display_redraw(child->_displayObject);
             }
         }
+        for (const auto& it : treeOrders)
+            sync_container_tree_order(it.first, it.second);
     }
     break;
     case ChildrenRenderOrder::DESCENT:
     {
+        std::unordered_map<FUIInnerContainer*, std::vector<Node*>> treeOrders;
         for (int i = 0; i < cnt; i++)
         {
             GObject* child = _children.at(i).ptr();
@@ -987,13 +1023,18 @@ void GComponent::buildNativeDisplayList()
                 FUIInnerContainer* dc = getDisplayContainerFor(child);
                 ensure_display_child_added(dc, child);
                 set_display_child_z_order(child, getDisplaySiblingIndexDescent(child));
+                treeOrders[dc].push_back(child->_displayObject);
+                queue_display_redraw(child->_displayObject);
             }
         }
+        for (const auto& it : treeOrders)
+            sync_container_tree_order(it.first, it.second);
     }
     break;
 
     case ChildrenRenderOrder::ARCH:
     {
+        std::unordered_map<FUIInnerContainer*, std::vector<Node*>> treeOrders;
         int ai = std::min(_apexIndex, cnt);
         for (int i = 0; i < ai; i++)
         {
@@ -1003,6 +1044,8 @@ void GComponent::buildNativeDisplayList()
                 FUIInnerContainer* dc = getDisplayContainerFor(child);
                 ensure_display_child_added(dc, child);
                 set_display_child_z_order(child, i);
+                treeOrders[dc].push_back(child->_displayObject);
+                queue_display_redraw(child->_displayObject);
             }
         }
         for (int i = cnt - 1; i >= ai; i--)
@@ -1013,8 +1056,12 @@ void GComponent::buildNativeDisplayList()
                 FUIInnerContainer* dc = getDisplayContainerFor(child);
                 ensure_display_child_added(dc, child);
                 set_display_child_z_order(child, ai + cnt - 1 - i);
+                treeOrders[dc].push_back(child->_displayObject);
+                queue_display_redraw(child->_displayObject);
             }
         }
+        for (const auto& it : treeOrders)
+            sync_container_tree_order(it.first, it.second);
     }
     break;
     }

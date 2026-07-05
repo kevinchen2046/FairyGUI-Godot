@@ -46,8 +46,6 @@ void UIConfig::registerFont(const std::string& aliasName, const std::string& rea
 {
     FontNameItem fi;
     fi.name = realName;
-    // Match README: file extension decides TTF loading, not FileAccess::exists().
-    // Web export may only ship imported .fontdata while the res:// path still resolves via ResourceLoader.
     fi.ttf = isFontFilePath(realName);
 
     _fontNames[aliasName] = fi;

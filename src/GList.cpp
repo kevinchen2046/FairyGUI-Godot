@@ -221,6 +221,7 @@ GObject* GList::addChildAt(const Ref<GObject>& child, int index)
     if (dynamic_cast<GButton*>(child.ptr()))
     {
         GButton* button = static_cast<GButton*>(child.ptr());
+        button->resetListItemState();
         button->setSelected(false);
         button->setChangeStateOnClick(false);
     }

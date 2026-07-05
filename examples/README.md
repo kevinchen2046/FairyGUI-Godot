@@ -60,6 +60,10 @@ python D:\Source\godot\platform\web\serve.py -r "你的导出目录" -p 8060
 - 示例在 `_registerDefaultFonts()` 注册 `Resources/fonts/DroidSansFallback.ttf`（别名 `default` / `en` / `微软雅黑`）。
 - Web 导出须 Include Filters 包含 `Resources/fonts/*`。
 
+### PopupMenu 悬停文字
+
+- 若悬停菜单项时文字被背景盖住，需**重新编译 Godot**（`GComponent` 显示列表顺序修复）并在 FairyGUI 编辑器中**重导 `Basics` 包**（`PopupMenuItem.xml` 已调整 `gearColor` 与 title 层级）。
+
 ### 语言说明
 
 - **GDScript / TypeScript** 可导出 Web；**C# / Mono 不支持 Web 导出**，Web 请用 `gd/` 或 `ts/` 主场景。

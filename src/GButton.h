@@ -71,6 +71,8 @@ public:
     bool isChangeStateOnClick() { return _changeStateOnClick; }
     void setChangeStateOnClick(bool value) { _changeStateOnClick = value; }
 
+    void resetListItemState();
+
     GTextField* getTextField() const;
 
     virtual Variant getProp(ObjectPropID propId) override;

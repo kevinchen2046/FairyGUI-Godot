@@ -182,7 +182,7 @@ private:
     int getDisplaySiblingIndexDescent(GObject* child) const;
     int getInsertPosForSortingChild(GObject* target);
     int moveChild(GObject* child, int oldIndex, int index);
-    static void ensure_display_child_added(FUIInnerContainer* container, GObject* child);
+    void ensure_display_child_added(FUIInnerContainer* container, GObject* child);
 
     CALL_LATER_FUNC(GComponent, doUpdateBounds);
     CALL_LATER_FUNC(GComponent, buildNativeDisplayList);

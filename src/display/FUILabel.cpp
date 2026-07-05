@@ -23,25 +23,47 @@ static HorizontalAlignment fui_text_h_align(int align)
     }
 }
 
+static String fui_sanitize_text(const String& text)
+{
+    if (text.find_char('\t') == -1)
+        return text;
+    return text.replace("\t", " ");
+}
+
 static Vector2 fui_measure_text(const Ref<Font>& font, const String& text, int fontSize, bool wrap, float maxWidth, int align)
 {
+    const String sanitized = fui_sanitize_text(text);
     if (wrap)
-        return font->get_multiline_string_size(text, fui_text_h_align(align), maxWidth, fontSize);
-    return font->get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, fontSize);
+        return font->get_multiline_string_size(sanitized, fui_text_h_align(align), maxWidth, fontSize,
+                -1, TextServer::BREAK_MANDATORY | TextServer::BREAK_WORD_BOUND, TextServer::JUSTIFICATION_NONE,
+                TextServer::DIRECTION_LTR);
+    return font->get_string_size(sanitized, HORIZONTAL_ALIGNMENT_LEFT, -1, fontSize,
+            TextServer::JUSTIFICATION_NONE, TextServer::DIRECTION_LTR);
 }
 
 static void fui_draw_text(CanvasItem* item, const Ref<Font>& font, const Vector2& pos, const String& text,
-        int fontSize, const Color& color, bool wrap, float maxWidth, int align)
+        int fontSize, const Color& color, bool wrap, float boxWidth, int align, bool manualHAlignOffset)
 {
+    const String sanitized = fui_sanitize_text(text);
+    const float drawWidth = boxWidth > 0 ? boxWidth : -1;
+    const HorizontalAlignment hAlign = manualHAlignOffset ? HORIZONTAL_ALIGNMENT_LEFT : fui_text_h_align(align);
+
     if (wrap)
-        item->draw_multiline_string(font, pos, text, fui_text_h_align(align), maxWidth, fontSize, -1, color);
+    {
+        item->draw_multiline_string(font, pos, sanitized, fui_text_h_align(align), drawWidth, fontSize, -1, color,
+                TextServer::BREAK_MANDATORY | TextServer::BREAK_WORD_BOUND, TextServer::JUSTIFICATION_NONE,
+                TextServer::DIRECTION_LTR);
+    }
     else
-        item->draw_string(font, pos, text, fui_text_h_align(align), -1, fontSize, color);
+    {
+        item->draw_string(font, pos, sanitized, hAlign, drawWidth, fontSize, color,
+                TextServer::JUSTIFICATION_NONE, TextServer::DIRECTION_LTR);
+    }
 }
 
 // Match FairyGUI VertexBuffer.GenerateOutline: duplicate text at cardinal/diagonal offsets.
 static void fui_draw_stroke(CanvasItem* item, const Ref<Font>& font, const Vector2& pos, const String& text,
-        int fontSize, const Color& color, bool wrap, float maxWidth, int align, float strokeWidth)
+        int fontSize, const Color& color, bool wrap, float boxWidth, int align, bool manualHAlignOffset, float strokeWidth)
 {
     static const Vector2 STROKE_DIRS[] = {
         Vector2(-1, 0), Vector2(1, 0), Vector2(0, -1), Vector2(0, 1),
@@ -49,7 +71,7 @@ static void fui_draw_stroke(CanvasItem* item, const Ref<Font>& font, const Vecto
     };
     const float w = MAX(strokeWidth, 1.f);
     for (const Vector2& dir : STROKE_DIRS)
-        fui_draw_text(item, font, pos + dir * w, text, fontSize, color, wrap, maxWidth, align);
+        fui_draw_text(item, font, pos + dir * w, text, fontSize, color, wrap, boxWidth, align, manualHAlignOffset);
 }
 
 Color FUILabel::toGrayed(const Color& source)
@@ -365,8 +387,9 @@ void FUILabel::_draw()
     Color textColor = _grayed ? toGrayed(_textFormat->color) : _textFormat->color;
     int fontSize = getDrawFontSize();
     bool wrap = _wrapEnabled && _contentSize.x > 0;
-    float maxWidth = wrap ? _contentSize.x : -1;
-    String godotText = GObject::toGodotStr(_text);
+    const float boxWidth = _contentSize.x > 0 ? _contentSize.x : -1;
+    const bool manualHAlignOffset = !wrap && boxWidth > 0;
+    String godotText = fui_sanitize_text(GObject::toGodotStr(_text));
 
     // Compute alignment offset within content rect
     Vector2 offset = _drawOffset;
@@ -375,7 +398,7 @@ void FUILabel::_draw()
     {
         float textW = getTextWidth();
         float textH = getTextHeight();
-        if (!wrap)
+        if (manualHAlignOffset)
         {
             if (_textFormat->align == 1)      offset.x = (_contentSize.x - textW) * 0.5f;
             else if (_textFormat->align == 2) offset.x = _contentSize.x - textW;
@@ -394,22 +417,22 @@ void FUILabel::_draw()
     {
         Color shadowColor = _grayed ? toGrayed(_textFormat->shadowColor) : _textFormat->shadowColor;
         Vector2 shadowPos = offset + _textFormat->shadowOffset;
-        fui_draw_text(this, font, shadowPos, godotText, fontSize, shadowColor, wrap, maxWidth, _textFormat->align);
+        fui_draw_text(this, font, shadowPos, godotText, fontSize, shadowColor, wrap, boxWidth, _textFormat->align, manualHAlignOffset);
     }
 
     if (_textFormat->hasEffect(TextFormat::OUTLINE) && _textFormat->outlineSize > 0.f)
     {
         Color outlineColor = _grayed ? toGrayed(_textFormat->outlineColor) : _textFormat->outlineColor;
-        fui_draw_stroke(this, font, offset, godotText, fontSize, outlineColor, wrap, maxWidth, _textFormat->align, _textFormat->outlineSize);
+        fui_draw_stroke(this, font, offset, godotText, fontSize, outlineColor, wrap, boxWidth, _textFormat->align, manualHAlignOffset, _textFormat->outlineSize);
     }
     else if (_textFormat->hasEffect(TextFormat::GLOW))
     {
         Color glowColor = _grayed ? toGrayed(_textFormat->glowColor) : _textFormat->glowColor;
-        fui_draw_text(this, font, offset, godotText, fontSize, glowColor, wrap, maxWidth, _textFormat->align);
+        fui_draw_text(this, font, offset, godotText, fontSize, glowColor, wrap, boxWidth, _textFormat->align, manualHAlignOffset);
     }
 
     // Main text
-    fui_draw_text(this, font, offset, godotText, fontSize, textColor, wrap, maxWidth, _textFormat->align);
+    fui_draw_text(this, font, offset, godotText, fontSize, textColor, wrap, boxWidth, _textFormat->align, manualHAlignOffset);
 
     // Underline
     if (_textFormat->underline)
