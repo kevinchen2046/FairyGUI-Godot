@@ -8,6 +8,7 @@ var _pending_scene_path: String = ""
 func _ready() -> void:
 	_scene_active = true
 	_register_default_fonts()
+	_register_default_scroll_bars()
 	if GRoot.getInstance() != null:
 		GRoot.cleanup()
 	call_deferred("_delayed_init")
@@ -80,6 +81,12 @@ func _register_default_fonts() -> void:
 	ui.registerFont("en", font_path)
 	ui.registerFont("微软雅黑", font_path)
 	ui.setDefaultFont("default")
+
+func _register_default_scroll_bars() -> void:
+	UIPackage.addPackage("res://Resources/UI/Basics")
+	var ui := UIConfigHelper.getInstance()
+	ui.verticalScrollBar = "ui://Basics/ScrollBar_VT"
+	ui.horizontalScrollBar = "ui://Basics/ScrollBar_HZ"
 
 func continue_init() -> void:
 	pass

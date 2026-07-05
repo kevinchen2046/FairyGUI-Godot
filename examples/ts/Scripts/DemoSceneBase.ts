@@ -21,6 +21,7 @@ export class DemoSceneBase extends Node {
     _ready(): void {
         this._sceneActive = true;
         this._registerDefaultFonts();
+        this._registerDefaultScrollBars();
         if (GRoot.getInstance() != null) {
             GRoot.cleanup();
         }
@@ -122,6 +123,14 @@ export class DemoSceneBase extends Node {
         ui.registerFont("en", fontPath);
         ui.registerFont("微软雅黑", fontPath);
         ui.defaultFont = "default";
+    }
+
+    /** ScrollBar 组件在 Basics 包里；各 demo 须先注册 URL 并加载包，否则 ScrollPane 创建不出滚动条。 */
+    protected _registerDefaultScrollBars(): void {
+        UIPackage.addPackage("res://Resources/UI/Basics");
+        const ui = UIConfigHelper.getInstance()!;
+        ui.verticalScrollBar = "ui://Basics/ScrollBar_VT";
+        ui.horizontalScrollBar = "ui://Basics/ScrollBar_HZ";
     }
 
     protected ContinueInit(): void | Promise<void> {

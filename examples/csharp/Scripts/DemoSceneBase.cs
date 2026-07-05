@@ -16,6 +16,7 @@ public partial class DemoSceneBase : Node
     {
         _sceneActive = true;
         RegisterDefaultFonts();
+        RegisterDefaultScrollBars();
         if (GRoot.GetInstance() != null)
             GRoot.Cleanup();
         CallDeferred(MethodName.DelayedInit);
@@ -104,6 +105,14 @@ public partial class DemoSceneBase : Node
         ui.RegisterFont("en", fontPath);
         ui.RegisterFont("微软雅黑", fontPath);
         ui.SetDefaultFont("default");
+    }
+
+    private static void RegisterDefaultScrollBars()
+    {
+        UIPackage.AddPackage("res://Resources/UI/Basics");
+        var ui = UIConfigHelper.GetInstance();
+        ui.SetVerticalScrollBar("ui://Basics/ScrollBar_VT");
+        ui.SetHorizontalScrollBar("ui://Basics/ScrollBar_HZ");
     }
 
     protected virtual void ContinueInit()
