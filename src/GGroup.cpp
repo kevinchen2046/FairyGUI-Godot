@@ -4,7 +4,8 @@
 #include <cfloat>
 
 NS_FGUI_BEGIN
-GGroup::GGroup() : _layout(GroupLayoutType::NONE),
+GGroup::GGroup() : _updating(false),
+                   _layout(GroupLayoutType::NONE),
                    _lineGap(0),
                    _columnGap(0),
                    _excludeInvisibles(false),
@@ -15,8 +16,7 @@ GGroup::GGroup() : _layout(GroupLayoutType::NONE),
                    _boundsChanged(false),
                    _mainChildIndex(-1),
                    _totalSize(0),
-                   _numChildren(0),
-                   _updating(false)
+                   _numChildren(0)
 {
     _touchDisabled = true;
 }
