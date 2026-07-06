@@ -1,8 +1,14 @@
 # FairyGUI-Godot
 
-> 当前项目是正在开发中的实验项目，基于FairyGUI的cocos2dx版本，使用AI重构中。
+> 当前项目是基于FairyGUI的cocos2dx版本重构，支持C#、gdscript、javascript/typescript或其它godot支持的脚本语言。
+> 目前支持Godot 4.5-4.6
+
+[javascript版demo在线预览](https://fairygui.niceaddons.com/js/)
+[gdscript版demo在线预览](https://fairygui.niceaddons.com/gd/)
 
 FairyGUI 的 Godot 引擎运行时，以内置 C++ Module 形式集成。
+
+也可以通过直接构建git@github.com:mkdevkit/godot.git使用。
 
 ## Project Structure
 
@@ -162,7 +168,7 @@ GLoader3D 通过以下方式引用 spine_godot 头文件：
 
 FairyGUI 作为 **Godot 内置模块**编译 — 无需独立构建步骤。
 
-在 Godot 源码根目录（如 `D:\Source\godot`）执行：
+在 Godot 源码根目录执行：
 
 **启用 Spine 支持**（使用 `GLoader3D` 时推荐）：
 
@@ -196,6 +202,8 @@ Godot 构建系统通过 `config.py` 自动发现模块。
 
 ### Spine 运行时集成
 
+Spine运行时有部分修改，可以clone https://github.com/mkdevkit/spine_godot
+
 当 `module_spine_godot_enabled=yes` 时，Spine 支持由 `spine_godot` 模块（`modules/spine_godot/`）提供。
 
 - `spine-cpp/` 包含来自 [EsotericSoftware/spine-runtimes](https://github.com/EsotericSoftware/spine-runtimes) 的上游 Spine C++ 运行时
@@ -205,6 +213,10 @@ Godot 构建系统通过 `config.py` 自动发现模块。
 > **修改说明：** `modules/spine_godot/SCsub` 第5行和第8行 — include 路径从
 > `#../spine_godot/spine-cpp/include` 改为 `#modules/spine_godot/spine-cpp/include`
 > 以适配新的模块目录布局。
+
+### 使用GodotJS脚本方案支持javascript开发（非本项目必须，有typescript demo）。
+
+GodotJS有补丁，可以clone https://github.com/mkdevkit/GodotJS
 
 ## GodotJS 补丁
 
@@ -575,3 +587,46 @@ comp.getTransition("hide").play(func():
 | `fairygui.UIPackage` | `RefCounted` | 包管理器 |
 | `fairygui.GPopupMenu` | `RefCounted` | 弹出菜单 |
 > **未注册：** `ScrollPane`/`Transition`（需要自定义构造函数）、`DrawNode`（内部类）。
+
+
+### Demo 运行指南
+
+## typescript
+
+要编译带GodotJS module的引擎。
+
+需要在 examples 目录 执行npx -p typescript tsc来编译typescript
+
+项目主场景配成res://ts/Scenes/MainMenu.tscn
+
+## C#
+
+要编译带mono的引擎。
+
+scons module_mono_enabled=yes module_spine_godot_enabled=yes
+
+生成mono 胶水代码
+.\bin\godot.windows.editor.dev.x86_64.mono.exe --headless --generate-mono-glue modules/mono/glue
+
+执行胶水生成后，再运行托管库编译脚本：
+python modules/mono/build_scripts/build_assemblies.py --godot-output-dir ./bin  --push-nupkgs-local ./nupkgs
+
+声明环境变量GODOT_BIN=godot编译生成的bin目录。
+如果版本没有nuget源，可以使用以下命令，把本地的编译做为源。
+添加本地 NuGet 源（只需一次）
+dotnet nuget add source D:\Source\godot\nupkgs --name GodotLocal
+
+项目主场景配成res://csharp/Scenes/MainMenu.tscn
+然后编辑器中启动主场景测试。
+
+## gdscript
+项目主场景配成res://gd/Scenes/MainMenu.tscn
+
+
+## web
+
+scons platform=web target=template_release optimize=size_extra lto=full disable_3d=yes disable_advanced_gui=yes module_mono_enabled=no module_xr_enabled=no module_webxr_enabled=no module_multiplayer_enabled=no module_text_server_adv_enabled=no module_text_server_fb_enabled=yes module_bmp_enabled=no module_dds_enabled=no module_hdr_enabled=no module_ktx_enabled=no module_tga_enabled=no disable_audio_speech=yes module_spine_godot_enabled=yes
+
+如果需要在一些手机浏览器中也能跑，需要加threads=no选项
+
+项目主场景可以配成res://ts/Scenes/MainMenu.tscn或res://gd/Scenes/MainMenu.tscn以使用javascipt或gdscipt的方式跑demo.目前godot还不支持导出支持C#的web项目。

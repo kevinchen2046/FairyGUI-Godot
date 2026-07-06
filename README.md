@@ -1,10 +1,16 @@
 # FairyGUI-Godot
 
-> This is an experimental project under active development, based on the FairyGUI cocos2d-x version and being refactored with AI assistance.
+> This project is a refactor of the FairyGUI cocos2d-x runtime for Godot. It supports C#, GDScript, JavaScript/TypeScript, or any other scripting language Godot supports.
+> Currently supports Godot 4.5–4.6.
 
-FairyGUI runtime for Godot Engine, built-in C++ module.
+> **中文文档：[README.zh.md](README.zh.md)**
 
-> [中文文档](README.zh.md)
+[JavaScript demo (online)](https://fairygui.niceaddons.com/js/)  
+[GDScript demo (online)](https://fairygui.niceaddons.com/gd/)
+
+FairyGUI runtime for Godot Engine, integrated as a built-in C++ module.
+
+You can also build from [https://github.com/mkdevkit/godot](https://github.com/mkdevkit/godot).
 
 ## Project Structure
 
@@ -18,30 +24,30 @@ modules/fairygui/
 │   ├── FairyGUI.h                      # Umbrella include header
 │   ├── FairyGUIMacros.h                # Namespace macros
 │   ├── FieldTypes.h                    # All enums (ObjectType, FillMethod, etc.)
-│   ├── godot_types.h                   # Godot engine type mapping (replaces godot-cpp)
+│   ├── godot_types.h                   # Godot engine type mapping
 │   ├── Margin.h/Margin.cpp             # Margin type
 │   ├── UIConfig.h/UIConfig.cpp         # Global UI configuration
 │   ├── PackageItem.h/PackageItem.cpp   # Package resource item
 │   ├── UIPackage.h/UIPackage.cpp       # Package loader (reads .fui binary)
-│   ├── Controller.h/Controller.cpp     # GController (page-based state)
+│   ├── Controller.h/Controller.cpp     # GController (page state controller)
 │   ├── GObject.h/GObject.cpp           # Base GObject (inherits Node)
 │   ├── GComponent.h/GComponent.cpp     # GComponent container
 │   ├── UIObjectFactory.h/UIObjectFactory.cpp  # Widget factory
-│   ├── GObjectPool.h/GObjectPool.cpp   # Object pooling
+│   ├── GObjectPool.h/GObjectPool.cpp   # Object pool
 │   ├── RelationItem.h/RelationItem.cpp  # Single relation constraint
 │   ├── Relations.h/Relations.cpp       # Relation collection
-│   ├── ScrollPane.h/ScrollPane.cpp     # ScrollPane for GComponent
+│   ├── ScrollPane.h/ScrollPane.cpp     # ScrollPane (GComponent scroll container)
 │   ├── Transition.h/Transition.cpp     # Transition animation system
 │   ├── TranslationHelper.h/TranslationHelper.cpp  # String translation
 │   ├── GRoot.h/GRoot.cpp               # GRoot (root canvas)
-│   ├── Window.h/Window.cpp             # GWindow (modal/popup window)
+│   ├── Window.h/Window.cpp             # GWindow (popup / modal window)
 │   ├── GPopupMenu.h/GPopupMenu.cpp     # PopupMenu
 │   ├── DragDropManager.h/DragDropManager.cpp  # DragDropManager
 │   ├── GImage.h/GImage.cpp             # GImage widget
-│   ├── GGraph.h/GGraph.cpp             # GGraph widget (drawing primitives)
+│   ├── GGraph.h/GGraph.cpp             # GGraph drawing widget
 │   ├── GTextField.h/GTextField.cpp     # GTextField / GBasicTextField
-│   ├── GRichTextField.h/GRichTextField.cpp   # GRichTextField widget
-│   ├── GTextInput.h/GTextInput.cpp     # GTextInput widget
+│   ├── GRichTextField.h/GRichTextField.cpp   # GRichTextField rich text widget
+│   ├── GTextInput.h/GTextInput.cpp     # GTextInput text input widget
 │   ├── GButton.h/GButton.cpp           # GButton widget
 │   ├── GLabel.h/GLabel.cpp             # GLabel widget
 │   ├── GComboBox.h/GComboBox.cpp       # GComboBox widget
@@ -52,8 +58,8 @@ modules/fairygui/
 │   ├── GTree.h/GTree.cpp               # GTree widget
 │   ├── GTreeNode.h/GTreeNode.cpp       # GTreeNode
 │   ├── GLoader.h/GLoader.cpp           # GLoader widget
-│   ├── GLoader3D.h/GLoader3D.cpp       # GLoader3D widget (Spine runtime)
-│   ├── GMovieClip.h/GMovieClip.cpp     # GMovieClip widget
+│   ├── GLoader3D.h/GLoader3D.cpp       # GLoader3D (Spine runtime)
+│   ├── GMovieClip.h/GMovieClip.cpp     # GMovieClip frame animation widget
 │   ├── GGroup.h/GGroup.cpp             # GGroup widget
 │   ├── event/
 │   │   ├── UIEventType.h               # Event type constants
@@ -65,11 +71,11 @@ modules/fairygui/
 │   ├── display/
 │   │   ├── BitmapFont.h/BitmapFont.cpp  # Bitmap font rendering
 │   │   ├── FUIContainer.h/FUIContainer.cpp  # Container node (clipping, stencil)
-│   │   ├── FUIInput.h/FUIInput.cpp     # Input text control
+│   │   ├── FUIInput.h/FUIInput.cpp     # Text input control
 │   │   ├── FUILabel.h/FUILabel.cpp     # Label rendering node
 │   │   ├── FUIRichText.h/FUIRichText.cpp  # Rich text rendering node
 │   │   ├── FUISprite.h/FUISprite.cpp   # Sprite rendering node
-│   │   └── TextFormat.h/TextFormat.cpp  # Text formatting descriptor
+│   │   └── TextFormat.h/TextFormat.cpp  # Text format descriptor
 │   ├── gears/
 │   │   ├── GearBase.h/GearBase.cpp     # Gear base class
 │   │   ├── GearAnimation.h/GearAnimation.cpp  # Animation gear
@@ -108,11 +114,11 @@ modules/fairygui/
 
 ## Dependencies
 
-This module optionally depends on the **spine_godot** module (also under `modules/`) for `GLoader3D` Spine animation support. When `spine_godot` is not enabled, fairygui still builds; `GLoader3D` compiles with `SPINE_GODOT_DISABLED` and skips Spine loading at runtime.
+This module **optionally** depends on the **spine_godot** module (`modules/spine_godot/`) for Spine skeletal animation in `GLoader3D`. When `spine_godot` is not enabled, fairygui still builds; `SPINE_GODOT_DISABLED` is defined and `GLoader3D` skips Spine loading at runtime.
 
 ### Spine Runtime (spine_godot)
 
-Located at `modules/spine_godot/`, this module provides Spine 2D skeletal animation support for `GLoader3D`.
+Located at `modules/spine_godot/`, provides Spine 2D skeletal animation support for `GLoader3D`.
 
 ```
 modules/spine_godot/
@@ -139,7 +145,8 @@ modules/spine_godot/
 └── ...
 ```
 
-GLoader3D requires spine_godot headers via:
+`GLoader3D` includes spine_godot headers as follows:
+
 ```cpp
 #include "SpineSprite.h"
 #include "SpineSkeleton.h"
@@ -164,7 +171,7 @@ GLoader3D requires spine_godot headers via:
 
 FairyGUI is compiled as a **built-in Godot module** — no separate build step required.
 
-Run from the Godot source root (`D:\Source\godot` or your clone path):
+Run from the Godot source root:
 
 **With Spine support** (recommended if you use `GLoader3D`):
 
@@ -184,19 +191,22 @@ You can combine these flags with other SCons options, for example:
 scons platform=windows target=editor dev_build=yes module_fairygui_enabled=yes module_spine_godot_enabled=yes -j8
 ```
 
-Or for a Visual Studio project (debug):
+Or generate a Visual Studio project (debug):
 
 ```sh
 scons platform=windows vsproj=yes dev_build=yes arch=x86_64 vulkan=no opengl3=yes csharp=no module_fairygui_enabled=yes module_spine_godot_enabled=yes
 ```
 
-The module is auto-detected by Godot's build system via `config.py`.
+Godot's build system auto-detects the module via `config.py`.
 
-The `SCsub` adds include paths for:
+`SCsub` adds include paths for:
+
 - `src/` and all subdirectories (event, display, gears, tween, utils, utils/html, controller_action)
 - `modules/spine_godot/` and `modules/spine_godot/spine-cpp/include` (only when `module_spine_godot_enabled=yes`)
 
 ### Spine Runtime Integration
+
+The Spine runtime has been partially modified. You can clone [https://github.com/mkdevkit/spine_godot](https://github.com/mkdevkit/spine_godot).
 
 When `module_spine_godot_enabled=yes`, Spine support is provided by the `spine_godot` module (`modules/spine_godot/`).
 
@@ -204,11 +214,15 @@ When `module_spine_godot_enabled=yes`, Spine support is provided by the `spine_g
 - The `spine_godot` SCsub compiles both `spine-cpp/src/spine/*.cpp` and its own `*.cpp` files
 - Fairygui's `GLoader3D` includes spine_godot headers directly
 
-> **Modification:** `modules/spine_godot/SCsub` line 5 & 8 — include path changed from
+> **Modification note:** In `modules/spine_godot/SCsub` lines 5 and 8, the include path was changed from
 > `#../spine_godot/spine-cpp/include` to `#modules/spine_godot/spine-cpp/include`
 > to match the new module directory layout.
 
-## GodotJS patch
+### JavaScript development with GodotJS (optional; TypeScript demo included)
+
+GodotJS requires a patch. Clone [https://github.com/mkdevkit/GodotJS](https://github.com/mkdevkit/GodotJS).
+
+## GodotJS Patch
 
 When running the TypeScript demos (`examples/ts/`) with **GodotJS**, both items below are required.
 
@@ -238,7 +252,7 @@ GodotJS lazily loads ClassDB types via the `godot` module Proxy. For renamed eng
              }
 ```
 
-Do **not** change line 97–99 (`expose_class` path for types like `Signal`) — there `class_info->name` matches the JS display name.
+Do **not** change lines 97–99 (`expose_class` path for types like `Signal`) — there `class_info->name` matches the JS display name.
 
 Rebuild Godot (including GodotJS) after applying the patch. Then `FGUIEventContext.getData()` can return `GuiObject` to JS normally; `getItemText()` remains available when you only need ClickItem text.
 
@@ -260,7 +274,7 @@ GRoot.create(get_tree())
 GRoot.createDeferred(get_tree())
 ```
 
-UI packages come from FairyGUI Editor exported `.fui` files. Place them under `res://` in your Godot project — no additional path configuration needed:
+UI packages come from FairyGUI Editor exported `.fui` files. Place them under `res://` in your Godot project:
 
 ```
 res://Ui/YourPackage.fui
@@ -271,7 +285,7 @@ res://Ui/YourPackage_atlas0.png
 # Add a FairyGUI package (path without .fui extension)
 UIPackage.addPackage("res://UI/YourPackage")
 
-# Create a component and attach it to GRoot.
+# Create a component and attach it to GRoot
 var comp = UIPackage.createObject("YourPackage", "Main")
 GRoot.getInstance().addChild(comp)
 
@@ -280,10 +294,9 @@ var btn = UIPackage.createObjectFromURL("ui://YourPackage/MyButton")
 ```
 
 > **Note**: If you call `addChild()` on the **same frame** as `GRoot.create()`,
-> you may hit "Parent node is busy setting up children". In that case use
-> `GRoot.getInstance().addChild.call_deferred(comp)`. When adding children
-> from a button callback, timer, `_process()`, or any later frame, plain
-> `addChild()` is fine.
+> you may hit "Parent node is busy setting up children".
+> Use `GRoot.createDeferred(get_tree())` in that case — it attaches on the next frame.
+> When adding children from a button callback, timer, or any later frame, plain `addChild()` is fine.
 
 > **Note**: If you enable **branch** export in FairyGUI Editor, component names will be prefixed with the branch ID, e.g. `7iys1/Menu`. In that case, `createObject` needs the full prefixed name. Disable branch in the editor if you don't need it.
 
@@ -311,7 +324,7 @@ FairyGUI supports two font types: **BMFont** (bitmap fonts from FairyGUI Editor)
 
 #### BM Font (from FairyGUI Editor)
 
-Bitmaps fonts exported from FairyGUI Editor (`.fnt` files) are loaded automatically through the package system. The font name follows the `ui://PackageName/FontName` URL format.
+Bitmap fonts exported from FairyGUI Editor (`.fnt` files) are loaded automatically through the package system. The font name follows the `ui://PackageName/FontName` URL format.
 
 No additional configuration is required.
 
@@ -338,7 +351,7 @@ UIPackage.registerFont("Arial", "Arial")
 UIPackage.setDefaultFont("SimHei")
 ```
 
-Font names without a file extension are resolved via `SystemFont`, which looks up the installed system fonts.
+Font names without a file extension are resolved via `SystemFont`, which looks up installed system fonts.
 
 #### How It Works
 
@@ -347,6 +360,16 @@ In FairyGUI Editor, you set a font name on text objects (e.g., `"SimHei"` or `"m
 1. `UIConfig::getRealFontName()` resolves the alias to the actual file path or system font name
 2. If the resolved name ends with `.ttf` / `.otf` → `FontFile::load_dynamic_font()` loads the file
 3. Otherwise → `SystemFont` matches the name against installed system fonts
+
+#### ScrollBar
+
+Horizontal and vertical scroll bars used by `ScrollPane` are **separate UI components**. You must register their URLs via `UIConfig`, and the corresponding package must be loaded with `UIPackage.addPackage`. The `scrollBars` entry in editor `Common.json` does **not** apply automatically at runtime.
+
+- The demo registers scroll bars in `examples/*/Scripts/DemoSceneBase` via `_registerDefaultScrollBars()`: load the **Basics** package and set `horizontalScrollBar` / `verticalScrollBar`.
+- `scrollBar="auto"` (editor: show on scroll): matches Cocos — visible on desktop hover / drag / inertia scroll; mouse wheel does not trigger display.
+- GList **item pool** only recycles list items; it is unrelated to ScrollBar components.
+
+For full details (including “no scroll bar until Basics demo was opened” behavior), see [`examples/README.md`](examples/README.md#scrollbar).
 
 ### 3. Common Widget Operations
 
@@ -410,19 +433,19 @@ btn.addClickListener(func(ctx):
 )
 
 # Scroll event
-list.addEventListener(fairygui.UIEventType.Scroll, func(ctx):
+list.addEventListener(UIEventType.Scroll, func(ctx):
     print("List scrolling")
 )
 
-# Other common event types:
-# fairygui.UIEventType.Click
-# fairygui.UIEventType.Changed
-# fairygui.UIEventType.TouchBegin / TouchEnd
-# fairygui.UIEventType.RollOver / RollOut
-# fairygui.UIEventType.Scroll / ScrollEnd
-# fairygui.UIEventType.DragStart / DragEnd
-# fairygui.UIEventType.PositionChange / SizeChange
-# fairygui.UIEventType.GearStop
+# Other common event types
+# UIEventType.Click
+# UIEventType.Changed
+# UIEventType.TouchBegin / TouchEnd
+# UIEventType.RollOver / RollOut
+# UIEventType.Scroll / ScrollEnd
+# UIEventType.DragStart / DragEnd
+# UIEventType.PositionChange / SizeChange
+# UIEventType.GearStop
 ```
 
 ### 5. Controllers
@@ -437,22 +460,80 @@ if ctrl:
     print(ctrl.previousIndex)        # previous index
 ```
 
-### 6. Drag & Drop
+### 6. Screen Adaptation
+
+```gdscript
+# After creating GRoot, set design resolution and scale mode
+var root = GRoot.create(get_tree())
+
+# Content scale (design resolution 1136x640, proportional scaling)
+root.setContentScaleFactor(1136, 640, GRoot.ScreenMatchMode.MATCH_WIDTH_OR_HEIGHT)
+
+# Call when the window size changes so FairyGUI recalculates scale and layout
+root.onWindowSizeChanged()
+```
+
+#### ScreenMatchMode
+
+| Mode | Scale | GRoot size | Effect |
+|------|-------|------------|--------|
+| `MATCH_WIDTH_OR_HEIGHT` | `min(screenW/designW, screenH/designH)` | `(designW, designH)` | Uniform scale, letterboxed, content always visible |
+| `MATCH_WIDTH` | `screenW / designW` | `(designW, screenH/scale)` | Fixed width, dynamic height |
+| `MATCH_HEIGHT` | `screenH / designH` | `(screenW/scale, designH)` | Fixed height, dynamic width |
+| `MATCH_FILL` | `scaleX=screenW/designW`, `scaleY=screenH/designH` | `(designW, designH)` | Non-uniform stretch to fill screen |
+
+#### Listening for window resize in GDScript
+
+```gdscript
+func _ready():
+    var root = GRoot.create(get_tree())
+    root.setContentScaleFactor(1136, 640, GRoot.ScreenMatchMode.MATCH_WIDTH_OR_HEIGHT)
+
+    # Initial layout
+    root.onWindowSizeChanged()
+
+    # Listen for resize — get GRoot's displayObject, find the Window node, connect size_changed
+    var display_node = root.getDisplayObject()
+    if display_node and display_node.is_inside_tree():
+        var viewport = display_node.get_viewport()
+        if viewport is Window:
+            viewport.size_changed.connect(root.onWindowSizeChanged)
+```
+
+#### Notes on makeFullScreen
+
+`makeFullScreen()` reads `GRoot` size to set its own size. Calling it directly in `_ready()` may run before `GRoot` is fully initialized.
+
+```gdscript
+var root = GRoot.create(get_tree())
+root.setContentScaleFactor(1136, 640, GRoot.ScreenMatchMode.MATCH_WIDTH_OR_HEIGHT)
+
+var comp = UIPackage.createObject("UI", "MainPanel")
+comp.center()
+comp.makeFullScreen.call_deferred()  # wait until GRoot is ready
+root.addChild(comp)
+
+func _on_window_size_change() -> void:
+    GRoot.getInstance().onWindowSizeChanged()
+    main_panel.makeFullScreen()
+```
+
+### 7. Drag & Drop
 
 ```gdscript
 obj.draggable = true
 obj.setDragBounds(Rect2(0, 0, 500, 400))
 ```
 
-### 7. Relations (Layout Constraints)
+### 8. Relations (Layout Constraints)
 
 ```gdscript
 # Keep child aligned relative to parent
-child.addRelation(parent, fairygui.RelationType.Width_Width)
-child.addRelation(parent, fairygui.RelationType.Height_Height)
+child.addRelation(parent, RelationType.Width_Width)
+child.addRelation(parent, RelationType.Height_Height)
 ```
 
-### 8. Transitions
+### 9. Transitions
 
 Design transitions in FairyGUI Editor, then play them at runtime:
 
@@ -463,19 +544,19 @@ comp.getTransition("hide").play(func():
 )
 ```
 
-### 9. Registered Godot Classes
+### 10. Registered Godot Classes
 
-All classes below are registered in Godot (methods not yet exposed to GDScript):
+The following classes are registered in Godot (methods not yet fully exposed to GDScript):
 
 | Class | Inherits From | Description |
 |---|---|---|
 | `fairygui.UIEventDispatcher` | `RefCounted` | Event dispatch base |
 | `fairygui.GController` | `UIEventDispatcher` | Controller |
-| `fairygui.GObject` | `UIEventDispatcher` | Base class for all UI objects |
-| `fairygui.GComponent` | `GObject` | Container component |
-| `fairygui.GImage` | `GObject` | Image |
-| `fairygui.GGraph` | `GObject` | Shape drawing |
-| `fairygui.GTextField` | `GObject` | Text base (abstract) |
+| `fairygui.GuiObject` | `UIEventDispatcher` | Base class for all UI objects |
+| `fairygui.GComponent` | `GuiObject` | Container component |
+| `fairygui.GImage` | `GuiObject` | Image |
+| `fairygui.GGraph` | `GuiObject` | Shape drawing |
+| `fairygui.GTextField` | `GuiObject` | Text base (abstract) |
 | `fairygui.GBasicTextField` | `GTextField` | Basic text |
 | `fairygui.GRichTextField` | `GTextField` | Rich text |
 | `fairygui.GTextInput` | `GTextField` | Text input |
@@ -489,10 +570,10 @@ All classes below are registered in Godot (methods not yet exposed to GDScript):
 | `fairygui.GList` | `GComponent` | List |
 | `fairygui.GTree` | `GList` | Tree view |
 | `fairygui.GTreeNode` | `RefCounted` | Tree node |
-| `fairygui.GLoader` | `GObject` | Loader |
-| `fairygui.GLoader3D` | `GObject` | Spine animation |
-| `fairygui.GMovieClip` | `GObject` | Frame animation |
-| `fairygui.GGroup` | `GObject` | Group |
+| `fairygui.GLoader` | `GuiObject` | Loader |
+| `fairygui.GLoader3D` | `GuiObject` | Spine animation |
+| `fairygui.GMovieClip` | `GuiObject` | Frame animation |
+| `fairygui.GGroup` | `GuiObject` | Group |
 | `fairygui.GRoot` | `GComponent` | Root node |
 | `fairygui.FUIContainer` | `Node2D` | Display container |
 | `fairygui.FUIInnerContainer` | `FUIContainer` | Inner container |
@@ -502,4 +583,67 @@ All classes below are registered in Godot (methods not yet exposed to GDScript):
 | `fairygui.FUISprite` | `Sprite2D` | Sprite display |
 | `fairygui.UIPackage` | `RefCounted` | Package manager |
 | `fairygui.GPopupMenu` | `RefCounted` | Popup menu |
-> **Not registered:** `ScrollPane`/`Transition` (require custom constructors), `DrawNode` (internal class).
+
+> **Not registered:** `ScrollPane` / `Transition` (require custom constructors), `DrawNode` (internal class).
+
+## Demo Running Guide
+
+### TypeScript
+
+Build Godot with the GodotJS module enabled.
+
+In the `examples/` directory, compile TypeScript:
+
+```sh
+npx -p typescript tsc
+```
+
+Set the main scene to `res://ts/Scenes/MainMenu.tscn`.
+
+### C#
+
+Build Godot with Mono enabled:
+
+```sh
+scons module_mono_enabled=yes module_spine_godot_enabled=yes
+```
+
+Generate Mono glue code:
+
+```sh
+.\bin\godot.windows.editor.dev.x86_64.mono.exe --headless --generate-mono-glue modules/mono/glue
+```
+
+After glue generation, build managed assemblies:
+
+```sh
+python modules/mono/build_scripts/build_assemblies.py --godot-output-dir ./bin --push-nupkgs-local ./nupkgs
+```
+
+Set the `GODOT_BIN` environment variable to your Godot build output directory (`bin/`).
+
+If you don't have the NuGet feed configured, add a local source (once):
+
+```sh
+dotnet nuget add source D:\Source\godot\nupkgs --name GodotLocal
+```
+
+Set the main scene to `res://csharp/Scenes/MainMenu.tscn`, then run from the editor.
+
+See also [`examples/csharp/README.md`](examples/csharp/README.md).
+
+### GDScript
+
+Set the main scene to `res://gd/Scenes/MainMenu.tscn`.
+
+### Web
+
+```sh
+scons platform=web target=template_release optimize=size_extra lto=full disable_3d=yes disable_advanced_gui=yes module_mono_enabled=no module_xr_enabled=no module_webxr_enabled=no module_multiplayer_enabled=no module_text_server_adv_enabled=no module_text_server_fb_enabled=yes module_bmp_enabled=no module_dds_enabled=no module_hdr_enabled=no module_ktx_enabled=no module_tga_enabled=no disable_audio_speech=yes module_spine_godot_enabled=yes
+```
+
+For broader mobile browser compatibility, add `threads=no`.
+
+Set the main scene to `res://ts/Scenes/MainMenu.tscn` or `res://gd/Scenes/MainMenu.tscn` for JavaScript or GDScript demos. Godot does not currently support exporting C# Web projects.
+
+See [`examples/README.md`](examples/README.md#web-export) for export filters, COOP/COEP, fonts, and related notes.
