@@ -106,14 +106,14 @@ modules/fairygui/
 
 ## 依赖
 
-本模块**可选**依赖 **spine_godot** 模块（位于 `modules/spine_godot/`），用于 `GLoader3D` 的 Spine 骨骼动画。未启用 `spine_godot` 时 fairygui 仍可正常编译；此时会定义 `SPINE_GODOT_DISABLED`，`GLoader3D` 在运行时会跳过 Spine 加载。
+本模块**可选**依赖 **spine-godot** 模块（位于 `modules/spine-godot/`），用于 `GLoader3D` 的 Spine 骨骼动画。未启用 `spine-godot` 时 fairygui 仍可正常编译；此时会定义 `SPINE_GODOT_DISABLED`，`GLoader3D` 在运行时会跳过 Spine 加载。
 
-### Spine 运行时 (spine_godot)
+### Spine 运行时 (spine-godot)
 
-位于 `modules/spine_godot/`，为 `GLoader3D` 提供 Spine 2D 骨骼动画支持。
+位于 `modules/spine-godot/`，为 `GLoader3D` 提供 Spine 2D 骨骼动画支持。
 
 ```
-modules/spine_godot/
+modules/spine-godot/
 ├── config.py                           # 模块构建配置
 ├── SCsub                               # SCons 构建脚本
 ├── SpineSprite.h / .cpp                # Spine 精灵节点
@@ -137,7 +137,7 @@ modules/spine_godot/
 └── ...
 ```
 
-GLoader3D 通过以下方式引用 spine_godot 头文件：
+GLoader3D 通过以下方式引用 spine-godot 头文件：
 ```cpp
 #include "SpineSprite.h"
 #include "SpineSkeleton.h"
@@ -192,18 +192,18 @@ Godot 构建系统通过 `config.py` 自动发现模块。
 
 `SCsub` 添加的包含路径：
 - `src/` 及其所有子目录 (event, display, gears, tween, utils, utils/html, controller_action)
-- `modules/spine_godot/` 与 `modules/spine_godot/spine-cpp/include`（仅在 `module_spine_godot_enabled=yes` 时）
+- `modules/spine-godot/` 与 `modules/spine-godot/spine-cpp/include`（仅在 `module_spine_godot_enabled=yes` 时）
 
 ### Spine 运行时集成
 
-当 `module_spine_godot_enabled=yes` 时，Spine 支持由 `spine_godot` 模块（`modules/spine_godot/`）提供。
+当 `module_spine_godot_enabled=yes` 时，Spine 支持由 `spine-godot` 模块（`modules/spine-godot/`）提供。
 
 - `spine-cpp/` 包含来自 [EsotericSoftware/spine-runtimes](https://github.com/EsotericSoftware/spine-runtimes) 的上游 Spine C++ 运行时
-- `spine_godot` 的 SCsub 同时编译 `spine-cpp/src/spine/*.cpp` 和自己的 `*.cpp` 文件
-- Fairygui 的 `GLoader3D` 直接包含 spine_godot 头文件
+- `spine-godot` 的 SCsub 同时编译 `spine-cpp/src/spine/*.cpp` 和自己的 `*.cpp` 文件
+- Fairygui 的 `GLoader3D` 直接包含 spine-godot 头文件
 
-> **修改说明：** `modules/spine_godot/SCsub` 第5行和第8行 — include 路径从
-> `#../spine_godot/spine-cpp/include` 改为 `#modules/spine_godot/spine-cpp/include`
+> **修改说明：** `modules/spine-godot/SCsub` 第5行和第8行 — include 路径从
+> `#../spine-godot/spine-cpp/include` 改为 `#modules/spine-godot/spine-cpp/include`
 > 以适配新的模块目录布局。
 
 ## GodotJS 补丁
