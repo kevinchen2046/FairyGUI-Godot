@@ -18,9 +18,9 @@ env_fairygui.Append(CPPPATH=[
     "src/controller_action/",
 ])
 
-# Spine runtime include path (spine-godot module at modules/spine-godot/)
+# Spine runtime include path (spine_godot module at modules/spine_godot/)
 if env.get("module_spine_godot_enabled", False):
-    env_fairygui.Append(CPPPATH=["#modules/spine-godot", "#modules/spine-godot/spine-cpp/include"])
+    env_fairygui.Append(CPPPATH=["#modules/spine_godot", "#modules/spine_godot/spine-cpp/include"])
 else:
     env_fairygui.Append(CPPDEFINES=["SPINE_GODOT_DISABLED"])
 
