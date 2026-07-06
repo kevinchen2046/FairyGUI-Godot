@@ -1,5 +1,6 @@
 #include "HtmlElement.h"
 #include "HtmlObject.h"
+#include "fgui_godot_compat.h"
 
 NS_FGUI_BEGIN
 using namespace std;
@@ -17,7 +18,7 @@ int HtmlElement::getInt(const std::string& attrName, int defValue)
     if (attrs.is_empty())
         return defValue;
 
-    Variant var = attrs[String(attrName.c_str())];
+    Variant var = fgui_dictionary_get(attrs, String(attrName.c_str()));
     if (var.get_type() != Variant::NIL)
         return (int)var;
     else
@@ -29,7 +30,7 @@ std::string HtmlElement::getString(const std::string& attrName, const std::strin
     if (attrs.is_empty())
         return defValue;
 
-    Variant var = attrs[String(attrName.c_str())];
+    Variant var = fgui_dictionary_get(attrs, String(attrName.c_str()));
     if (var.get_type() != Variant::NIL)
         return std::string((const char*)var.stringify().utf8().ptr());
     else
@@ -40,7 +41,7 @@ Array HtmlElement::getArray(const std::string& attrName)
 {
     if (!attrs.is_empty())
     {
-        Variant var = attrs[String(attrName.c_str())];
+        Variant var = fgui_dictionary_get(attrs, String(attrName.c_str()));
         if (var.get_type() == Variant::ARRAY)
             return var;
     }

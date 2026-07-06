@@ -1,4 +1,5 @@
 #include "HtmlParser.h"
+#include "fgui_godot_compat.h"
 #include "HtmlElement.h"
 #include "utils/ToolSet.h"
 #include "core/io/xml_parser.h"
@@ -121,7 +122,7 @@ void HtmlParser::startElement(void* /*ctx*/, const char *elementName, const char
         Dictionary attrMap = parseAttrs(atts);
         _format.fontSize = attributeInt(attrMap, "size", _format.fontSize);
 
-        Variant colorVal = attrMap[String("color")];
+        Variant colorVal = fgui_dictionary_get(attrMap, String("color"));
         if (colorVal.get_type() != Variant::NIL)
         {
             _format.color = (Color)ToolSet::hexToColor(std::string((const char*)colorVal.stringify().utf8().ptr()).c_str());
@@ -190,7 +191,7 @@ void HtmlParser::startElement(void* /*ctx*/, const char *elementName, const char
         if (_currentSelect != nullptr)
         {
             Dictionary attrMap = parseAttrs(atts);
-            Variant val = attrMap[String("value")];
+            Variant val = fgui_dictionary_get(attrMap, String("value"));
             if (val.get_type() != Variant::NIL)
                 _currentSelect->getArray("values").push_back(Variant(val.stringify()));
             else
@@ -275,7 +276,7 @@ Dictionary HtmlParser::parseAttrs(const char** attrs)
 
 int HtmlParser::attributeInt(const Dictionary& valueMap, const std::string& key, int defaultValue)
 {
-    Variant result = valueMap[String(key.c_str())];
+    Variant result = fgui_dictionary_get(valueMap, String(key.c_str()));
     if (result.get_type() != Variant::NIL) {
         string str = std::string((const char*)result.stringify().utf8().ptr());
         if (!str.empty() && str.back() == '%')
