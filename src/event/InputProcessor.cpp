@@ -1,5 +1,6 @@
 #include "InputProcessor.h"
 #include "display/FUIInput.h"
+#include "display/FUIRichText.h"
 #include "GComponent.h"
 #include "GRoot.h"
 #include "GRichTextField.h"
@@ -15,6 +16,21 @@ static GObject* normalize_input_target(GObject* target, GComponent* owner)
 {
     GObject* resolved = resolve_live_gobject(target);
     return resolved != nullptr ? resolved : owner;
+}
+
+static void dispatch_rich_text_click_link(GObject* clickTarget, const Vector2& pt)
+{
+    GRichTextField* tf = Object::cast_to<GRichTextField>(clickTarget);
+    if (tf == nullptr)
+        return;
+
+    FUIRichText* richText = Object::cast_to<FUIRichText>(tf->displayObject());
+    if (richText == nullptr)
+        return;
+
+    const char* linkHref = richText->hitTestLink(pt);
+    if (linkHref != nullptr && linkHref[0] != '\0')
+        tf->bubbleEvent(UIEventType::ClickLink, nullptr, String(linkHref));
 }
 
 InputProcessor* InputProcessor::_activeProcessor = nullptr;
@@ -441,7 +457,10 @@ void InputProcessor::onTouchEnd(const Vector2& screenPos, int touchId)
         ti->clickCount++;
         _recentInput._clickCount = ti->clickCount;
         WeakPtr cwptr(clickTarget);
-        clickTarget->bubbleEvent(UIEventType::Click);
+        dispatch_rich_text_click_link(clickTarget, pt);
+        clickTarget = cwptr.ptr();
+        if (clickTarget)
+            clickTarget->bubbleEvent(UIEventType::Click);
         clickTarget = cwptr.ptr();
     }
 
@@ -517,7 +536,10 @@ void InputProcessor::onMouseUp(const Vector2& screenPos, int button)
     if (clickTarget)
     {
         WeakPtr cwptr(clickTarget);
-        clickTarget->bubbleEvent(UIEventType::Click);
+        dispatch_rich_text_click_link(clickTarget, pt);
+        clickTarget = cwptr.ptr();
+        if (clickTarget)
+            clickTarget->bubbleEvent(UIEventType::Click);
     }
 
     _activeProcessor = nullptr;

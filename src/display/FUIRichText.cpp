@@ -3,6 +3,7 @@
 #include "FUIDisplayNode.h"
 #include "FUILabel.h"
 #include "GObject.h"
+#include "GRoot.h"
 #include "utils/html/HtmlElement.h"
 #include "utils/html/HtmlObject.h"
 #include "utils/WeakPtr.h"
@@ -313,7 +314,8 @@ const char* FUIRichText::hitTestLink(const Vector2& worldPoint)
 {
     if (!_clipContainer)
         return nullptr;
-    Vector2 localPt = to_local(worldPoint);
+    Vector2 pt2 = GRoot::getInstance()->rootToWorld(worldPoint);
+    Vector2 localPt = get_global_transform_with_canvas().affine_inverse().xform(pt2);
     for (int i = 0; i < _clipContainer->get_child_count(); i++)
     {
         Node* child = _clipContainer->get_child(i);
