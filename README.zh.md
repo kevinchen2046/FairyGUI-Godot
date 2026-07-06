@@ -591,10 +591,10 @@ comp.getTransition("hide").play(func():
 ### 导出注意事项
 
 筛选导出非资源文件/文件夹需要配
-*.fui, Resources/UI/*, *.ttf, Resources/fonts/*
+`*.fui, Resources/UI/*, *.ttf, Resources/fonts/*`
 
 排除文件/文件夹
-gen/godot/*, *.cs
+`gen/godot/*, *.cs`
 
 ### Demo 运行指南
 
