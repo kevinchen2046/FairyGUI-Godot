@@ -586,6 +586,16 @@ The following classes are registered in Godot (methods not yet fully exposed to 
 
 > **Not registered:** `ScrollPane` / `Transition` (require custom constructors), `DrawNode` (internal class).
 
+### Export notes
+
+When using filtered export, include these non-resource files/folders:
+
+`*.fui`, `Resources/UI/*`, `*.ttf`, `Resources/fonts/*`
+
+Exclude these files/folders:
+
+`gen/godot/*`, `*.cs`
+
 ## Demo Running Guide
 
 ### TypeScript
@@ -647,3 +657,20 @@ For broader mobile browser compatibility, add `threads=no`.
 Set the main scene to `res://ts/Scenes/MainMenu.tscn` or `res://gd/Scenes/MainMenu.tscn` for JavaScript or GDScript demos. Godot does not currently support exporting C# Web projects.
 
 See [`examples/README.md`](examples/README.md#web-export) for export filters, COOP/COEP, fonts, and related notes.
+
+### WeChat Mini Game
+
+**Disable wasm-eh:** when building export templates, edit `platform/web/detect.py` and change both `'wasm'` entries to `'emscripten'`:
+
+```python
+env.Append(CCFLAGS=["-sSUPPORT_LONGJMP='emscripten'"])
+env.Append(LINKFLAGS=["-sSUPPORT_LONGJMP='emscripten'"])
+```
+
+**Disable `javascript_eval`:** add `javascript_eval=no` to your SCons command.
+
+WeChat does not allow `eval()`. If you develop with JavaScript (GodotJS), also add `use_quickjs_ng=yes` — this embeds a JS VM in the WASM build instead of using the host JS environment. WeChat runs WASM in high-performance mode, so performance is generally acceptable (similar to using Lua for WeChat mini games in Unity).
+
+```sh
+scons platform=web target=template_release optimize=size_extra lto=full disable_3d=yes disable_advanced_gui=yes module_mono_enabled=no module_xr_enabled=no module_webxr_enabled=no module_multiplayer_enabled=no module_text_server_adv_enabled=no module_text_server_fb_enabled=yes module_bmp_enabled=no module_dds_enabled=no module_hdr_enabled=no module_ktx_enabled=no module_tga_enabled=no disable_audio_speech=yes module_spine_godot_enabled=yes threads=no javascript_eval=no use_quickjs_ng=yes
+```
