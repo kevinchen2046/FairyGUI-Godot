@@ -66,6 +66,7 @@ protected:
     GList* _list;
 
 private:
+    void resetListItemStates();
     void onClickItem(EventContext* context);
     void onEnter(EventContext* context);
 };

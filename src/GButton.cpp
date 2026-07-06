@@ -209,7 +209,6 @@ void GButton::syncButtonControllerState()
     setCurrentState();
     // setState() skips applyController when selectedIndex is unchanged; gears must still run.
     applyController(_buttonController.ptr());
-    refreshDisplayList();
 }
 
 void GButton::onConstruct()
@@ -380,7 +379,11 @@ void GButton::onRollOver(EventContext* context)
     if (isGrayed() && _buttonController->hasPage(DISABLED))
         return;
 
-    syncButtonControllerState();
+    const std::string& state = _selected ? SELECTED_OVER : OVER;
+    if (_buttonController->getSelectedPage() != state)
+        setState(state);
+    else
+        applyController(_buttonController.ptr());
 }
 
 void GButton::onRollOut(EventContext* context)
@@ -395,7 +398,11 @@ void GButton::onRollOut(EventContext* context)
     if (isGrayed() && _buttonController->hasPage(DISABLED))
         return;
 
-    syncButtonControllerState();
+    const std::string& state = _selected ? DOWN : UP;
+    if (_buttonController->getSelectedPage() != state)
+        setState(state);
+    else
+        applyController(_buttonController.ptr());
 }
 
 void GButton::onTouchBegin(EventContext* context)

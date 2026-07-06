@@ -196,10 +196,25 @@ int GPopupMenu::getItemCount() const
     return _list->numChildren();
 }
 
+void GPopupMenu::resetListItemStates()
+{
+    if (_list == nullptr)
+        return;
+
+    const int cnt = _list->numChildren();
+    for (int i = 0; i < cnt; i++)
+    {
+        GButton* button = dynamic_cast<GButton*>(_list->getChildAt(i));
+        if (button != nullptr)
+            button->resetListItemState();
+    }
+}
+
 void GPopupMenu::show(GObject * target, PopupDirection dir)
 {
     if (_list != nullptr)
     {
+        resetListItemStates();
         _list->resizeToFit(INT_MAX, 10);
         _list->setSelectedIndex(-1);
     }
