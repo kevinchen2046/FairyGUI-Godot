@@ -8,7 +8,7 @@
 
 FairyGUI 的 Godot 引擎运行时，以内置 C++ Module 形式集成。
 
-也可以通过直接构建git@github.com:mkdevkit/godot.git使用。
+也可以通过直接构建[git@github.com](mailto:git@github.com):mkdevkit/godot.git使用。
 
 ## Project Structure
 
@@ -110,6 +110,8 @@ modules/fairygui/
 │           └── HtmlParser.h/HtmlParser.cpp    # HTML 到富文本解析器
 ```
 
+
+
 ## 依赖
 
 本模块**可选**依赖 **spine_godot** 模块（位于 `modules/spine_godot/`），用于 `GLoader3D` 的 Spine 骨骼动画。未启用 `spine_godot` 时 fairygui 仍可正常编译；此时会定义 `SPINE_GODOT_DISABLED`，`GLoader3D` 在运行时会跳过 Spine 加载。
@@ -144,25 +146,32 @@ modules/spine_godot/
 ```
 
 GLoader3D 通过以下方式引用 spine_godot 头文件：
+
 ```cpp
 #include "SpineSprite.h"
 #include "SpineSkeleton.h"
 // 等等
 ```
 
+
+
 ## Key Architecture Decisions
 
-| Cocos2dx Original | Godot Port |
-|---|---|
-| `cocos2d::Ref` | `Node` / `Object` |
-| `cocos2d::Sprite` | `Sprite2D` / `FUISprite` |
-| `cocos2d::Vec2` / `cocos2d::Size` | `Vector2` |
-| `cocos2d::Color4F` / `Color3B` | `Color` |
-| `cocos2d::Texture2D*` | `Ref<Texture2D>` |
-| `cocos2d::Rect` | `Rect2` (别名 `Rect`) |
-| `cocos2d::ui::Scale9Sprite` | 原生 `FUISprite` 九宫格 |
-| `CREATE_FUNC` 宏 | `memnew` / Godot 内存管理 |
-| `CC_SAFE_RETAIN` / `CC_SAFE_RELEASE` | Godot `Ref<>` 引用计数 |
+
+| Cocos2dx Original                    | Godot Port               |
+| ------------------------------------ | ------------------------ |
+| `cocos2d::Ref`                       | `Node` / `Object`        |
+| `cocos2d::Sprite`                    | `Sprite2D` / `FUISprite` |
+| `cocos2d::Vec2` / `cocos2d::Size`    | `Vector2`                |
+| `cocos2d::Color4F` / `Color3B`       | `Color`                  |
+| `cocos2d::Texture2D*`                | `Ref<Texture2D>`         |
+| `cocos2d::Rect`                      | `Rect2` (别名 `Rect`)      |
+| `cocos2d::ui::Scale9Sprite`          | 原生 `FUISprite` 九宫格       |
+| `CREATE_FUNC` 宏                      | `memnew` / Godot 内存管理    |
+| `CC_SAFE_RETAIN` / `CC_SAFE_RELEASE` | Godot `Ref<>` 引用计数       |
+
+
+
 
 ## 构建
 
@@ -197,12 +206,15 @@ scons platform=windows vsproj=yes dev_build=yes arch=x86_64 vulkan=no opengl3=ye
 Godot 构建系统通过 `config.py` 自动发现模块。
 
 `SCsub` 添加的包含路径：
+
 - `src/` 及其所有子目录 (event, display, gears, tween, utils, utils/html, controller_action)
 - `modules/spine_godot/` 与 `modules/spine_godot/spine-cpp/include`（仅在 `module_spine_godot_enabled=yes` 时）
 
+
+
 ### Spine 运行时集成
 
-Spine运行时有部分修改，可以clone https://github.com/mkdevkit/spine_godot
+Spine运行时有部分修改，可以clone [https://github.com/mkdevkit/spine_godot](https://github.com/mkdevkit/spine_godot)
 
 当 `module_spine_godot_enabled=yes` 时，Spine 支持由 `spine_godot` 模块（`modules/spine_godot/`）提供。
 
@@ -214,9 +226,11 @@ Spine运行时有部分修改，可以clone https://github.com/mkdevkit/spine_go
 > `#../spine_godot/spine-cpp/include` 改为 `#modules/spine_godot/spine-cpp/include`
 > 以适配新的模块目录布局。
 
+
+
 ### 使用GodotJS脚本方案支持javascript开发（非本项目必须，有typescript demo）。
 
-GodotJS有补丁，可以clone https://github.com/mkdevkit/GodotJS
+GodotJS有补丁，可以clone [https://github.com/mkdevkit/GodotJS](https://github.com/mkdevkit/GodotJS)
 
 ## GodotJS 补丁
 
@@ -224,11 +238,11 @@ GodotJS有补丁，可以clone https://github.com/mkdevkit/GodotJS
 
 ### 1. FairyGUI 基类须注册为 `GuiObject`（必须）
 
-GodotJS 将引擎 `Object` 在 JavaScript 中暴露为 **`GObject`**（避免与 JS 内置 `Object` 冲突，见 `GodotJS/internal/jsb_naming_util.cpp`）。
+GodotJS 将引擎 `Object` 在 JavaScript 中暴露为 `GObject`（避免与 JS 内置 `Object` 冲突，见 `GodotJS/internal/jsb_naming_util.cpp`）。
 
 若 FairyGUI 基类 ClassDB 名仍为 `GObject`，会与引擎 `Object` 的 JS 名混淆，导致继承链、类型查找错误（例如 `GComponent.addChild is not a function`）。
 
-因此本模块将 UI 基类注册为 **`GuiObject`**；C++ 内保留 `using GObject = GuiObject` 别名，与 Cocos 源码命名兼容。**此改名与下方 GodotJS 补丁是两件事，都需要。**
+因此本模块将 UI 基类注册为 `GuiObject`；C++ 内保留 `using GObject = GuiObject` 别名，与 Cocos 源码命名兼容。**此改名与下方 GodotJS 补丁是两件事，都需要。**
 
 ### 2. 修正 `jsb_godot_module_loader` 断言（dev 构建必须）
 
@@ -254,7 +268,11 @@ GodotJS 通过 `godot` 模块 Proxy **懒加载** ClassDB 类。对改名映射�
 
 > **说明：** 曾尝试在 `fgui-globals.ts` 启动时预加载 `godot.GObject`，会在 dev 下直接触发上述断言，无法替代此补丁。
 
+
+
 ## 使用
+
+
 
 ### 1. 初始化 GRoot 并加载 UI 包
 
@@ -296,9 +314,11 @@ var btn = UIPackage.createObjectFromURL("ui://YourPackage/MyButton")
 
 > **注意**：如果从 FairyGUI 编辑器导出包时勾选了**分支**（branch）功能，组件名称会被加上分支 ID 前缀，例如 `7iys1/Menu`。此时 `createObject` 需要传入带前缀的名称。如果不需要分支功能，导出时取消勾选即可。
 
+
+
 ### 场景根节点类型与鼠标输入
 
-FairyGUI 通过 `FUIContainer` 的 `_unhandled_input()` 管线接收输入事件。这要求场景根节点**不能是 `Control` 类型**。
+FairyGUI 通过 `FUIContainer` 的 `_unhandled_input()` 管线接收输入事件。这要求场景根节点**不能是** `Control` **类型**。
 
 `Control` 节点的默认 `mouse_filter = MOUSE_FILTER_STOP` 会拦截鼠标事件，阻止它到达 `_unhandled_input`。结果 FairyGUI 的 `InputProcessor → hitTest → bubbleEvent(Click)` 链路永不会触发，所有按钮点击会被静默吞噬。
 
@@ -357,6 +377,8 @@ UIPackage.setDefaultFont("SimHei")
 2. 如果解析后的名称以 `.ttf` / `.otf` 结尾 → `FontFile::load_dynamic_font()` 加载文件
 3. 否则 → `SystemFont` 按名称匹配系统已安装字体
 
+
+
 #### 滚动条（ScrollBar）
 
 ScrollPane 使用的水平/垂直滚动条是**独立 UI 组件**，须通过 `UIConfig` 注册 URL，且对应包已 `UIPackage.addPackage` 加载。编辑器 `Common.json` 里的 `scrollBars` 不会自动在运行时生效。
@@ -365,7 +387,7 @@ ScrollPane 使用的水平/垂直滚动条是**独立 UI 组件**，须通过 `U
 - `scrollBar="auto"`（编辑器「滚动时显示」）：与 Cocos 一致，桌面悬停/拖动/惯性滚动时显示，滚轮不触发。
 - GList **item pool** 只回收列表项，与 ScrollBar 组件无关。
 
-完整说明（含「先开 Bag 无条、去过 List demo 后才有」等现象）见 [`examples/README.md`](examples/README.md#滚动条scrollbar)。
+完整说明（含「先开 Bag 无条、去过 List demo 后才有」等现象）见 `[examples/README.md](examples/README.md#滚动条scrollbar)`。
 
 ### 3. 常见 Widget 操作
 
@@ -420,6 +442,8 @@ slider.value = 0.5
 slider.max = 1.0
 ```
 
+
+
 ### 4. 事件监听
 
 ```gdscript
@@ -444,6 +468,8 @@ list.addEventListener(UIEventType.Scroll, func(ctx):
 # fairygui.UIEventType.GearStop
 ```
 
+
+
 ### 5. Controller（控制器）
 
 ```gdscript
@@ -455,6 +481,8 @@ if ctrl:
     print(ctrl.pageCount)            # 页面数量
     print(ctrl.previousIndex)        # 上一次的索引
 ```
+
+
 
 ### 6. 屏幕适配
 
@@ -469,14 +497,20 @@ root.setContentScaleFactor(1136, 640, GRoot.ScreenMatchMode.MATCH_WIDTH_OR_HEIGH
 root.onWindowSizeChanged()
 ```
 
+
+
 #### ScreenMatchMode 说明
 
-| 模式 | scale 计算 | GRoot 尺寸 | 效果 |
-|------|-----------|-----------|------|
-| `MATCH_WIDTH_OR_HEIGHT` | `min(screenW/designW, screenH/designH)` | `(designW, designH)` | 等比缩放，黑边居中，内容始终可见 |
-| `MATCH_WIDTH` | `screenW / designW` | `(designW, screenH/scale)` | 宽度固定，高度动态（屏幕越高内容越多） |
-| `MATCH_HEIGHT` | `screenH / designH` | `(screenW/scale, designH)` | 高度固定，宽度动态（屏幕越宽内容越多） |
-| `MATCH_FILL` | `scaleX=screenW/designW`<br>`scaleY=screenH/designH` | `(designW, designH)` | 非等比拉伸撑满屏幕，无黑边 |
+
+| 模式                      | scale 计算                                          | GRoot 尺寸                   | 效果                  |
+| ----------------------- | ------------------------------------------------- | -------------------------- | ------------------- |
+| `MATCH_WIDTH_OR_HEIGHT` | `min(screenW/designW, screenH/designH)`           | `(designW, designH)`       | 等比缩放，黑边居中，内容始终可见    |
+| `MATCH_WIDTH`           | `screenW / designW`                               | `(designW, screenH/scale)` | 宽度固定，高度动态（屏幕越高内容越多） |
+| `MATCH_HEIGHT`          | `screenH / designH`                               | `(screenW/scale, designH)` | 高度固定，宽度动态（屏幕越宽内容越多） |
+| `MATCH_FILL`            | `scaleX=screenW/designW` `scaleY=screenH/designH` | `(designW, designH)`       | 非等比拉伸撑满屏幕，无黑边       |
+
+
+
 
 #### GDScript 中监听窗口 resize
 
@@ -500,6 +534,8 @@ func _ready():
             viewport.size_changed.connect(root.onWindowSizeChanged)
 ```
 
+
+
 #### makeFullScreen 的注意事项
 
 `makeFullScreen()` 内部会读取 `GRoot` 的尺寸来设置自身大小。如果在 `_ready()` 中直接调用，此时 `GRoot` 可能还未完成初始化或尺寸尚未设置。
@@ -521,12 +557,16 @@ func _on_window_size_change() -> void:
     main_panel.makeFullScreen()
 ```
 
+
+
 ### 7. 拖拽
 
 ```gdscript
 obj.draggable = true
 obj.setDragBounds(Rect2(0, 0, 500, 400))
 ```
+
+
 
 ### 7. Relation（关联布局）
 
@@ -535,6 +575,8 @@ obj.setDragBounds(Rect2(0, 0, 500, 400))
 child.addRelation(parent, fairygui.RelationType.Width_Width)
 child.addRelation(parent, fairygui.RelationType.Height_Height)
 ```
+
+
 
 ### 8. Transition（过渡动画）
 
@@ -547,56 +589,67 @@ comp.getTransition("hide").play(func():
 )
 ```
 
+
+
 ### 9. 已注册的 Godot 类
 
 以下类已在 Godot 中注册（方法尚未暴露到 GDScript）：
 
-| 类名 | 继承自 | 说明 |
-|---|---|---|
-| `fairygui.UIEventDispatcher` | `RefCounted` | 事件分发基类 |
-| `fairygui.GController` | `UIEventDispatcher` | 控制器 |
-| `fairygui.GObject` | `UIEventDispatcher` | 所有 UI 对象的基类 |
-| `fairygui.GComponent` | `GObject` | 容器组件 |
-| `fairygui.GImage` | `GObject` | 图片 |
-| `fairygui.GGraph` | `GObject` | 图形绘制 |
-| `fairygui.GTextField` | `GObject` | 文本基类（抽象） |
-| `fairygui.GBasicTextField` | `GTextField` | 基础文本 |
-| `fairygui.GRichTextField` | `GTextField` | 富文本 |
-| `fairygui.GTextInput` | `GTextField` | 文本输入 |
-| `fairygui.GButton` | `GComponent` | 按钮 |
-| `fairygui.GLabel` | `GComponent` | 标签（按钮+标题） |
-| `fairygui.GComboBox` | `GComponent` | 下拉框 |
-| `fairygui.GProgressBar` | `GComponent` | 进度条 |
-| `fairygui.GSlider` | `GComponent` | 滑块 |
-| `fairygui.GScrollBar` | `GComponent` | 滚动条 |
-| `fairygui.GWindow` | `GComponent` | 弹窗 |
-| `fairygui.GList` | `GComponent` | 列表 |
-| `fairygui.GTree` | `GList` | 树形控件 |
-| `fairygui.GTreeNode` | `RefCounted` | 树节点 |
-| `fairygui.GLoader` | `GObject` | 加载器 |
-| `fairygui.GLoader3D` | `GObject` | Spine 动画 |
-| `fairygui.GMovieClip` | `GObject` | 序列帧动画 |
-| `fairygui.GGroup` | `GObject` | 编组 |
-| `fairygui.GRoot` | `GComponent` | 根节点 |
-| `fairygui.FUIContainer` | `Node2D` | 显示容器 |
-| `fairygui.FUIInnerContainer` | `FUIContainer` | 内部容器 |
-| `fairygui.FUIInput` | `Control` | 输入框控件 |
-| `fairygui.FUILabel` | `Node2D` | 标签显示 |
-| `fairygui.FUIRichText` | `Node2D` | 富文本显示 |
-| `fairygui.FUISprite` | `Sprite2D` | 精灵显示 |
-| `fairygui.UIPackage` | `RefCounted` | 包管理器 |
-| `fairygui.GPopupMenu` | `RefCounted` | 弹出菜单 |
+
+| 类名                           | 继承自                 | 说明          |
+| ---------------------------- | ------------------- | ----------- |
+| `fairygui.UIEventDispatcher` | `RefCounted`        | 事件分发基类      |
+| `fairygui.GController`       | `UIEventDispatcher` | 控制器         |
+| `fairygui.GObject`           | `UIEventDispatcher` | 所有 UI 对象的基类 |
+| `fairygui.GComponent`        | `GObject`           | 容器组件        |
+| `fairygui.GImage`            | `GObject`           | 图片          |
+| `fairygui.GGraph`            | `GObject`           | 图形绘制        |
+| `fairygui.GTextField`        | `GObject`           | 文本基类（抽象）    |
+| `fairygui.GBasicTextField`   | `GTextField`        | 基础文本        |
+| `fairygui.GRichTextField`    | `GTextField`        | 富文本         |
+| `fairygui.GTextInput`        | `GTextField`        | 文本输入        |
+| `fairygui.GButton`           | `GComponent`        | 按钮          |
+| `fairygui.GLabel`            | `GComponent`        | 标签（按钮+标题）   |
+| `fairygui.GComboBox`         | `GComponent`        | 下拉框         |
+| `fairygui.GProgressBar`      | `GComponent`        | 进度条         |
+| `fairygui.GSlider`           | `GComponent`        | 滑块          |
+| `fairygui.GScrollBar`        | `GComponent`        | 滚动条         |
+| `fairygui.GWindow`           | `GComponent`        | 弹窗          |
+| `fairygui.GList`             | `GComponent`        | 列表          |
+| `fairygui.GTree`             | `GList`             | 树形控件        |
+| `fairygui.GTreeNode`         | `RefCounted`        | 树节点         |
+| `fairygui.GLoader`           | `GObject`           | 加载器         |
+| `fairygui.GLoader3D`         | `GObject`           | Spine 动画    |
+| `fairygui.GMovieClip`        | `GObject`           | 序列帧动画       |
+| `fairygui.GGroup`            | `GObject`           | 编组          |
+| `fairygui.GRoot`             | `GComponent`        | 根节点         |
+| `fairygui.FUIContainer`      | `Node2D`            | 显示容器        |
+| `fairygui.FUIInnerContainer` | `FUIContainer`      | 内部容器        |
+| `fairygui.FUIInput`          | `Control`           | 输入框控件       |
+| `fairygui.FUILabel`          | `Node2D`            | 标签显示        |
+| `fairygui.FUIRichText`       | `Node2D`            | 富文本显示       |
+| `fairygui.FUISprite`         | `Sprite2D`          | 精灵显示        |
+| `fairygui.UIPackage`         | `RefCounted`        | 包管理器        |
+| `fairygui.GPopupMenu`        | `RefCounted`        | 弹出菜单        |
+
+
 > **未注册：** `ScrollPane`/`Transition`（需要自定义构造函数）、`DrawNode`（内部类）。
+
+
 
 ### 导出注意事项
 
 筛选导出非资源文件/文件夹需要配
+
 `*.fui, Resources/UI/*, *.ttf, Resources/fonts/*`
 
 排除文件/文件夹
+
 `gen/godot/*, *.cs`
 
 ### Demo 运行指南
+
+
 
 ## typescript
 
@@ -627,8 +680,8 @@ dotnet nuget add source D:\Source\godot\nupkgs --name GodotLocal
 然后编辑器中启动主场景测试。
 
 ## gdscript
-项目主场景配成res://gd/Scenes/MainMenu.tscn
 
+项目主场景配成res://gd/Scenes/MainMenu.tscn
 
 ## web
 
@@ -643,6 +696,7 @@ scons platform=web target=template_release optimize=size_extra lto=full disable_
 关掉 wasm-eh
 编译导出模板需要改 platform/web/detect.py
 把上面两处 'wasm' 改成 'emscripten'：
+
 ```python
 env.Append(CCFLAGS=["-sSUPPORT_LONGJMP='emscripten'"])
 env.Append(LINKFLAGS=["-sSUPPORT_LONGJMP='emscripten'"])
