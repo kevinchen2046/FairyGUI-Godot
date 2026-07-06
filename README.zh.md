@@ -643,12 +643,14 @@ scons platform=web target=template_release optimize=size_extra lto=full disable_
 关掉 wasm-eh
 编译导出模板需要改 platform/web/detect.py
 把上面两处 'wasm' 改成 'emscripten'：
+```python
 env.Append(CCFLAGS=["-sSUPPORT_LONGJMP='emscripten'"])
 env.Append(LINKFLAGS=["-sSUPPORT_LONGJMP='emscripten'"])
+```
 
 关闭javascript_eval需要加javascript_eval=no
 另微信无法使用eval，如果需要用javascript(GodotJS)开发，需要加use_quickjs_ng=yes（不使用微信的js环境,编译一个js虚拟机在微信里跑，因为微信wasm会使用高性能模式跑，所以性能还可以接受，相当于unity使用lua开发微信小游戏）
 
 scons platform=web target=template_release optimize=size_extra lto=full disable_3d=yes disable_advanced_gui=yes module_mono_enabled=no module_xr_enabled=no module_webxr_enabled=no module_multiplayer_enabled=no module_text_server_adv_enabled=no module_text_server_fb_enabled=yes module_bmp_enabled=no module_dds_enabled=no module_hdr_enabled=no module_ktx_enabled=no module_tga_enabled=no disable_audio_speech=yes module_spine_godot_enabled=yes threads=no javascript_eval=no use_quickjs_ng=yes
 
-使用上面的命令生成的导出模板，以Web的方式导出项目，然后使用https://github.com/mkdevkit/godot-minigame工具将导出的项目改造成微信工程。
+使用上面的命令生成的导出模板，以Web的方式导出项目，然后使用[godot-minigame](https://github.com/mkdevkit/godot-minigame)工具将导出的项目改造成微信工程。
