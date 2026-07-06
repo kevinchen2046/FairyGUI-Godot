@@ -651,3 +651,4 @@ env.Append(LINKFLAGS=["-sSUPPORT_LONGJMP='emscripten'"])
 
 scons platform=web target=template_release optimize=size_extra lto=full disable_3d=yes disable_advanced_gui=yes module_mono_enabled=no module_xr_enabled=no module_webxr_enabled=no module_multiplayer_enabled=no module_text_server_adv_enabled=no module_text_server_fb_enabled=yes module_bmp_enabled=no module_dds_enabled=no module_hdr_enabled=no module_ktx_enabled=no module_tga_enabled=no disable_audio_speech=yes module_spine_godot_enabled=yes threads=no javascript_eval=no use_quickjs_ng=yes
 
+使用上面的命令生成的导出模板，以Web的方式导出项目，然后使用https://github.com/mkdevkit/godot-minigame工具将导出的项目改造成微信工程。

@@ -674,3 +674,5 @@ WeChat does not allow `eval()`. If you develop with JavaScript (GodotJS), also a
 ```sh
 scons platform=web target=template_release optimize=size_extra lto=full disable_3d=yes disable_advanced_gui=yes module_mono_enabled=no module_xr_enabled=no module_webxr_enabled=no module_multiplayer_enabled=no module_text_server_adv_enabled=no module_text_server_fb_enabled=yes module_bmp_enabled=no module_dds_enabled=no module_hdr_enabled=no module_ktx_enabled=no module_tga_enabled=no disable_audio_speech=yes module_spine_godot_enabled=yes threads=no javascript_eval=no use_quickjs_ng=yes
 ```
+
+Export your project as **Web** using the templates built with the command above, then convert the exported output into a WeChat mini game project with [godot-minigame](https://github.com/mkdevkit/godot-minigame).
