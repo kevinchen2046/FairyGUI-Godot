@@ -45,6 +45,8 @@ func _deferred_click_back() -> void:
 		_win_b.hideImmediately()
 	if _win_a != null and _win_a.isShowing():
 		_win_a.hideImmediately()
+	_win_a = null
+	_win_b = null
 	_cleanup_groot_overlays()
 	_demo_container.removeChildren()
 	_demo_objects.clear()
@@ -139,16 +141,14 @@ func _play_popup(obj: Object) -> void:
 	)
 
 func _play_window(obj: Object) -> void:
-	if _win_a != null:
-		return
+	if _win_a == null:
+		var window1_script = load("res://gd/Scripts/Window1.gd")
+		var window2_script = load("res://gd/Scripts/Window2.gd")
+		if window1_script == null or window2_script == null:
+			return
 
-	var window1_script = load("res://gd/Scripts/Window1.gd")
-	var window2_script = load("res://gd/Scripts/Window2.gd")
-	if window1_script == null or window2_script == null:
-		return
-
-	_win_a = window1_script.new()
-	_win_b = window2_script.new()
+		_win_a = window1_script.new()
+		_win_b = window2_script.new()
 
 	var n0 = obj.getChild("n0")
 	if n0 != null:

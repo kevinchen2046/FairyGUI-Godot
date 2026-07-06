@@ -57,6 +57,8 @@ public partial class BasicsScene : DemoSceneBase
             _winB.HideImmediately();
         if (_winA != null && _winA.IsShowing())
             _winA.HideImmediately();
+        _winA = null;
+        _winB = null;
         CleanupGrootOverlays();
         _demoContainer.RemoveChildren();
         _demoObjects.Clear();
@@ -185,11 +187,11 @@ public partial class BasicsScene : DemoSceneBase
 
     private void PlayWindow(GuiObject obj)
     {
-        if (_winA != null)
-            return;
-
-        _winA = new Window1();
-        _winB = new Window2();
+        if (_winA == null)
+        {
+            _winA = new Window1();
+            _winB = new Window2();
+        }
 
         var n0 = obj.GetChild("n0");
         n0?.AddClickListener(Callable.From(() => _winA.Show()));

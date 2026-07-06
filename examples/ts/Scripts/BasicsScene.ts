@@ -65,6 +65,8 @@ export default class BasicsScene extends DemoSceneBase {
         if (this._winA?.isShowing()) {
             this._winA.hideImmediately();
         }
+        this._winA = null;
+        this._winB = null;
         this._cleanupGrootOverlays();
         this._demoContainer?.removeChildren();
         this._demoObjects.clear();
@@ -208,12 +210,10 @@ export default class BasicsScene extends DemoSceneBase {
     }
 
     private _playWindow(obj: GComponent): void {
-        if (this._winA != null) {
-            return;
+        if (this._winA == null) {
+            this._winA = new Window1();
+            this._winB = new Window2();
         }
-
-        this._winA = new Window1();
-        this._winB = new Window2();
 
         const n0 = obj.getChild("n0");
         if (n0 != null) {
