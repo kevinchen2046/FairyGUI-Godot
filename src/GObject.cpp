@@ -17,7 +17,7 @@
 #include "utils/WeakPtr.h"
 #include <sstream>
 #include <cfloat>
-#include "servers/rendering_server.h"
+#include "fgui_godot_compat.h"
 
 NS_FGUI_BEGIN
 GuiObject* GuiObject::_draggingObject = nullptr;

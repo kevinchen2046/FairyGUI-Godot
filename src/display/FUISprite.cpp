@@ -2,7 +2,7 @@
 #include "FUIDisplayNode.h"
 #include <cfloat>
 #include "scene/resources/shader.h"
-#include "servers/rendering_server.h"
+#include "fgui_godot_compat.h"
 
 NS_FGUI_BEGIN
 

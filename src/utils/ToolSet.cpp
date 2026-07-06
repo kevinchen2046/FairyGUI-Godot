@@ -1,6 +1,6 @@
 #include "utils/ToolSet.h"
 #include "core/io/file_access.h"
-#include "servers/display_server.h"
+#include "fgui_godot_compat.h"
 
 NS_FGUI_BEGIN
 using namespace std;

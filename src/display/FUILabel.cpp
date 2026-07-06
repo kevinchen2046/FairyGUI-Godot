@@ -6,7 +6,7 @@
 #include "UIConfig.h"
 #include "UIPackage.h"
 #include "scene/resources/font.h"
-#include "servers/text_server.h"
+#include "fgui_godot_compat.h"
 
 NS_FGUI_BEGIN
 

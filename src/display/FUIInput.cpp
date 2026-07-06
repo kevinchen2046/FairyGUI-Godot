@@ -10,7 +10,7 @@
 
 #include "scene/gui/text_edit.h"
 
-#include "servers/display_server.h"
+#include "fgui_godot_compat.h"
 
 
 

@@ -16,7 +16,7 @@
 #include <cfloat>
 #include <unordered_map>
 #include <vector>
-#include "servers/rendering_server.h"
+#include "fgui_godot_compat.h"
 
 NS_FGUI_BEGIN
 using namespace std;

@@ -19,11 +19,17 @@ diff --git a/modules/spine-godot/SCsub b/modules/spine-godot/SCsub
 diff --git a/modules/spine-godot/SpineSprite.h b/modules/spine-godot/SpineSprite.h
 --- a/modules/spine-godot/SpineSprite.h
 +++ b/modules/spine-godot/SpineSprite.h
-@@ -40,7 +40,7 @@
+@@ -40,7 +40,13 @@
  #else
  #include "scene/2d/node_2d.h"
- #if VERSION_MAJOR > 3
--#include "servers/rendering/rendering_server.h"
+-#if VERSION_MAJOR > 3
++#include "core/version.h"
++#if GODOT_VERSION_MAJOR > 3
++#if GODOT_VERSION_MAJOR > 4 || (GODOT_VERSION_MAJOR == 4 && GODOT_VERSION_MINOR >= 6)
+ #include "servers/rendering/rendering_server.h"
++#else
 +#include "servers/rendering_server.h"
++#endif
  #endif
  #endif
+ 

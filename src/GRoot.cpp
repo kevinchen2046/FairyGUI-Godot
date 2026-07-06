@@ -15,7 +15,7 @@
 #include "scene/main/viewport.h"
 #include "scene/main/window.h"
 #include "scene/main/canvas_layer.h"
-#include "servers/display_server.h"
+#include "fgui_godot_compat.h"
 
 #include <algorithm>
 
