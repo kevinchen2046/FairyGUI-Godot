@@ -108,14 +108,14 @@ modules/fairygui/
 
 ## Dependencies
 
-This module optionally depends on the **spine-godot** module (also under `modules/`) for `GLoader3D` Spine animation support. When `spine-godot` is not enabled, fairygui still builds; `GLoader3D` compiles with `SPINE_GODOT_DISABLED` and skips Spine loading at runtime.
+This module optionally depends on the **spine_godot** module (also under `modules/`) for `GLoader3D` Spine animation support. When `spine_godot` is not enabled, fairygui still builds; `GLoader3D` compiles with `SPINE_GODOT_DISABLED` and skips Spine loading at runtime.
 
-### Spine Runtime (spine-godot)
+### Spine Runtime (spine_godot)
 
-Located at `modules/spine-godot/`, this module provides Spine 2D skeletal animation support for `GLoader3D`.
+Located at `modules/spine_godot/`, this module provides Spine 2D skeletal animation support for `GLoader3D`.
 
 ```
-modules/spine-godot/
+modules/spine_godot/
 ├── config.py                           # Module build configuration
 ├── SCsub                               # SCons build script
 ├── SpineSprite.h / .cpp                # Spine sprite node
@@ -139,7 +139,7 @@ modules/spine-godot/
 └── ...
 ```
 
-GLoader3D requires spine-godot headers via:
+GLoader3D requires spine_godot headers via:
 ```cpp
 #include "SpineSprite.h"
 #include "SpineSkeleton.h"
@@ -194,18 +194,18 @@ The module is auto-detected by Godot's build system via `config.py`.
 
 The `SCsub` adds include paths for:
 - `src/` and all subdirectories (event, display, gears, tween, utils, utils/html, controller_action)
-- `modules/spine-godot/` and `modules/spine-godot/spine-cpp/include` (only when `module_spine_godot_enabled=yes`)
+- `modules/spine_godot/` and `modules/spine_godot/spine-cpp/include` (only when `module_spine_godot_enabled=yes`)
 
 ### Spine Runtime Integration
 
-When `module_spine_godot_enabled=yes`, Spine support is provided by the `spine-godot` module (`modules/spine-godot/`).
+When `module_spine_godot_enabled=yes`, Spine support is provided by the `spine_godot` module (`modules/spine_godot/`).
 
 - `spine-cpp/` contains the upstream Spine C++ runtime from [EsotericSoftware/spine-runtimes](https://github.com/EsotericSoftware/spine-runtimes)
-- The `spine-godot` SCsub compiles both `spine-cpp/src/spine/*.cpp` and its own `*.cpp` files
-- Fairygui's `GLoader3D` includes spine-godot headers directly
+- The `spine_godot` SCsub compiles both `spine-cpp/src/spine/*.cpp` and its own `*.cpp` files
+- Fairygui's `GLoader3D` includes spine_godot headers directly
 
-> **Modification:** `modules/spine-godot/SCsub` line 5 & 8 — include path changed from
-> `#../spine-godot/spine-cpp/include` to `#modules/spine-godot/spine-cpp/include`
+> **Modification:** `modules/spine_godot/SCsub` line 5 & 8 — include path changed from
+> `#../spine_godot/spine-cpp/include` to `#modules/spine_godot/spine-cpp/include`
 > to match the new module directory layout.
 
 ## GodotJS patch
