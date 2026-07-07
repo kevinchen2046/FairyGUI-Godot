@@ -695,7 +695,7 @@ scons platform=web target=template_release optimize=size_extra lto=full disable_
 
 关掉 wasm-eh
 编译导出模板需要改 platform/web/detect.py
-把上面两处 'wasm' 改成 'emscripten'：
+把下面两处 'wasm' 改成 'emscripten'：
 
 ```python
 env.Append(CCFLAGS=["-sSUPPORT_LONGJMP='emscripten'"])
