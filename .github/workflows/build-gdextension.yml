@@ -1,8 +1,12 @@
 name: Build GDExtension
 
+permissions:
+  contents: write
+
 on:
   push:
     branches: [gdextension]
+    tags: ["v*"]
   pull_request:
     branches: [gdextension]
   workflow_dispatch:
@@ -48,3 +52,35 @@ jobs:
           name: fairygui-${{ matrix.platform }}-${{ matrix.arch }}
           path: examples/addons/fairygui/
           if-no-files-found: error
+
+  package:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all platform libraries
+        uses: actions/download-artifact@v4
+        with:
+          pattern: fairygui-*
+          path: package/addons/fairygui
+          merge-multiple: true
+
+      - name: Create all-platform plugin archive
+        run: |
+          mkdir -p dist
+          cd package
+          zip -r "../dist/fairygui-godot-${{ github.ref_name }}.zip" addons
+
+      - name: Upload combined plugin
+        uses: actions/upload-artifact@v4
+        with:
+          name: fairygui-godot-${{ github.ref_name }}
+          path: dist/*.zip
+          if-no-files-found: error
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh release create "${{ github.ref_name }}" dist/*.zip
+          --verify-tag --generate-notes
