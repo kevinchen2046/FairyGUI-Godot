@@ -1,19 +1,29 @@
 ﻿#include "WeakPtr.h"
 #include "GObject.h"
+#ifndef FGUI_GDEXTENSION
 #include "core/object/object.h"
 #include "core/templates/hash_map.h"
+#endif
 
 NS_FGUI_BEGIN
 using namespace std;
 
 std::unordered_map<uint64_t, GObject*> _weakPointers;
+#ifdef FGUI_GDEXTENSION
+static std::unordered_map<GObject *, ObjectID> _live_gobject_ids;
+#else
 static HashMap<GObject *, ObjectID> _live_gobject_ids;
+#endif
 
 void register_live_gobject(GObject *obj)
 {
     if (obj == nullptr)
         return;
+#ifdef FGUI_GDEXTENSION
+    ObjectID id(obj->get_instance_id());
+#else
     ObjectID id = obj->get_instance_id();
+#endif
     if (id.is_valid())
         _live_gobject_ids[obj] = id;
 }
@@ -29,11 +39,19 @@ GObject* resolve_live_gobject(GObject* obj)
     if (obj == nullptr)
         return nullptr;
 
-    const ObjectID *id = _live_gobject_ids.getptr(obj);
-    if (id == nullptr || !id->is_valid())
+#ifdef FGUI_GDEXTENSION
+    auto found = _live_gobject_ids.find(obj);
+    if (found == _live_gobject_ids.end() || !found->second.is_valid())
         return nullptr;
+    const ObjectID id = found->second;
+#else
+    const ObjectID *id_ptr = _live_gobject_ids.getptr(obj);
+    if (id_ptr == nullptr || !id_ptr->is_valid())
+        return nullptr;
+    const ObjectID id = *id_ptr;
+#endif
 
-    Object *o = ObjectDB::get_instance(*id);
+    Object *o = ObjectDB::get_instance(id);
     return Object::cast_to<GObject>(o);
 }
 

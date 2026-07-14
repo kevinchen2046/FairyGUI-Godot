@@ -2,7 +2,12 @@
 #define __FUISPRITE_H__
 
 #include "FairyGUIMacros.h"
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/material.hpp>
+#include <godot_cpp/classes/shader_material.hpp>
+#else
 #include "scene/resources/material.h"
+#endif
 #include <functional>
 
 NS_FGUI_BEGIN
@@ -62,7 +67,7 @@ public:
     const Vector2& getContentSize() const { return _contentSize; }
     void setRotated(bool v) { _rotated = v; }
     bool isRotated() const { return _rotated; }
-    static void clearStaticRefs() { _empty.unref(); }
+    static void clearStaticRefs();
 
     std::function<void(float)> _processCallback;
 

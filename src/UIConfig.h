@@ -3,7 +3,11 @@
 
 // cocos2d.h removed - see godot_types.h
 #include "FairyGUIMacros.h"
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/font.hpp>
+#else
 #include "scene/resources/font.h"
+#endif
 
 NS_FGUI_BEGIN
 

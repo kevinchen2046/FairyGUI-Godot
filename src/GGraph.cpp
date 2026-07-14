@@ -49,7 +49,9 @@ class DrawNode : public Node2D {
     GDCLASS(DrawNode, Node2D)
     public:
         DrawNode() {
+#ifndef FGUI_GDEXTENSION
             item_rect_changed(); // enable NOTIFICATION_DRAW for Node2D
+#endif
         }
 
         static DrawNode* create() { return memnew(DrawNode); }
@@ -181,7 +183,11 @@ class DrawNode : public Node2D {
                         pts.resize(segs + 1);
                         for (int i = 0; i <= segs; i++)
                         {
+#ifdef FGUI_GDEXTENSION
+                            const float a = (float)Math_TAU * i / segs;
+#else
                             const float a = (float)Math::TAU * i / segs;
+#endif
                             pts.set(i, center + Vector2(Math::cos(a) * radius, Math::sin(a) * radius * scaleY));
                         }
                         draw_polyline(pts, cmd.fillColor, lineWidth, true);
@@ -204,7 +210,14 @@ class DrawNode : public Node2D {
     private:
         std::vector<Cmd> _cmds;
         float _lineWidth = 1.0f;
-    };
+};
+
+#ifdef FGUI_GDEXTENSION
+void register_draw_node_class()
+{
+    GDREGISTER_INTERNAL_CLASS(DrawNode);
+}
+#endif
 
 static void drawVertRect(DrawNode* shape, float x, float y, float width, float height, const Color& color)
 {

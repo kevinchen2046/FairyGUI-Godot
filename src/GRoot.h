@@ -7,9 +7,15 @@
 #include "Window.h"
 #include "godot_types.h"
 #include "event/InputProcessor.h"
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/audio_stream_player.hpp>
+#include <godot_cpp/classes/canvas_layer.hpp>
+#include <godot_cpp/classes/scene_tree.hpp>
+#else
 #include "scene/main/scene_tree.h"
 #include "scene/main/canvas_layer.h"
 #include "scene/audio/audio_stream_player.h"
+#endif
 
 NS_FGUI_BEGIN
 

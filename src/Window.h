@@ -5,7 +5,9 @@
 // cocos2d.h removed - see godot_types.h
 #include "GComponent.h"
 
+#ifndef FGUI_GDEXTENSION
 class CanvasLayer;
+#endif
 
 NS_FGUI_BEGIN
 

@@ -1,12 +1,17 @@
 #include "FUISprite.h"
 #include "FUIDisplayNode.h"
 #include <cfloat>
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/shader.hpp>
+#else
 #include "scene/resources/shader.h"
+#endif
 #include "fgui_godot_compat.h"
 
 NS_FGUI_BEGIN
 
 Ref<Texture2D> FUISprite::_empty;
+static Ref<Shader> fui_sprite_shader;
 
 // Const for radial fill boundary coords lookup
 static const char kProgressTextureCoords = 0x4b; // {0,1} {0,0} {1,0} {1,1}
@@ -14,11 +19,10 @@ static const int kProgressTextureCoordsCount = 4;
 
 static Ref<Shader> get_fui_sprite_shader()
 {
-    static Ref<Shader> shader;
-    if (shader.is_null())
+    if (fui_sprite_shader.is_null())
     {
-        shader.instantiate();
-        shader->set_code(
+        fui_sprite_shader.instantiate();
+        fui_sprite_shader->set_code(
             "shader_type canvas_item;\n"
             "uniform bool u_grayed = false;\n"
             "void fragment() {\n"
@@ -31,7 +35,13 @@ static Ref<Shader> get_fui_sprite_shader()
             "    }\n"
             "}\n");
     }
-    return shader;
+    return fui_sprite_shader;
+}
+
+void FUISprite::clearStaticRefs()
+{
+    _empty.unref();
+    fui_sprite_shader.unref();
 }
 
 static Rect2 getRotatedAtlasSrcRect(float ox, float oy, float ow, float oh, const Rect2& atlasRect);
@@ -55,7 +65,9 @@ FUISprite::FUISprite() :
     _tileDisplaySize(0, 0)
 {
     set_centered(false); // FairyGUI uses top-left origin, NOT center origin
+#ifndef FGUI_GDEXTENSION
     item_rect_changed(); // enable NOTIFICATION_DRAW for Node2D
+#endif
 }
 
 FUISprite::~FUISprite()
@@ -557,7 +569,11 @@ void FUISprite::drawFillRadial()
         return;
     }
 
+#ifdef FGUI_GDEXTENSION
+    float angle = (float)Math_TAU * (_fillClockwise ? (1.0f - _fillAmount) : _fillAmount);
+#else
     float angle = 2.0f * Math::PI * (_fillClockwise ? (1.0f - _fillAmount) : _fillAmount);
+#endif
 
     Vector2 midpoint(0.5f, 0.5f);
     Vector2 topMid(0.5f, 1.0f);
@@ -720,7 +736,11 @@ void FUISprite::_draw()
                 tri.set(j, map_vertex(idx));
                 uvs.set(j, map_uv(idx));
             }
+#ifdef FGUI_GDEXTENSION
+            draw_polygon(tri, PackedColorArray{ color, color, color }, uvs, tex);
+#else
             draw_polygon(tri, Vector<Color>{ color, color, color }, uvs, tex);
+#endif
         }
         return;
     }

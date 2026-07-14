@@ -1,5 +1,13 @@
 #include "UIConfig.h"
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/font_file.hpp>
+#include <godot_cpp/classes/system_font.hpp>
+#endif
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/resource_loader.hpp>
+#else
 #include "core/io/resource_loader.h"
+#endif
 
 NS_FGUI_BEGIN
 std::string UIConfig::defaultFont = "";
@@ -94,15 +102,24 @@ Ref<Font> UIConfig::loadFont(const std::string& resolvedName, bool is_file)
     {
         Ref<SystemFont> sysFont;
         sysFont.instantiate();
+#ifdef FGUI_GDEXTENSION
+        PackedStringArray names = String(resolvedName.c_str()).split(",");
+        sysFont->set_font_names(names);
+#else
         Vector<String> names = String(resolvedName.c_str()).split(",");
         sysFont->set_font_names(PackedStringArray(names));
+#endif
         return sysFont;
     }
 
     const String path = String(resolvedName.c_str());
     if (path.begins_with("res://") || path.begins_with("user://"))
     {
+#ifdef FGUI_GDEXTENSION
+        Ref<Font> loaded = ResourceLoader::get_singleton()->load(path);
+#else
         Ref<Font> loaded = ResourceLoader::load(path);
+#endif
         if (loaded.is_valid())
             return loaded;
     }

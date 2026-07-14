@@ -3,14 +3,25 @@
 
 #include "FairyGUIMacros.h"
 #include "TextFormat.h"
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/control.hpp>
+#include <godot_cpp/classes/input_event.hpp>
+#else
 #include "core/input/input_event.h"
 #include "scene/gui/control.h"
+#endif
 #include <functional>
 
+#ifndef FGUI_GDEXTENSION
 class LineEdit;
 class TextEdit;
+#endif
 
 NS_FGUI_BEGIN
+
+#ifdef FGUI_GDEXTENSION
+void register_fui_input_internal_classes();
+#endif
 
 class FUIInput : public Control
 {

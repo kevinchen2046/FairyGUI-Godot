@@ -7,6 +7,10 @@
 
 NS_FGUI_BEGIN
 
+#ifdef FGUI_GDEXTENSION
+void register_draw_node_class();
+#endif
+
 class DrawNode;
 
 class GGraph : public GObject

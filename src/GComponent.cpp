@@ -24,7 +24,11 @@ using namespace std;
 static int sorting_order_to_canvas_z(int sortingOrder, int siblingIndex)
 {
     const int z = sortingOrder != 0 ? sortingOrder : siblingIndex;
+#ifdef FGUI_GDEXTENSION
+    return CLAMP(z, RenderingServer::CANVAS_ITEM_Z_MIN, RenderingServer::CANVAS_ITEM_Z_MAX);
+#else
     return CLAMP(z, RS::CANVAS_ITEM_Z_MIN, RS::CANVAS_ITEM_Z_MAX);
+#endif
 }
 
 static int get_display_child_z_order(GObject* child, int siblingIndex)

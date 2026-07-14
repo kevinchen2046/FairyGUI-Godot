@@ -8,12 +8,18 @@
 #include "display/FUISprite.h"
 #include "utils/ByteBuffer.h"
 #include "utils/ToolSet.h"
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/image.hpp>
+#include <godot_cpp/classes/image_texture.hpp>
+#include <godot_cpp/classes/resource_loader.hpp>
+#include <godot_cpp/classes/resource_uid.hpp>
+#else
 #include "core/io/resource_loader.h"
-
 #include "core/io/image.h"
 #include "core/io/image_loader.h"
 #include "core/io/resource_uid.h"
 #include "scene/resources/image_texture.h"
+#endif
 
 NS_FGUI_BEGIN
 
@@ -311,7 +317,11 @@ void GLoader::loadFromPackage()
 void GLoader::loadExternal()
 {
     String path = ResourceUID::ensure_path(GObject::toGodotStr(_url));
+#ifdef FGUI_GDEXTENSION
+    Ref<Texture2D> tex2d = ResourceLoader::get_singleton()->load(path);
+#else
     Ref<Texture2D> tex2d = ResourceLoader::load(path);
+#endif
     if (tex2d.is_valid())
     {
         ImageFrame* sf = new ImageFrame();

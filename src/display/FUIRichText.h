@@ -4,7 +4,11 @@
 #include "FairyGUIMacros.h"
 #include "TextFormat.h"
 #include "utils/html/HtmlParser.h"
+#ifdef FGUI_GDEXTENSION
+#include <unordered_map>
+#else
 #include "core/templates/hash_map.h"
+#endif
 
 NS_FGUI_BEGIN
 
@@ -53,7 +57,11 @@ public:
 
     void applyGrayedToLabels(bool grayed);
 
+#ifdef FGUI_GDEXTENSION
+    Rect2 get_anchorable_rect() const;
+#else
     Rect2 get_anchorable_rect() const override;
+#endif
 
     static void _bind_methods();
 
@@ -97,7 +105,11 @@ private:
     std::string _text;
 
     FUIClipContainer* _clipContainer;
+#ifdef FGUI_GDEXTENSION
+    std::unordered_map<Node *, HtmlElement *> _rendererElements;
+#else
     HashMap<Node *, HtmlElement *> _rendererElements;
+#endif
 };
 
 NS_FGUI_END

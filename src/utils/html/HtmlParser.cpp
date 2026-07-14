@@ -2,7 +2,11 @@
 #include "fgui_godot_compat.h"
 #include "HtmlElement.h"
 #include "utils/ToolSet.h"
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/xml_parser.hpp>
+#else
 #include "core/io/xml_parser.h"
+#endif
 
 #include <sstream>
 #include <vector>
@@ -306,7 +310,11 @@ void HtmlParser::parse(const std::string& source, const TextFormat& format, std:
 
     // Keep raw UTF-8 bytes (same as Cocos SAXParser); do not round-trip through String.
     const std::string xmlText = std::string("<dummy>") + source + "</dummy>";
+#ifdef FGUI_GDEXTENSION
+    PackedByteArray xmlBuf;
+#else
     Vector<uint8_t> xmlBuf;
+#endif
     xmlBuf.resize(xmlText.size());
     memcpy(xmlBuf.ptrw(), xmlText.data(), xmlText.size());
 

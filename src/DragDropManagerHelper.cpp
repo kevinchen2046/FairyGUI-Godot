@@ -9,7 +9,12 @@ DragDropManagerHelper* DragDropManagerHelper::getInstance()
 {
     if (_inst == nullptr)
     {
+#ifdef FGUI_GDEXTENSION
+        Ref<DragDropManagerHelper> instance = memnew(DragDropManagerHelper);
+        _inst = instance.ptr();
+#else
         _inst = memnew(DragDropManagerHelper);
+#endif
         _inst->reference();
     }
     return _inst;

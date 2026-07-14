@@ -9,7 +9,12 @@ GTweenHelper* GTweenHelper::getInstance()
 {
     if (_inst == nullptr)
     {
+#ifdef FGUI_GDEXTENSION
+        Ref<GTweenHelper> instance = memnew(GTweenHelper);
+        _inst = instance.ptr();
+#else
         _inst = memnew(GTweenHelper);
+#endif
         _inst->reference();
     }
     return _inst;

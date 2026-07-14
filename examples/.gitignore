@@ -3,5 +3,8 @@
 /android/
 gen/
 .vscode/
-addons/
+addons/*
+!addons/fairygui/
+addons/fairygui/*
+!addons/fairygui/fairygui.gdextension
 .vs

@@ -1,12 +1,25 @@
 #include "FUIDisplayNode.h"
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/canvas_layer.hpp>
+#include <godot_cpp/classes/viewport.hpp>
+#include <godot_cpp/variant/callable_method_pointer.hpp>
+#else
 #include "scene/main/viewport.h"
 #include "scene/main/canvas_layer.h"
 #include "core/object/callable_method_pointer.h"
+#endif
 
 NS_FGUI_BEGIN
 
 void fui_sync_child_order_changed(Node2D* self, bool p_connect)
 {
+#ifdef FGUI_GDEXTENSION
+    // gui_set_root_order_dirty is private to the engine. Godot's public
+    // extension path already propagates child order changes for Node2D.
+    (void)self;
+    (void)p_connect;
+    return;
+#else
     if (self == nullptr)
         return;
 
@@ -31,6 +44,7 @@ void fui_sync_child_order_changed(Node2D* self, bool p_connect)
     {
         parent->disconnect(SNAME("child_order_changed"), callable);
     }
+#endif
 }
 
 NS_FGUI_END

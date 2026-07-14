@@ -8,6 +8,8 @@
 #include "utils/ToolSet.h"
 
 NS_FGUI_BEGIN
+
+#define _owner _fguiOwner
 using namespace std;
 
 const int OPTION_IGNORE_DISPLAY_CONTROLLER = 1;
@@ -1580,3 +1582,5 @@ Ref<GComponent> Transition::gd_getOwner() const
 }
 
 NS_FGUI_END
+
+#undef _owner

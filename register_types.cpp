@@ -1,6 +1,11 @@
 #include "register_types.h"
 
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/core/class_db.hpp>
+using namespace godot;
+#else
 #include "core/object/class_db.h"
+#endif
 
 // Core
 #include "src/event/UIEventDispatcher.h"
@@ -63,6 +68,10 @@ void initialize_fairygui_module(ModuleInitializationLevel p_level)
 {
     if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE)
     {
+#ifdef FGUI_GDEXTENSION
+        fairygui::register_draw_node_class();
+        fairygui::register_fui_input_internal_classes();
+#endif
         // Core
         GDREGISTER_CLASS(fairygui::FGUIEventContext);
         GDREGISTER_CLASS(fairygui::UIEventDispatcher);

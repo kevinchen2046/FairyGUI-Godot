@@ -9,11 +9,17 @@
 #include "tween/GTween.h"
 #include "utils/ByteBuffer.h"
 #include "utils/ToolSet.h"
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/viewport.hpp>
+#else
 #include "scene/main/viewport.h"
+#endif
 #include <algorithm>
 #include <vector>
 
 NS_FGUI_BEGIN
+
+#define _owner _fguiOwner
 
 ScrollPane* ScrollPane::_draggingPane = nullptr;
 int ScrollPane::_gestureFlag = 0;
@@ -2068,3 +2074,5 @@ void ScrollPane::_bind_methods()
 }
 
 NS_FGUI_END
+
+#undef _owner

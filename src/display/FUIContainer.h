@@ -2,6 +2,9 @@
 #define __FUICONTANER_H__
 
 #include "FairyGUIMacros.h"
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/input_event.hpp>
+#endif
 #include <functional>
 
 NS_FGUI_BEGIN
@@ -51,15 +54,23 @@ public:
 
     std::function<void(float)> _processCallback;
 
+#ifdef FGUI_GDEXTENSION
+    Rect2 get_anchorable_rect() const;
+    void _draw() override;
+    void _unhandled_input(const Ref<::InputEvent>& event) override;
+#else
     Rect2 get_anchorable_rect() const override;
+#endif
 
 protected:
     static void _bind_methods();
 
     void _notification(int p_what);
     void _deferred_redraw_all();
+#ifndef FGUI_GDEXTENSION
     void _draw();
     virtual void unhandled_input(const Ref<::InputEvent>& event) override;
+#endif
 
 private:
     void applyClipping();

@@ -3,7 +3,11 @@
 #include "UIPackage.h"
 #include "UIConfig.h"
 #include "display/FUIContainer.h"
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/canvas_layer.hpp>
+#else
 #include "scene/main/canvas_layer.h"
+#endif
 
 NS_FGUI_BEGIN
 

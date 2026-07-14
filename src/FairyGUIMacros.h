@@ -27,6 +27,15 @@
 // returned Ref<> is stored (e.g. in _children), the refcount reflects
 // all active references. Objects are auto-freed when the last Ref<>
 // goes out of scope.
+#ifdef FGUI_GDEXTENSION
+#define FAIRYGUI_CREATE(TYPE) \
+    static Ref<TYPE> create() { \
+        Ref<TYPE> pRet = memnew(TYPE); \
+        if (pRet->init()) \
+            return pRet; \
+        return Ref<TYPE>(); \
+    }
+#else
 #define FAIRYGUI_CREATE(TYPE) \
     static Ref<TYPE> create() { \
         TYPE* pRet = memnew(TYPE); \
@@ -35,5 +44,6 @@
         memdelete(pRet); \
         return Ref<TYPE>(); \
     }
+#endif
 
 #endif

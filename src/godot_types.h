@@ -15,6 +15,39 @@
 #include <cstdlib>
 #include <climits>
 
+// Godot headers. The public godot-cpp API is used by the standalone
+// GDExtension build; the original engine headers remain available when this
+// repository is built as an in-tree module.
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/camera2d.hpp>
+#include <godot_cpp/classes/canvas_layer.hpp>
+#include <godot_cpp/classes/canvas_item.hpp>
+#include <godot_cpp/classes/control.hpp>
+#include <godot_cpp/classes/file_access.hpp>
+#include <godot_cpp/classes/font.hpp>
+#include <godot_cpp/classes/image.hpp>
+#include <godot_cpp/classes/image_texture.hpp>
+#include <godot_cpp/classes/node.hpp>
+#include <godot_cpp/classes/node2d.hpp>
+#include <godot_cpp/classes/object.hpp>
+#include <godot_cpp/classes/ref_counted.hpp>
+#include <godot_cpp/classes/sprite2d.hpp>
+#include <godot_cpp/classes/style_box.hpp>
+#include <godot_cpp/classes/texture2d.hpp>
+#include <godot_cpp/core/memory.hpp>
+#include <godot_cpp/templates/vector.hpp>
+#include <godot_cpp/variant/array.hpp>
+#include <godot_cpp/variant/color.hpp>
+#include <godot_cpp/variant/rect2.hpp>
+#include <godot_cpp/variant/string.hpp>
+#include <godot_cpp/variant/transform2d.hpp>
+#include <godot_cpp/variant/variant.hpp>
+#include <godot_cpp/variant/vector2.hpp>
+#include <godot_cpp/variant/vector3.hpp>
+#include <godot_cpp/variant/vector4.hpp>
+using namespace godot;
+using CanvasLayer = godot::CanvasLayer;
+#else
 // Godot engine core headers
 #include "core/object/ref_counted.h"
 #include "core/object/object.h"
@@ -43,6 +76,7 @@
 #include "scene/2d/sprite_2d.h"
 #include "scene/2d/camera_2d.h"
 #include "core/math/vector4.h"
+#endif
 
 // C++ does not typedef `Rect` in the engine, add an alias.
 // Code uses `Rect` as an alias for `Rect2`.

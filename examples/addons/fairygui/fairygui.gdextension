@@ -1,0 +1,14 @@
+[configuration]
+
+entry_symbol = "fairygui_library_init"
+compatibility_minimum = "4.5"
+reloadable = true
+
+[libraries]
+
+windows.debug.x86_64 = "res://addons/fairygui/bin/libfairygui.windows.editor.x86_64.dll"
+windows.release.x86_64 = "res://addons/fairygui/bin/libfairygui.windows.template_release.x86_64.dll"
+linux.debug.x86_64 = "res://addons/fairygui/bin/libfairygui.linux.template_debug.x86_64.so"
+linux.release.x86_64 = "res://addons/fairygui/bin/libfairygui.linux.template_release.x86_64.so"
+macos.debug = "res://addons/fairygui/bin/libfairygui.macos.template_debug.framework"
+macos.release = "res://addons/fairygui/bin/libfairygui.macos.template_release.framework"

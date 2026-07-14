@@ -9,7 +9,12 @@ UIConfigHelper* UIConfigHelper::getInstance()
 {
     if (_inst == nullptr)
     {
+#ifdef FGUI_GDEXTENSION
+        Ref<UIConfigHelper> instance = memnew(UIConfigHelper);
+        _inst = instance.ptr();
+#else
         _inst = memnew(UIConfigHelper);
+#endif
         _inst->reference();
     }
     return _inst;

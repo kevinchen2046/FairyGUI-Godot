@@ -5,7 +5,13 @@
 #include "GRoot.h"
 #include "UIConfig.h"
 #include "UIPackage.h"
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/font.hpp>
+#include <godot_cpp/classes/font_file.hpp>
+#include <godot_cpp/classes/font_variation.hpp>
+#else
 #include "scene/resources/font.h"
+#endif
 #include "fgui_godot_compat.h"
 
 NS_FGUI_BEGIN
@@ -25,7 +31,11 @@ static HorizontalAlignment fui_text_h_align(int align)
 
 static String fui_sanitize_text(const String& text)
 {
+#ifdef FGUI_GDEXTENSION
+    if (text.find("\t") == -1)
+#else
     if (text.find_char('\t') == -1)
+#endif
         return text;
     return text.replace("\t", " ");
 }
@@ -93,7 +103,9 @@ FUILabel::FUILabel() :
     _bmfontScale(1.0f),
     _bmFontCanTint(false)
 {
+#ifndef FGUI_GDEXTENSION
     item_rect_changed(); // enable NOTIFICATION_DRAW for Node2D
+#endif
 }
 
 FUILabel::~FUILabel()
@@ -164,7 +176,11 @@ void FUILabel::applyTextFormat()
             const std::string& fontName = UIConfig::getRealFontName(_fontName, &ttf);
             _bmFont = UIConfig::loadFont(fontName, ttf);
             if (_bmFont.is_null())
-                _bmFont.instantiate(); // fallback to empty
+            {
+                Ref<FontFile> fallback;
+                fallback.instantiate();
+                _bmFont = fallback;
+            }
         }
     }
 

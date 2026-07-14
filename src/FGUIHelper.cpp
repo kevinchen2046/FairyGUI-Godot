@@ -3,7 +3,11 @@
 #include "UIPackage.h"
 #include "TranslationHelper.h"
 #include "utils/html/HtmlObject.h"
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/file_access.hpp>
+#else
 #include "core/io/file_access.h"
+#endif
 
 NS_FGUI_BEGIN
 
@@ -13,7 +17,12 @@ FGUIHelper* FGUIHelper::getInstance()
 {
     if (_inst == nullptr)
     {
+#ifdef FGUI_GDEXTENSION
+        Ref<FGUIHelper> instance = memnew(FGUIHelper);
+        _inst = instance.ptr();
+#else
         _inst = memnew(FGUIHelper);
+#endif
         _inst->reference();
     }
     return _inst;

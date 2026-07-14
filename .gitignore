@@ -5,3 +5,9 @@
 .sconsign.dblite
 build/
 __pycache__/
+godot-cpp/
+godot-cpp.zip
+extension_api.json
+build-gdextension.*.log
+diagnostics/
+examples/addons/fairygui/bin/

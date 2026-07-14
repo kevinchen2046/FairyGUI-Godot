@@ -28,7 +28,7 @@ public:
 
     void setup(ByteBuffer* buffer);
 
-    GComponent* getOwner() const { return _owner; }
+    GComponent* getOwner() const { return _fguiOwner; }
     GComponent* getHeader() const { return _header.ptr(); }
     GComponent* getFooter() const { return _footer.ptr(); }
     Ref<GComponent> gd_getHeader() const { return _header; }
@@ -226,7 +226,7 @@ private:
     Vector2 _tweenTime;
     Vector2 _tweenDuration;
 
-    GComponent* _owner;
+    GComponent* _fguiOwner;
     FUIClipContainer* _maskContainer;
     FUIInnerContainer* _container;
     Ref<GScrollBar> _hzScrollBar;

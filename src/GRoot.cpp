@@ -6,8 +6,17 @@
 #include "display/FUIContainer.h"
 #include "tween/GTween.h"
 #include "tween/TweenManager.h"
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/audio_stream.hpp>
+#include <godot_cpp/classes/audio_stream_player.hpp>
+#include <godot_cpp/classes/canvas_layer.hpp>
+#include <godot_cpp/classes/resource_loader.hpp>
+#include <godot_cpp/classes/scene_tree.hpp>
+#include <godot_cpp/classes/viewport.hpp>
+#include <godot_cpp/classes/window.hpp>
+#include <godot_cpp/core/class_db.hpp>
+#else
 #include "core/object/class_db.h"
-
 #include "scene/audio/audio_stream_player.h"
 #include "servers/audio/audio_stream.h"
 #include "core/io/resource_loader.h"
@@ -15,6 +24,7 @@
 #include "scene/main/viewport.h"
 #include "scene/main/window.h"
 #include "scene/main/canvas_layer.h"
+#endif
 #include "fgui_godot_compat.h"
 
 #include <algorithm>
@@ -883,7 +893,11 @@ void GRoot::playSound(const std::string& url, float volumeScale)
     if (!pi)
         return;
 
+#ifdef FGUI_GDEXTENSION
+    Ref<AudioStream> stream = ResourceLoader::get_singleton()->load(String(pi->file.c_str()));
+#else
     Ref<AudioStream> stream = ResourceLoader::load(String(pi->file.c_str()));
+#endif
     if (!stream.is_valid())
         return;
 
@@ -920,7 +934,11 @@ void GRoot::playSound(const std::string& url, float volumeScale)
     player->set_stream(stream);
     float db = _soundVolumeScale * volumeScale;
     if (db > 0.0f)
+#ifdef FGUI_GDEXTENSION
+        player->set_volume_db(Math::linear2db(db));
+#else
         player->set_volume_db(Math::linear_to_db(db));
+#endif
     else
         player->set_volume_db(-80.0f);
     player->play();

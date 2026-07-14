@@ -3,7 +3,11 @@
 
 #include "FairyGUIMacros.h"
 // cocos2d.h removed - see godot_types.h
+#ifdef FGUI_GDEXTENSION
+#include <vector>
+#else
 #include "core/templates/local_vector.h"
+#endif
 #include "EventContext.h"
 #include "UIEventType.h"
 
@@ -83,7 +87,11 @@ private:
     std::vector<EventCallbackItem*> _callbacks;
     int _dispatching;
 
+#ifdef FGUI_GDEXTENSION
+    static std::vector<EventCallbackItem*> _deferred_callback_items;
+#else
     static LocalVector<EventCallbackItem*> _deferred_callback_items;
+#endif
     static void _schedule_callback_item_delete(EventCallbackItem* p_item);
 
 public:

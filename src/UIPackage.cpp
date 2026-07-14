@@ -6,11 +6,18 @@
 #include "event/HitTest.h"
 #include "utils/ByteBuffer.h"
 #include "utils/ToolSet.h"
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/image.hpp>
+#include <godot_cpp/classes/image_texture.hpp>
+#include <godot_cpp/classes/resource_loader.hpp>
+#include <godot_cpp/classes/resource_uid.hpp>
+#else
 #include "core/io/image.h"
 #include "core/io/image_loader.h"
 #include "core/io/resource_uid.h"
 #include "scene/resources/image_texture.h"
 #include "core/io/resource_loader.h"
+#endif
 
 NS_FGUI_BEGIN
 
@@ -634,7 +641,11 @@ void* UIPackage::getItemAsset(PackageItem* item)
 void UIPackage::loadAtlas(PackageItem* item)
 {
     // 通过 Godot 导入系统加载为 Texture2D，再提取 Image
+#ifdef FGUI_GDEXTENSION
+    Ref<Texture2D> tex2d = ResourceLoader::get_singleton()->load(GObject::toGodotStr(item->file), "Texture2D");
+#else
     Ref<Texture2D> tex2d = ResourceLoader::load(GObject::toGodotStr(item->file), "Texture2D");
+#endif
     if (tex2d.is_null())
     {
         item->texture = _emptyTexture;
@@ -666,7 +677,11 @@ void UIPackage::loadAtlas(PackageItem* item)
 
     if (ToolSet::isFileExist(alphaFilePath))
     {
+#ifdef FGUI_GDEXTENSION
+        Ref<Texture2D> alphaTex2d = ResourceLoader::get_singleton()->load(GObject::toGodotStr(alphaFilePath), "Texture2D");
+#else
         Ref<Texture2D> alphaTex2d = ResourceLoader::load(GObject::toGodotStr(alphaFilePath), "Texture2D");
+#endif
         if (alphaTex2d.is_valid())
         {
             Ref<Image> alphaImg = alphaTex2d->get_image();
@@ -810,10 +825,11 @@ void UIPackage::loadMovieClip(PackageItem* item)
             frameData.imageData.texture = sprite->atlas->texture;
             frameData.imageData.region = sprite->rect;
             frameData.imageData.rotated = sprite->rotated;
-            frameData.imageData.offset = Vector2(
-                rect.position.x - (mcSize.x - rect.size.x) / 2,
-                -(rect.position.y - (mcSize.y - rect.size.y) / 2)
-            );
+            // The package stores the trimmed frame's top-left position in the
+            // movie clip canvas. cocos2d converts that value to a centre-based
+            // SpriteFrame offset, but FUISprite draws from a top-left origin and
+            // therefore needs the package value directly.
+            frameData.imageData.offset = rect.position;
             frameData.imageData.originalSize = mcSize;
             frameData.imageData.originalSizeInPixels = mcSizeInPixels;
         }
@@ -821,10 +837,7 @@ void UIPackage::loadMovieClip(PackageItem* item)
         {
             frameData.imageData.texture = _emptyTexture;
             frameData.imageData.region = Rect2(0, 0, 2, 2);
-            frameData.imageData.offset = Vector2(
-                rect.position.x - (mcSize.x - rect.size.x) / 2,
-                -(rect.position.y - (mcSize.y - rect.size.y) / 2)
-            );
+            frameData.imageData.offset = rect.position;
             frameData.imageData.originalSize = mcSize;
             frameData.imageData.originalSizeInPixels = mcSizeInPixels;
         }

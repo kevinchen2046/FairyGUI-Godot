@@ -2,12 +2,20 @@
 #include "GComponent.h"
 #include "InputProcessor.h"
 #include "utils/WeakPtr.h"
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/variant/callable_method_pointer.hpp>
+#else
 #include "core/object/message_queue.h"
 #include "core/object/callable_method_pointer.h"
+#endif
 
 NS_FGUI_BEGIN
 
+#ifdef FGUI_GDEXTENSION
+std::vector<UIEventDispatcher::EventCallbackItem*> UIEventDispatcher::_deferred_callback_items;
+#else
 LocalVector<UIEventDispatcher::EventCallbackItem*> UIEventDispatcher::_deferred_callback_items;
+#endif
 
 void UIEventDispatcher::_schedule_callback_item_delete(EventCallbackItem* p_item)
 {
@@ -16,8 +24,13 @@ void UIEventDispatcher::_schedule_callback_item_delete(EventCallbackItem* p_item
     _deferred_callback_items.push_back(p_item);
     if (_deferred_callback_items.size() == 1)
     {
+#ifdef FGUI_GDEXTENSION
+        // MessageQueue is an engine-private API. Extension builds flush this
+        // queue at the next safe dispatch boundary and during shutdown.
+#else
         MessageQueue::get_singleton()->push_callable(
             callable_mp_static(UIEventDispatcher::flush_deferred_callback_items));
+#endif
     }
 }
 
@@ -282,6 +295,10 @@ void UIEventDispatcher::doDispatch(int eventType, EventContext* context)
                 it++;
         }
     }
+#ifdef FGUI_GDEXTENSION
+    if (_dispatching == 0)
+        flush_deferred_callback_items();
+#endif
 
     // release(); // GODOT_ADAPT: Godot ref counting handled by engine
 }
@@ -310,6 +327,9 @@ void UIEventDispatcher::gd_addEventListener(int eventType, const Callable& calla
         Ref<FGUIEventContext> evt = Ref<FGUIEventContext>(memnew(FGUIEventContext));
         evt->bind(ctx);
 
+#ifdef FGUI_GDEXTENSION
+        callable.call(evt);
+#else
         Callable::CallError err;
         Variant ret;
         const Variant arg = evt;
@@ -317,9 +337,9 @@ void UIEventDispatcher::gd_addEventListener(int eventType, const Callable& calla
         callable.callp(args, 1, ret, err);
 
         // GDScript/C# handlers with no parameters: fall back to zero-arg call.
-        if (err.error == Callable::CallError::CALL_ERROR_TOO_MANY_ARGUMENTS) {
+        if (err.error == Callable::CallError::CALL_ERROR_TOO_MANY_ARGUMENTS)
             callable.call();
-        }
+#endif
 
         if (eventType == UIEventType::TouchBegin && ctx->_touchCapture == 0)
             ctx->captureTouch();

@@ -2,7 +2,11 @@
 #define __FUIDISPLAYNODE_H__
 
 #include "FairyGUIMacros.h"
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/node2d.hpp>
+#else
 #include "scene/2d/node_2d.h"
+#endif
 
 NS_FGUI_BEGIN
 

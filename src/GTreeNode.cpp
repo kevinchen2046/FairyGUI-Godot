@@ -5,6 +5,12 @@
 NS_FGUI_BEGIN
 Ref<GTreeNode> GTreeNode::create(bool isFolder, const std::string& resURL)
 {
+#ifdef FGUI_GDEXTENSION
+    Ref<GTreeNode> pRet = memnew(GTreeNode);
+    if (pRet->init(isFolder, resURL))
+        return pRet;
+    return Ref<GTreeNode>();
+#else
     GTreeNode* pRet = memnew(GTreeNode);
     if (pRet->init(isFolder, resURL))
     {
@@ -12,6 +18,7 @@ Ref<GTreeNode> GTreeNode::create(bool isFolder, const std::string& resURL)
     }
     memdelete(pRet);
     return Ref<GTreeNode>();
+#endif
 }
 
 GTreeNode::GTreeNode()

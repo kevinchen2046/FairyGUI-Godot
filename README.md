@@ -1,5 +1,9 @@
 # FairyGUI-Godot
 
+> This fork adds a standalone GDExtension build for Godot 4.7. It can be
+> installed as a project plugin without rebuilding the Godot engine. See
+> [GDEXTENSION.md](GDEXTENSION.md) for build and diagnostics instructions.
+
 > This project is a refactor of the FairyGUI cocos2d-x runtime for Godot. It supports C#, GDScript, JavaScript/TypeScript, or any other scripting language Godot supports.
 > Currently supports Godot 4.5–4.6.
 

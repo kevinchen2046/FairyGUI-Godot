@@ -2,7 +2,11 @@
 #include "PackageItem.h"
 #include "UIPackage.h"
 #include "utils/ByteBuffer.h"
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/xml_parser.hpp>
+#else
 #include "core/io/xml_parser.h"
+#endif
 
 NS_FGUI_BEGIN
 

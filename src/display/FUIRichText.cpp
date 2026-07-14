@@ -9,7 +9,11 @@
 #include "utils/WeakPtr.h"
 #include "UIPackage.h"
 #include "godot_types.h"
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/variant/char_utils.hpp>
+#else
 #include "core/string/char_utils.h"
+#endif
 #include <algorithm>
 #include <sstream>
 #include <cfloat>
@@ -164,7 +168,9 @@ FUIRichText::FUIRichText() :
     _textRectWidth(0),
     _numLines(0)
 {
+#ifndef FGUI_GDEXTENSION
     item_rect_changed();
+#endif
     _clipContainer = memnew(FUIClipContainer);
     _clipContainer->set_name("ClipContainer");
     add_child(_clipContainer);
@@ -180,8 +186,13 @@ HtmlElement *FUIRichText::getRendererElement(Node *p_node) const
 {
     if (p_node == nullptr)
         return nullptr;
+#ifdef FGUI_GDEXTENSION
+    auto found = _rendererElements.find(p_node);
+    return found != _rendererElements.end() ? found->second : nullptr;
+#else
     const HtmlElement *const *found = _rendererElements.getptr(p_node);
     return found ? const_cast<HtmlElement *>(*found) : nullptr;
+#endif
 }
 
 Vector2 FUIRichText::measureRendererNode(Node *p_node) const
@@ -222,7 +233,11 @@ Rect2 FUIRichText::get_anchorable_rect() const
         return Rect2(0, 0, _dimensionsX, _dimensionsY);
     if (_contentWidth > 0 && _contentHeight > 0)
         return Rect2(0, 0, _contentWidth, _contentHeight);
+#ifdef FGUI_GDEXTENSION
+    return Rect2();
+#else
     return CanvasItem::get_anchorable_rect();
+#endif
 }
 
 FUIRichText::~FUIRichText()

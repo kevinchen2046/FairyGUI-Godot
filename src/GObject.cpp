@@ -9,7 +9,11 @@
 #include "display/FUISprite.h"
 #include "gears/GearDisplay.h"
 #include "gears/GearDisplay2.h"
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/control.hpp>
+#else
 #include "scene/gui/control.h"
+#endif
 #include "tween/GTween.h"
 #include "tween/GTweener.h"
 #include "utils/ByteBuffer.h"
@@ -30,7 +34,13 @@ static int apply_absolute_overlay_z_order(Node* node, int baseZ, int localZ)
     if (CanvasItem* ci = Object::cast_to<CanvasItem>(node))
     {
         ci->set_z_as_relative(false);
-        ci->set_z_index(CLAMP(baseZ + localZ, RS::CANVAS_ITEM_Z_MIN, RS::CANVAS_ITEM_Z_MAX));
+        ci->set_z_index(CLAMP(baseZ + localZ,
+#ifdef FGUI_GDEXTENSION
+                RenderingServer::CANVAS_ITEM_Z_MIN, RenderingServer::CANVAS_ITEM_Z_MAX
+#else
+                RS::CANVAS_ITEM_Z_MIN, RS::CANVAS_ITEM_Z_MAX
+#endif
+                ));
         localZ++;
     }
 

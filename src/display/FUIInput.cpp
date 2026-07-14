@@ -4,11 +4,18 @@
 #include "UIPackage.h"
 #include "UIConfig.h"
 #include "display/BitmapFont.h"
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/line_edit.hpp>
+#include <godot_cpp/classes/style_box.hpp>
+#include <godot_cpp/classes/style_box_empty.hpp>
+#include <godot_cpp/classes/text_edit.hpp>
+#else
 #include "scene/resources/style_box.h"
 
 #include "scene/gui/line_edit.h"
 
 #include "scene/gui/text_edit.h"
+#endif
 
 #include "fgui_godot_compat.h"
 
@@ -18,11 +25,23 @@ NS_FGUI_BEGIN
 
 class FUILineEdit : public LineEdit {
     GDCLASS(FUILineEdit, LineEdit)
+protected:
+    static void _bind_methods() {}
 };
 
 class FUITextEdit : public TextEdit {
     GDCLASS(FUITextEdit, TextEdit)
+protected:
+    static void _bind_methods() {}
 };
+
+#ifdef FGUI_GDEXTENSION
+void register_fui_input_internal_classes()
+{
+    GDREGISTER_INTERNAL_CLASS(FUILineEdit);
+    GDREGISTER_INTERNAL_CLASS(FUITextEdit);
+}
+#endif
 
 FUIInput* FUIInput::_activeInput = nullptr;
 
@@ -582,9 +601,15 @@ static void apply_transparent_editor_style(Control* editor)
 {
     Ref<StyleBoxEmpty> transparent;
     transparent.instantiate();
+#ifdef FGUI_GDEXTENSION
+    editor->add_theme_stylebox_override("normal", transparent);
+    editor->add_theme_stylebox_override("focus", transparent);
+    editor->add_theme_stylebox_override("read_only", transparent);
+#else
     editor->add_theme_style_override("normal", transparent);
     editor->add_theme_style_override("focus", transparent);
     editor->add_theme_style_override("read_only", transparent);
+#endif
 }
 
 

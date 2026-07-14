@@ -1,5 +1,10 @@
 ﻿#include "BitmapFont.h"
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/font.hpp>
+#include <godot_cpp/classes/font_file.hpp>
+#else
 #include "scene/resources/font.h"
+#endif
 
 NS_FGUI_BEGIN
 
@@ -52,7 +57,6 @@ BitmapFont::BitmapFont()
     , _resizable(false)
     , _fontSize(0)
 {
-    _font.instantiate();
 }
 
 BitmapFont::~BitmapFont()

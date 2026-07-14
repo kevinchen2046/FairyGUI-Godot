@@ -23,7 +23,7 @@ public:
     explicit Transition(GComponent* owner);
     virtual ~Transition();
 
-    GComponent* getOwner() const { return _owner; }
+    GComponent* getOwner() const { return _fguiOwner; }
     Ref<GComponent> gd_getOwner() const;
     bool isPlaying() const { return _playing; }
 
@@ -77,7 +77,7 @@ private:
     void applyValue(TransitionItem* item);
     void decodeValue(TransitionItem* item, ByteBuffer* buffer, void* value);
 
-    GComponent* _owner;
+    GComponent* _fguiOwner;
     std::vector<TransitionItem*> _items;
     int _totalTimes;
     int _totalTasks;

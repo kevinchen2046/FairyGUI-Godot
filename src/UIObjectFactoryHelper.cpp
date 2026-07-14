@@ -9,7 +9,12 @@ UIObjectFactoryHelper* UIObjectFactoryHelper::getInstance()
 {
     if (_inst == nullptr)
     {
+#ifdef FGUI_GDEXTENSION
+        Ref<UIObjectFactoryHelper> instance = memnew(UIObjectFactoryHelper);
+        _inst = instance.ptr();
+#else
         _inst = memnew(UIObjectFactoryHelper);
+#endif
         _inst->reference();
     }
     return _inst;

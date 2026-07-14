@@ -3,11 +3,16 @@
 #include "UIPackage.h"
 #include "display/FUIContainer.h"
 #include "utils/ByteBuffer.h"
-#include "core/io/resource_uid.h"
 #include "utils/ToolSet.h"
-
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/control.hpp>
+#include <godot_cpp/classes/resource_uid.hpp>
+#include <godot_cpp/classes/sprite2d.hpp>
+#else
+#include "core/io/resource_uid.h"
 #include "scene/2d/sprite_2d.h"
 #include "scene/gui/control.h"
+#endif
 
 #ifndef SPINE_GODOT_DISABLED
 #include "SpineSprite.h"

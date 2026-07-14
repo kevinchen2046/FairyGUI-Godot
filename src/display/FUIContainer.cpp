@@ -6,9 +6,20 @@
 #include "display/FUISprite.h"
 #include "event/InputProcessor.h"
 #include "utils/ToolSet.h"
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/material.hpp>
+#include <godot_cpp/classes/input_event_key.hpp>
+#include <godot_cpp/classes/input_event_mouse_button.hpp>
+#include <godot_cpp/classes/input_event_mouse_motion.hpp>
+#include <godot_cpp/classes/input_event_screen_drag.hpp>
+#include <godot_cpp/classes/input_event_screen_touch.hpp>
+#include <godot_cpp/classes/shader.hpp>
+#include <godot_cpp/classes/viewport.hpp>
+#else
 #include "scene/resources/shader.h"
 #include "scene/resources/material.h"
 #include "scene/main/viewport.h"
+#endif
 #include "fgui_godot_compat.h"
 
 NS_FGUI_BEGIN
@@ -45,7 +56,11 @@ Rect2 FUIContainer::get_anchorable_rect() const
 {
     if (gOwner)
         return Rect2(0, 0, gOwner->getWidth(), gOwner->getHeight());
+#ifdef FGUI_GDEXTENSION
+    return Rect2();
+#else
     return CanvasItem::get_anchorable_rect();
+#endif
 }
 
 static void mark_input_handled(Node* node)
@@ -101,7 +116,9 @@ FUIContainer::FUIContainer() :
     _alphaThreshold(1.0f),
     _inverted(false)
 {
+#ifndef FGUI_GDEXTENSION
     item_rect_changed();
+#endif
     set_process_unhandled_input(true);
 }
 
@@ -322,7 +339,11 @@ void FUIContainer::applyStencilEffects()
     queue_redraw();
 }
 
+#ifdef FGUI_GDEXTENSION
+void FUIContainer::_unhandled_input(const Ref<::InputEvent>& event)
+#else
 void FUIContainer::unhandled_input(const Ref<::InputEvent>& event)
+#endif
 {
     if (!gOwner) return;
     GRoot* root = Object::cast_to<GRoot>(gOwner);
@@ -402,7 +423,13 @@ void FUIContainer::unhandled_input(const Ref<::InputEvent>& event)
 
     Ref<InputEventMouseMotion> mm = event;
     if (mm.is_valid()) {
-        if (mm->get_button_mask().has_flag(::MouseButtonMask::LEFT)) {
+        if (mm->get_button_mask().has_flag(
+#ifdef FGUI_GDEXTENSION
+                ::MouseButtonMask::MOUSE_BUTTON_MASK_LEFT
+#else
+                ::MouseButtonMask::LEFT
+#endif
+                )) {
             if (!ToolSet::isDesktopInput()) {
                 mark_input_handled(this);
                 return;

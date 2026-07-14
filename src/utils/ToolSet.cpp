@@ -1,5 +1,9 @@
 #include "utils/ToolSet.h"
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/classes/file_access.hpp>
+#else
 #include "core/io/file_access.h"
+#endif
 #include "fgui_godot_compat.h"
 
 NS_FGUI_BEGIN
@@ -73,7 +77,11 @@ int ToolSet::findInStringArray(const std::vector<std::string>& arr, const std::s
 
 bool ToolSet::isFileExist(const std::string& fileName)
 {
+#ifdef FGUI_GDEXTENSION
+    return FileAccess::file_exists(String(fileName.c_str()));
+#else
     return FileAccess::exists(String(fileName.c_str()));
+#endif
 }
 
 bool ToolSet::isDesktopInput()
