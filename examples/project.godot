@@ -8,11 +8,19 @@
 
 config_version=5
 
+[GodotJS]
+
+runtime/core/camel_case_bindings_enabled=true
+
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="FairyGUI-Godot-Examples"
 run/main_scene="res://gd/Scenes/MainMenu.tscn"
-config/features=PackedStringArray("4.5", "GL Compatibility")
+config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [dotnet]
@@ -21,8 +29,4 @@ project/assembly_name="FairyGUI.Godot.Examples"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/godot_mcp/plugin.cfg")
-
-[GodotJS/runtime/core]
-
-camel_case_bindings_enabled=true
+enabled=PackedStringArray()

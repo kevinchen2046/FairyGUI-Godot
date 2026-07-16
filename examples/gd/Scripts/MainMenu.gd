@@ -2,6 +2,7 @@ extends "res://gd/Scripts/DemoSceneBase.gd"
 
 
 func continue_init() -> void:
+
 	UIPackage.addPackage("res://Resources/UI/MainMenu")
 	_view = UIPackage.createObject("MainMenu", "Main")
 	_groot.addChild(_view)

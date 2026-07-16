@@ -142,7 +142,10 @@ declare module "godot" {
     class UIObjectFactoryHelper extends RefCounted {
         constructor(identifier?: any)
         static getInstance(): null | UIObjectFactoryHelper
-        setPackageItemExtension(url: string, creator: Callable): void
+        /** Registers a GDScript or C# Script resource as a component extension. */
+        setPackageItemExtension(url: string, script: Resource): void
+        /** Registers a factory callback, primarily for GodotJS/TypeScript. */
+        setPackageItemExtensionWithCreator(url: string, creator: Callable): void
         /** @deprecated Internal use. Does not exist at runtime. */
         __godotRPCMap: __RPCMapUIObjectFactoryHelper;
         /** @deprecated Internal use. Does not exist at runtime. */

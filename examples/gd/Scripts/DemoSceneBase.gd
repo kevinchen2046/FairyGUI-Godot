@@ -106,8 +106,8 @@ func _add_close_button() -> void:
 	if close_btn == null:
 		return
 	close_btn.setPosition(_groot.getWidth() - close_btn.getWidth() - 10, _groot.getHeight() - close_btn.getHeight() - 10)
-	close_btn.addRelation(_groot, GuiObject.RIGHT_RIGHT, false)
-	close_btn.addRelation(_groot, GuiObject.BOTTOM_BOTTOM, false)
+	close_btn.addRelation(_groot, GEnumRelation.RIGHT_RIGHT, false)
+	close_btn.addRelation(_groot, GEnumRelation.BOTTOM_BOTTOM, false)
 	close_btn.setSortingOrder(100000)
 	close_btn.addClickListener(func(): call_deferred("_on_close"))
 	_groot.addChild(close_btn)
