@@ -73,6 +73,16 @@ const std::string& UIConfig::getRealFontName(const std::string& aliasName, bool*
         return it->second.name;
     }
 
+    // defaultFont may be a system family name or a font file path directly;
+    // requiring callers to register the same value as an alias first makes a
+    // plain `UIConfigHelper.defaultFont = "..."` assignment ineffective.
+    if (aliasName.empty() && !UIConfig::defaultFont.empty())
+    {
+        if (isTTF)
+            *isTTF = isFontFilePath(UIConfig::defaultFont);
+        return UIConfig::defaultFont;
+    }
+
     if (!aliasName.empty() && !UIConfig::defaultFont.empty())
     {
         it = _fontNames.find(UIConfig::defaultFont);
@@ -103,7 +113,7 @@ Ref<Font> UIConfig::loadFont(const std::string& resolvedName, bool is_file)
         Ref<SystemFont> sysFont;
         sysFont.instantiate();
 #ifdef FGUI_GDEXTENSION
-        PackedStringArray names = String(resolvedName.c_str()).split(",");
+        PackedStringArray names = String::utf8(resolvedName.c_str()).split(",");
         sysFont->set_font_names(names);
 #else
         Vector<String> names = String(resolvedName.c_str()).split(",");
@@ -112,7 +122,7 @@ Ref<Font> UIConfig::loadFont(const std::string& resolvedName, bool is_file)
         return sysFont;
     }
 
-    const String path = String(resolvedName.c_str());
+    const String path = String::utf8(resolvedName.c_str());
     if (path.begins_with("res://") || path.begins_with("user://"))
     {
 #ifdef FGUI_GDEXTENSION

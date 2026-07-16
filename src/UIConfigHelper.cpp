@@ -21,7 +21,7 @@ UIConfigHelper* UIConfigHelper::getInstance()
 }
 
 void UIConfigHelper::setDefaultFont(const String& value) { UIConfig::defaultFont = value.utf8().get_data(); }
-String UIConfigHelper::getDefaultFont() const { return UIConfig::defaultFont.c_str(); }
+String UIConfigHelper::getDefaultFont() const { return String::utf8(UIConfig::defaultFont.c_str()); }
 void UIConfigHelper::setButtonSound(const String& value) { UIConfig::buttonSound = value.utf8().get_data(); }
 String UIConfigHelper::getButtonSound() const { return UIConfig::buttonSound.c_str(); }
 void UIConfigHelper::setButtonSoundVolumeScale(float value) { UIConfig::buttonSoundVolumeScale = value; }
@@ -70,7 +70,7 @@ void UIConfigHelper::registerFont(const String& aliasName, const String& realNam
 
 String UIConfigHelper::getRealFontName(const String& aliasName) const
 {
-    return UIConfig::getRealFontName(aliasName.utf8().get_data()).c_str();
+    return String::utf8(UIConfig::getRealFontName(aliasName.utf8().get_data()).c_str());
 }
 
 void UIConfigHelper::_bind_methods()

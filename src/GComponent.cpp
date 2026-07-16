@@ -69,6 +69,9 @@ static void queue_display_redraw(Node* display)
 
 void GComponent::ensure_display_child_added(FUIInnerContainer* container, GObject* child)
 {
+    ERR_FAIL_NULL_MSG(container, "GComponent display container is not initialized. Call setupDisplay() before adding children.");
+    ERR_FAIL_NULL(child);
+
     Node* display = child->displayObject();
     if (display != nullptr && display->get_parent() == nullptr)
     {
@@ -1818,5 +1821,4 @@ Ref<Transition> GComponent::gd_getTransition(const String& pName) const { return
 Ref<Transition> GComponent::gd_getTransitionAt(int index) const { return Ref<Transition>(getTransitionAt(index)); }
 
 NS_FGUI_END
-
 

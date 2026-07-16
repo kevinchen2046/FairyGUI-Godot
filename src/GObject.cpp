@@ -137,6 +137,12 @@ bool GuiObject::init()
     return true;
 }
 
+void GuiObject::_notification(int p_what)
+{
+    if (p_what == Object::NOTIFICATION_POSTINITIALIZE)
+        init();
+}
+
 void GuiObject::setX(float value)
 {
     setPosition(value, _position.y);
@@ -1404,6 +1410,18 @@ void GuiObject::gd_removeRelation(Object* target, int relation_type)
         removeRelation(go, (RelationType)relation_type);
 }
 
+bool GuiObject::hasProperty(const StringName& property_name) const
+{
+    const TypedArray<Dictionary> properties = get_property_list();
+    for (int i = 0; i < properties.size(); ++i)
+    {
+        const Dictionary property = properties[i];
+        if (property.has("name") && StringName(property["name"]) == property_name)
+            return true;
+    }
+    return false;
+}
+
 /// @author Kevin.CodeBuddy.Auto / 2026-07-16
 /// 枚举常量已从 GuiObject 移除，拆分为独立的枚举容器类：
 ///   GEnumRelation    - RelationType（关联类型）
@@ -1522,6 +1540,7 @@ void GuiObject::_bind_methods()
     ClassDB::bind_method(D_METHOD("getInitSize"), &GuiObject::getSize);
     ClassDB::bind_method(D_METHOD("addRelation", "target", "relation_type", "use_percent"), &GuiObject::gd_addRelation, DEFVAL(false));
     ClassDB::bind_method(D_METHOD("removeRelation", "target", "relation_type"), &GuiObject::gd_removeRelation);
+    ClassDB::bind_method(D_METHOD("hasProperty", "property_name"), &GuiObject::hasProperty);
     ClassDB::bind_method(D_METHOD("getTreeNode"), &GuiObject::gd_getTreeNode);
 }
 

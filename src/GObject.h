@@ -35,6 +35,11 @@ public:
 
     static void _bind_methods();
 
+    // Native classes created through ClassDB (for example GComponent.new() in
+    // GDScript) do not pass through FAIRYGUI_CREATE. Initialize their display
+    // object after the complete derived instance has been constructed.
+    void _notification(int p_what);
+
     float getX() const { return _position.x; };
     void setX(float value);
     float getY() const { return _position.y; };
@@ -258,6 +263,7 @@ protected:
     Ref<GTreeNode> gd_getTreeNode() const;
     void gd_addRelation(Object* target, int relation_type, bool use_percent);
     void gd_removeRelation(Object* target, int relation_type);
+    bool hasProperty(const StringName& property_name) const;
 
 protected:
     bool init();
