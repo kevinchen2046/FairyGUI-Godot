@@ -1396,25 +1396,29 @@ void GuiObject::gd_addRelation(Object* target, int relation_type, bool use_perce
         addRelation(go, (RelationType)relation_type, use_percent);
 }
 
+/// @author Kevin.CodeBuddy.Auto / 2026-07-16
+void GuiObject::gd_removeRelation(Object* target, int relation_type)
+{
+    GObject* go = Object::cast_to<GObject>(target);
+    if (go)
+        removeRelation(go, (RelationType)relation_type);
+}
+
+/// @author Kevin.CodeBuddy.Auto / 2026-07-16
+/// 枚举常量已从 GuiObject 移除，拆分为独立的枚举容器类：
+///   GEnumRelation    - RelationType（关联类型）
+///   GEnumAlign       - AlignType（水平对齐）
+///   GEnumVAlign      - VertAlignType（垂直对齐）
+///   GEnumProp        - ObjectPropID（属性ID）
+///   GEnumObject      - ObjectType（对象类型）
+///   GEnumPackage     - PackageItemType（包资源类型）
+///   GEnumMouse       - MouseButton（鼠标按钮）
+///   GEnumKey         - KeyCode（键盘按键）
+/// 拆分原因：Godot 类级别常量名必须唯一，不同枚举的同名常量
+/// （TEXT/LEFT/RIGHT/CENTER/NONE等）集中在 GuiObject 上会导致冲突。
+/// 每个枚举独立为一个 RefCounted 子类后，各自拥有独立命名空间，无冲突。
 void GuiObject::_bind_methods()
 {
-    ClassDB::bind_integer_constant(get_class_static(), "RelationType", "LEFT_LEFT", static_cast<int64_t>(RelationType::Left_Left));
-    ClassDB::bind_integer_constant(get_class_static(), "RelationType", "LEFT_CENTER", static_cast<int64_t>(RelationType::Left_Center));
-    ClassDB::bind_integer_constant(get_class_static(), "RelationType", "LEFT_RIGHT", static_cast<int64_t>(RelationType::Left_Right));
-    ClassDB::bind_integer_constant(get_class_static(), "RelationType", "CENTER_CENTER", static_cast<int64_t>(RelationType::Center_Center));
-    ClassDB::bind_integer_constant(get_class_static(), "RelationType", "RIGHT_LEFT", static_cast<int64_t>(RelationType::Right_Left));
-    ClassDB::bind_integer_constant(get_class_static(), "RelationType", "RIGHT_CENTER", static_cast<int64_t>(RelationType::Right_Center));
-    ClassDB::bind_integer_constant(get_class_static(), "RelationType", "RIGHT_RIGHT", static_cast<int64_t>(RelationType::Right_Right));
-    ClassDB::bind_integer_constant(get_class_static(), "RelationType", "TOP_TOP", static_cast<int64_t>(RelationType::Top_Top));
-    ClassDB::bind_integer_constant(get_class_static(), "RelationType", "TOP_MIDDLE", static_cast<int64_t>(RelationType::Top_Middle));
-    ClassDB::bind_integer_constant(get_class_static(), "RelationType", "TOP_BOTTOM", static_cast<int64_t>(RelationType::Top_Bottom));
-    ClassDB::bind_integer_constant(get_class_static(), "RelationType", "MIDDLE_MIDDLE", static_cast<int64_t>(RelationType::Middle_Middle));
-    ClassDB::bind_integer_constant(get_class_static(), "RelationType", "BOTTOM_TOP", static_cast<int64_t>(RelationType::Bottom_Top));
-    ClassDB::bind_integer_constant(get_class_static(), "RelationType", "BOTTOM_MIDDLE", static_cast<int64_t>(RelationType::Bottom_Middle));
-    ClassDB::bind_integer_constant(get_class_static(), "RelationType", "BOTTOM_BOTTOM", static_cast<int64_t>(RelationType::Bottom_Bottom));
-    ClassDB::bind_integer_constant(get_class_static(), "RelationType", "WIDTH", static_cast<int64_t>(RelationType::Width));
-    ClassDB::bind_integer_constant(get_class_static(), "RelationType", "HEIGHT", static_cast<int64_t>(RelationType::Height));
-
     ClassDB::bind_method(D_METHOD("setX", "value"), &GuiObject::setX);
     ClassDB::bind_method(D_METHOD("getX"), &GuiObject::getX);
 
@@ -1517,6 +1521,7 @@ void GuiObject::_bind_methods()
 
     ClassDB::bind_method(D_METHOD("getInitSize"), &GuiObject::getSize);
     ClassDB::bind_method(D_METHOD("addRelation", "target", "relation_type", "use_percent"), &GuiObject::gd_addRelation, DEFVAL(false));
+    ClassDB::bind_method(D_METHOD("removeRelation", "target", "relation_type"), &GuiObject::gd_removeRelation);
     ClassDB::bind_method(D_METHOD("getTreeNode"), &GuiObject::gd_getTreeNode);
 }
 

@@ -1570,16 +1570,43 @@ void Transition::gd_stop()
 
 void Transition::_bind_methods()
 {
+    /// @author Kevin.CodeBuddy.Auto / 2026-07-16
+    // TransitionActionType 枚举
+    ClassDB::bind_integer_constant(get_class_static(), "TransitionActionType", "XY", static_cast<int64_t>(TransitionActionType::XY));
+    ClassDB::bind_integer_constant(get_class_static(), "TransitionActionType", "SIZE", static_cast<int64_t>(TransitionActionType::Size));
+    ClassDB::bind_integer_constant(get_class_static(), "TransitionActionType", "SCALE", static_cast<int64_t>(TransitionActionType::Scale));
+    ClassDB::bind_integer_constant(get_class_static(), "TransitionActionType", "PIVOT", static_cast<int64_t>(TransitionActionType::Pivot));
+    ClassDB::bind_integer_constant(get_class_static(), "TransitionActionType", "ALPHA", static_cast<int64_t>(TransitionActionType::Alpha));
+    ClassDB::bind_integer_constant(get_class_static(), "TransitionActionType", "ROTATION", static_cast<int64_t>(TransitionActionType::Rotation));
+    ClassDB::bind_integer_constant(get_class_static(), "TransitionActionType", "COLOR", static_cast<int64_t>(TransitionActionType::Color));
+    ClassDB::bind_integer_constant(get_class_static(), "TransitionActionType", "ANIMATION", static_cast<int64_t>(TransitionActionType::Animation));
+    ClassDB::bind_integer_constant(get_class_static(), "TransitionActionType", "VISIBLE", static_cast<int64_t>(TransitionActionType::Visible));
+    ClassDB::bind_integer_constant(get_class_static(), "TransitionActionType", "SOUND", static_cast<int64_t>(TransitionActionType::Sound));
+    ClassDB::bind_integer_constant(get_class_static(), "TransitionActionType", "TRANSITION", static_cast<int64_t>(TransitionActionType::Transition));
+    ClassDB::bind_integer_constant(get_class_static(), "TransitionActionType", "SHAKE", static_cast<int64_t>(TransitionActionType::Shake));
+    ClassDB::bind_integer_constant(get_class_static(), "TransitionActionType", "COLOR_FILTER", static_cast<int64_t>(TransitionActionType::ColorFilter));
+    ClassDB::bind_integer_constant(get_class_static(), "TransitionActionType", "SKEW", static_cast<int64_t>(TransitionActionType::Skew));
+    ClassDB::bind_integer_constant(get_class_static(), "TransitionActionType", "TEXT", static_cast<int64_t>(TransitionActionType::Text));
+    ClassDB::bind_integer_constant(get_class_static(), "TransitionActionType", "ICON", static_cast<int64_t>(TransitionActionType::Icon));
+    ClassDB::bind_integer_constant(get_class_static(), "TransitionActionType", "UNKNOWN", static_cast<int64_t>(TransitionActionType::Unknown));
+
     ClassDB::bind_method(D_METHOD("play", "times", "delay", "callback"), &Transition::gd_play, DEFVAL(1), DEFVAL(0.0f), DEFVAL(Callable()));
     ClassDB::bind_method(D_METHOD("stop"), &Transition::gd_stop);
     ClassDB::bind_method(D_METHOD("isPlaying"), &Transition::isPlaying);
     ClassDB::bind_method(D_METHOD("getOwner"), &Transition::gd_getOwner);
+
+    ClassDB::bind_method(D_METHOD("getName"), &Transition::gd_getName);
+    ClassDB::bind_method(D_METHOD("setName", "name"), &Transition::gd_setName);
+    ADD_PROPERTY(PropertyInfo(Variant::STRING, "name"), "setName", "getName");
 }
 
 Ref<GComponent> Transition::gd_getOwner() const
 {
     return Ref<GComponent>(_owner);
 }
+
+String Transition::gd_getName() const { return String(name.c_str()); }
+void Transition::gd_setName(const String& value) { name = value.utf8().get_data(); }
 
 NS_FGUI_END
 

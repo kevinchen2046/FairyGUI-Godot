@@ -216,6 +216,10 @@ void GController::_bind_methods()
 
     ClassDB::bind_method(D_METHOD("getParent"), &GController::gd_getParent);
     ClassDB::bind_method(D_METHOD("setParent", "parent"), &GController::setParent);
+
+    ClassDB::bind_method(D_METHOD("getName"), &GController::gd_getName);
+    ClassDB::bind_method(D_METHOD("setName", "name"), &GController::gd_setName);
+    ADD_PROPERTY(PropertyInfo(Variant::STRING, "name"), "setName", "getName");
 }
 
 Ref<GComponent> GController::gd_getParent() const
@@ -229,5 +233,8 @@ void GController::gd_setSelectedPageId(const String& value) { setSelectedPageId(
 String GController::gd_getSelectedPageId() const { return String(getSelectedPageId().c_str()); }
 String GController::gd_getPreviousPage() const { return String(getPreviousPage().c_str()); }
 String GController::gd_getPreviousPageId() const { return String(getPreviousPageId().c_str()); }
+
+String GController::gd_getName() const { return String(name.c_str()); }
+void GController::gd_setName(const String& value) { name = value.utf8().get_data(); }
 
 NS_FGUI_END

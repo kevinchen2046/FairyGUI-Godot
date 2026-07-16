@@ -257,6 +257,7 @@ protected:
     Ref<GObject> gd_getParent() const;
     Ref<GTreeNode> gd_getTreeNode() const;
     void gd_addRelation(Object* target, int relation_type, bool use_percent);
+    void gd_removeRelation(Object* target, int relation_type);
 
 protected:
     bool init();

@@ -2055,6 +2055,18 @@ void ScrollPane::onRollOut(EventContext* context)
 
 void ScrollPane::_bind_methods()
 {
+    /// @author Kevin.CodeBuddy.Auto / 2026-07-16
+    // ScrollType 枚举
+    ClassDB::bind_integer_constant(get_class_static(), "ScrollType", "HORIZONTAL", static_cast<int64_t>(ScrollType::HORIZONTAL));
+    ClassDB::bind_integer_constant(get_class_static(), "ScrollType", "VERTICAL", static_cast<int64_t>(ScrollType::VERTICAL));
+    ClassDB::bind_integer_constant(get_class_static(), "ScrollType", "BOTH", static_cast<int64_t>(ScrollType::BOTH));
+
+    // ScrollBarDisplayType 枚举
+    ClassDB::bind_integer_constant(get_class_static(), "ScrollBarDisplayType", "DEFAULT", static_cast<int64_t>(ScrollBarDisplayType::DEFAULT));
+    ClassDB::bind_integer_constant(get_class_static(), "ScrollBarDisplayType", "VISIBLE", static_cast<int64_t>(ScrollBarDisplayType::VISIBLE));
+    ClassDB::bind_integer_constant(get_class_static(), "ScrollBarDisplayType", "AUTO", static_cast<int64_t>(ScrollBarDisplayType::AUTO));
+    ClassDB::bind_integer_constant(get_class_static(), "ScrollBarDisplayType", "HIDDEN", static_cast<int64_t>(ScrollBarDisplayType::HIDDEN));
+
     ClassDB::bind_method(D_METHOD("getPosX"), &ScrollPane::gd_getPosX);
     ClassDB::bind_method(D_METHOD("setPosX", "value", "ani"), &ScrollPane::gd_setPosX, DEFVAL(false));
     ClassDB::bind_method(D_METHOD("getPosY"), &ScrollPane::gd_getPosY);

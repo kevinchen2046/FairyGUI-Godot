@@ -51,6 +51,11 @@ public:
 
     virtual void constructFromResource() override;
 
+    /// @brief 直接设置/获取纹理
+    /// @author Kevin.CodeBuddy.Auto / 2026-07-15
+    Ref<Texture2D> getTexture() const;
+    void setTexture(const Ref<Texture2D>& value);
+
     virtual Variant getProp(ObjectPropID propId) override;
     virtual void setProp(ObjectPropID propId, const Variant& value) override;
 

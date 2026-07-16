@@ -10,6 +10,10 @@
 #include "display/FUIContainer.h"
 #include "event/HitTest.h"
 
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/core/gdvirtual.gen.inc>
+#endif
+
 NS_FGUI_BEGIN
 
 class GWindow;
@@ -73,6 +77,8 @@ public:
     void removeController(GController* c);
     void gd_removeController(GController* c) { removeController(c); }
 
+    int numControllers() const { return (int)_controllers.size(); }
+
     const std::vector<Ref<GController>>& getControllers() const { return _controllers; }
 
     void applyController(GController* c);
@@ -83,6 +89,8 @@ public:
 
     Ref<Transition> gd_getTransition(const String& pName) const;
     Ref<Transition> gd_getTransitionAt(int index) const;
+
+    int numTransitions() const { return (int)_transitions.size(); }
 
     const std::vector<Ref<Transition>>& getTransitions() const { return _transitions; }
 
@@ -143,7 +151,10 @@ public:
 
 protected:
     virtual void constructExtension(ByteBuffer* buffer);
+    /// 构建完成后回调（C++ vtable 分发，GButton/GSlider 等覆写此方法）
     virtual void onConstruct();
+    /// 构建完成后回调（GDScript/C# 可覆写此虚方法，在 XML 构建完成后被调用，可安全访问子节点）
+    GDVIRTUAL0(_on_construct);
     virtual void setup_afterAdd(ByteBuffer* buffer, int beginPos) override;
     virtual void handleInit() override;
     virtual void handleSizeChanged() override;

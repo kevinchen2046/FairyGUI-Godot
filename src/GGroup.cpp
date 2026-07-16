@@ -469,6 +469,12 @@ void GGroup::setup_afterAdd(ByteBuffer* buffer, int beginPos)
 
 void GGroup::_bind_methods()
 {
+    /// @author Kevin.CodeBuddy.Auto / 2026-07-16
+    // GroupLayoutType 枚举
+    ClassDB::bind_integer_constant(get_class_static(), "GroupLayoutType", "NONE", static_cast<int64_t>(GroupLayoutType::NONE));
+    ClassDB::bind_integer_constant(get_class_static(), "GroupLayoutType", "HORIZONTAL", static_cast<int64_t>(GroupLayoutType::HORIZONTAL));
+    ClassDB::bind_integer_constant(get_class_static(), "GroupLayoutType", "VERTICAL", static_cast<int64_t>(GroupLayoutType::VERTICAL));
+
     ClassDB::bind_method(D_METHOD("ensureBoundsCorrect"), &GGroup::ensureBoundsCorrect);
 
     ClassDB::bind_method(D_METHOD("setLayout", "layout"), &GGroup::gd_setLayout);

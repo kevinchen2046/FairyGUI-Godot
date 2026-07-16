@@ -493,6 +493,12 @@ void GButton::onExit(EventContext* context)
 
 void GButton::_bind_methods()
 {
+    /// @author Kevin.CodeBuddy.Auto / 2026-07-16
+    // ButtonMode 枚举
+    ClassDB::bind_integer_constant(get_class_static(), "ButtonMode", "COMMON", static_cast<int64_t>(ButtonMode::COMMON));
+    ClassDB::bind_integer_constant(get_class_static(), "ButtonMode", "CHECK", static_cast<int64_t>(ButtonMode::CHECK));
+    ClassDB::bind_integer_constant(get_class_static(), "ButtonMode", "RADIO", static_cast<int64_t>(ButtonMode::RADIO));
+
     ClassDB::bind_method(D_METHOD("setTitle", "title"), &GButton::gd_setTitle);
     ClassDB::bind_method(D_METHOD("getTitle"), &GButton::gd_getTitle);
 

@@ -677,6 +677,41 @@ void GTweener::_bind_methods()
     ClassDB::bind_integer_constant(get_class_static(), "TweenPropType", "ALPHA", static_cast<int64_t>(TweenPropType::Alpha));
     ClassDB::bind_integer_constant(get_class_static(), "TweenPropType", "PROGRESS", static_cast<int64_t>(TweenPropType::Progress));
 
+    /// @author Kevin.CodeBuddy.Auto / 2026-07-16
+    // EaseType 枚举
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "LINEAR", static_cast<int64_t>(EaseType::Linear));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "SINE_IN", static_cast<int64_t>(EaseType::SineIn));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "SINE_OUT", static_cast<int64_t>(EaseType::SineOut));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "SINE_IN_OUT", static_cast<int64_t>(EaseType::SineInOut));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "QUAD_IN", static_cast<int64_t>(EaseType::QuadIn));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "QUAD_OUT", static_cast<int64_t>(EaseType::QuadOut));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "QUAD_IN_OUT", static_cast<int64_t>(EaseType::QuadInOut));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "CUBIC_IN", static_cast<int64_t>(EaseType::CubicIn));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "CUBIC_OUT", static_cast<int64_t>(EaseType::CubicOut));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "CUBIC_IN_OUT", static_cast<int64_t>(EaseType::CubicInOut));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "QUART_IN", static_cast<int64_t>(EaseType::QuartIn));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "QUART_OUT", static_cast<int64_t>(EaseType::QuartOut));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "QUART_IN_OUT", static_cast<int64_t>(EaseType::QuartInOut));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "QUINT_IN", static_cast<int64_t>(EaseType::QuintIn));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "QUINT_OUT", static_cast<int64_t>(EaseType::QuintOut));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "QUINT_IN_OUT", static_cast<int64_t>(EaseType::QuintInOut));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "EXPO_IN", static_cast<int64_t>(EaseType::ExpoIn));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "EXPO_OUT", static_cast<int64_t>(EaseType::ExpoOut));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "EXPO_IN_OUT", static_cast<int64_t>(EaseType::ExpoInOut));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "CIRC_IN", static_cast<int64_t>(EaseType::CircIn));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "CIRC_OUT", static_cast<int64_t>(EaseType::CircOut));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "CIRC_IN_OUT", static_cast<int64_t>(EaseType::CircInOut));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "ELASTIC_IN", static_cast<int64_t>(EaseType::ElasticIn));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "ELASTIC_OUT", static_cast<int64_t>(EaseType::ElasticOut));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "ELASTIC_IN_OUT", static_cast<int64_t>(EaseType::ElasticInOut));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "BACK_IN", static_cast<int64_t>(EaseType::BackIn));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "BACK_OUT", static_cast<int64_t>(EaseType::BackOut));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "BACK_IN_OUT", static_cast<int64_t>(EaseType::BackInOut));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "BOUNCE_IN", static_cast<int64_t>(EaseType::BounceIn));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "BOUNCE_OUT", static_cast<int64_t>(EaseType::BounceOut));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "BOUNCE_IN_OUT", static_cast<int64_t>(EaseType::BounceInOut));
+    ClassDB::bind_integer_constant(get_class_static(), "EaseType", "CUSTOM", static_cast<int64_t>(EaseType::Custom));
+
     ClassDB::bind_method(D_METHOD("setDelay", "value"), &GTweener::gd_setDelay);
     ClassDB::bind_method(D_METHOD("getDelay"), &GTweener::getDelay);
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "delay"), "setDelay", "getDelay");

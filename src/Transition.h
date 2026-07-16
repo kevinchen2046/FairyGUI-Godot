@@ -59,6 +59,10 @@ public:
     void setup(ByteBuffer* buffer);
 
     std::string name;
+    /// @brief GDScript 可访问的 name getter/setter
+    /// @author Kevin.CodeBuddy.Auto / 2026-07-15
+    String gd_getName() const;
+    void gd_setName(const String& value);
 
 private:
     void play(int times, float delay, float startTime, float endTime, PlayCompleteCallback onComplete, bool reverse);

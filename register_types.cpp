@@ -7,6 +7,9 @@ using namespace godot;
 #include "core/object/class_db.h"
 #endif
 
+// Enum classes (独立枚举常量类，避免类级命名冲突)
+#include "src/FGUIEnums.h"
+
 // Core
 #include "src/event/UIEventDispatcher.h"
 #include "src/Controller.h"
@@ -72,6 +75,17 @@ void initialize_fairygui_module(ModuleInitializationLevel p_level)
         fairygui::register_draw_node_class();
         fairygui::register_fui_input_internal_classes();
 #endif
+        /// @author Kevin.CodeBuddy.Auto / 2026-07-16
+        /// 枚举常量类 - 每个枚举独立为一个 RefCounted 子类，各自拥有独立常量命名空间
+        GDREGISTER_CLASS(fairygui::GEnumRelation);
+        GDREGISTER_CLASS(fairygui::GEnumAlign);
+        GDREGISTER_CLASS(fairygui::GEnumVAlign);
+        GDREGISTER_CLASS(fairygui::GEnumProp);
+        GDREGISTER_CLASS(fairygui::GEnumObject);
+        GDREGISTER_CLASS(fairygui::GEnumPackage);
+        GDREGISTER_CLASS(fairygui::GEnumMouse);
+        GDREGISTER_CLASS(fairygui::GEnumKey);
+
         // Core
         GDREGISTER_CLASS(fairygui::FGUIEventContext);
         GDREGISTER_CLASS(fairygui::UIEventDispatcher);

@@ -1686,7 +1686,11 @@ void GComponent::constructFromResource(std::vector<GObject*>* objectPool, int po
     buildNativeDisplayList();
     setBoundsChangedFlag();
     ensureBoundsCorrect();
+
+    // C++ vtable 分发：GButton / GSlider 等子类覆写
     onConstruct();
+    // GDScript/C# 虚方法分发：用户可在 _on_construct() 中安全访问子节点
+    GDVIRTUAL_CALL(_on_construct);
 }
 
 void GComponent::constructExtension(ByteBuffer* buffer)
@@ -1733,6 +1737,17 @@ void GComponent::setup_afterAdd(ByteBuffer* buffer, int beginPos)
 
 void GComponent::_bind_methods()
 {
+    /// @author Kevin.CodeBuddy.Auto / 2026-07-16
+    // ChildrenRenderOrder 枚举
+    ClassDB::bind_integer_constant(get_class_static(), "ChildrenRenderOrder", "ASCENT", static_cast<int64_t>(ChildrenRenderOrder::ASCENT));
+    ClassDB::bind_integer_constant(get_class_static(), "ChildrenRenderOrder", "DESCENT", static_cast<int64_t>(ChildrenRenderOrder::DESCENT));
+    ClassDB::bind_integer_constant(get_class_static(), "ChildrenRenderOrder", "ARCH", static_cast<int64_t>(ChildrenRenderOrder::ARCH));
+
+    // OverflowType 枚举
+    ClassDB::bind_integer_constant(get_class_static(), "OverflowType", "VISIBLE", static_cast<int64_t>(OverflowType::VISIBLE));
+    ClassDB::bind_integer_constant(get_class_static(), "OverflowType", "HIDDEN", static_cast<int64_t>(OverflowType::HIDDEN));
+    ClassDB::bind_integer_constant(get_class_static(), "OverflowType", "SCROLL", static_cast<int64_t>(OverflowType::SCROLL));
+
     ClassDB::bind_method(D_METHOD("getChild", "name"), &GComponent::gd_getChild);
     ClassDB::bind_method(D_METHOD("getChildByPath", "path"), &GComponent::gd_getChildByPath);
     ClassDB::bind_method(D_METHOD("getChildById", "id"), &GComponent::gd_getChildById);
@@ -1747,6 +1762,7 @@ void GComponent::_bind_methods()
     ClassDB::bind_method(D_METHOD("getControllerAt", "index"), &GComponent::gd_getControllerAt);
     ClassDB::bind_method(D_METHOD("getController", "name"), &GComponent::gd_getController);
     ClassDB::bind_method(D_METHOD("removeController", "controller"), &GComponent::gd_removeController);
+    ClassDB::bind_method(D_METHOD("numControllers"), &GComponent::numControllers);
     ClassDB::bind_method(D_METHOD("applyController", "controller"), &GComponent::applyController);
     ClassDB::bind_method(D_METHOD("applyAllControllers"), &GComponent::applyAllControllers);
 
@@ -1770,12 +1786,17 @@ void GComponent::_bind_methods()
     // GDScript extensions
     ClassDB::bind_method(D_METHOD("getChildAt", "index"), &GComponent::gd_getChildAt);
     ClassDB::bind_method(D_METHOD("getTransition", "name"), &GComponent::gd_getTransition);
+    ClassDB::bind_method(D_METHOD("getTransitionAt", "index"), &GComponent::gd_getTransitionAt);
+    ClassDB::bind_method(D_METHOD("numTransitions"), &GComponent::numTransitions);
     ClassDB::bind_method(D_METHOD("getScrollPane"), &GComponent::gd_getScrollPane);
     ClassDB::bind_method(D_METHOD("ensureBoundsCorrect"), &GComponent::ensureBoundsCorrect);
     ClassDB::bind_method(D_METHOD("doUpdateBounds"), &GComponent::doUpdateBounds);
     ClassDB::bind_method(D_METHOD("buildNativeDisplayList"), &GComponent::buildNativeDisplayList);
     ClassDB::bind_method(D_METHOD("isChildInView", "child"), &GComponent::isChildInView);
     ClassDB::bind_method(D_METHOD("isAncestorOf", "obj"), &GComponent::isAncestorOf);
+
+    // 构建完成虚方法，GDScript/C# 覆写 _on_construct() 在 XML 构建完成后安全访问子节点
+    GDVIRTUAL_BIND(_on_construct);
 }
 
 void GComponent::gd_removeChildAt(int index) { removeChildAt(index); }

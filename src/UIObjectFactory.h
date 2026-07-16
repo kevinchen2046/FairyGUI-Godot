@@ -9,6 +9,12 @@
 
 NS_FGUI_BEGIN
 
+/// @brief UI对象工厂（C++ 核心层），负责创建 FairyGUI 所有运行时对象
+/// @author Kevin.CodeBuddy.Auto / 2026-07-15
+///
+/// 扩展注册机制：
+/// - GComponentCreator：std::function 工厂函数，供 UIObjectFactoryHelper 桥接层使用
+/// - 脚本层应通过 UIObjectFactoryHelper::setPackageItemExtension 注册扩展类型
 class UIObjectFactory
 {
 public:

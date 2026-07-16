@@ -505,6 +505,13 @@ Vector2 GTextField::getTextSize()
 
 void GTextField::_bind_methods()
 {
+    /// @author Kevin.CodeBuddy.Auto / 2026-07-16
+    // AutoSizeType 枚举
+    ClassDB::bind_integer_constant(get_class_static(), "AutoSizeType", "NONE", static_cast<int64_t>(AutoSizeType::NONE));
+    ClassDB::bind_integer_constant(get_class_static(), "AutoSizeType", "BOTH", static_cast<int64_t>(AutoSizeType::BOTH));
+    ClassDB::bind_integer_constant(get_class_static(), "AutoSizeType", "HEIGHT", static_cast<int64_t>(AutoSizeType::HEIGHT));
+    ClassDB::bind_integer_constant(get_class_static(), "AutoSizeType", "SHRINK", static_cast<int64_t>(AutoSizeType::SHRINK));
+
     // setText/getText inherited from GObject
 
     ClassDB::bind_method(D_METHOD("setColor", "color"), &GTextField::setColor);

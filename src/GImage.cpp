@@ -193,6 +193,13 @@ void GImage::setup_beforeAdd(ByteBuffer* buffer, int beginPos)
 
 void GImage::_bind_methods()
 {
+    /// @author Kevin.CodeBuddy.Auto / 2026-07-16
+    // FlipType 枚举
+    ClassDB::bind_integer_constant(get_class_static(), "FlipType", "NONE", static_cast<int64_t>(FlipType::NONE));
+    ClassDB::bind_integer_constant(get_class_static(), "FlipType", "HORIZONTAL", static_cast<int64_t>(FlipType::HORIZONTAL));
+    ClassDB::bind_integer_constant(get_class_static(), "FlipType", "VERTICAL", static_cast<int64_t>(FlipType::VERTICAL));
+    ClassDB::bind_integer_constant(get_class_static(), "FlipType", "BOTH", static_cast<int64_t>(FlipType::BOTH));
+
     ClassDB::bind_method(D_METHOD("setFlip", "flip"), &GImage::gd_setFlip);
     ClassDB::bind_method(D_METHOD("getFlip"), &GImage::gd_getFlip);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "flip"), "setFlip", "getFlip");
@@ -216,6 +223,10 @@ void GImage::_bind_methods()
     ClassDB::bind_method(D_METHOD("setFillAmount", "amount"), &GImage::setFillAmount);
     ClassDB::bind_method(D_METHOD("getFillAmount"), &GImage::getFillAmount);
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "fillAmount", PROPERTY_HINT_RANGE, "0,1,0.01"), "setFillAmount", "getFillAmount");
+
+    ClassDB::bind_method(D_METHOD("setTexture", "texture"), &GImage::setTexture);
+    ClassDB::bind_method(D_METHOD("getTexture"), &GImage::getTexture);
+    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture2D"), "setTexture", "getTexture");
 }
 
 void GImage::gd_setFillMethod(int value) { setFillMethod(static_cast<FillMethod>(value)); }
@@ -224,6 +235,27 @@ void GImage::gd_setFillOrigin(int value) { setFillOrigin(static_cast<FillOrigin>
 int GImage::gd_getFillOrigin() const { return static_cast<int>(getFillOrigin()); }
 void GImage::gd_setFlip(int value) { setFlip(static_cast<FlipType>(value)); }
 int GImage::gd_getFlip() const { return static_cast<int>(getFlip()); }
+
+Ref<Texture2D> GImage::getTexture() const
+{
+    return _content ? _content->getTexture() : Ref<Texture2D>();
+}
+
+void GImage::setTexture(const Ref<Texture2D>& value)
+{
+    if (!_content)
+        return;
+
+    _content->setTexture(value);
+
+    if (value.is_valid())
+    {
+        Vector2 texSize = value->get_size();
+        _content->set_region_rect(Rect2(Vector2(), texSize));
+        ((FUISprite*)_content)->setImageFrameInfo(texSize, Vector2());
+        setSize(texSize.width, texSize.height);
+    }
+}
 
 NS_FGUI_END
 

@@ -84,6 +84,11 @@ public:
     GComponent* getComponent() const { return _content2; }
     Ref<GComponent> gd_getComponent() const;
 
+    /// @brief 直接设置/获取纹理（绕过 URL 加载机制）
+    /// @author Kevin.CodeBuddy.Auto / 2026-07-15
+    Ref<Texture2D> getTexture() const;
+    void setTexture(const Ref<Texture2D>& value);
+
     virtual Variant getProp(ObjectPropID propId) override;
     virtual void setProp(ObjectPropID propId, const Variant& value) override;
 

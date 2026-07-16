@@ -232,6 +232,13 @@ void GProgressBar::setup_afterAdd(ByteBuffer* buffer, int beginPos)
 
 void GProgressBar::_bind_methods()
 {
+    /// @author Kevin.CodeBuddy.Auto / 2026-07-16
+    // ProgressTitleType 枚举
+    ClassDB::bind_integer_constant(get_class_static(), "ProgressTitleType", "PERCENT", static_cast<int64_t>(ProgressTitleType::PERCENT));
+    ClassDB::bind_integer_constant(get_class_static(), "ProgressTitleType", "VALUE_MAX", static_cast<int64_t>(ProgressTitleType::VALUE_MAX));
+    ClassDB::bind_integer_constant(get_class_static(), "ProgressTitleType", "VALUE", static_cast<int64_t>(ProgressTitleType::VALUE));
+    ClassDB::bind_integer_constant(get_class_static(), "ProgressTitleType", "MAX", static_cast<int64_t>(ProgressTitleType::MAX));
+
     ClassDB::bind_method(D_METHOD("setMin", "value"), &GProgressBar::setMin);
     ClassDB::bind_method(D_METHOD("getMin"), &GProgressBar::getMin);
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "min"), "setMin", "getMin");

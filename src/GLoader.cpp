@@ -679,6 +679,15 @@ GObject* GLoader::hitTest(const Vector2 & worldPoint, const Camera2D * camera)
 
 void GLoader::_bind_methods()
 {
+    /// @author Kevin.CodeBuddy.Auto / 2026-07-16
+    // LoaderFillType 枚举
+    ClassDB::bind_integer_constant(get_class_static(), "LoaderFillType", "NONE", static_cast<int64_t>(LoaderFillType::NONE));
+    ClassDB::bind_integer_constant(get_class_static(), "LoaderFillType", "SCALE", static_cast<int64_t>(LoaderFillType::SCALE));
+    ClassDB::bind_integer_constant(get_class_static(), "LoaderFillType", "SCALE_MATCH_HEIGHT", static_cast<int64_t>(LoaderFillType::SCALE_MATCH_HEIGHT));
+    ClassDB::bind_integer_constant(get_class_static(), "LoaderFillType", "SCALE_MATCH_WIDTH", static_cast<int64_t>(LoaderFillType::SCALE_MATCH_WIDTH));
+    ClassDB::bind_integer_constant(get_class_static(), "LoaderFillType", "SCALE_FREE", static_cast<int64_t>(LoaderFillType::SCALE_FREE));
+    ClassDB::bind_integer_constant(get_class_static(), "LoaderFillType", "SCALE_NO_BORDER", static_cast<int64_t>(LoaderFillType::SCALE_NO_BORDER));
+
     ClassDB::bind_method(D_METHOD("setURL", "url"), &GLoader::gd_setURL);
     ClassDB::bind_method(D_METHOD("getURL"), &GLoader::gd_getURL);
 
@@ -727,6 +736,10 @@ void GLoader::_bind_methods()
     ClassDB::bind_method(D_METHOD("setColor", "color"), &GLoader::setColor);
     ClassDB::bind_method(D_METHOD("getColor"), &GLoader::getColor);
     ADD_PROPERTY(PropertyInfo(Variant::COLOR, "imageColor"), "setColor", "getColor");
+
+    ClassDB::bind_method(D_METHOD("setTexture", "texture"), &GLoader::setTexture);
+    ClassDB::bind_method(D_METHOD("getTexture"), &GLoader::getTexture);
+    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture2D"), "setTexture", "getTexture");
 }
 
 void GLoader::gd_setURL(const String& value) { setURL(value.utf8().get_data()); }
@@ -735,6 +748,29 @@ String GLoader::gd_getURL() const { return String(getURL().c_str()); }
 Ref<GComponent> GLoader::gd_getComponent() const
 {
     return Ref<GComponent>(_content2);
+}
+
+Ref<Texture2D> GLoader::getTexture() const
+{
+    return _content ? _content->getTexture() : Ref<Texture2D>();
+}
+
+void GLoader::setTexture(const Ref<Texture2D>& value)
+{
+    if (!_content)
+        return;
+
+    _content->setTexture(value);
+
+    if (value.is_valid())
+    {
+        _sourceSize = value->get_size();
+        _content->set_region_rect(Rect2(Vector2(), _sourceSize));
+        ((FUISprite*)_content)->setImageFrameInfo(_sourceSize, Vector2());
+    }
+    _contentStatus = 4; // external
+    _url.clear();
+    updateLayout();
 }
 
 NS_FGUI_END

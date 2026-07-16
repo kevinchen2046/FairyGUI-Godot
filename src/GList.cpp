@@ -2735,6 +2735,20 @@ void GList::setup_afterAdd(ByteBuffer* buffer, int beginPos)
 
 void GList::_bind_methods()
 {
+    /// @author Kevin.CodeBuddy.Auto / 2026-07-16
+    // ListLayoutType 枚举
+    ClassDB::bind_integer_constant(get_class_static(), "ListLayoutType", "SINGLE_COLUMN", static_cast<int64_t>(ListLayoutType::SINGLE_COLUMN));
+    ClassDB::bind_integer_constant(get_class_static(), "ListLayoutType", "SINGLE_ROW", static_cast<int64_t>(ListLayoutType::SINGLE_ROW));
+    ClassDB::bind_integer_constant(get_class_static(), "ListLayoutType", "FLOW_HORIZONTAL", static_cast<int64_t>(ListLayoutType::FLOW_HORIZONTAL));
+    ClassDB::bind_integer_constant(get_class_static(), "ListLayoutType", "FLOW_VERTICAL", static_cast<int64_t>(ListLayoutType::FLOW_VERTICAL));
+    ClassDB::bind_integer_constant(get_class_static(), "ListLayoutType", "PAGINATION", static_cast<int64_t>(ListLayoutType::PAGINATION));
+
+    // ListSelectionMode 枚举
+    ClassDB::bind_integer_constant(get_class_static(), "ListSelectionMode", "SINGLE", static_cast<int64_t>(ListSelectionMode::SINGLE));
+    ClassDB::bind_integer_constant(get_class_static(), "ListSelectionMode", "MULTIPLE", static_cast<int64_t>(ListSelectionMode::MULTIPLE));
+    ClassDB::bind_integer_constant(get_class_static(), "ListSelectionMode", "MULTIPLE_SINGLECLICK", static_cast<int64_t>(ListSelectionMode::MULTIPLE_SINGLECLICK));
+    ClassDB::bind_integer_constant(get_class_static(), "ListSelectionMode", "NONE", static_cast<int64_t>(ListSelectionMode::NONE));
+
     ClassDB::bind_method(D_METHOD("doRefreshVirtualListDeferred"), &GList::doRefreshVirtualListDeferred);
 
     ClassDB::bind_method(D_METHOD("setDefaultItem", "url"), &GList::gd_setDefaultItem);

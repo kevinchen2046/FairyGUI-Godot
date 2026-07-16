@@ -58,6 +58,11 @@ public:
     void setup(ByteBuffer* buffer);
 
     std::string name;
+    /// @brief GDScript 可访问的 name getter/setter
+    /// @author Kevin.CodeBuddy.Auto / 2026-07-15
+    String gd_getName() const;
+    void gd_setName(const String& value);
+
     bool changing;
     bool autoRadioGroupDepth;
 
