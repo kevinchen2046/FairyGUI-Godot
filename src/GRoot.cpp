@@ -11,7 +11,6 @@
 #include <godot_cpp/classes/audio_stream_player.hpp>
 #include <godot_cpp/classes/canvas_layer.hpp>
 #include <godot_cpp/classes/resource_loader.hpp>
-#include <godot_cpp/classes/scene_tree.hpp>
 #include <godot_cpp/classes/viewport.hpp>
 #include <godot_cpp/classes/window.hpp>
 #include <godot_cpp/core/class_db.hpp>
@@ -20,7 +19,6 @@
 #include "scene/audio/audio_stream_player.h"
 #include "servers/audio/audio_stream.h"
 #include "core/io/resource_loader.h"
-#include "scene/main/scene_tree.h"
 #include "scene/main/viewport.h"
 #include "scene/main/window.h"
 #include "scene/main/canvas_layer.h"
@@ -36,15 +34,14 @@ bool GRoot::_soundEnabled = true;
 float GRoot::_soundVolumeScale = 1.0f;
 int GRoot::contentScaleLevel = 0;
 
-GRoot* GRoot::create(SceneTree* tree, int zOrder)
+GRoot* GRoot::create(Node* parent, int zOrder)
 {
     Ref<GRoot> ref = memnew(GRoot);
     GRoot* pRet = ref.ptr();
     
-    Node* root = Object::cast_to<Node>(tree->get_root());
-    if (pRet->initWithParent(Object::cast_to<Node>(tree->get_root()), zOrder))
+    if (pRet->initWithParent(parent, zOrder))
     {
-        pRet->onInitWithParent(root, zOrder);
+        pRet->onInitWithParent(parent, zOrder);
         pRet->reference(); // keep alive after ref dtor (2→1)
         return pRet;
     }
@@ -52,15 +49,14 @@ GRoot* GRoot::create(SceneTree* tree, int zOrder)
     return nullptr;
 }
 
-GRoot* GRoot::createDeferred(SceneTree* tree, int zOrder)
+GRoot* GRoot::createDeferred(Node* parent, int zOrder)
 {
     Ref<GRoot> ref = memnew(GRoot);
     GRoot* pRet = ref.ptr();
     
-    Node* root = Object::cast_to<Node>(tree->get_root());
-    if (pRet->initWithParent(root, zOrder))
+    if (pRet->initWithParent(parent, zOrder))
     {
-        pRet->onInitWithParent(root, zOrder, true);
+        pRet->onInitWithParent(parent, zOrder, true);
         pRet->reference(); // keep alive after ref dtor (2→1)
         return pRet;
     }
@@ -147,8 +143,8 @@ void GRoot::_bind_methods()
     ClassDB::bind_integer_constant(get_class_static(), "PopupDirection", "UP", static_cast<GDExtensionInt>(PopupDirection::UP));
     ClassDB::bind_integer_constant(get_class_static(), "PopupDirection", "DOWN", static_cast<GDExtensionInt>(PopupDirection::DOWN));
 
-    ClassDB::bind_static_method(get_class_static(), D_METHOD("create", "tree", "z_order"), &GRoot::gd_create, DEFVAL(1000));
-    ClassDB::bind_static_method(get_class_static(), D_METHOD("createDeferred", "tree", "z_order"), &GRoot::gd_createDeferred, DEFVAL(1000));
+    ClassDB::bind_static_method(get_class_static(), D_METHOD("create", "parent", "z_order"), &GRoot::gd_create, DEFVAL(1000));
+    ClassDB::bind_static_method(get_class_static(), D_METHOD("createDeferred", "parent", "z_order"), &GRoot::gd_createDeferred, DEFVAL(1000));
     ClassDB::bind_static_method(get_class_static(), D_METHOD("getInstance"), &GRoot::gd_getInstance);
     ClassDB::bind_static_method(get_class_static(), D_METHOD("cleanup"), &GRoot::cleanup);
 

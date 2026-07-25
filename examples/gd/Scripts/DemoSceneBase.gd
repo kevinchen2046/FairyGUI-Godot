@@ -47,7 +47,7 @@ func _delayed_init() -> void:
 	if tree == null:
 		return
 	if GRoot.getInstance() == null:
-		GRoot.create(tree)
+		GRoot.create(self)
 	_deferred_attach_to_groot()
 
 func _deferred_attach_to_groot() -> void:

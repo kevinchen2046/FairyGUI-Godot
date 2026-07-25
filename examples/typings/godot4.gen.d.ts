@@ -2950,8 +2950,8 @@ declare module "godot" {
     /** @link https://docs.godotengine.org/en/4.5/classes/class_groot.html */
     class GRoot extends GComponent {
         constructor(identifier?: any)
-        static create(tree: SceneTree, zOrder?: int64 /* = 1000 */): GRoot
-        static createDeferred(tree: SceneTree, zOrder?: int64 /* = 1000 */): GRoot
+        static create(parent: Node, zOrder?: int64 /* = 1000 */): GRoot
+        static createDeferred(parent: Node, zOrder?: int64 /* = 1000 */): GRoot
         static getInstance(): null | GRoot
         showWindow(win: GWindow): void
         hideWindow(win: GWindow): void

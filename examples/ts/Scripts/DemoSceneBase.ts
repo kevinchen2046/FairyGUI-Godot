@@ -80,7 +80,7 @@ export class DemoSceneBase extends Node {
             return;
         }
         if (GRoot.getInstance() == null) {
-            GRoot.create(tree);
+            GRoot.create(this as unknown as Node);
         }
         this._deferredAttachToGroot();
     }

@@ -10,9 +10,7 @@
 #ifdef FGUI_GDEXTENSION
 #include <godot_cpp/classes/audio_stream_player.hpp>
 #include <godot_cpp/classes/canvas_layer.hpp>
-#include <godot_cpp/classes/scene_tree.hpp>
 #else
-#include "scene/main/scene_tree.h"
 #include "scene/main/canvas_layer.h"
 #include "scene/audio/audio_stream_player.h"
 #endif
@@ -29,11 +27,11 @@ public:
     GRoot();
     virtual ~GRoot();
 
-    static GRoot* create(SceneTree* tree, int zOrder = 1000);
-    static GRoot* createDeferred(SceneTree* tree, int zOrder = 1000);
+    static GRoot* create(Node* parent, int zOrder = 1000);
+    static GRoot* createDeferred(Node* parent, int zOrder = 1000);
     static GRoot* getInstance() { return _inst; }
-    static Ref<GRoot> gd_create(SceneTree* tree, int zOrder = 1000) { return Ref<GRoot>(create(tree, zOrder)); }
-    static Ref<GRoot> gd_createDeferred(SceneTree* tree, int zOrder = 1000) { return Ref<GRoot>(createDeferred(tree, zOrder)); }
+    static Ref<GRoot> gd_create(Node* parent, int zOrder = 1000) { return Ref<GRoot>(create(parent, zOrder)); }
+    static Ref<GRoot> gd_createDeferred(Node* parent, int zOrder = 1000) { return Ref<GRoot>(createDeferred(parent, zOrder)); }
     static Ref<GRoot> gd_getInstance() { return Ref<GRoot>(_inst); }
     static void cleanup();
 

@@ -63,7 +63,7 @@ public partial class DemoSceneBase : Node
         if (tree == null)
             return;
         if (GRoot.GetInstance() == null)
-            GRoot.Create(tree);
+            GRoot.Create(this);
         DeferredAttachToGroot();
     }
 

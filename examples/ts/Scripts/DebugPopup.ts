@@ -1,7 +1,7 @@
 /// <reference path="../fairygui.d.ts" />
 
 import "./fgui-globals";
-import { CanvasItem, Node2D, SceneTree } from "godot";
+import { CanvasItem, Node2D, Node, SceneTree } from "godot";
 
 export default class DebugPopup extends SceneTree {
     _initialize(): void {
@@ -9,7 +9,7 @@ export default class DebugPopup extends SceneTree {
     }
 
     private _run(): void {
-        const groot = GRoot.create(this);
+        const groot = GRoot.create((this as unknown as any).root as Node);
         UIConfigHelper.getInstance()!.popupMenu = "ui://Basics/PopupMenu";
         UIPackage.addPackage("res://Resources/UI/Basics");
         const view = UIPackage.createObject("Basics", "Demo_Popup");
