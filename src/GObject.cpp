@@ -802,9 +802,9 @@ Variant GuiObject::getProp(ObjectPropID propId)
     switch (propId)
     {
     case ObjectPropID::Text:
-        return Variant(getText().c_str());
+        return Variant(toGodotStr(getText()));
     case ObjectPropID::Icon:
-        return Variant(getIcon().c_str());
+        return Variant(toGodotStr(getIcon()));
     default:
         return Variant();
     }
@@ -1175,7 +1175,7 @@ void GuiObject::setup_beforeAdd(ByteBuffer* buffer, int beginPos)
 
     const std::string& str = buffer->readS();
     if (!str.empty())
-        _customData = Variant(str.c_str());
+        _customData = Variant(toGodotStr(str));
 }
 
 void GuiObject::setup_afterAdd(ByteBuffer* buffer, int beginPos)

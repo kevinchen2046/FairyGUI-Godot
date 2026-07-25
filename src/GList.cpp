@@ -2716,7 +2716,7 @@ void GList::setupItem(ByteBuffer* buffer, GObject* obj)
                 std::string value = buffer->readS();
                 GObject* obj2 = gcom->getChildByPath(target);
                 if (obj2 != nullptr)
-                    obj2->setProp(propId, Variant(value.c_str()));
+                    obj2->setProp(propId, Variant(GObject::toGodotStr(value)));
             }
         }
     }
@@ -2832,5 +2832,4 @@ int GList::gd_getFirstChildInView() { return getFirstChildInView(); }
 void GList::gd_addSelection(int index, bool scroll_it_to_view) { addSelection(index, scroll_it_to_view); }
 
 NS_FGUI_END
-
 

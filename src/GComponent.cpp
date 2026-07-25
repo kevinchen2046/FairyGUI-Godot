@@ -1733,7 +1733,7 @@ void GComponent::setup_afterAdd(ByteBuffer* buffer, int beginPos)
             std::string value = buffer->readS();
             GObject* obj = getChildByPath(target);
             if (obj != nullptr)
-                obj->setProp(propId, Variant(value.c_str()));
+                obj->setProp(propId, Variant(GObject::toGodotStr(value)));
         }
     }
 }
@@ -1821,4 +1821,3 @@ Ref<Transition> GComponent::gd_getTransition(const String& pName) const { return
 Ref<Transition> GComponent::gd_getTransitionAt(int index) const { return Ref<Transition>(getTransitionAt(index)); }
 
 NS_FGUI_END
-
