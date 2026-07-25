@@ -1075,7 +1075,11 @@ void GuiObject::handleAlphaChanged()
     if (!_displayObject)
         return;
 
-    ((CanvasItem*)_displayObject)->set_self_modulate(Color(1, 1, 1, _alpha));
+    // GObject display roots often contain one or more child CanvasItems (for
+    // example GComponent, GImage and text fields). self_modulate affects only
+    // the root itself, so a GearLook alpha change did not reach any visible
+    // child. modulate is inherited by the display subtree.
+    ((CanvasItem*)_displayObject)->set_modulate(Color(1, 1, 1, _alpha));
 }
 
 void GuiObject::handleGrayedChanged()
