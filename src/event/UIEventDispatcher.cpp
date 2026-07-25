@@ -328,7 +328,11 @@ void UIEventDispatcher::gd_addEventListener(int eventType, const Callable& calla
         evt->bind(ctx);
 
 #ifdef FGUI_GDEXTENSION
-        callable.call(evt);
+        // GDScript lambdas with no parameters: call without args.
+        if (callable.get_argument_count() < 1)
+            callable.call();
+        else
+            callable.call(evt);
 #else
         Callable::CallError err;
         Variant ret;
