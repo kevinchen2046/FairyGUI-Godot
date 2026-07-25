@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GEnumAlign" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>水平对齐枚举常量类。</brief_description>
+	<description>定义水平对齐方式：LEFT（左对齐）、CENTER（居中对齐）、RIGHT（右对齐）。</description>
+	<tutorials />
+	<methods>
+	</methods>
+	<members>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+		<constant name="AlignType_LEFT" value="0"></constant>
+		<constant name="AlignType_CENTER" value="0"></constant>
+		<constant name="AlignType_RIGHT" value="0"></constant>
+	</constants>
+</class>

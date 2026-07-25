@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GController" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 中的控制器。</brief_description>
+	<description>GController 管理一组页面，支持页面切换和选择。通过 selectedIndex 或 selectedPage 控制当前显示的页面，可用于切换组件状态。切换时可触发预定义的动作（ControllerAction）。</description>
+	<tutorials />
+	<methods>
+		<method name="setSelectedIndex">
+			<return type="void" />
+			<param index="0" name="index" type="Variant" />
+			<description>设置当前选中的页面索引。</description>
+		</method>
+		<method name="getSelectedIndex">
+			<return type="Variant" />
+			<description>获取当前选中的页面索引。</description>
+		</method>
+		<method name="getPageCount">
+			<return type="Variant" />
+			<description>获取页面总数。</description>
+		</method>
+		<method name="getPreviousPage">
+			<return type="Variant" />
+			<description>获取上一个选中页面的名称。</description>
+		</method>
+		<method name="getPreviousPageId">
+			<return type="Variant" />
+			<description>获取上一个选中页面的 ID。</description>
+		</method>
+		<method name="setSelectedPage">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>通过名称设置当前页面。</description>
+		</method>
+		<method name="getSelectedPage">
+			<return type="Variant" />
+			<description>获取当前页面。</description>
+		</method>
+		<method name="setSelectedPageId">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>通过页面 ID 设置选中页面。</description>
+		</method>
+		<method name="getSelectedPageId">
+			<return type="Variant" />
+			<description>获取当前选中页面的 ID。</description>
+		</method>
+		<method name="getParent">
+			<return type="Variant" />
+			<description>获取父组件。</description>
+		</method>
+		<method name="setParent">
+			<return type="void" />
+			<param index="0" name="parent" type="Variant" />
+			<description>设置父组件。</description>
+		</method>
+		<method name="getName">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setName">
+			<return type="void" />
+			<param index="0" name="name" type="Variant" />
+			<description></description>
+		</method>
+	</methods>
+	<members>
+		<member name="selectedIndex" type="int" setter="setSelectedIndex" getter="getSelectedIndex"></member>
+		<member name="name" type="String" setter="setName" getter="getName"></member>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+	</constants>
+</class>

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GList" inherits="GComponent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 中的列表组件。</brief_description>
+	<description>GList 支持多种布局模式（单列、单行、横向流动、纵向流动、分页），可设置为虚拟列表以支持大量项目。支持单选/多选模式，内置对象池（GObjectPool）以优化性能。</description>
+	<tutorials />
+	<methods>
+		<method name="doRefreshVirtualListDeferred">
+			<return type="void" />
+			<description></description>
+		</method>
+		<method name="setDefaultItem">
+			<return type="void" />
+			<param index="0" name="url" type="Variant" />
+			<description>设置默认列表项的资源 URL。</description>
+		</method>
+		<method name="getDefaultItem">
+			<return type="Variant" />
+			<description>获取默认列表项的资源 URL。</description>
+		</method>
+		<method name="setColumnCount">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置列数（单列/分页模式时有效）。</description>
+		</method>
+		<method name="getColumnCount">
+			<return type="Variant" />
+			<description>获取列数（单列/分页模式时有效）。</description>
+		</method>
+		<method name="setLineCount">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置行数（单行/分页模式时有效）。</description>
+		</method>
+		<method name="getLineCount">
+			<return type="Variant" />
+			<description>获取行数（单行/分页模式时有效）。</description>
+		</method>
+		<method name="setColumnGap">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置列间距。</description>
+		</method>
+		<method name="getColumnGap">
+			<return type="Variant" />
+			<description>获取列间距。</description>
+		</method>
+		<method name="setLineGap">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置行间距。</description>
+		</method>
+		<method name="getLineGap">
+			<return type="Variant" />
+			<description>获取行间距。</description>
+		</method>
+		<method name="setAutoResizeItem">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置是否自动调整项尺寸（与列表等宽/等高）。</description>
+		</method>
+		<method name="getAutoResizeItem">
+			<return type="Variant" />
+			<description>获取是否自动调整项尺寸（与列表等宽/等高）。</description>
+		</method>
+		<method name="removeChildrenToPool">
+			<return type="void" />
+			<param index="0" name="begin_index" type="Variant" />
+			<param index="1" name="end_index" type="Variant" />
+			<description>移除所有子对象并归还到对象池。</description>
+		</method>
+		<method name="scrollToView">
+			<return type="void" />
+			<param index="0" name="index" type="Variant" />
+			<param index="1" name="ani" type="Variant" />
+			<param index="2" name="set_first" type="Variant" />
+			<description>项索引。 是否使用动画。 是否将该项作为可见区域的第一项。</description>
+		</method>
+		<method name="setLayout">
+			<return type="void" />
+			<param index="0" name="layout" type="Variant" />
+			<description>设置布局模式。</description>
+		</method>
+		<method name="getLayout">
+			<return type="Variant" />
+			<description>获取布局模式。</description>
+		</method>
+		<method name="setSelectionController">
+			<return type="void" />
+			<param index="0" name="controller" type="Variant" />
+			<description>设置选择控制器（关联的控制器，选择变化时自动更新）。</description>
+		</method>
+		<method name="getSelectionController">
+			<return type="Variant" />
+			<description>获取选择控制器（关联的控制器，选择变化时自动更新）。</description>
+		</method>
+		<method name="setSelectedIndex">
+			<return type="void" />
+			<param index="0" name="index" type="Variant" />
+			<description>设置当前选中项的索引（单选模式）。</description>
+		</method>
+		<method name="getSelectedIndex">
+			<return type="Variant" />
+			<description>获取当前选中项的索引（单选模式）。</description>
+		</method>
+		<method name="clearSelection">
+			<return type="void" />
+			<description>清除所有选中。</description>
+		</method>
+		<method name="setItemRenderer">
+			<return type="void" />
+			<param index="0" name="callable" type="Variant" />
+			<description></description>
+		</method>
+		<method name="setItemProvider">
+			<return type="void" />
+			<param index="0" name="callable" type="Variant" />
+			<description></description>
+		</method>
+		<method name="addItemFromPool">
+			<return type="void" />
+			<description>从对象池添加项目。</description>
+		</method>
+		<method name="setVirtual">
+			<return type="void" />
+			<description>设置虚拟列表模式。</description>
+		</method>
+		<method name="setVirtualAndLoop">
+			<return type="void" />
+			<description>启用虚拟+循环列表（无限滚动）。</description>
+		</method>
+		<method name="setNumItems">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置虚拟列表的项目总数。</description>
+		</method>
+		<method name="getNumItems">
+			<return type="Variant" />
+			<description>获取列表总项数（虚拟列表模式下）。</description>
+		</method>
+		<method name="getFirstChildInView">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="addSelection">
+			<return type="void" />
+			<param index="0" name="index" type="Variant" />
+			<param index="1" name="scroll_to_view" type="Variant" />
+			<description>添加一个选中项。</description>
+		</method>
+	</methods>
+	<members>
+		<member name="columnCount" type="int" setter="setColumnCount" getter="getColumnCount"></member>
+		<member name="lineCount" type="int" setter="setLineCount" getter="getLineCount"></member>
+		<member name="columnGap" type="int" setter="setColumnGap" getter="getColumnGap"></member>
+		<member name="lineGap" type="int" setter="setLineGap" getter="getLineGap"></member>
+		<member name="autoResizeItem" type="bool" setter="setAutoResizeItem" getter="getAutoResizeItem"></member>
+		<member name="layout" type="int" setter="setLayout" getter="getLayout"></member>
+		<member name="selectedIndex" type="int" setter="setSelectedIndex" getter="getSelectedIndex"></member>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+		<constant name="ListLayoutType_SINGLE_COLUMN" value="0"></constant>
+		<constant name="ListLayoutType_SINGLE_ROW" value="0"></constant>
+		<constant name="ListLayoutType_FLOW_HORIZONTAL" value="0"></constant>
+		<constant name="ListLayoutType_FLOW_VERTICAL" value="0"></constant>
+		<constant name="ListLayoutType_PAGINATION" value="0"></constant>
+		<constant name="ListSelectionMode_SINGLE" value="0"></constant>
+		<constant name="ListSelectionMode_MULTIPLE" value="0"></constant>
+		<constant name="ListSelectionMode_MULTIPLE_SINGLECLICK" value="0"></constant>
+		<constant name="ListSelectionMode_NONE" value="0"></constant>
+	</constants>
+</class>

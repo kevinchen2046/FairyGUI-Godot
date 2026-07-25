@@ -1,0 +1,7 @@
+{
+    "comment": "FairyGUI-Godot 编译后 DLL 自动部署的目标项目路径列表",
+    "target_projects": [
+        "F:/projects/desktop-pasture/client-godpt-fgui-test",
+        "F:/projects/desktop-pasture/client-godot"
+    ]
+}

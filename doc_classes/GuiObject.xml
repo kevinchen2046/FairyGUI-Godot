@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GuiObject" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 中所有 UI 对象的基类。</brief_description>
+	<description>GuiObject 是 FairyGUI 对象层次结构的根，提供了所有 UI 元素共有的基本属性和功能：位置、大小、缩放、旋转、透明度、可见性、可触摸性、拖拽支持等。
+每个 UI 对象都有一个唯一标识符（id）、一个名称（name）和一个可选的包项引用（packageItem）。</description>
+	<tutorials />
+	<methods>
+		<method name="setX">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置 X 坐标。</description>
+		</method>
+		<method name="getX">
+			<return type="Variant" />
+			<description>获取 X 坐标。</description>
+		</method>
+		<method name="setY">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置 Y 坐标。</description>
+		</method>
+		<method name="getY">
+			<return type="Variant" />
+			<description>获取 Y 坐标。</description>
+		</method>
+		<method name="setPosition">
+			<return type="void" />
+			<param index="0" name="x" type="Variant" />
+			<param index="1" name="y" type="Variant" />
+			<description>同时设置 X 和 Y 坐标。</description>
+		</method>
+		<method name="getPosition">
+			<return type="Variant" />
+			<description>获取当前位置。</description>
+		</method>
+		<method name="setWidth">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置宽度。</description>
+		</method>
+		<method name="getWidth">
+			<return type="Variant" />
+			<description>获取宽度。</description>
+		</method>
+		<method name="setHeight">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置高度。</description>
+		</method>
+		<method name="getHeight">
+			<return type="Variant" />
+			<description>获取高度。</description>
+		</method>
+		<method name="setSize">
+			<return type="void" />
+			<param index="0" name="width" type="Variant" />
+			<param index="1" name="height" type="Variant" />
+			<param index="2" name="ignore_pivot" type="Variant" />
+			<description>同时设置宽度和高度。</description>
+		</method>
+		<method name="getSize">
+			<return type="Variant" />
+			<description>获取当前大小。</description>
+		</method>
+		<method name="setPixelSnapping">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置是否启用像素对齐。</description>
+		</method>
+		<method name="isPixelSnapping">
+			<return type="Variant" />
+			<description>是否启用像素对齐（使对象位置对齐到整数像素）。</description>
+		</method>
+		<method name="setScale">
+			<return type="void" />
+			<param index="0" name="x" type="Variant" />
+			<param index="1" name="y" type="Variant" />
+			<description>同时设置 X 和 Y 方向的缩放。</description>
+		</method>
+		<method name="getScale">
+			<return type="Variant" />
+			<description>获取缩放值。</description>
+		</method>
+		<method name="setScaleX">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置 X 方向缩放。</description>
+		</method>
+		<method name="getScaleX">
+			<return type="Variant" />
+			<description>获取 X 方向缩放。</description>
+		</method>
+		<method name="setScaleY">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置 Y 方向缩放。</description>
+		</method>
+		<method name="getScaleY">
+			<return type="Variant" />
+			<description>获取 Y 方向缩放。</description>
+		</method>
+		<method name="tweenScale">
+			<return type="void" />
+			<param index="0" name="end_value" type="Variant" />
+			<param index="1" name="duration" type="Variant" />
+			<description>目标缩放值。 动画时长（秒）。 GTweener 缓动对象。</description>
+		</method>
+		<method name="setSkewX">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置 X 方向倾斜角度。</description>
+		</method>
+		<method name="getSkewX">
+			<return type="Variant" />
+			<description>获取 X 方向倾斜角度。</description>
+		</method>
+		<method name="setSkewY">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置 Y 方向倾斜角度。</description>
+		</method>
+		<method name="getSkewY">
+			<return type="Variant" />
+			<description>获取 Y 方向倾斜角度。</description>
+		</method>
+		<method name="setRotation">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置旋转角度（度）。</description>
+		</method>
+		<method name="getRotation">
+			<return type="Variant" />
+			<description>获取旋转角度。</description>
+		</method>
+		<method name="setAlpha">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置透明度（0-1）。</description>
+		</method>
+		<method name="getAlpha">
+			<return type="Variant" />
+			<description>获取透明度。</description>
+		</method>
+		<method name="setGrayed">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置是否变灰。</description>
+		</method>
+		<method name="isGrayed">
+			<return type="Variant" />
+			<description>是否处于灰色滤镜状态。</description>
+		</method>
+		<method name="setVisible">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置可见性。</description>
+		</method>
+		<method name="isVisible">
+			<return type="Variant" />
+			<description>是否可见。</description>
+		</method>
+		<method name="setTouchable">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置是否可触摸。</description>
+		</method>
+		<method name="isTouchable">
+			<return type="Variant" />
+			<description>是否可触摸。</description>
+		</method>
+		<method name="setSortingOrder">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置渲染层级。</description>
+		</method>
+		<method name="getSortingOrder">
+			<return type="Variant" />
+			<description>获取渲染层级（值越大渲染越靠前）。</description>
+		</method>
+		<method name="center">
+			<return type="void" />
+			<description>将对象居中。</description>
+		</method>
+		<method name="makeFullScreen">
+			<return type="void" />
+			<description>将对象设置为全屏尺寸。</description>
+		</method>
+		<method name="setText">
+			<return type="void" />
+			<param index="0" name="text" type="Variant" />
+			<description>设置文本内容。</description>
+		</method>
+		<method name="getText">
+			<return type="Variant" />
+			<description>获取文本内容。</description>
+		</method>
+		<method name="setName">
+			<return type="void" />
+			<param index="0" name="name" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getName">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setTooltips">
+			<return type="void" />
+			<param index="0" name="text" type="Variant" />
+			<description>设置鼠标悬停提示文本。</description>
+		</method>
+		<method name="getTooltips">
+			<return type="Variant" />
+			<description>获取鼠标悬停提示文本。</description>
+		</method>
+		<method name="setDraggable">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置是否可拖拽。</description>
+		</method>
+		<method name="isDraggable">
+			<return type="Variant" />
+			<description>是否可拖拽。</description>
+		</method>
+		<method name="startDrag">
+			<return type="void" />
+			<param index="0" name="touch_id" type="Variant" />
+			<description>开始拖拽。</description>
+		</method>
+		<method name="stopDrag">
+			<return type="void" />
+			<description>停止拖拽。</description>
+		</method>
+		<method name="getResourceURL">
+			<return type="Variant" />
+			<description>获取对象在 UI 包中的资源 URL。格式：ui://包名/资源名</description>
+		</method>
+		<method name="removeFromParent">
+			<return type="void" />
+			<description>从父组件中移除。</description>
+		</method>
+		<method name="onStage">
+			<return type="void" />
+			<description>是否已添加到舞台（显示列表）中。</description>
+		</method>
+		<method name="localToGlobal">
+			<return type="void" />
+			<param index="0" name="pt" type="Variant" />
+			<description>将局部坐标转换为全局坐标。</description>
+		</method>
+		<method name="globalToLocal">
+			<return type="void" />
+			<param index="0" name="pt" type="Variant" />
+			<description>将全局坐标转换为局部坐标。</description>
+		</method>
+		<method name="addChild">
+			<return type="void" />
+			<param index="0" name="node" type="Variant" />
+			<description>添加的 GObject 指针（可能返回池中的对象）。</description>
+		</method>
+		<method name="removeChild">
+			<return type="void" />
+			<param index="0" name="node" type="Variant" />
+			<description>移除 GObject 子对象。</description>
+		</method>
+		<method name="setupDisplay">
+			<return type="void" />
+			<description></description>
+		</method>
+		<method name="addClickListener">
+			<return type="void" />
+			<param index="0" name="callable" type="Variant" />
+			<description>添加点击事件监听器。</description>
+		</method>
+		<method name="removeClickListener">
+			<return type="void" />
+			<description>移除指定标签的点击事件监听器。</description>
+		</method>
+		<method name="setIcon">
+			<return type="void" />
+			<param index="0" name="icon" type="Variant" />
+			<description>设置图标 URL。</description>
+		</method>
+		<method name="getIcon">
+			<return type="Variant" />
+			<description>获取图标 URL（虚函数，子类可覆写）。</description>
+		</method>
+		<method name="setPivot">
+			<return type="void" />
+			<param index="0" name="x" type="Variant" />
+			<param index="1" name="y" type="Variant" />
+			<param index="2" name="as_anchor" type="Variant" />
+			<description>是否作为锚点使用（true 时轴心影响位置计算）。</description>
+		</method>
+		<method name="getPivot">
+			<return type="Variant" />
+			<description>获取轴心坐标（归一化值，默认为 (0,0) 即左上角）。</description>
+		</method>
+		<method name="transformRect">
+			<return type="void" />
+			<param index="0" name="rect" type="Variant" />
+			<param index="1" name="target_space" type="Variant" />
+			<description>源矩形。 目标空间对象（nullptr 表示全局空间）。</description>
+		</method>
+		<method name="setDragBounds">
+			<return type="void" />
+			<param index="0" name="bounds" type="Variant" />
+			<description>设置拖曳范围限制。</description>
+		</method>
+		<method name="getParent">
+			<return type="Variant" />
+			<description>获取父组件。</description>
+		</method>
+		<method name="setGroup">
+			<return type="void" />
+			<param index="0" name="group" type="Variant" />
+			<description>设置关联的高级组。</description>
+		</method>
+		<method name="getGroup">
+			<return type="Variant" />
+			<description>获取关联的高级组 (GGroup)。</description>
+		</method>
+		<method name="getInitSize">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="addRelation">
+			<return type="void" />
+			<param index="0" name="target" type="Variant" />
+			<param index="1" name="relation_type" type="Variant" />
+			<param index="2" name="use_percent" type="Variant" />
+			<description>关联目标对象。 关联类型（对齐、尺寸跟随等）。 是否使用百分比模式。</description>
+		</method>
+		<method name="removeRelation">
+			<return type="void" />
+			<param index="0" name="target" type="Variant" />
+			<param index="1" name="relation_type" type="Variant" />
+			<description>移除一个关联关系。</description>
+		</method>
+		<method name="hasProperty">
+			<return type="Variant" />
+			<param index="0" name="property_name" type="Variant" />
+			<description>检查对象是否具有指定属性。</description>
+		</method>
+		<method name="getTreeNode">
+			<return type="Variant" />
+			<description></description>
+		</method>
+	</methods>
+	<members>
+		<member name="icon" type="String" setter="setIcon" getter="getIcon"></member>
+		<member name="group" type="Object" setter="setGroup" getter="getGroup"></member>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+	</constants>
+</class>

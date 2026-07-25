@@ -9,6 +9,8 @@ NS_FGUI_BEGIN
 
 #include "../GuiObjectFwd.h"
 
+/// @brief 字体大小关联器。
+/// 根据控制器页面切换改变对象的字体大小。
 class GearFontSize : public GearBase
 {
 public:
@@ -23,8 +25,8 @@ protected:
     void init() override;
 
 private:
-    std::unordered_map<std::string, int> _storage;
-    int _default;
+    std::unordered_map<std::string, int> _storage; ///< 各页面对应的字体大小。
+    int _default;  ///< 默认字体大小。
 };
 
 NS_FGUI_END

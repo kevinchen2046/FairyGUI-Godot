@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GTweener" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 缓动动画实例。</brief_description>
+	<description>GTweener 封装了单个缓动动画的配置和执行。支持设置延迟（delay）、持续时间（duration）、缓动类型（ease）、重复次数（repeat）、回调函数等。</description>
+	<tutorials />
+	<methods>
+		<method name="setDelay">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置延迟开始时间（秒）。</description>
+		</method>
+		<method name="getDelay">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setDuration">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置动画持续时间（秒）。</description>
+		</method>
+		<method name="getDuration">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setEase">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>EaseType 枚举值，如 EaseType::QuadOut。</description>
+		</method>
+		<method name="setRepeat">
+			<return type="void" />
+			<param index="0" name="repeat" type="Variant" />
+			<param index="1" name="yoyo" type="Variant" />
+			<description>重复次数（0 表示只播放一次）。 是否来回播放。</description>
+		</method>
+		<method name="getRepeat">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setTimeScale">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置时间缩放（加速/减速）。</description>
+		</method>
+		<method name="setSnapping">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置是否像素吸附（结果值对齐到整数）。</description>
+		</method>
+		<method name="setTarget">
+			<return type="void" />
+			<param index="0" name="target" type="Variant" />
+			<param index="1" name="prop_type" type="Variant" />
+			<description>目标对象。 动画属性类型（如 TweenPropType::X）。</description>
+		</method>
+		<method name="setPaused">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置暂停状态。</description>
+		</method>
+		<method name="seek">
+			<return type="void" />
+			<param index="0" name="time" type="Variant" />
+			<description>跳转到指定时间位置。</description>
+		</method>
+		<method name="kill">
+			<return type="void" />
+			<param index="0" name="complete" type="Variant" />
+			<description>是否先完成动画再终止。</description>
+		</method>
+		<method name="getNormalizedTime">
+			<return type="Variant" />
+			<description>获取当前归一化时间（0-1）。</description>
+		</method>
+		<method name="isCompleted">
+			<return type="Variant" />
+			<description>是否已完成（含自然完成和被终止）。</description>
+		</method>
+		<method name="allCompleted">
+			<return type="void" />
+			<description>是否所有重复都已自然完成。</description>
+		</method>
+		<method name="onUpdate">
+			<return type="void" />
+			<param index="0" name="callable" type="Variant" />
+			<description>设置每帧更新回调。</description>
+		</method>
+		<method name="onStart">
+			<return type="void" />
+			<param index="0" name="callable" type="Variant" />
+			<description>设置动画开始回调。</description>
+		</method>
+		<method name="onComplete">
+			<return type="void" />
+			<param index="0" name="callable" type="Variant" />
+			<description>设置动画完成回调（无参数版本）。</description>
+		</method>
+	</methods>
+	<members>
+		<member name="delay" type="float" setter="setDelay" getter="getDelay"></member>
+		<member name="duration" type="float" setter="setDuration" getter="getDuration"></member>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+		<constant name="TweenPropType_NONE" value="0"></constant>
+		<constant name="TweenPropType_X" value="0"></constant>
+		<constant name="TweenPropType_Y" value="0"></constant>
+		<constant name="TweenPropType_POSITION" value="0"></constant>
+		<constant name="TweenPropType_WIDTH" value="0"></constant>
+		<constant name="TweenPropType_HEIGHT" value="0"></constant>
+		<constant name="TweenPropType_SIZE" value="0"></constant>
+		<constant name="TweenPropType_SCALE_X" value="0"></constant>
+		<constant name="TweenPropType_SCALE_Y" value="0"></constant>
+		<constant name="TweenPropType_SCALE" value="0"></constant>
+		<constant name="TweenPropType_ROTATION" value="0"></constant>
+		<constant name="TweenPropType_ALPHA" value="0"></constant>
+		<constant name="TweenPropType_PROGRESS" value="0"></constant>
+		<constant name="EaseType_LINEAR" value="0"></constant>
+		<constant name="EaseType_SINE_IN" value="0"></constant>
+		<constant name="EaseType_SINE_OUT" value="0"></constant>
+		<constant name="EaseType_SINE_IN_OUT" value="0"></constant>
+		<constant name="EaseType_QUAD_IN" value="0"></constant>
+		<constant name="EaseType_QUAD_OUT" value="0"></constant>
+		<constant name="EaseType_QUAD_IN_OUT" value="0"></constant>
+		<constant name="EaseType_CUBIC_IN" value="0"></constant>
+		<constant name="EaseType_CUBIC_OUT" value="0"></constant>
+		<constant name="EaseType_CUBIC_IN_OUT" value="0"></constant>
+		<constant name="EaseType_QUART_IN" value="0"></constant>
+		<constant name="EaseType_QUART_OUT" value="0"></constant>
+		<constant name="EaseType_QUART_IN_OUT" value="0"></constant>
+		<constant name="EaseType_QUINT_IN" value="0"></constant>
+		<constant name="EaseType_QUINT_OUT" value="0"></constant>
+		<constant name="EaseType_QUINT_IN_OUT" value="0"></constant>
+		<constant name="EaseType_EXPO_IN" value="0"></constant>
+		<constant name="EaseType_EXPO_OUT" value="0"></constant>
+		<constant name="EaseType_EXPO_IN_OUT" value="0"></constant>
+		<constant name="EaseType_CIRC_IN" value="0"></constant>
+		<constant name="EaseType_CIRC_OUT" value="0"></constant>
+		<constant name="EaseType_CIRC_IN_OUT" value="0"></constant>
+		<constant name="EaseType_ELASTIC_IN" value="0"></constant>
+		<constant name="EaseType_ELASTIC_OUT" value="0"></constant>
+		<constant name="EaseType_ELASTIC_IN_OUT" value="0"></constant>
+		<constant name="EaseType_BACK_IN" value="0"></constant>
+		<constant name="EaseType_BACK_OUT" value="0"></constant>
+		<constant name="EaseType_BACK_IN_OUT" value="0"></constant>
+		<constant name="EaseType_BOUNCE_IN" value="0"></constant>
+		<constant name="EaseType_BOUNCE_OUT" value="0"></constant>
+		<constant name="EaseType_BOUNCE_IN_OUT" value="0"></constant>
+		<constant name="EaseType_CUSTOM" value="0"></constant>
+	</constants>
+</class>

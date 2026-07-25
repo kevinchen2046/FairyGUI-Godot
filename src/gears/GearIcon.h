@@ -9,6 +9,8 @@ NS_FGUI_BEGIN
 
 #include "../GuiObjectFwd.h"
 
+/// @brief 图标关联器。
+/// 根据控制器页面切换改变对象的图标 URL。
 class GearIcon : public GearBase
 {
 public:
@@ -23,8 +25,8 @@ protected:
     void init() override;
 
 private:
-    std::unordered_map<std::string, std::string> _storage;
-    std::string _default;
+    std::unordered_map<std::string, std::string> _storage; ///< 各页面对应的图标 URL。
+    std::string _default;  ///< 默认图标 URL。
 };
 
 NS_FGUI_END

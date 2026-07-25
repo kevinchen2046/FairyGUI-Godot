@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GPopupMenu" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 中的弹出菜单组件。</brief_description>
+	<description>GPopupMenu 用于显示右键菜单或下拉菜单。通过 addItem() 添加菜单项，支持分隔线和子菜单。</description>
+	<tutorials />
+	<methods>
+		<method name="addItem">
+			<return type="void" />
+			<param index="0" name="caption" type="Variant" />
+			<description>添加菜单项</description>
+		</method>
+		<method name="addSeperator">
+			<return type="void" />
+			<description>添加分隔线</description>
+		</method>
+		<method name="clearItems">
+			<return type="void" />
+			<description>清除所有菜单项</description>
+		</method>
+		<method name="getItemCount">
+			<return type="Variant" />
+			<description>获取菜单项数量</description>
+		</method>
+		<method name="getList">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="getContentPane">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="getItemName">
+			<return type="Variant" />
+			<param index="0" name="index" type="Variant" />
+			<description>获取指定索引的菜单项名称</description>
+		</method>
+		<method name="setItemText">
+			<return type="void" />
+			<param index="0" name="name" type="Variant" />
+			<param index="1" name="caption" type="Variant" />
+			<description>设置菜单项文本</description>
+		</method>
+		<method name="setItemVisible">
+			<return type="void" />
+			<param index="0" name="name" type="Variant" />
+			<param index="1" name="visible" type="Variant" />
+			<description>设置菜单项是否可见</description>
+		</method>
+		<method name="removeItem">
+			<return type="void" />
+			<param index="0" name="name" type="Variant" />
+			<description>移除指定名称的菜单项</description>
+		</method>
+		<method name="setItemGrayed">
+			<return type="void" />
+			<param index="0" name="name" type="Variant" />
+			<param index="1" name="grayed" type="Variant" />
+			<description>设置菜单项是否灰掉（不可点击）</description>
+		</method>
+		<method name="setItemCheckable">
+			<return type="void" />
+			<param index="0" name="name" type="Variant" />
+			<param index="1" name="checkable" type="Variant" />
+			<description>设置菜单项是否可勾选</description>
+		</method>
+		<method name="setItemChecked">
+			<return type="void" />
+			<param index="0" name="name" type="Variant" />
+			<param index="1" name="check" type="Variant" />
+			<description>设置菜单项是否已勾选</description>
+		</method>
+		<method name="isItemChecked">
+			<return type="Variant" />
+			<param index="0" name="name" type="Variant" />
+			<description>判断菜单项是否已勾选</description>
+		</method>
+		<method name="show">
+			<return type="void" />
+			<description>显示菜单</description>
+		</method>
+		<method name="showMenuAt">
+			<return type="void" />
+			<param index="0" name="target" type="Variant" />
+			<param index="1" name="dir" type="Variant" />
+			<description></description>
+		</method>
+	</methods>
+	<members>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+	</constants>
+</class>

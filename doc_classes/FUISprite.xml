@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="FUISprite" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 精灵显示节点。</brief_description>
+	<description>FUISprite 是 GImage / GLoader 等图片/动画组件的底层渲染节点，负责纹理的绘制和精灵动画播放。</description>
+	<tutorials />
+	<methods>
+		<method name="clearContent">
+			<return type="void" />
+			<description>清除当前显示内容</description>
+		</method>
+		<method name="setScale9Grid">
+			<return type="void" />
+			<param index="0" name="rect" type="Variant" />
+			<description>设置九宫格缩放区域</description>
+		</method>
+		<method name="setScaleByTile">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置是否使用平铺模式缩放</description>
+		</method>
+		<method name="isScaleByTile">
+			<return type="Variant" />
+			<description>是否使用平铺模式缩放</description>
+		</method>
+		<method name="setGrayed">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置为灰度显示</description>
+		</method>
+		<method name="isGrayed">
+			<return type="Variant" />
+			<description>是否为灰度显示</description>
+		</method>
+		<method name="setFlippedH">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置水平翻转</description>
+		</method>
+		<method name="isFlippedH">
+			<return type="Variant" />
+			<description>是否水平翻转</description>
+		</method>
+		<method name="setFlippedV">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置垂直翻转</description>
+		</method>
+		<method name="isFlippedV">
+			<return type="Variant" />
+			<description>是否垂直翻转</description>
+		</method>
+		<method name="setColor">
+			<return type="void" />
+			<param index="0" name="color" type="Variant" />
+			<description>设置色调颜色</description>
+		</method>
+		<method name="getColor">
+			<return type="Variant" />
+			<description>获取色调颜色</description>
+		</method>
+		<method name="setRegion">
+			<return type="void" />
+			<param index="0" name="rect" type="Variant" />
+			<description>设置纹理区域</description>
+		</method>
+		<method name="getRegion">
+			<return type="Variant" />
+			<description>获取纹理区域</description>
+		</method>
+		<method name="setRegionEnabled">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置是否启用纹理区域</description>
+		</method>
+		<method name="isRegionEnabled">
+			<return type="Variant" />
+			<description>是否启用纹理区域</description>
+		</method>
+		<method name="setTexture">
+			<return type="void" />
+			<param index="0" name="texture" type="Variant" />
+			<description>设置纹理</description>
+		</method>
+		<method name="getTexture">
+			<return type="Variant" />
+			<description>获取纹理</description>
+		</method>
+		<method name="setFillMethod">
+			<return type="void" />
+			<param index="0" name="method" type="Variant" />
+			<description>设置填充方法</description>
+		</method>
+		<method name="getFillMethod">
+			<return type="Variant" />
+			<description>获取填充方法（水平/垂直/径向等）</description>
+		</method>
+		<method name="setFillOrigin">
+			<return type="void" />
+			<param index="0" name="origin" type="Variant" />
+			<description>设置填充起点</description>
+		</method>
+		<method name="getFillOrigin">
+			<return type="Variant" />
+			<description>获取填充起点</description>
+		</method>
+		<method name="setFillClockwise">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置是否顺时针填充</description>
+		</method>
+		<method name="isFillClockwise">
+			<return type="Variant" />
+			<description>是否顺时针填充</description>
+		</method>
+		<method name="setFillAmount">
+			<return type="void" />
+			<param index="0" name="amount" type="Variant" />
+			<description>设置填充量 (0~1)</description>
+		</method>
+		<method name="getFillAmount">
+			<return type="Variant" />
+			<description>获取填充量 (0~1)</description>
+		</method>
+	</methods>
+	<members>
+		<member name="scaleByTile" type="bool" setter="setScaleByTile" getter="isScaleByTile"></member>
+		<member name="grayed" type="bool" setter="setGrayed" getter="isGrayed"></member>
+		<member name="flippedH" type="bool" setter="setFlippedH" getter="isFlippedH"></member>
+		<member name="flippedV" type="bool" setter="setFlippedV" getter="isFlippedV"></member>
+		<member name="color" type="Color" setter="setColor" getter="getColor">精灵的颜色调制。</member>
+		<member name="region" type="Rect2" setter="setRegion" getter="getRegion"></member>
+		<member name="regionEnabled" type="bool" setter="setRegionEnabled" getter="isRegionEnabled"></member>
+		<member name="texture" type="Object" setter="setTexture" getter="getTexture">精灵的纹理资源。</member>
+		<member name="fillMethod" type="int" setter="setFillMethod" getter="getFillMethod">填充方式。</member>
+		<member name="fillOrigin" type="int" setter="setFillOrigin" getter="getFillOrigin">填充起点。</member>
+		<member name="fillClockwise" type="bool" setter="setFillClockwise" getter="isFillClockwise">填充是否顺时针。</member>
+		<member name="fillAmount" type="float" setter="setFillAmount" getter="getFillAmount">填充量。</member>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+		<constant name="FillMethod_None" value="0"></constant>
+		<constant name="FillMethod_Horizontal" value="0"></constant>
+		<constant name="FillMethod_Vertical" value="0"></constant>
+		<constant name="FillMethod_Radial90" value="0"></constant>
+		<constant name="FillMethod_Radial180" value="0"></constant>
+		<constant name="FillMethod_Radial360" value="0"></constant>
+		<constant name="FillOrigin_Top" value="0"></constant>
+		<constant name="FillOrigin_Bottom" value="0"></constant>
+		<constant name="FillOrigin_Left" value="0"></constant>
+		<constant name="FillOrigin_Right" value="0"></constant>
+	</constants>
+</class>

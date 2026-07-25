@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="FUIContainer" inherits="Control" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 的 UI 容器节点。</brief_description>
+	<description>FUIContainer 是 FairyGUI 在 Godot 场景树中的显示节点基类。所有 FairyGUI 对象在底层都由 FUIContainer 或子类渲染。继承自 Control。</description>
+	<tutorials />
+	<methods>
+		<method name="setClippingEnabled">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="isClippingEnabled">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setClippingRegion">
+			<return type="void" />
+			<param index="0" name="region" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getClippingRegion">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setStencil">
+			<return type="void" />
+			<param index="0" name="stencil" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getStencil">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setAlphaThreshold">
+			<return type="void" />
+			<param index="0" name="threshold" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getAlphaThreshold">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setInverted">
+			<return type="void" />
+			<param index="0" name="inverted" type="Variant" />
+			<description></description>
+		</method>
+		<method name="isInverted">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="_deferred_redraw_all">
+			<return type="void" />
+			<description></description>
+		</method>
+	</methods>
+	<members>
+		<member name="clippingEnabled" type="bool" setter="setClippingEnabled" getter="isClippingEnabled"></member>
+		<member name="clippingRegion" type="Rect2" setter="setClippingRegion" getter="getClippingRegion"></member>
+		<member name="stencil" type="Object" setter="setStencil" getter="getStencil"></member>
+		<member name="alphaThreshold" type="float" setter="setAlphaThreshold" getter="getAlphaThreshold"></member>
+		<member name="inverted" type="bool" setter="setInverted" getter="isInverted"></member>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+	</constants>
+</class>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="FGUIHelper" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 辅助工具类。</brief_description>
+	<description>FGUIHelper 提供 FairyGUI 的通用辅助功能。</description>
+	<tutorials />
+	<methods>
+		<method name="getGRoot">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="createObject">
+			<return type="void" />
+			<param index="0" name="pkg" type="Variant" />
+			<param index="1" name="res" type="Variant" />
+			<description></description>
+		</method>
+		<method name="addPackage">
+			<return type="void" />
+			<param index="0" name="path" type="Variant" />
+			<description>加载 UI 包</description>
+		</method>
+		<method name="loadTranslation">
+			<return type="void" />
+			<param index="0" name="xml_path" type="Variant" />
+			<description>加载翻译文件（XML 文件路径）</description>
+		</method>
+		<method name="loadTranslationFromXML">
+			<return type="void" />
+			<param index="0" name="xml" type="Variant" />
+			<description>直接从 XML 字符串加载翻译</description>
+		</method>
+		<method name="setHtmlButtonResource">
+			<return type="void" />
+			<param index="0" name="url" type="Variant" />
+			<description>设置富文本中 HTML 按钮的默认资源</description>
+		</method>
+		<method name="setHtmlInputResource">
+			<return type="void" />
+			<param index="0" name="url" type="Variant" />
+			<description>设置富文本中 HTML 输入框的默认资源</description>
+		</method>
+		<method name="setHtmlSelectResource">
+			<return type="void" />
+			<param index="0" name="url" type="Variant" />
+			<description>设置富文本中 HTML 下拉框的默认资源</description>
+		</method>
+	</methods>
+	<members>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+	</constants>
+</class>

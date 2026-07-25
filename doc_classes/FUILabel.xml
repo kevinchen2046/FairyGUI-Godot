@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="FUILabel" inherits="Control" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 文本标签显示节点。</brief_description>
+	<description>FUILabel 是 GBasicTextField / GRichTextField 使用的底层显示节点，负责文本的渲染和显示。</description>
+	<tutorials />
+	<methods>
+		<method name="setText">
+			<return type="void" />
+			<param index="0" name="text" type="Variant" />
+			<description>设置显示文本</description>
+		</method>
+		<method name="getText">
+			<return type="Variant" />
+			<description>获取显示文本</description>
+		</method>
+		<method name="setGrayed">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置灰度效果</description>
+		</method>
+		<method name="isGrayed">
+			<return type="Variant" />
+			<description>是否启用灰度效果</description>
+		</method>
+		<method name="setWrapEnabled">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置是否自动换行</description>
+		</method>
+		<method name="isWrapEnabled">
+			<return type="Variant" />
+			<description>是否自动换行</description>
+		</method>
+		<method name="getTextSize">
+			<return type="Variant" />
+			<description>获取文本渲染尺寸</description>
+		</method>
+		<method name="setUnderlineColor">
+			<return type="void" />
+			<param index="0" name="color" type="Variant" />
+			<description>设置下划线颜色</description>
+		</method>
+		<method name="getTextWidth">
+			<return type="Variant" />
+			<description>获取文本绘制宽度</description>
+		</method>
+		<method name="getTextHeight">
+			<return type="Variant" />
+			<description>获取文本绘制高度</description>
+		</method>
+		<method name="applyTextFormat">
+			<return type="void" />
+			<description>应用文本格式到渲染</description>
+		</method>
+	</methods>
+	<members>
+		<member name="grayed" type="bool" setter="setGrayed" getter="isGrayed"></member>
+		<member name="wrapEnabled" type="bool" setter="setWrapEnabled" getter="isWrapEnabled"></member>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+	</constants>
+</class>

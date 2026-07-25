@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="ScrollPane" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 中的滚动面板。</brief_description>
+	<description>ScrollPane 提供惯性滚动、弹性回弹、分页模式、下拉刷新等功能。支持垂直和水平方向的滚动控制，可通过 scrollStep 设置每次滚动的步长。</description>
+	<tutorials />
+	<methods>
+		<method name="getPosX">
+			<return type="Variant" />
+			<description>获取水平滚动位置</description>
+		</method>
+		<method name="setPosX">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<param index="1" name="ani" type="Variant" />
+			<description>设置水平滚动位置</description>
+		</method>
+		<method name="getPosY">
+			<return type="Variant" />
+			<description>获取垂直滚动位置</description>
+		</method>
+		<method name="setPosY">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<param index="1" name="ani" type="Variant" />
+			<description>设置垂直滚动位置</description>
+		</method>
+		<method name="getScrollingPosX">
+			<return type="Variant" />
+			<description>获取水平方向滚动中的当前位置</description>
+		</method>
+		<method name="getScrollingPosY">
+			<return type="Variant" />
+			<description>获取垂直方向滚动中的当前位置</description>
+		</method>
+		<method name="scrollTop">
+			<return type="void" />
+			<param index="0" name="ani" type="Variant" />
+			<description>滚动到顶部。</description>
+		</method>
+		<method name="scrollBottom">
+			<return type="void" />
+			<param index="0" name="ani" type="Variant" />
+			<description>滚动到底部。</description>
+		</method>
+		<method name="isBottomMost">
+			<return type="Variant" />
+			<description>是否已滚动到底部</description>
+		</method>
+		<method name="getHeader">
+			<return type="Variant" />
+			<description>获取头部组件</description>
+		</method>
+		<method name="getFooter">
+			<return type="Variant" />
+			<description>获取底部组件</description>
+		</method>
+		<method name="lockHeader">
+			<return type="void" />
+			<param index="0" name="size" type="Variant" />
+			<description>锁定头部区域大小（头部不随滚动移动）</description>
+		</method>
+		<method name="lockFooter">
+			<return type="void" />
+			<param index="0" name="size" type="Variant" />
+			<description>锁定底部区域大小（底部不随滚动移动）</description>
+		</method>
+		<method name="cancelDragging">
+			<return type="Variant" />
+			<description>取消当前拖拽</description>
+		</method>
+		<method name="refresh">
+			<return type="void" />
+			<description></description>
+		</method>
+		<method name="refreshScrollBars">
+			<return type="void" />
+			<description></description>
+		</method>
+	</methods>
+	<members>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+		<constant name="ScrollType_HORIZONTAL" value="0"></constant>
+		<constant name="ScrollType_VERTICAL" value="0"></constant>
+		<constant name="ScrollType_BOTH" value="0"></constant>
+		<constant name="ScrollBarDisplayType_DEFAULT" value="0"></constant>
+		<constant name="ScrollBarDisplayType_VISIBLE" value="0"></constant>
+		<constant name="ScrollBarDisplayType_AUTO" value="0"></constant>
+		<constant name="ScrollBarDisplayType_HIDDEN" value="0"></constant>
+	</constants>
+</class>

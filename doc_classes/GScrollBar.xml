@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GScrollBar" inherits="GComponent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 中的滚动条组件。</brief_description>
+	<description>GScrollBar 继承自 GComponent，用于控制滚动面板的滚动位置。支持垂直和水平方向。</description>
+	<tutorials />
+	<methods>
+		<method name="setDisplayPerc">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置显示百分比（滑块大小与轨道大小的比例）</description>
+		</method>
+		<method name="setScrollPerc">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置滚动百分比（滑块位置）</description>
+		</method>
+		<method name="getMinSize">
+			<return type="Variant" />
+			<description>获取滑块的最小尺寸</description>
+		</method>
+	</methods>
+	<members>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+	</constants>
+</class>

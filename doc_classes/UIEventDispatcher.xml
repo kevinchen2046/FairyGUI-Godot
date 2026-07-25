@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="UIEventDispatcher" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 事件分发器基类。</brief_description>
+	<description>UIEventDispatcher 是 FairyGUI 事件系统的基础，提供 addEventListener / removeEventListener / dispatchEvent / bubbleEvent 等核心事件功能。
+所有 UI 对象都继承此类，支持 CLICK（点击）、ROLLOVER（悬停进入）、ROLLOUT（悬停离开）等多种事件类型。</description>
+	<tutorials />
+	<methods>
+		<method name="addEventListener">
+			<return type="void" />
+			<param index="0" name="type" type="Variant" />
+			<param index="1" name="callable" type="Variant" />
+			<description>添加事件监听器。type 为事件类型，callable 为回调函数。</description>
+		</method>
+		<method name="removeEventListener">
+			<return type="void" />
+			<param index="0" name="type" type="Variant" />
+			<description>移除指定类型的事件监听器。</description>
+		</method>
+	</methods>
+	<members>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+		<constant name="ENTER" value="0"></constant>
+		<constant name="EXIT" value="0"></constant>
+		<constant name="CHANGED" value="0"></constant>
+		<constant name="SUBMIT" value="0"></constant>
+		<constant name="CLICK" value="0"></constant>
+		<constant name="TOUCHBEGIN" value="0"></constant>
+		<constant name="TOUCHMOVE" value="0"></constant>
+		<constant name="TOUCHEND" value="0"></constant>
+		<constant name="ROLLOVER" value="0"></constant>
+		<constant name="ROLLOUT" value="0"></constant>
+		<constant name="MOUSEWHEEL" value="0"></constant>
+		<constant name="RIGHTCLICK" value="0"></constant>
+		<constant name="MIDDLECLICK" value="0"></constant>
+		<constant name="KEYDOWN" value="0"></constant>
+		<constant name="KEYUP" value="0"></constant>
+		<constant name="SCROLL" value="0"></constant>
+		<constant name="SCROLLEND" value="0"></constant>
+		<constant name="PULLDOWNRELEASE" value="0"></constant>
+		<constant name="PULLUPRELEASE" value="0"></constant>
+		<constant name="POSITIONCHANGE" value="0"></constant>
+		<constant name="SIZECHANGE" value="0"></constant>
+		<constant name="CLICKITEM" value="0"></constant>
+		<constant name="CLICKLINK" value="0"></constant>
+		<constant name="CLICKMENU" value="0"></constant>
+		<constant name="RIGHTCLICKITEM" value="0"></constant>
+		<constant name="DRAGSTART" value="0"></constant>
+		<constant name="DRAGMOVE" value="0"></constant>
+		<constant name="DRAGEND" value="0"></constant>
+		<constant name="DROP" value="0"></constant>
+		<constant name="GEARSTOP" value="0"></constant>
+	</constants>
+</class>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GEnumKey" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>键盘按键枚举常量类。</brief_description>
+	<description>定义常用的键盘按键码：含字母A-Z、数字0-9、功能键F1-F12、方向键、Enter、Esc、Tab、Space等。</description>
+	<tutorials />
+	<methods>
+	</methods>
+	<members>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+		<constant name="KeyCode_NONE" value="0"></constant>
+		<constant name="KeyCode_BACKSPACE" value="0"></constant>
+		<constant name="KeyCode_TAB" value="0"></constant>
+		<constant name="KeyCode_ENTER" value="0"></constant>
+		<constant name="KeyCode_ESCAPE" value="0"></constant>
+		<constant name="KeyCode_SPACE" value="0"></constant>
+		<constant name="KeyCode_LEFT" value="0"></constant>
+		<constant name="KeyCode_UP" value="0"></constant>
+		<constant name="KeyCode_RIGHT" value="0"></constant>
+		<constant name="KeyCode_DOWN" value="0"></constant>
+		<constant name="KeyCode_DELETE" value="0"></constant>
+		<constant name="KeyCode_A" value="0"></constant>
+		<constant name="KeyCode_C" value="0"></constant>
+		<constant name="KeyCode_V" value="0"></constant>
+		<constant name="KeyCode_X" value="0"></constant>
+		<constant name="KeyCode_Y" value="0"></constant>
+		<constant name="KeyCode_Z" value="0"></constant>
+	</constants>
+</class>

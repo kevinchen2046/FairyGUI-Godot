@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="UIConfigHelper" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI UI 配置辅助类。</brief_description>
+	<description>UIConfigHelper 用于配置 FairyGUI 的全局设置，包括默认字体、按钮声音、滚动设置、全局颜色等。</description>
+	<tutorials />
+	<methods>
+		<method name="setDefaultFont">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getDefaultFont">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setButtonSound">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getButtonSound">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setButtonSoundVolumeScale">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getButtonSoundVolumeScale">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setDefaultScrollStep">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getDefaultScrollStep">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setDefaultScrollDecelerationRate">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getDefaultScrollDecelerationRate">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setDefaultScrollTouchEffect">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getDefaultScrollTouchEffect">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setDefaultScrollBounceEffect">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getDefaultScrollBounceEffect">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setDefaultScrollBarDisplay">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getDefaultScrollBarDisplay">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setVerticalScrollBar">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getVerticalScrollBar">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setHorizontalScrollBar">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getHorizontalScrollBar">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setTouchDragSensitivity">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getTouchDragSensitivity">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setClickDragSensitivity">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getClickDragSensitivity">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setTouchScrollSensitivity">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getTouchScrollSensitivity">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setDefaultComboBoxVisibleItemCount">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getDefaultComboBoxVisibleItemCount">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setGlobalModalWaiting">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getGlobalModalWaiting">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setModalLayerColor">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getModalLayerColor">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setTooltipsWin">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getTooltipsWin">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setBringWindowToFrontOnClick">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getBringWindowToFrontOnClick">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setWindowModalWaiting">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getWindowModalWaiting">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setPopupMenu">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getPopupMenu">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setPopupMenuSeperator">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getPopupMenuSeperator">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="registerFont">
+			<return type="void" />
+			<param index="0" name="aliasName" type="Variant" />
+			<param index="1" name="realName" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getRealFontName">
+			<return type="Variant" />
+			<param index="0" name="aliasName" type="Variant" />
+			<description></description>
+		</method>
+	</methods>
+	<members>
+		<member name="defaultFont" type="String" setter="setDefaultFont" getter="getDefaultFont"></member>
+		<member name="buttonSound" type="String" setter="setButtonSound" getter="getButtonSound"></member>
+		<member name="buttonSoundVolumeScale" type="float" setter="setButtonSoundVolumeScale" getter="getButtonSoundVolumeScale"></member>
+		<member name="defaultScrollStep" type="int" setter="setDefaultScrollStep" getter="getDefaultScrollStep"></member>
+		<member name="defaultScrollDecelerationRate" type="float" setter="setDefaultScrollDecelerationRate" getter="getDefaultScrollDecelerationRate"></member>
+		<member name="defaultScrollTouchEffect" type="bool" setter="setDefaultScrollTouchEffect" getter="getDefaultScrollTouchEffect"></member>
+		<member name="defaultScrollBounceEffect" type="bool" setter="setDefaultScrollBounceEffect" getter="getDefaultScrollBounceEffect"></member>
+		<member name="defaultScrollBarDisplay" type="int" setter="setDefaultScrollBarDisplay" getter="getDefaultScrollBarDisplay"></member>
+		<member name="verticalScrollBar" type="String" setter="setVerticalScrollBar" getter="getVerticalScrollBar"></member>
+		<member name="horizontalScrollBar" type="String" setter="setHorizontalScrollBar" getter="getHorizontalScrollBar"></member>
+		<member name="touchDragSensitivity" type="int" setter="setTouchDragSensitivity" getter="getTouchDragSensitivity"></member>
+		<member name="clickDragSensitivity" type="int" setter="setClickDragSensitivity" getter="getClickDragSensitivity"></member>
+		<member name="touchScrollSensitivity" type="int" setter="setTouchScrollSensitivity" getter="getTouchScrollSensitivity"></member>
+		<member name="defaultComboBoxVisibleItemCount" type="int" setter="setDefaultComboBoxVisibleItemCount" getter="getDefaultComboBoxVisibleItemCount"></member>
+		<member name="globalModalWaiting" type="String" setter="setGlobalModalWaiting" getter="getGlobalModalWaiting"></member>
+		<member name="modalLayerColor" type="Color" setter="setModalLayerColor" getter="getModalLayerColor"></member>
+		<member name="tooltipsWin" type="String" setter="setTooltipsWin" getter="getTooltipsWin"></member>
+		<member name="bringWindowToFrontOnClick" type="bool" setter="setBringWindowToFrontOnClick" getter="getBringWindowToFrontOnClick"></member>
+		<member name="windowModalWaiting" type="String" setter="setWindowModalWaiting" getter="getWindowModalWaiting"></member>
+		<member name="popupMenu" type="String" setter="setPopupMenu" getter="getPopupMenu"></member>
+		<member name="popupMenuSeperator" type="String" setter="setPopupMenuSeperator" getter="getPopupMenuSeperator"></member>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+	</constants>
+</class>

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GLoader" inherits="GuiObject" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 中的加载器组件，用于加载外部资源。</brief_description>
+	<description>GLoader 支持从 URL 加载图片或组件资源，支持多种填充模式（等比例缩放、拉伸等），可以设置对齐方式。加载完成后会触发相应的事件。</description>
+	<tutorials />
+	<methods>
+		<method name="setURL">
+			<return type="void" />
+			<param index="0" name="url" type="Variant" />
+			<description>设置加载内容 URL。</description>
+		</method>
+		<method name="getURL">
+			<return type="Variant" />
+			<description>获取加载内容 URL。格式：ui://包名/资源名</description>
+		</method>
+		<method name="setAlign">
+			<return type="void" />
+			<param index="0" name="align" type="Variant" />
+			<description>设置水平对齐方式。</description>
+		</method>
+		<method name="getAlign">
+			<return type="Variant" />
+			<description>获取水平对齐方式。</description>
+		</method>
+		<method name="setVerticalAlign">
+			<return type="void" />
+			<param index="0" name="align" type="Variant" />
+			<description>设置垂直对齐方式。</description>
+		</method>
+		<method name="getVerticalAlign">
+			<return type="Variant" />
+			<description>获取垂直对齐方式。</description>
+		</method>
+		<method name="setAutoSize">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getAutoSize">
+			<return type="Variant" />
+			<description>是否自动调整尺寸（根据加载内容自适应）。</description>
+		</method>
+		<method name="setFillType">
+			<return type="void" />
+			<param index="0" name="fill" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getFillType">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setShrinkOnly">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="isShrinkOnly">
+			<return type="Variant" />
+			<description>是否仅在需要时缩小（不放大）。</description>
+		</method>
+		<method name="setPlaying">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置是否播放动画。</description>
+		</method>
+		<method name="isPlaying">
+			<return type="Variant" />
+			<description>是否正在播放动画。</description>
+		</method>
+		<method name="setFrame">
+			<return type="void" />
+			<param index="0" name="frame" type="Variant" />
+			<description>设置当前动画帧。</description>
+		</method>
+		<method name="getFrame">
+			<return type="Variant" />
+			<description>获取当前动画帧。</description>
+		</method>
+		<method name="setFillMethod">
+			<return type="void" />
+			<param index="0" name="method" type="Variant" />
+			<description>设置填充方法（进度条效果）。</description>
+		</method>
+		<method name="getFillMethod">
+			<return type="Variant" />
+			<description>获取填充方法（进度条效果）。</description>
+		</method>
+		<method name="setFillOrigin">
+			<return type="void" />
+			<param index="0" name="origin" type="Variant" />
+			<description>设置填充原点。</description>
+		</method>
+		<method name="getFillOrigin">
+			<return type="Variant" />
+			<description>获取填充原点。</description>
+		</method>
+		<method name="setFillAmount">
+			<return type="void" />
+			<param index="0" name="amount" type="Variant" />
+			<description>设置填充量（0-1）。</description>
+		</method>
+		<method name="getFillAmount">
+			<return type="Variant" />
+			<description>获取填充量（0-1）。</description>
+		</method>
+		<method name="getComponent">
+			<return type="Variant" />
+			<description>获取加载的组件（当加载内容为组件时）。</description>
+		</method>
+		<method name="setColor">
+			<return type="void" />
+			<param index="0" name="color" type="Variant" />
+			<description>设置颜色。</description>
+		</method>
+		<method name="getColor">
+			<return type="Variant" />
+			<description>获取颜色。</description>
+		</method>
+		<method name="setTexture">
+			<return type="void" />
+			<param index="0" name="texture" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getTexture">
+			<return type="Variant" />
+			<description>直接设置/获取纹理（绕过 URL 加载机制）。</description>
+		</method>
+	</methods>
+	<members>
+		<member name="align" type="int" setter="setAlign" getter="getAlign"></member>
+		<member name="verticalAlign" type="int" setter="setVerticalAlign" getter="getVerticalAlign"></member>
+		<member name="autoSize" type="bool" setter="setAutoSize" getter="getAutoSize"></member>
+		<member name="fill" type="int" setter="setFillType" getter="getFillType"></member>
+		<member name="shrinkOnly" type="bool" setter="setShrinkOnly" getter="isShrinkOnly"></member>
+		<member name="playing" type="bool" setter="setPlaying" getter="isPlaying"></member>
+		<member name="frame" type="int" setter="setFrame" getter="getFrame"></member>
+		<member name="fillMethod" type="int" setter="setFillMethod" getter="getFillMethod"></member>
+		<member name="fillOrigin" type="int" setter="setFillOrigin" getter="getFillOrigin"></member>
+		<member name="fillAmount" type="float" setter="setFillAmount" getter="getFillAmount"></member>
+		<member name="imageColor" type="Color" setter="setColor" getter="getColor"></member>
+		<member name="texture" type="Object" setter="setTexture" getter="getTexture"></member>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+		<constant name="LoaderFillType_NONE" value="0"></constant>
+		<constant name="LoaderFillType_SCALE" value="0"></constant>
+		<constant name="LoaderFillType_SCALE_MATCH_HEIGHT" value="0"></constant>
+		<constant name="LoaderFillType_SCALE_MATCH_WIDTH" value="0"></constant>
+		<constant name="LoaderFillType_SCALE_FREE" value="0"></constant>
+		<constant name="LoaderFillType_SCALE_NO_BORDER" value="0"></constant>
+	</constants>
+</class>

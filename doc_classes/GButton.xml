@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GButton" inherits="GComponent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 中的按钮组件。</brief_description>
+	<description>GButton 支持三种按钮模式：普通按钮（Common）、复选按钮（Check）和单选按钮（Radio）。具有上下左右四种状态（UP/DOWN/OVER/SELECTED），每种状态可以设置不同的标题和图标。通过 relatedController 可以实现页面切换控制。</description>
+	<tutorials />
+	<methods>
+		<method name="setTitle">
+			<return type="void" />
+			<param index="0" name="title" type="Variant" />
+			<description>MANUALLY EDITED IN XML</description>
+		</method>
+		<method name="getTitle">
+			<return type="Variant" />
+			<description>获取标题文本。</description>
+		</method>
+		<method name="setSelectedTitle">
+			<return type="void" />
+			<param index="0" name="title" type="Variant" />
+			<description>设置选中状态的标题文本。</description>
+		</method>
+		<method name="getSelectedTitle">
+			<return type="Variant" />
+			<description>获取选中状态的标题文本。</description>
+		</method>
+		<method name="setSelectedIcon">
+			<return type="void" />
+			<param index="0" name="icon" type="Variant" />
+			<description>设置选中状态的图标 URL。</description>
+		</method>
+		<method name="getSelectedIcon">
+			<return type="Variant" />
+			<description>获取选中状态的图标 URL。</description>
+		</method>
+		<method name="setTitleColor">
+			<return type="void" />
+			<param index="0" name="color" type="Variant" />
+			<description>设置标题颜色。</description>
+		</method>
+		<method name="getTitleColor">
+			<return type="Variant" />
+			<description>获取标题颜色。</description>
+		</method>
+		<method name="setTitleFontSize">
+			<return type="void" />
+			<param index="0" name="size" type="Variant" />
+			<description>设置标题字体大小。</description>
+		</method>
+		<method name="getTitleFontSize">
+			<return type="Variant" />
+			<description>获取标题字体大小。</description>
+		</method>
+		<method name="setSelected">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置选中状态。</description>
+		</method>
+		<method name="isSelected">
+			<return type="Variant" />
+			<description>是否选中。</description>
+		</method>
+		<method name="getRelatedController">
+			<return type="Variant" />
+			<description>获取关联的控制器。</description>
+		</method>
+		<method name="setRelatedController">
+			<return type="void" />
+			<param index="0" name="controller" type="Variant" />
+			<description>设置关联的控制器。</description>
+		</method>
+		<method name="setChangeStateOnClick">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置是否在点击时改变状态。</description>
+		</method>
+		<method name="isChangeStateOnClick">
+			<return type="Variant" />
+			<description>是否在点击时改变状态（按下/弹起）。</description>
+		</method>
+	</methods>
+	<members>
+		<member name="titleColor" type="Color" setter="setTitleColor" getter="getTitleColor">标题文本的颜色。</member>
+		<member name="titleFontSize" type="int" setter="setTitleFontSize" getter="getTitleFontSize">标题文本的字体大小。</member>
+		<member name="selected" type="bool" setter="setSelected" getter="isSelected">按钮的选中状态。</member>
+		<member name="changeStateOnClick" type="bool" setter="setChangeStateOnClick" getter="isChangeStateOnClick">点击时是否自动改变按钮状态。</member>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+		<constant name="ButtonMode_COMMON" value="0"></constant>
+		<constant name="ButtonMode_CHECK" value="0"></constant>
+		<constant name="ButtonMode_RADIO" value="0"></constant>
+	</constants>
+</class>

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GComponent" inherits="GuiObject" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 中的组件类，是所有容器的基类。</brief_description>
+	<description>GComponent 是 FairyGUI 中最重要的类之一。它可以包含子对象（children），管理控制器（controllers），控制过渡动画（transitions），支持滚动面板（scrollPane），设置遮罩（mask）和点击区域（hitArea）。
+GComponent 的不透明度（opaque）属性决定其是否参与点击测试：关闭时点击穿透到下层对象。</description>
+	<tutorials />
+	<methods>
+		<method name="getChild">
+			<return type="Variant" />
+			<param index="0" name="name" type="Variant" />
+			<description>通过名称获取子对象。</description>
+		</method>
+		<method name="getChildByPath">
+			<return type="Variant" />
+			<param index="0" name="path" type="Variant" />
+			<description>通过路径获取子对象（支持多级路径，用 "/" 分隔）。</description>
+		</method>
+		<method name="getChildById">
+			<return type="Variant" />
+			<param index="0" name="id" type="Variant" />
+			<description>通过 ID 获取子对象。</description>
+		</method>
+		<method name="getChildIndex">
+			<return type="Variant" />
+			<param index="0" name="child" type="Variant" />
+			<description>获取子对象的索引。</description>
+		</method>
+		<method name="setChildIndex">
+			<return type="void" />
+			<param index="0" name="child" type="Variant" />
+			<param index="1" name="index" type="Variant" />
+			<description>设置子对象的索引位置。</description>
+		</method>
+		<method name="swapChildren">
+			<return type="void" />
+			<param index="0" name="child1" type="Variant" />
+			<param index="1" name="child2" type="Variant" />
+			<description>交换两个子对象的位置。</description>
+		</method>
+		<method name="swapChildrenAt">
+			<return type="void" />
+			<param index="0" name="index1" type="Variant" />
+			<param index="1" name="index2" type="Variant" />
+			<description>交换两个索引的子对象。</description>
+		</method>
+		<method name="numChildren">
+			<return type="void" />
+			<description>获取子对象数量。</description>
+		</method>
+		<method name="addController">
+			<return type="void" />
+			<param index="0" name="controller" type="Variant" />
+			<description>控制器的创建和设计应通过编辑器完成，不建议使用代码创建。</description>
+		</method>
+		<method name="getControllerAt">
+			<return type="Variant" />
+			<param index="0" name="index" type="Variant" />
+			<description>通过索引获取控制器。</description>
+		</method>
+		<method name="getController">
+			<return type="Variant" />
+			<param index="0" name="name" type="Variant" />
+			<description>通过名称获取控制器。</description>
+		</method>
+		<method name="removeController">
+			<return type="void" />
+			<param index="0" name="controller" type="Variant" />
+			<description>移除指定控制器。</description>
+		</method>
+		<method name="numControllers">
+			<return type="void" />
+			<description>获取控制器数量。</description>
+		</method>
+		<method name="applyController">
+			<return type="void" />
+			<param index="0" name="controller" type="Variant" />
+			<description>应用指定控制器的状态到所有关联对象。</description>
+		</method>
+		<method name="applyAllControllers">
+			<return type="void" />
+			<description>应用所有控制器的状态。</description>
+		</method>
+		<method name="addChildAt">
+			<return type="void" />
+			<param index="0" name="child" type="Variant" />
+			<param index="1" name="index" type="Variant" />
+			<description>在指定索引位置添加子对象。</description>
+		</method>
+		<method name="removeChildAt">
+			<return type="void" />
+			<param index="0" name="index" type="Variant" />
+			<description>移除指定索引位置的子对象。</description>
+		</method>
+		<method name="removeChildren">
+			<return type="void" />
+			<param index="0" name="begin_index" type="Variant" />
+			<param index="1" name="end_index" type="Variant" />
+			<description>移除所有子对象。</description>
+		</method>
+		<method name="setOpaque">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置不透明度模式（影响点击测试）。</description>
+		</method>
+		<method name="getOpaque">
+			<return type="Variant" />
+			<description>是否不透明（开启后自身会参与命中测试，而不仅仅是子节点）。</description>
+		</method>
+		<method name="setViewWidth">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置视口宽度（有滚动面板时为可视区域宽度，否则为组件宽度）。</description>
+		</method>
+		<method name="getViewWidth">
+			<return type="Variant" />
+			<description>获取视口宽度（有滚动面板时为可视区域宽度，否则为组件宽度）。</description>
+		</method>
+		<method name="setViewHeight">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置视口高度。</description>
+		</method>
+		<method name="getViewHeight">
+			<return type="Variant" />
+			<description>获取视口高度。</description>
+		</method>
+		<method name="getChildAt">
+			<return type="Variant" />
+			<param index="0" name="index" type="Variant" />
+			<description>获取指定索引的子对象。</description>
+		</method>
+		<method name="getTransition">
+			<return type="Variant" />
+			<param index="0" name="name" type="Variant" />
+			<description>通过名称获取过渡动画。</description>
+		</method>
+		<method name="getTransitionAt">
+			<return type="Variant" />
+			<param index="0" name="index" type="Variant" />
+			<description>通过索引获取过渡动画。</description>
+		</method>
+		<method name="numTransitions">
+			<return type="void" />
+			<description>获取过渡动画数量。</description>
+		</method>
+		<method name="getScrollPane">
+			<return type="Variant" />
+			<description>获取滚动面板。</description>
+		</method>
+		<method name="ensureBoundsCorrect">
+			<return type="void" />
+			<description>确保边界计算正确（延迟处理）。</description>
+		</method>
+		<method name="doUpdateBounds">
+			<return type="void" />
+			<description></description>
+		</method>
+		<method name="buildNativeDisplayList">
+			<return type="void" />
+			<description></description>
+		</method>
+		<method name="isChildInView">
+			<return type="Variant" />
+			<param index="0" name="child" type="Variant" />
+			<description>指定子对象是否在可视区域内（虚函数，GList 覆写）。</description>
+		</method>
+		<method name="isAncestorOf">
+			<return type="Variant" />
+			<param index="0" name="obj" type="Variant" />
+			<description>判断指定对象是否是本组件的祖先（向上递归检查）。</description>
+		</method>
+	</methods>
+	<members>
+		<member name="opaque" type="bool" setter="setOpaque" getter="getOpaque"></member>
+		<member name="viewWidth" type="float" setter="setViewWidth" getter="getViewWidth"></member>
+		<member name="viewHeight" type="float" setter="setViewHeight" getter="getViewHeight"></member>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+		<constant name="ChildrenRenderOrder_ASCENT" value="0"></constant>
+		<constant name="ChildrenRenderOrder_DESCENT" value="0"></constant>
+		<constant name="ChildrenRenderOrder_ARCH" value="0"></constant>
+		<constant name="OverflowType_VISIBLE" value="0"></constant>
+		<constant name="OverflowType_HIDDEN" value="0"></constant>
+		<constant name="OverflowType_SCROLL" value="0"></constant>
+	</constants>
+</class>

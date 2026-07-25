@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GSlider" inherits="GComponent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 中的滑块组件。</brief_description>
+	<description>GSlider 支持设置 value、max 和 slideStep，用于实现连续的数值选择。可以关联标题和图标来显示当前值。</description>
+	<tutorials />
+	<methods>
+		<method name="setMin">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置最小值</description>
+		</method>
+		<method name="getMin">
+			<return type="Variant" />
+			<description>获取最小值</description>
+		</method>
+		<method name="setMax">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置最大值</description>
+		</method>
+		<method name="getMax">
+			<return type="Variant" />
+			<description>获取最大值</description>
+		</method>
+		<method name="setValue">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置当前值</description>
+		</method>
+		<method name="getValue">
+			<return type="Variant" />
+			<description>获取当前值</description>
+		</method>
+		<method name="setWholeNumbers">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置是否只允许整数值</description>
+		</method>
+		<method name="getWholeNumbers">
+			<return type="Variant" />
+			<description>是否只允许整数值</description>
+		</method>
+	</methods>
+	<members>
+		<member name="min" type="float" setter="setMin" getter="getMin"></member>
+		<member name="max" type="float" setter="setMax" getter="getMax"></member>
+		<member name="value" type="float" setter="setValue" getter="getValue"></member>
+		<member name="wholeNumbers" type="bool" setter="setWholeNumbers" getter="getWholeNumbers"></member>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+	</constants>
+</class>

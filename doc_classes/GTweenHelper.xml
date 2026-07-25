@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GTweenHelper" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 缓动动画辅助工具。</brief_description>
+	<description>GTweenHelper 提供创建和启动缓动动画的静态方法，简化 GTweener 的使用。</description>
+	<tutorials />
+	<methods>
+		<method name="toFloat">
+			<return type="void" />
+			<param index="0" name="start" type="Variant" />
+			<param index="1" name="end" type="Variant" />
+			<param index="2" name="duration" type="Variant" />
+			<description></description>
+		</method>
+		<method name="toVec2">
+			<return type="void" />
+			<param index="0" name="start" type="Variant" />
+			<param index="1" name="end" type="Variant" />
+			<param index="2" name="duration" type="Variant" />
+			<description></description>
+		</method>
+		<method name="toVec3">
+			<return type="void" />
+			<param index="0" name="start" type="Variant" />
+			<param index="1" name="end" type="Variant" />
+			<param index="2" name="duration" type="Variant" />
+			<description></description>
+		</method>
+		<method name="toVec4">
+			<return type="void" />
+			<param index="0" name="start" type="Variant" />
+			<param index="1" name="end" type="Variant" />
+			<param index="2" name="duration" type="Variant" />
+			<description></description>
+		</method>
+		<method name="toColor">
+			<return type="void" />
+			<param index="0" name="start" type="Variant" />
+			<param index="1" name="end" type="Variant" />
+			<param index="2" name="duration" type="Variant" />
+			<description></description>
+		</method>
+		<method name="toDouble">
+			<return type="void" />
+			<param index="0" name="start" type="Variant" />
+			<param index="1" name="end" type="Variant" />
+			<param index="2" name="duration" type="Variant" />
+			<description></description>
+		</method>
+		<method name="delayedCall">
+			<return type="void" />
+			<param index="0" name="delay" type="Variant" />
+			<description>创建延迟调用</description>
+		</method>
+		<method name="shake">
+			<return type="void" />
+			<param index="0" name="start" type="Variant" />
+			<param index="1" name="amplitude" type="Variant" />
+			<param index="2" name="duration" type="Variant" />
+			<description>创建抖动效果</description>
+		</method>
+		<method name="isTweening">
+			<return type="Variant" />
+			<param index="0" name="target" type="Variant" />
+			<description>目标对象是否有正在进行的缓动</description>
+		</method>
+		<method name="kill">
+			<return type="void" />
+			<param index="0" name="target" type="Variant" />
+			<param index="1" name="complete" type="Variant" />
+			<description>终止目标对象的缓动</description>
+		</method>
+		<method name="clean">
+			<return type="void" />
+			<description>清理所有缓动</description>
+		</method>
+		<method name="killAll">
+			<return type="void" />
+			<param index="0" name="complete" type="Variant" />
+			<description>终止所有缓动</description>
+		</method>
+	</methods>
+	<members>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+	</constants>
+</class>

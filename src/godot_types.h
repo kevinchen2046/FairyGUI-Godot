@@ -1,10 +1,18 @@
 #ifndef __GODOT_TYPES_H__
 #define __GODOT_TYPES_H__
 
-// Godot type mappings for FairyGUI port from cocos2d-x
-// This header provides type aliases to bridge cocos2d API to Godot API
+/// @file    godot_types.h
+/// @brief   FairyGUI 从 cocos2d-x 移植到 Godot 的类型映射和头文件聚合。
+///
+/// 本文件提供：
+/// - STL 标准库头文件（所有 FairyGUI 头文件需要的公共依赖）
+/// - Godot 引擎头文件（GDExtension 或引擎内建模块两种构建模式）
+/// - Rect 类型别名（Rect = Rect2）
+/// - EMPTY_STRING 空字符串常量
+/// - 数学工具常量（M_PI, MATH_DEG_TO_RAD）
+/// - FGUI_CREATE/FGUI_DELETE 内存管理宏
 
-// STL includes required by many FairyGUI headers
+// ---- STL 标准库 ----
 #include <functional>
 #include <vector>
 #include <unordered_map>
@@ -15,9 +23,9 @@
 #include <cstdlib>
 #include <climits>
 
-// Godot headers. The public godot-cpp API is used by the standalone
-// GDExtension build; the original engine headers remain available when this
-// repository is built as an in-tree module.
+// ---- Godot 引擎头文件 ----
+// GDExtension 模式下使用 godot-cpp 的公开 API；
+// 引擎内建模式下使用 Godot 引擎原始头文件。
 #ifdef FGUI_GDEXTENSION
 #include <godot_cpp/classes/camera2d.hpp>
 #include <godot_cpp/classes/canvas_layer.hpp>
@@ -48,7 +56,6 @@
 using namespace godot;
 using CanvasLayer = godot::CanvasLayer;
 #else
-// Godot engine core headers
 #include "core/object/ref_counted.h"
 #include "core/object/object.h"
 #include "core/os/memory.h"
@@ -64,7 +71,6 @@ using CanvasLayer = godot::CanvasLayer;
 #include "core/string/ustring.h"
 #include "core/templates/vector.h"
 
-// Scene headers
 #include "scene/main/node.h"
 #include "scene/2d/node_2d.h"
 #include "scene/main/canvas_item.h"
@@ -78,20 +84,22 @@ using CanvasLayer = godot::CanvasLayer;
 #include "core/math/vector4.h"
 #endif
 
-// C++ does not typedef `Rect` in the engine, add an alias.
-// Code uses `Rect` as an alias for `Rect2`.
+/// @brief Rect 类型别名，与 Godot 的 Rect2 等价。
+/// 保留以便与 cocos2d 原有代码兼容。
 using Rect = Rect2;
 
-// Empty string constant (replaces EMPTY_STRING)
+/// @brief 空字符串常量，替代 cocos2d 的 EMPTY_STRING 宏。
 const std::string EMPTY_STRING;
 
-// Math utility macros
+// ---- 数学工具 ----
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
+
+/// @brief 角度转弧度宏
 #define MATH_DEG_TO_RAD(angle) ((angle) * 3.14159265358979323846f / 180.0f)
 
-// Godot memory helper
+// ---- Godot 内存管理助手 ----
 #define FGUI_CREATE(T) memnew(T)
 #define FGUI_DELETE(T) do { delete (T); (T) = nullptr; } while(0)
 

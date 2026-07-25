@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GComboBox" inherits="GComponent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 中的下拉框组件。</brief_description>
+	<description>GComboBox 提供下拉选择功能，包含标题文本、图标和下拉列表。通过 dropdownList 和 visibleItemCount 控制样式和行为。</description>
+	<tutorials />
+	<methods>
+		<method name="setTitle">
+			<return type="void" />
+			<param index="0" name="title" type="Variant" />
+			<description>设置标题文本</description>
+		</method>
+		<method name="getTitle">
+			<return type="Variant" />
+			<description>获取当前显示的标题文本</description>
+		</method>
+		<method name="setTitleColor">
+			<return type="void" />
+			<param index="0" name="color" type="Variant" />
+			<description>设置标题文本颜色</description>
+		</method>
+		<method name="getTitleColor">
+			<return type="Variant" />
+			<description>获取标题文本颜色</description>
+		</method>
+		<method name="setTitleFontSize">
+			<return type="void" />
+			<param index="0" name="size" type="Variant" />
+			<description>设置标题字体大小</description>
+		</method>
+		<method name="getTitleFontSize">
+			<return type="Variant" />
+			<description>获取标题字体大小</description>
+		</method>
+		<method name="setValue">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置当前选中项的值（按值查找匹配项）</description>
+		</method>
+		<method name="getValue">
+			<return type="Variant" />
+			<description>获取当前选中项的值</description>
+		</method>
+		<method name="setSelectedIndex">
+			<return type="void" />
+			<param index="0" name="index" type="Variant" />
+			<description>设置当前选中项的索引</description>
+		</method>
+		<method name="getSelectedIndex">
+			<return type="Variant" />
+			<description>获取当前选中项的索引</description>
+		</method>
+		<method name="getDropdown">
+			<return type="Variant" />
+			<description>获取下拉面板组件</description>
+		</method>
+		<method name="refresh">
+			<return type="void" />
+			<description>刷新下拉列表</description>
+		</method>
+	</methods>
+	<members>
+		<member name="titleColor" type="Color" setter="setTitleColor" getter="getTitleColor"></member>
+		<member name="titleFontSize" type="int" setter="setTitleFontSize" getter="getTitleFontSize"></member>
+		<member name="selectedIndex" type="int" setter="setSelectedIndex" getter="getSelectedIndex"></member>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+	</constants>
+</class>

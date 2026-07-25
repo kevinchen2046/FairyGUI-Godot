@@ -10,7 +10,12 @@
 
 NS_FGUI_BEGIN
 
-// Mirrors Node2D child_order_changed wiring; each child must pair connect/disconnect via REFERENCE_COUNTED.
+/// @brief 同步 Node2D 的 child_order_changed 信号连接。
+///
+/// 每个子节点必须通过 REFERENCE_COUNTED 配对调用 connect/disconnect，
+/// 以保持子节点顺序变化的正确同步。
+/// @param self 要同步的 Node2D 节点
+/// @param p_connect true=连接信号, false=断开信号
 void fui_sync_child_order_changed(Node2D* self, bool p_connect);
 
 NS_FGUI_END

@@ -9,6 +9,8 @@ NS_FGUI_BEGIN
 
 #include "../GuiObjectFwd.h"
 
+/// @brief 动画关联器。
+/// 根据控制器页面切换控制对象的动画播放状态和当前帧。
 class GearAnimation : public GearBase
 {
 public:
@@ -23,17 +25,18 @@ protected:
     void init() override;
 
 private:
+    /// 动画状态值。
     class GearAnimationValue
     {
     public:
-        bool playing;
-        int frame;
+        bool playing;  ///< 是否播放中。
+        int frame;     ///< 当前帧索引。
 
         GearAnimationValue();
         GearAnimationValue(bool playing, int frame);
     };
-    std::unordered_map<std::string, GearAnimationValue> _storage;
-    GearAnimationValue _default;
+    std::unordered_map<std::string, GearAnimationValue> _storage; ///< 各页面对应的动画值。
+    GearAnimationValue _default;  ///< 默认动画值。
 };
 
 NS_FGUI_END

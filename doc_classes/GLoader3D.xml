@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GLoader3D" inherits="GuiObject" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 中的 3D 加载器组件。</brief_description>
+	<description>GLoader3D 用于加载和显示 3D 模型资源，支持动画、材质设置等 3D 场景功能。</description>
+	<tutorials />
+	<methods>
+		<method name="setURL">
+			<return type="void" />
+			<param index="0" name="url" type="Variant" />
+			<description>设置加载的 URL</description>
+		</method>
+		<method name="getURL">
+			<return type="Variant" />
+			<description>获取加载的 URL</description>
+		</method>
+		<method name="setAlign">
+			<return type="void" />
+			<param index="0" name="align" type="Variant" />
+			<description>设置水平对齐方式</description>
+		</method>
+		<method name="getAlign">
+			<return type="Variant" />
+			<description>获取水平对齐方式</description>
+		</method>
+		<method name="setVerticalAlign">
+			<return type="void" />
+			<param index="0" name="align" type="Variant" />
+			<description>设置垂直对齐方式</description>
+		</method>
+		<method name="getVerticalAlign">
+			<return type="Variant" />
+			<description>获取垂直对齐方式</description>
+		</method>
+		<method name="setAutoSize">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置是否自动调整大小</description>
+		</method>
+		<method name="getAutoSize">
+			<return type="Variant" />
+			<description>获取是否自动调整大小</description>
+		</method>
+		<method name="setFillType">
+			<return type="void" />
+			<param index="0" name="fill" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getFillType">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setShrinkOnly">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置是否仅缩小</description>
+		</method>
+		<method name="isShrinkOnly">
+			<return type="Variant" />
+			<description>是否仅在需要缩小时才缩小（不放大）</description>
+		</method>
+		<method name="setAnimationName">
+			<return type="void" />
+			<param index="0" name="name" type="Variant" />
+			<description>设置动画名称</description>
+		</method>
+		<method name="getPlayingAnimationName">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setSkinName">
+			<return type="void" />
+			<param index="0" name="name" type="Variant" />
+			<description>设置皮肤名称</description>
+		</method>
+		<method name="getSkinName">
+			<return type="Variant" />
+			<description>获取皮肤名称</description>
+		</method>
+		<method name="isPlaying">
+			<return type="Variant" />
+			<description>动画是否正在播放</description>
+		</method>
+		<method name="isLoop">
+			<return type="Variant" />
+			<description>动画是否循环播放</description>
+		</method>
+		<method name="setLoop">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置动画是否循环播放</description>
+		</method>
+		<method name="setPlaying">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置动画播放状态</description>
+		</method>
+		<method name="setFrame">
+			<return type="void" />
+			<param index="0" name="frame" type="Variant" />
+			<description>设置当前帧</description>
+		</method>
+		<method name="getFrame">
+			<return type="Variant" />
+			<description>获取当前帧</description>
+		</method>
+		<method name="play">
+			<return type="void" />
+			<param index="0" name="name" type="Variant" />
+			<description>播放指定动画</description>
+		</method>
+		<method name="stop">
+			<return type="void" />
+			<description>停止动画播放</description>
+		</method>
+		<method name="dispose">
+			<return type="void" />
+			<description></description>
+		</method>
+		<method name="getContent">
+			<return type="Variant" />
+			<description>获取嵌入的内容节点</description>
+		</method>
+		<method name="setContent">
+			<return type="void" />
+			<param index="0" name="node" type="Variant" />
+			<description>设置嵌入的内容节点</description>
+		</method>
+		<method name="setColor">
+			<return type="void" />
+			<param index="0" name="color" type="Variant" />
+			<description>设置内容颜色（色调）</description>
+		</method>
+		<method name="getColor">
+			<return type="Variant" />
+			<description>获取内容颜色（色调）</description>
+		</method>
+	</methods>
+	<members>
+		<member name="align" type="int" setter="setAlign" getter="getAlign"></member>
+		<member name="verticalAlign" type="int" setter="setVerticalAlign" getter="getVerticalAlign"></member>
+		<member name="autoSize" type="bool" setter="setAutoSize" getter="getAutoSize"></member>
+		<member name="fill" type="int" setter="setFillType" getter="getFillType"></member>
+		<member name="shrinkOnly" type="bool" setter="setShrinkOnly" getter="isShrinkOnly"></member>
+		<member name="loop" type="bool" setter="setLoop" getter="isLoop"></member>
+		<member name="color" type="Color" setter="setColor" getter="getColor"></member>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+	</constants>
+</class>

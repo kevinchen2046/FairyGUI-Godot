@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="FUIClipContainer" inherits="FUIContainer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		FairyGUI 裁剪容器节点。
+	</brief_description>
+	<description>
+		FUIClipContainer 是支持裁剪区域的容器节点，继承自 FUIContainer。用于实现遮罩效果和内容裁剪。
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+	</methods>
+	<members>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+	</constants>
+</class>

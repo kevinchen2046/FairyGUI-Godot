@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="FUIRichText" inherits="Control" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 富文本显示节点。</brief_description>
+	<description>FUIRichText 是用于富文本渲染的底层显示节点，支持 BBCode 样式和图文混排。</description>
+	<tutorials />
+	<methods>
+		<method name="setDimensions">
+			<return type="void" />
+			<param index="0" name="width" type="Variant" />
+			<param index="1" name="height" type="Variant" />
+			<description>设置文本区域尺寸</description>
+		</method>
+		<method name="getDimensions">
+			<return type="Variant" />
+			<description>获取文本区域尺寸</description>
+		</method>
+		<method name="setText">
+			<return type="void" />
+			<param index="0" name="text" type="Variant" />
+			<description>设置富文本内容（HTML/UBB 格式）</description>
+		</method>
+		<method name="setOverflow">
+			<return type="void" />
+			<param index="0" name="overflow" type="Variant" />
+			<description>设置溢出模式（可见/隐藏/裁剪/省略号）</description>
+		</method>
+		<method name="getOverflow">
+			<return type="Variant" />
+			<description>获取溢出模式</description>
+		</method>
+		<method name="applyTextFormat">
+			<return type="void" />
+			<description>应用文本格式到所有子节点</description>
+		</method>
+		<method name="getControl">
+			<return type="Variant" />
+			<param index="0" name="name" type="Variant" />
+			<description>根据名称获取内嵌控件</description>
+		</method>
+		<method name="hitTestLink">
+			<return type="void" />
+			<param index="0" name="world_point" type="Variant" />
+			<description>检测世界坐标下命中的链接</description>
+		</method>
+		<method name="isAnchorTextUnderline">
+			<return type="Variant" />
+			<description>是否启用锚点文本下划线</description>
+		</method>
+		<method name="setAnchorTextUnderline">
+			<return type="void" />
+			<param index="0" name="enable" type="Variant" />
+			<description>设置锚点文本下划线启用</description>
+		</method>
+		<method name="getAnchorFontColor">
+			<return type="Variant" />
+			<description>获取锚点文本颜色</description>
+		</method>
+		<method name="setAnchorFontColor">
+			<return type="void" />
+			<param index="0" name="color" type="Variant" />
+			<description>设置锚点文本颜色</description>
+		</method>
+	</methods>
+	<members>
+		<member name="overflow" type="int" setter="setOverflow" getter="getOverflow"></member>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+	</constants>
+</class>

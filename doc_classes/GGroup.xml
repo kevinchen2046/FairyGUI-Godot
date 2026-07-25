@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GGroup" inherits="GuiObject" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 中的组布局组件。</brief_description>
+	<description>GGroup 用于对多个子对象进行自动排列布局。支持设置列间距（columnGap）、行间距（lineGap）以及布局对齐方式。</description>
+	<tutorials />
+	<methods>
+		<method name="ensureBoundsCorrect">
+			<return type="void" />
+			<description></description>
+		</method>
+		<method name="setLayout">
+			<return type="void" />
+			<param index="0" name="layout" type="Variant" />
+			<description>设置布局类型。</description>
+		</method>
+		<method name="getLayout">
+			<return type="Variant" />
+			<description>获取布局类型。</description>
+		</method>
+		<method name="setColumnGap">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置列间距。</description>
+		</method>
+		<method name="getColumnGap">
+			<return type="Variant" />
+			<description>获取列间距。</description>
+		</method>
+		<method name="setLineGap">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置行间距。</description>
+		</method>
+		<method name="getLineGap">
+			<return type="Variant" />
+			<description>获取行间距。</description>
+		</method>
+		<method name="setExcludeInvisibles">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="isExcludeInvisibles">
+			<return type="Variant" />
+			<description>是否排除不可见元素（在布局计算时忽略隐藏的子对象）。</description>
+		</method>
+		<method name="setAutoSizeDisabled">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="isAutoSizeDisabled">
+			<return type="Variant" />
+			<description>是否禁用自动调整尺寸。</description>
+		</method>
+		<method name="setMainGridIndex">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置主轴网格索引。</description>
+		</method>
+		<method name="getMainGridIndex">
+			<return type="Variant" />
+			<description>获取主轴网格索引。</description>
+		</method>
+		<method name="setMainGridMinSize">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置主轴网格最小尺寸。</description>
+		</method>
+		<method name="getMainGridMinSize">
+			<return type="Variant" />
+			<description>获取主轴网格最小尺寸。</description>
+		</method>
+	</methods>
+	<members>
+		<member name="layout" type="int" setter="setLayout" getter="getLayout"></member>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+		<constant name="GroupLayoutType_NONE" value="0"></constant>
+		<constant name="GroupLayoutType_HORIZONTAL" value="0"></constant>
+		<constant name="GroupLayoutType_VERTICAL" value="0"></constant>
+	</constants>
+</class>

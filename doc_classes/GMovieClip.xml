@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GMovieClip" inherits="GuiObject" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 中的影片剪辑组件。</brief_description>
+	<description>GMovieClip 用于播放帧动画，支持设置帧率（frameRate）、循环播放（loop）和播放控制。</description>
+	<tutorials />
+	<methods>
+		<method name="setPlaying">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置播放状态</description>
+		</method>
+		<method name="isPlaying">
+			<return type="Variant" />
+			<description>是否正在播放</description>
+		</method>
+		<method name="setFrame">
+			<return type="void" />
+			<param index="0" name="frame" type="Variant" />
+			<description>设置当前帧索引</description>
+		</method>
+		<method name="getFrame">
+			<return type="Variant" />
+			<description>获取当前帧索引</description>
+		</method>
+		<method name="setTimeScale">
+			<return type="void" />
+			<param index="0" name="scale" type="Variant" />
+			<description>设置时间缩放因子</description>
+		</method>
+		<method name="getTimeScale">
+			<return type="Variant" />
+			<description>获取时间缩放因子</description>
+		</method>
+		<method name="advance">
+			<return type="void" />
+			<param index="0" name="time" type="Variant" />
+			<description>前进指定时间</description>
+		</method>
+		<method name="setFlip">
+			<return type="void" />
+			<param index="0" name="flip" type="Variant" />
+			<description>设置翻转模式</description>
+		</method>
+		<method name="getFlip">
+			<return type="Variant" />
+			<description>获取翻转模式</description>
+		</method>
+		<method name="setColor">
+			<return type="void" />
+			<param index="0" name="color" type="Variant" />
+			<description>设置颜色（色调）</description>
+		</method>
+		<method name="getColor">
+			<return type="Variant" />
+			<description>获取颜色（色调）</description>
+		</method>
+	</methods>
+	<members>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+	</constants>
+</class>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GProgressBar" inherits="GComponent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 中的进度条组件。</brief_description>
+	<description>GProgressBar 通过设置 value 和 max 来控制进度，支持正向（LEFT_TO_RIGHT）和反向（RIGHT_TO_LEFT）两种方向模式。</description>
+	<tutorials />
+	<methods>
+		<method name="setMin">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置最小值</description>
+		</method>
+		<method name="getMin">
+			<return type="Variant" />
+			<description>获取最小值</description>
+		</method>
+		<method name="setMax">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置最大值</description>
+		</method>
+		<method name="getMax">
+			<return type="Variant" />
+			<description>获取最大值</description>
+		</method>
+		<method name="setValue">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置当前进度值</description>
+		</method>
+		<method name="getValue">
+			<return type="Variant" />
+			<description>获取当前进度值</description>
+		</method>
+		<method name="tweenValue">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<param index="1" name="duration" type="Variant" />
+			<description>通过缓动动画过渡到目标值</description>
+		</method>
+	</methods>
+	<members>
+		<member name="min" type="float" setter="setMin" getter="getMin"></member>
+		<member name="max" type="float" setter="setMax" getter="getMax"></member>
+		<member name="value" type="float" setter="setValue" getter="getValue"></member>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+		<constant name="ProgressTitleType_PERCENT" value="0"></constant>
+		<constant name="ProgressTitleType_VALUE_MAX" value="0"></constant>
+		<constant name="ProgressTitleType_VALUE" value="0"></constant>
+		<constant name="ProgressTitleType_MAX" value="0"></constant>
+	</constants>
+</class>

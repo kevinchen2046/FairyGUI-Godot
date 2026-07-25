@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GLabel" inherits="GComponent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 中的标签组件。</brief_description>
+	<description>GLabel 继承自 GComponent，包含一个标题文本（title）和一个图标（icon），同时可设置标题颜色和字体大小。常被用作按钮的扩展或带图标的标签。</description>
+	<tutorials />
+	<methods>
+		<method name="setTitle">
+			<return type="void" />
+			<param index="0" name="title" type="Variant" />
+			<description>设置标题文本（等同于 setText()）</description>
+		</method>
+		<method name="getTitle">
+			<return type="Variant" />
+			<description>获取标题文本（等同于 getText()）</description>
+		</method>
+		<method name="setTitleColor">
+			<return type="void" />
+			<param index="0" name="color" type="Variant" />
+			<description>设置标题文本颜色</description>
+		</method>
+		<method name="getTitleColor">
+			<return type="Variant" />
+			<description>获取标题文本颜色</description>
+		</method>
+		<method name="setTitleFontSize">
+			<return type="void" />
+			<param index="0" name="size" type="Variant" />
+			<description>设置标题字体大小</description>
+		</method>
+		<method name="getTitleFontSize">
+			<return type="Variant" />
+			<description>获取标题字体大小</description>
+		</method>
+	</methods>
+	<members>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+	</constants>
+</class>

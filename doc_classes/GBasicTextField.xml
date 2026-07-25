@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GBasicTextField" inherits="GTextField" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 中的基础文本字段。</brief_description>
+	<description>GBasicTextField 支持 UBB 语法解析、模板变量替换、自动大小调整（autoSize）等。是 GRichTextField 和 GTextInput 的父类。</description>
+	<tutorials />
+	<methods>
+	</methods>
+	<members>
+		<member name="color" type="Color" setter="setColor" getter="getColor"></member>
+		<member name="fontSize" type="int" setter="setFontSize" getter="getFontSize"></member>
+		<member name="singleLine" type="bool" setter="setSingleLine" getter="isSingleLine"></member>
+		<member name="autoSize" type="int" setter="setAutoSize" getter="getAutoSize"></member>
+		<member name="ubbEnabled" type="bool" setter="setUBBEnabled" getter="isUBBEnabled"></member>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+	</constants>
+</class>

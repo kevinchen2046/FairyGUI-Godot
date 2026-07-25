@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GEnumObject" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>对象类型枚举常量类。</brief_description>
+	<description>定义 FairyGUI 支持的所有对象类型：IMAGE（图片）、MOVIECLIP（影片剪辑）、SWF（SWF动画）、GRAPH（图形）、LOADER（加载器）、GROUP（组）、TEXT（文本）、RICHTEXT（富文本）、INPUTTEXT（输入文本）、COMPONENT（组件）、LIST（列表）、LABEL（标签）、BUTTON（按钮）、COMBOBOX（下拉框）、PROGRESSBAR（进度条）、SLIDER（滑块）、SCROLLBAR（滚动条）、TREE（树）、LOADER3D（3D加载器）。</description>
+	<tutorials />
+	<methods>
+	</methods>
+	<members>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+		<constant name="ObjectType_IMAGE" value="0"></constant>
+		<constant name="ObjectType_MOVIECLIP" value="0"></constant>
+		<constant name="ObjectType_SWF" value="0"></constant>
+		<constant name="ObjectType_GRAPH" value="0"></constant>
+		<constant name="ObjectType_LOADER" value="0"></constant>
+		<constant name="ObjectType_GROUP" value="0"></constant>
+		<constant name="ObjectType_TEXT" value="0"></constant>
+		<constant name="ObjectType_RICHTEXT" value="0"></constant>
+		<constant name="ObjectType_INPUTTEXT" value="0"></constant>
+		<constant name="ObjectType_COMPONENT" value="0"></constant>
+		<constant name="ObjectType_LIST" value="0"></constant>
+		<constant name="ObjectType_LABEL" value="0"></constant>
+		<constant name="ObjectType_BUTTON" value="0"></constant>
+		<constant name="ObjectType_COMBOBOX" value="0"></constant>
+		<constant name="ObjectType_PROGRESSBAR" value="0"></constant>
+		<constant name="ObjectType_SLIDER" value="0"></constant>
+		<constant name="ObjectType_SCROLLBAR" value="0"></constant>
+		<constant name="ObjectType_TREE" value="0"></constant>
+		<constant name="ObjectType_LOADER3D" value="0"></constant>
+	</constants>
+</class>

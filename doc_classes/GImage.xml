@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GImage" inherits="GuiObject" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 中的图片组件。</brief_description>
+	<description>GImage 用于显示图片资源。支持翻转（水平/垂直）、颜色调制、填充方式（FillMethod）和填充量（fillAmount）等属性。</description>
+	<tutorials />
+	<methods>
+		<method name="setFlip">
+			<return type="void" />
+			<param index="0" name="flip" type="Variant" />
+			<description>设置翻转模式。</description>
+		</method>
+		<method name="getFlip">
+			<return type="Variant" />
+			<description>获取翻转模式。</description>
+		</method>
+		<method name="setColor">
+			<return type="void" />
+			<param index="0" name="color" type="Variant" />
+			<description>设置颜色（叠加到纹理上）。</description>
+		</method>
+		<method name="getColor">
+			<return type="Variant" />
+			<description>获取颜色。</description>
+		</method>
+		<method name="setFillMethod">
+			<return type="void" />
+			<param index="0" name="method" type="Variant" />
+			<description>设置填充方法。</description>
+		</method>
+		<method name="getFillMethod">
+			<return type="Variant" />
+			<description>获取填充方法。</description>
+		</method>
+		<method name="setFillOrigin">
+			<return type="void" />
+			<param index="0" name="origin" type="Variant" />
+			<description>设置填充原点。</description>
+		</method>
+		<method name="getFillOrigin">
+			<return type="Variant" />
+			<description>获取填充原点。</description>
+		</method>
+		<method name="setFillClockwise">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="isFillClockwise">
+			<return type="Variant" />
+			<description>是否顺时针填充。</description>
+		</method>
+		<method name="setFillAmount">
+			<return type="void" />
+			<param index="0" name="amount" type="Variant" />
+			<description>设置填充量（0-1）。</description>
+		</method>
+		<method name="getFillAmount">
+			<return type="Variant" />
+			<description>获取填充量（0-1）。</description>
+		</method>
+		<method name="setTexture">
+			<return type="void" />
+			<param index="0" name="texture" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getTexture">
+			<return type="Variant" />
+			<description>直接设置/获取纹理（绕过 URL 加载机制）。</description>
+		</method>
+	</methods>
+	<members>
+		<member name="flip" type="int" setter="setFlip" getter="getFlip"></member>
+		<member name="imageColor" type="Color" setter="setColor" getter="getColor"></member>
+		<member name="fillMethod" type="int" setter="setFillMethod" getter="getFillMethod"></member>
+		<member name="fillOrigin" type="int" setter="setFillOrigin" getter="getFillOrigin"></member>
+		<member name="fillClockwise" type="bool" setter="setFillClockwise" getter="isFillClockwise"></member>
+		<member name="fillAmount" type="float" setter="setFillAmount" getter="getFillAmount"></member>
+		<member name="texture" type="Object" setter="setTexture" getter="getTexture"></member>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+		<constant name="FlipType_NONE" value="0"></constant>
+		<constant name="FlipType_HORIZONTAL" value="0"></constant>
+		<constant name="FlipType_VERTICAL" value="0"></constant>
+		<constant name="FlipType_BOTH" value="0"></constant>
+	</constants>
+</class>

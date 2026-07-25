@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GRoot" inherits="GComponent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 的根组件，管理所有顶层 UI。</brief_description>
+	<description>GRoot 是 FairyGUI UI 层级结构的顶层组件。它管理所有弹出窗口（Popup）、模态层（ModalLayer）、工具提示（Tooltips）和顶层显示对象。
+通过 GRoot.inst() 获取全局单例。</description>
+	<tutorials />
+	<methods>
+		<method name="showWindow">
+			<return type="void" />
+			<param index="0" name="win" type="Variant" />
+			<description>显示窗口</description>
+		</method>
+		<method name="hideWindow">
+			<return type="void" />
+			<param index="0" name="win" type="Variant" />
+			<description>隐藏窗口</description>
+		</method>
+		<method name="hideWindowImmediately">
+			<return type="void" />
+			<param index="0" name="win" type="Variant" />
+			<description>立即隐藏窗口（跳过关闭动画）</description>
+		</method>
+		<method name="bringToFront">
+			<return type="void" />
+			<param index="0" name="win" type="Variant" />
+			<description>将窗口置顶</description>
+		</method>
+		<method name="getTopWindow">
+			<return type="Variant" />
+			<description>获取最顶层的窗口</description>
+		</method>
+		<method name="showModalWait">
+			<return type="void" />
+			<description>显示全局模态等待</description>
+		</method>
+		<method name="closeModalWait">
+			<return type="void" />
+			<description>关闭全局模态等待</description>
+		</method>
+		<method name="closeAllExceptModals">
+			<return type="void" />
+			<description>关闭所有非模态窗口</description>
+		</method>
+		<method name="closeAllWindows">
+			<return type="void" />
+			<description>关闭所有窗口</description>
+		</method>
+		<method name="getModalWaitingPane">
+			<return type="Variant" />
+			<description>获取模态等待面板</description>
+		</method>
+		<method name="getModalLayer">
+			<return type="Variant" />
+			<description>获取模态遮罩层</description>
+		</method>
+		<method name="hasModalWindow">
+			<return type="Variant" />
+			<description>是否有模态窗口</description>
+		</method>
+		<method name="isModalWaiting">
+			<return type="Variant" />
+			<description>是否处于模态等待状态</description>
+		</method>
+		<method name="getTouchPosition">
+			<return type="Variant" />
+			<param index="0" name="touch_id" type="Variant" />
+			<description>获取指定触摸点的位置</description>
+		</method>
+		<method name="getTouchTarget">
+			<return type="Variant" />
+			<description>获取当前触摸命中的目标</description>
+		</method>
+		<method name="worldToRoot">
+			<return type="void" />
+			<param index="0" name="pt" type="Variant" />
+			<description>世界坐标转为根节点坐标</description>
+		</method>
+		<method name="rootToWorld">
+			<return type="void" />
+			<param index="0" name="pt" type="Variant" />
+			<description>根节点坐标转为世界坐标</description>
+		</method>
+		<method name="hasAnyPopup">
+			<return type="Variant" />
+			<description>是否有弹出面板显示</description>
+		</method>
+		<method name="hidePopup">
+			<return type="void" />
+			<description>隐藏指定弹出面板</description>
+		</method>
+		<method name="showTooltips">
+			<return type="void" />
+			<param index="0" name="msg" type="Variant" />
+			<description>显示文本提示（Tooltips）</description>
+		</method>
+		<method name="showTooltipsWin">
+			<return type="void" />
+			<param index="0" name="tooltip_win" type="Variant" />
+			<description>显示自定义提示窗口</description>
+		</method>
+		<method name="hideTooltips">
+			<return type="void" />
+			<description>隐藏提示信息</description>
+		</method>
+		<method name="playSound">
+			<return type="void" />
+			<param index="0" name="url" type="Variant" />
+			<param index="1" name="volume_scale" type="Variant" />
+			<description>播放声音</description>
+		</method>
+		<method name="setContentScaleFactor">
+			<return type="void" />
+			<param index="0" name="designWidth" type="Variant" />
+			<param index="1" name="designHeight" type="Variant" />
+			<param index="2" name="matchMode" type="Variant" />
+			<description>设置内容缩放因子</description>
+		</method>
+		<method name="onWindowSizeChanged">
+			<return type="void" />
+			<description>窗口尺寸变化回调</description>
+		</method>
+		<method name="getDisplayObject">
+			<return type="Variant" />
+			<description>获取显示对象节点</description>
+		</method>
+		<method name="setSoundEnabled">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置声音是否启用</description>
+		</method>
+		<method name="isSoundEnabled">
+			<return type="Variant" />
+			<description>声音是否启用</description>
+		</method>
+		<method name="setSoundVolumeScale">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置全局声音音量</description>
+		</method>
+		<method name="getSoundVolumeScale">
+			<return type="Variant" />
+			<description>获取全局声音音量</description>
+		</method>
+		<method name="showPopup">
+			<return type="void" />
+			<param index="0" name="popup" type="Variant" />
+			<param index="1" name="target" type="Variant" />
+			<param index="2" name="dir" type="Variant" />
+			<description>显示弹出面板并指定目标与方向</description>
+		</method>
+		<method name="showPopupSimple">
+			<return type="void" />
+			<param index="0" name="popup" type="Variant" />
+			<description></description>
+		</method>
+	</methods>
+	<members>
+		<member name="soundEnabled" type="bool" setter="setSoundEnabled" getter="isSoundEnabled"></member>
+		<member name="soundVolumeScale" type="float" setter="setSoundVolumeScale" getter="getSoundVolumeScale"></member>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+		<constant name="ScreenMatchMode_MATCH_WIDTH_OR_HEIGHT" value="0"></constant>
+		<constant name="ScreenMatchMode_MATCH_WIDTH" value="0"></constant>
+		<constant name="ScreenMatchMode_MATCH_HEIGHT" value="0"></constant>
+		<constant name="ScreenMatchMode_MATCH_FILL" value="0"></constant>
+		<constant name="PopupDirection_AUTO" value="0"></constant>
+		<constant name="PopupDirection_UP" value="0"></constant>
+		<constant name="PopupDirection_DOWN" value="0"></constant>
+	</constants>
+</class>

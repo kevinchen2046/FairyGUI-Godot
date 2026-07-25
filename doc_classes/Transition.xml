@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="Transition" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 中的过渡动画。</brief_description>
+	<description>Transition 管理组件内多个属性（位置、大小、透明度、颜色等）随时间变化的动画。支持多种播放模式（Play/Stop/Pause/Reverse），可设置时间缩放、自动播放等。</description>
+	<tutorials />
+	<methods>
+		<method name="play">
+			<return type="void" />
+			<param index="0" name="times" type="Variant" />
+			<param index="1" name="delay" type="Variant" />
+			<param index="2" name="callback" type="Variant" />
+			<description>播放过渡动画。</description>
+		</method>
+		<method name="stop">
+			<return type="void" />
+			<description>停止过渡动画。</description>
+		</method>
+		<method name="isPlaying">
+			<return type="Variant" />
+			<description>是否正在播放</description>
+		</method>
+		<method name="getOwner">
+			<return type="Variant" />
+			<description>获取过渡动画所属的组件</description>
+		</method>
+		<method name="getName">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setName">
+			<return type="void" />
+			<param index="0" name="name" type="Variant" />
+			<description></description>
+		</method>
+	</methods>
+	<members>
+		<member name="name" type="String" setter="setName" getter="getName"></member>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+		<constant name="TransitionActionType_XY" value="0"></constant>
+		<constant name="TransitionActionType_SIZE" value="0"></constant>
+		<constant name="TransitionActionType_SCALE" value="0"></constant>
+		<constant name="TransitionActionType_PIVOT" value="0"></constant>
+		<constant name="TransitionActionType_ALPHA" value="0"></constant>
+		<constant name="TransitionActionType_ROTATION" value="0"></constant>
+		<constant name="TransitionActionType_COLOR" value="0"></constant>
+		<constant name="TransitionActionType_ANIMATION" value="0"></constant>
+		<constant name="TransitionActionType_VISIBLE" value="0"></constant>
+		<constant name="TransitionActionType_SOUND" value="0"></constant>
+		<constant name="TransitionActionType_TRANSITION" value="0"></constant>
+		<constant name="TransitionActionType_SHAKE" value="0"></constant>
+		<constant name="TransitionActionType_COLOR_FILTER" value="0"></constant>
+		<constant name="TransitionActionType_SKEW" value="0"></constant>
+		<constant name="TransitionActionType_TEXT" value="0"></constant>
+		<constant name="TransitionActionType_ICON" value="0"></constant>
+		<constant name="TransitionActionType_UNKNOWN" value="0"></constant>
+	</constants>
+</class>

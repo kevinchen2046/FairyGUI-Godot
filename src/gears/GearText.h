@@ -9,6 +9,8 @@ NS_FGUI_BEGIN
 
 #include "../GuiObjectFwd.h"
 
+/// @brief 文本关联器。
+/// 根据控制器页面切换改变对象的文本内容。
 class GearText : public GearBase
 {
 public:
@@ -23,8 +25,8 @@ protected:
     void init() override;
 
 private:
-    std::unordered_map<std::string, std::string> _storage;
-    std::string _default;
+    std::unordered_map<std::string, std::string> _storage; ///< 各页面对应的文本。
+    std::string _default;  ///< 默认文本。
 };
 
 NS_FGUI_END

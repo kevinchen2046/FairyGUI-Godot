@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GWindow" inherits="GComponent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 中的窗口组件。</brief_description>
+	<description>GWindow 提供模态和非模态窗口功能。支持拖拽标题栏移动、点击关闭按钮关闭、显示/隐藏模态层等。通过 Show() 和 Hide() 控制显示。</description>
+	<tutorials />
+	<methods>
+		<method name="show">
+			<return type="void" />
+			<description></description>
+		</method>
+		<method name="hide">
+			<return type="void" />
+			<description></description>
+		</method>
+		<method name="hideImmediately">
+			<return type="void" />
+			<description></description>
+		</method>
+		<method name="toggleStatus">
+			<return type="void" />
+			<description></description>
+		</method>
+		<method name="bringToFront">
+			<return type="void" />
+			<description></description>
+		</method>
+		<method name="isShowing">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="isTop">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setModal">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="isModal">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="showModalWait">
+			<return type="void" />
+			<param index="0" name="requesting_cmd" type="Variant" />
+			<description></description>
+		</method>
+		<method name="closeModalWait">
+			<return type="void" />
+			<param index="0" name="requesting_cmd" type="Variant" />
+			<description></description>
+		</method>
+		<method name="initWindow">
+			<return type="void" />
+			<description></description>
+		</method>
+		<method name="setBringToFrontOnClick">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="isBringToFrontOnClick">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setContentPane">
+			<return type="void" />
+			<param index="0" name="pane" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getContentPane">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="getFrame">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setCloseButton">
+			<return type="void" />
+			<param index="0" name="button" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getCloseButton">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setDragArea">
+			<return type="void" />
+			<param index="0" name="area" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getDragArea">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setContentArea">
+			<return type="void" />
+			<param index="0" name="area" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getContentArea">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="getModalWaitingPane">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setOnInitCallback">
+			<return type="void" />
+			<param index="0" name="callback" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getOnInitCallback">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setOnShownCallback">
+			<return type="void" />
+			<param index="0" name="callback" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getOnShownCallback">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setOnHideCallback">
+			<return type="void" />
+			<param index="0" name="callback" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getOnHideCallback">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setDoShowAnimationCallback">
+			<return type="void" />
+			<param index="0" name="callback" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getDoShowAnimationCallback">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="setDoHideAnimationCallback">
+			<return type="void" />
+			<param index="0" name="callback" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getDoHideAnimationCallback">
+			<return type="Variant" />
+			<description></description>
+		</method>
+	</methods>
+	<members>
+		<member name="modal" type="bool" setter="setModal" getter="isModal"></member>
+		<member name="bringToFrontOnClick" type="bool" setter="setBringToFrontOnClick" getter="isBringToFrontOnClick"></member>
+		<member name="contentPane" type="Object" setter="setContentPane" getter="getContentPane"></member>
+		<member name="closeButton" type="Object" setter="setCloseButton" getter="getCloseButton"></member>
+		<member name="dragArea" type="Object" setter="setDragArea" getter="getDragArea"></member>
+		<member name="contentArea" type="Object" setter="setContentArea" getter="getContentArea"></member>
+		<member name="onInitCallback" type="Callable" setter="setOnInitCallback" getter="getOnInitCallback"></member>
+		<member name="onShownCallback" type="Callable" setter="setOnShownCallback" getter="getOnShownCallback"></member>
+		<member name="onHideCallback" type="Callable" setter="setOnHideCallback" getter="getOnHideCallback"></member>
+		<member name="doShowAnimationCallback" type="Callable" setter="setDoShowAnimationCallback" getter="getDoShowAnimationCallback"></member>
+		<member name="doHideAnimationCallback" type="Callable" setter="setDoHideAnimationCallback" getter="getDoHideAnimationCallback"></member>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+	</constants>
+</class>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GTextField" inherits="GuiObject" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 中文本字段的抽象基类。</brief_description>
+	<description>GTextField 是所有文本显示组件的基类，提供文本渲染的基础功能。子类包括 GBasicTextField、GRichTextField 和 GTextInput。</description>
+	<tutorials />
+	<methods>
+		<method name="setColor">
+			<return type="void" />
+			<param index="0" name="color" type="Variant" />
+			<description>设置文本颜色。</description>
+		</method>
+		<method name="getColor">
+			<return type="Variant" />
+			<description>获取文本颜色。</description>
+		</method>
+		<method name="setFontSize">
+			<return type="void" />
+			<param index="0" name="size" type="Variant" />
+			<description>设置字体大小。</description>
+		</method>
+		<method name="getFontSize">
+			<return type="Variant" />
+			<description>获取字体大小。</description>
+		</method>
+		<method name="setSingleLine">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="isSingleLine">
+			<return type="Variant" />
+			<description>是否为单行模式。</description>
+		</method>
+		<method name="setAutoSize">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置自动尺寸模式。</description>
+		</method>
+		<method name="getAutoSize">
+			<return type="Variant" />
+			<description>获取自动尺寸模式。</description>
+		</method>
+		<method name="setUBBEnabled">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="isUBBEnabled">
+			<return type="Variant" />
+			<description>是否启用 UBB 语法解析。</description>
+		</method>
+		<method name="setTemplateVars">
+			<return type="void" />
+			<param index="0" name="vars" type="Variant" />
+			<description>设置模板变量表。</description>
+		</method>
+		<method name="getTextSize">
+			<return type="Variant" />
+			<description>获取渲染后的文本尺寸。</description>
+		</method>
+	</methods>
+	<members>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+		<constant name="AutoSizeType_NONE" value="0"></constant>
+		<constant name="AutoSizeType_BOTH" value="0"></constant>
+		<constant name="AutoSizeType_HEIGHT" value="0"></constant>
+		<constant name="AutoSizeType_SHRINK" value="0"></constant>
+	</constants>
+</class>

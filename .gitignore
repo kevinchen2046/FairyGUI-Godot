@@ -11,3 +11,4 @@ extension_api.json
 build-gdextension.*.log
 diagnostics/
 examples/addons/fairygui/bin/
+tools/.build_cache.json

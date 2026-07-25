@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="DragDropManagerHelper" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 拖放管理器辅助类。</brief_description>
+	<description>DragDropManagerHelper 提供拖放操作的管理接口，用于启动、控制和监听拖放行为。</description>
+	<tutorials />
+	<methods>
+		<method name="startDrag">
+			<return type="void" />
+			<param index="0" name="icon" type="Variant" />
+			<param index="1" name="source_data" type="Variant" />
+			<param index="2" name="touch_point_id" type="Variant" />
+			<description>开始拖拽</description>
+		</method>
+		<method name="cancel">
+			<return type="Variant" />
+			<description>取消拖拽</description>
+		</method>
+		<method name="isDragging">
+			<return type="Variant" />
+			<description>是否正在拖拽中</description>
+		</method>
+	</methods>
+	<members>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+	</constants>
+</class>

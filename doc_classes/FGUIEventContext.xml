@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="FGUIEventContext" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 事件上下文。</brief_description>
+	<description>FGUIEventContext 封装了事件的详细信息，包括事件类型、目标对象、发送者、鼠标位置、键盘按键等。在事件回调中通过此对象获取事件的上下文数据。</description>
+	<tutorials />
+	<methods>
+		<method name="preventDefault">
+			<return type="void" />
+			<description>例如在右键点击事件中阻止浏览器默认菜单。</description>
+		</method>
+		<method name="getData">
+			<return type="Variant" />
+			<description>获取事件携带的数据。</description>
+		</method>
+		<method name="getItemText">
+			<return type="Variant" />
+			<description>ClickItem 等事件的列表项文本；不返回 GuiObject，供 GodotJS 等避免对象绑定崩溃。</description>
+		</method>
+		<method name="getTouchId">
+			<return type="Variant" />
+			<description>获取当前触摸点的 ID。</description>
+		</method>
+	</methods>
+	<members>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+	</constants>
+</class>

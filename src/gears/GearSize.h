@@ -10,6 +10,8 @@ NS_FGUI_BEGIN
 #include "../GuiObjectFwd.h"
 class GTweener;
 
+/// @brief 尺寸关联器。
+/// 根据控制器页面切换改变对象的宽高和缩放。
 class GearSize : public GearBase
 {
 public:
@@ -28,8 +30,8 @@ private:
     void onTweenUpdate(GTweener* tweener);
     void onTweenComplete();
 
-    std::unordered_map<std::string, Vector4> _storage;
-    Vector4 _default;
+    std::unordered_map<std::string, Vector4> _storage; ///< 各页面对应的尺寸值（width, height, scaleX, scaleY）。
+    Vector4 _default;  ///< 默认尺寸值。
 };
 
 NS_FGUI_END

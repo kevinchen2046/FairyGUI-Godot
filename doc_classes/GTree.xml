@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GTree" inherits="GComponent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 中的树形组件。</brief_description>
+	<description>GTree 继承自 GComponent，用于显示层次结构数据。每个节点由 GTreeNode 表示，支持展开/折叠操作。</description>
+	<tutorials />
+	<methods>
+		<method name="getRootNode">
+			<return type="Variant" />
+			<description>获取根节点（所有节点的顶层父节点）</description>
+		</method>
+		<method name="getSelectedNode">
+			<return type="Variant" />
+			<description>获取当前选中的节点</description>
+		</method>
+		<method name="selectNode">
+			<return type="void" />
+			<param index="0" name="node" type="Variant" />
+			<param index="1" name="scroll_to_view" type="Variant" />
+			<description>选中指定节点</description>
+		</method>
+		<method name="unselectNode">
+			<return type="void" />
+			<param index="0" name="node" type="Variant" />
+			<description>取消选中指定节点</description>
+		</method>
+		<method name="expandAll">
+			<return type="void" />
+			<param index="0" name="folder_node" type="Variant" />
+			<description>展开指定文件夹节点及其所有子节点</description>
+		</method>
+		<method name="collapseAll">
+			<return type="void" />
+			<param index="0" name="folder_node" type="Variant" />
+			<description>折叠指定文件夹节点及其所有子节点</description>
+		</method>
+		<method name="setIndent">
+			<return type="void" />
+			<param index="0" name="indent" type="Variant" />
+			<description>设置子节点的缩进距离</description>
+		</method>
+		<method name="getIndent">
+			<return type="Variant" />
+			<description>获取子节点的缩进距离（像素）</description>
+		</method>
+		<method name="setClickToExpand">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置点击展开的触发次数</description>
+		</method>
+		<method name="getClickToExpand">
+			<return type="Variant" />
+			<description>获取点击展开的触发次数（1=单击展开，2=双击展开）</description>
+		</method>
+		<method name="setTreeNodeRender">
+			<return type="void" />
+			<param index="0" name="callable" type="Variant" />
+			<description></description>
+		</method>
+	</methods>
+	<members>
+		<member name="indent" type="int" setter="setIndent" getter="getIndent"></member>
+		<member name="clickToExpand" type="int" setter="setClickToExpand" getter="getClickToExpand"></member>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+	</constants>
+</class>

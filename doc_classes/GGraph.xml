@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GGraph" inherits="GuiObject" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>FairyGUI 中的图形组件。</brief_description>
+	<description>GGraph 用于绘制基本图形，包括矩形（drawRect）、椭圆（drawEllipse）、多边形（drawPolygon）和正多边形（drawRegularPolygon）。</description>
+	<tutorials />
+	<methods>
+		<method name="drawRect">
+			<return type="void" />
+			<param index="0" name="width" type="Variant" />
+			<param index="1" name="height" type="Variant" />
+			<param index="2" name="line_size" type="Variant" />
+			<param index="3" name="line_color" type="Variant" />
+			<param index="4" name="fill_color" type="Variant" />
+			<description>宽度。 高度。 线条粗细（0 表示不描边）。 线条颜色。 填充颜色。</description>
+		</method>
+		<method name="drawEllipse">
+			<return type="void" />
+			<param index="0" name="width" type="Variant" />
+			<param index="1" name="height" type="Variant" />
+			<param index="2" name="line_size" type="Variant" />
+			<param index="3" name="line_color" type="Variant" />
+			<param index="4" name="fill_color" type="Variant" />
+			<description>宽度。 高度。 线条粗细。 线条颜色。 填充颜色。</description>
+		</method>
+		<method name="isEmpty">
+			<return type="Variant" />
+			<description>是否为空（未绘制任何图形）。</description>
+		</method>
+		<method name="setColor">
+			<return type="void" />
+			<param index="0" name="color" type="Variant" />
+			<description>设置图形颜色。</description>
+		</method>
+		<method name="getColor">
+			<return type="Variant" />
+			<description>获取图形颜色。</description>
+		</method>
+	</methods>
+	<members>
+		<member name="color" type="Color" setter="setColor" getter="getColor"></member>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+	</constants>
+</class>

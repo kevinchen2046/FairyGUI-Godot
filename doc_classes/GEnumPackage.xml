@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="GEnumPackage" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>包项类型枚举常量类。</brief_description>
+	<description>定义 UI 包中的资源类型：IMAGE（图片）、MOVIECLIP（影片剪辑）、SOUND（声音）、COMPONENT（组件）、ATLAS（图集）、FONT（字体）、SWF（SWF动画）、MISC（其他）、UNKNOWN（未知）。</description>
+	<tutorials />
+	<methods>
+	</methods>
+	<members>
+	</members>
+	<signals>
+	</signals>
+	<constants>
+		<constant name="PackageItemType_IMAGE" value="0"></constant>
+		<constant name="PackageItemType_MOVIECLIP" value="0"></constant>
+		<constant name="PackageItemType_SOUND" value="0"></constant>
+		<constant name="PackageItemType_COMPONENT" value="0"></constant>
+		<constant name="PackageItemType_ATLAS" value="0"></constant>
+		<constant name="PackageItemType_FONT" value="0"></constant>
+		<constant name="PackageItemType_SWF" value="0"></constant>
+		<constant name="PackageItemType_MISC" value="0"></constant>
+		<constant name="PackageItemType_UNKNOWN" value="0"></constant>
+		<constant name="PackageItemType_SPINE" value="0"></constant>
+		<constant name="PackageItemType_DRAGONBONES" value="0"></constant>
+	</constants>
+</class>
