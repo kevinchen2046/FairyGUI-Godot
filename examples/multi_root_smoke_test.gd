@@ -19,5 +19,12 @@ func _init() -> void:
 	root_b.addChild(view_b)
 	assert(view_a.getDisplayObject() != null)
 	assert(view_b.getDisplayObject() != null)
+	# Removing an already detached object must be a no-op, not an out-of-range crash.
+	root_a.removeChild(view_a)
+	root_a.removeChild(view_a)
+	view_a.removeFromParent()
+	root_a.removeChildAt(-1)
+	root_a.removeChildAt(999)
+	root_a.removeChildren(999)
 	print("FairyGUI multi-root smoke test passed")
 	quit()

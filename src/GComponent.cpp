@@ -294,17 +294,21 @@ int GComponent::getInsertPosForSortingChild(GObject* target)
 
 void GComponent::removeChild(GObject* child)
 {
-    // CCASSERT(child != nullptr, "Argument must be non-nil")
+    // Removing an object that is no longer a child is intentionally a no-op.
+    // This also makes repeated removeChild/removeFromParent calls safe.
+    if (child == nullptr)
+        return;
 
-    int childIndex = (int)(std::find_if(_children.begin(), _children.end(),
-        [child](const Ref<GObject>& r) { return r.ptr() == child; }) - _children.begin());
-    if (childIndex != -1)
-        removeChildAt(childIndex);
+    auto it = std::find_if(_children.begin(), _children.end(),
+        [child](const Ref<GObject>& r) { return r.ptr() == child; });
+    if (it != _children.end())
+        removeChildAt((int)(it - _children.begin()));
 }
 
 void GComponent::removeChildAt(int index)
 {
-    // CCASSERT(index >= 0 && index < _children.size(), "Invalid child index");
+    if (index < 0 || index >= (int)_children.size())
+        return;
 
     Ref<GObject> child = _children.at(index);
 
@@ -333,6 +337,10 @@ void GComponent::removeChildAt(int index)
 
 void GComponent::removeChildren(int beginIndex, int endIndex)
 {
+    if (beginIndex < 0)
+        beginIndex = 0;
+    if (beginIndex >= (int)_children.size())
+        return;
     if (endIndex < 0 || endIndex >= _children.size())
         endIndex = (int)_children.size() - 1;
 

@@ -901,7 +901,8 @@ GObject* GuiObject::addChild(const Ref<GObject>& child)
 
 void GuiObject::removeChild(GObject* child)
 {
-    removeChild(child->displayObject());
+    if (child != nullptr)
+        removeChild(child->displayObject());
 }
 
 void GuiObject::gd_addChild(Object* node)
