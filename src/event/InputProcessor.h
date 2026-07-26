@@ -74,6 +74,8 @@ public:
     void onMouseUp(const Vector2& screenPos, int button);
     /** 处理鼠标移动事件（包含 RollOver/RollOut 检测）。 */
     void onMouseMove(const Vector2& screenPos);
+    /** 窗口离开时清除当前悬停链，确保触发 RollOut 并允许重新进入触发 RollOver。 */
+    void resetRollOver();
     /** 处理鼠标滚轮事件。 */
     void onMouseScroll(const Vector2& screenPos, int delta);
 

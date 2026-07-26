@@ -565,6 +565,25 @@ void InputProcessor::onMouseMove(const Vector2& screenPos)
     _activeProcessor = nullptr;
 }
 
+void InputProcessor::resetRollOver()
+{
+    TouchInfo* ti = getTouch(-1, false);
+    if (!ti)
+        return;
+
+    GObject* element = resolve_live_gobject(ti->lastRollOver.ptr());
+    _activeProcessor = this;
+    while (element != nullptr)
+    {
+        GObject* next = resolve_live_gobject(element->findParent());
+        if (element->onStage())
+            element->dispatchEvent(UIEventType::RollOut);
+        element = next;
+    }
+    _activeProcessor = nullptr;
+    ti->lastRollOver = nullptr;
+}
+
 void InputProcessor::onMouseScroll(const Vector2& screenPos, int delta)
 {
     TouchInfo* ti = getTouch(-1);

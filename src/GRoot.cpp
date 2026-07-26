@@ -101,6 +101,7 @@ GRoot::GRoot()
       _soundPoolIndex(0),
       _hasDesignResolution(false),
       _viewportSizeConnected(false),
+      _windowMouseSignalsConnected(false),
       _contentCanvasLayer(nullptr),
       _overlayCanvasLayer(nullptr),
       _overlayContainer(nullptr)
@@ -993,6 +994,14 @@ void GRoot::_enter_tree()
             viewport->connect("size_changed", callable_mp(this, &GRoot::onWindowSizeChanged));
             _viewportSizeConnected = true;
         }
+        if (!_windowMouseSignalsConnected)
+        {
+            if (Node* window = _displayObject->get_window())
+            {
+                window->connect("mouse_exited", callable_mp(this, &GRoot::onWindowMouseExited));
+                _windowMouseSignalsConnected = true;
+            }
+        }
         onWindowSizeChanged();
     }
     syncCanvasLayerTransform();
@@ -1007,6 +1016,12 @@ void GRoot::_exit_tree()
         {
             viewport->disconnect("size_changed", callable_mp(this, &GRoot::onWindowSizeChanged));
             _viewportSizeConnected = false;
+        }
+        if (_windowMouseSignalsConnected)
+        {
+            if (Node* window = _displayObject->get_window())
+                window->disconnect("mouse_exited", callable_mp(this, &GRoot::onWindowMouseExited));
+            _windowMouseSignalsConnected = false;
         }
     }
 
@@ -1066,6 +1081,12 @@ void GRoot::onInitWithParent(Node* parent, int zOrder, bool deferAdd)
                 parent->move_child(_displayObject, zOrder);
         }
     }
+}
+
+void GRoot::onWindowMouseExited()
+{
+    if (_inputProcessor)
+        _inputProcessor->resetRollOver();
 }
 
 void GRoot::onWindowSizeChanged()

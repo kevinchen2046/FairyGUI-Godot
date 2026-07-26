@@ -254,6 +254,7 @@ private:
     void closePopup(GObject* target);
     void checkPopups();
     void onTouchEvent(int eventType);
+    void onWindowMouseExited();
     void updateContentScaleLevel();
     void applyContentScale();
     Node* gd_getDisplayObject();
@@ -306,6 +307,7 @@ private:
 
     /// @brief 是否已连接视口尺寸信号
     bool _viewportSizeConnected;
+    bool _windowMouseSignalsConnected;
 
     /// @brief 全局唯一 GRoot 实例（静态）
     static GRoot* _inst;
