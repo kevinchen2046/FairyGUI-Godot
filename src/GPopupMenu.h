@@ -11,6 +11,7 @@ NS_FGUI_BEGIN
 class GComponent;
 class GButton;
 class GList;
+class GRoot;
 
 /// @brief 弹出菜单组件，在指定位置弹出的菜单列表。
 ///
@@ -97,6 +98,7 @@ public:
     bool gd_isItemChecked(const String& name);
     bool gd_removeItem(const String& name);
     void gd_showMenuAt(GObject* target, int dir);
+    void gd_showMenuInRoot(GRoot* root, GObject* target, int dir);
 
     /// @brief 显示菜单（自动方向，无目标）
     void show() { show(nullptr, PopupDirection::AUTO); }
@@ -105,6 +107,8 @@ public:
     /// @param target 目标对象（菜单将显示在其附近）
     /// @param dir 弹出方向
     void show(GObject* target, PopupDirection dir);
+    /** 在指定 GRoot 中显示菜单，适用于多窗体场景。 */
+    void showInRoot(GRoot* root, GObject* target, PopupDirection dir);
 
 protected:
     bool init(const std::string& resourceURL);

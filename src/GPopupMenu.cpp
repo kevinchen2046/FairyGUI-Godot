@@ -222,6 +222,11 @@ void GPopupMenu::show(GObject * target, PopupDirection dir)
         _contentPane->setVisible(true);
 
     GRoot* r = target != nullptr ? target->getRoot() : GRoot::getInstance();
+    showInRoot(r, target, dir);
+}
+
+void GPopupMenu::showInRoot(GRoot* r, GObject* target, PopupDirection dir)
+{
     if (r == nullptr)
         return;
     r->showPopup(_contentPane, dynamic_cast<GRoot*>(target) ? nullptr : target, dir);
@@ -282,9 +287,11 @@ void GPopupMenu::_bind_methods()
     ClassDB::bind_method(D_METHOD("isItemChecked", "name"), &GPopupMenu::gd_isItemChecked);
     ClassDB::bind_method(D_METHOD("show"), static_cast<void(GPopupMenu::*)()>(&GPopupMenu::show));
     ClassDB::bind_method(D_METHOD("showMenuAt", "target", "dir"), &GPopupMenu::gd_showMenuAt);
+    ClassDB::bind_method(D_METHOD("showMenuInRoot", "root", "target", "dir"), &GPopupMenu::gd_showMenuInRoot);
 }
 
 void GPopupMenu::gd_showMenuAt(GObject* target, int dir) { show(target, static_cast<PopupDirection>(dir)); }
+void GPopupMenu::gd_showMenuInRoot(GRoot* root, GObject* target, int dir) { showInRoot(root, target, static_cast<PopupDirection>(dir)); }
 
 Ref<GButton> GPopupMenu::gd_addItem(const String& caption) { return Ref<GButton>(addItem(caption.utf8().get_data())); }
 
