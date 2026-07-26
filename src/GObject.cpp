@@ -1538,6 +1538,7 @@ void GuiObject::_bind_methods()
     ClassDB::bind_method(D_METHOD("stopDrag"), &GuiObject::stopDrag);
 
     ClassDB::bind_method(D_METHOD("getResourceURL"), &GuiObject::gd_getResourceURL);
+    ClassDB::bind_method(D_METHOD("getDisplayObject"), &GuiObject::gd_getDisplayObject);
 
     // get_parent returns GComponent* which can't be bound directly
     ClassDB::bind_method(D_METHOD("removeFromParent"), &GuiObject::removeFromParent);

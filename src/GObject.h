@@ -318,6 +318,8 @@ public:
     GObject* findParent() const;
     /** 获取引擎显示节点。 */
     Node* displayObject() const { return _displayObject; }
+    /** 获取对应的 Godot 显示节点（GDScript/C#）。 */
+    Node* gd_getDisplayObject() const { return _displayObject; }
     /** 获取根节点 (GRoot)。 */
     GRoot* getRoot() const;
     /** 是否已添加到舞台（显示列表）中。 */
