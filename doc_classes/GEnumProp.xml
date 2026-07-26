@@ -2,7 +2,6 @@
 <class name="GEnumProp" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>对象属性枚举常量类。</brief_description>
 	<description>定义 FairyGUI 对象的常用属性 ID：TEXT（文本）、ICON（图标）、COLOR（颜色）、OUTLINE_COLOR（描边颜色）、PLAYING（播放状态）、FRAME（帧）、DELTA_TIME（时间增量）、TIME_SCALE（时间缩放）、FONT_SIZE（字体大小）、SELECTED（选中状态）。</description>
-	<tutorials />
 	<methods>
 	</methods>
 	<members>

@@ -18,6 +18,7 @@
 import re
 import xml.etree.ElementTree as ET
 from pathlib import Path
+from xml.sax.saxutils import escape as xml_escape
 
 ROOT = Path(__file__).parent.parent
 SRC_DIR = ROOT / "src"
@@ -599,7 +600,7 @@ def generate_xml(class_name: str, parsed: dict, existing_descs: dict, h_data: di
             for i, p in enumerate(method["params"])
         )
         ret = _guess_return_type(mname)
-        desc = _resolve_method_desc(mname, class_name, existing_descs, h_methods)
+        desc = xml_escape(_resolve_method_desc(mname, class_name, existing_descs, h_methods))
         methods_xml += (
             f'\t\t<method name="{mname}">\n'
             f'\t\t\t<return type="{ret}" />\n'
@@ -615,8 +616,8 @@ def generate_xml(class_name: str, parsed: dict, existing_descs: dict, h_data: di
         prop_desc = class_existing.get('member', {}).get(pname, '')
         members_xml += (
             f'\t\t<member name="{pname}" type="{prop["type"]}" '
-            f'setter="{prop["setter"]}" getter="{prop["getter"]}">'
-            f'{prop_desc}</member>\n'
+            f'setter="{prop["setter"]}" getter="{prop["getter"]}">' 
+            f'{xml_escape(prop_desc)}</member>\n'
         )
 
     # 信号
@@ -626,7 +627,7 @@ def generate_xml(class_name: str, parsed: dict, existing_descs: dict, h_data: di
         sig_desc = class_existing.get('signal', {}).get(sname, '')
         signals_xml += (
             f'\t\t<signal name="{sname}">\n'
-            f'\t\t\t<description>{sig_desc}</description>\n'
+            f'\t\t\t<description>{xml_escape(sig_desc)}</description>\n'
             f'\t\t</signal>\n'
         )
 
@@ -637,16 +638,17 @@ def generate_xml(class_name: str, parsed: dict, existing_descs: dict, h_data: di
         cname = const["name"]
         full_name = f"{g}_{cname}" if g else cname
         const_desc = class_existing.get('constant', {}).get(full_name, '')
-        constants_xml += f'\t\t<constant name="{full_name}" value="0">{const_desc}</constant>\n'
+        constants_xml += f'\t\t<constant name="{full_name}" value="0">{xml_escape(const_desc)}</constant>\n'
 
     return (
         f'<?xml version="1.0" encoding="UTF-8" ?>\n'
         f'<class name="{class_name}" inherits="{inherits}" '
         f'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
         f'xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">\n'
-        f'\t<brief_description>{brief}</brief_description>\n'
-        f'\t<description>{desc_text}</description>\n'
-        f'\t<tutorials />\n'
+        f'\t<brief_description>{xml_escape(brief)}</brief_description>\n'
+        f'\t<description>{xml_escape(desc_text)}</description>\n'
+        # 不输出空 tutorials 节点。Godot 4.7 的 XMLParser 在扩展内嵌
+        # 文档中会把空 tutorials 后面的 methods 误判为非法标签。
         f'\t<methods>\n{methods_xml}\t</methods>\n'
         f'\t<members>\n{members_xml}\t</members>\n'
         f'\t<signals>\n{signals_xml}\t</signals>\n'

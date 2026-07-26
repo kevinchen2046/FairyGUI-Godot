@@ -2,7 +2,6 @@
 <class name="GMovieClip" inherits="GuiObject" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 中的影片剪辑组件。</brief_description>
 	<description>GMovieClip 用于播放帧动画，支持设置帧率（frameRate）、循环播放（loop）和播放控制。</description>
-	<tutorials />
 	<methods>
 		<method name="setPlaying">
 			<return type="void" />

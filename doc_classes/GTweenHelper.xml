@@ -2,7 +2,6 @@
 <class name="GTweenHelper" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 缓动动画辅助工具。</brief_description>
 	<description>GTweenHelper 提供创建和启动缓动动画的静态方法，简化 GTweener 的使用。</description>
-	<tutorials />
 	<methods>
 		<method name="toFloat">
 			<return type="void" />

@@ -2,7 +2,6 @@
 <class name="UIConfigHelper" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI UI 配置辅助类。</brief_description>
 	<description>UIConfigHelper 用于配置 FairyGUI 的全局设置，包括默认字体、按钮声音、滚动设置、全局颜色等。</description>
-	<tutorials />
 	<methods>
 		<method name="setDefaultFont">
 			<return type="void" />

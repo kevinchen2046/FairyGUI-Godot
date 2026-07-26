@@ -2,7 +2,6 @@
 <class name="FUIInput" inherits="Control" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 文本输入显示节点。</brief_description>
 	<description>FUIInput 是 GTextInput 底层使用的显示节点，封装了 LineEdit 控件。支持文本输入、密码模式、占位符等。</description>
-	<tutorials />
 	<methods>
 		<method name="setText">
 			<return type="void" />

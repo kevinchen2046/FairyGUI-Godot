@@ -2,7 +2,6 @@
 <class name="GEnumObject" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>对象类型枚举常量类。</brief_description>
 	<description>定义 FairyGUI 支持的所有对象类型：IMAGE（图片）、MOVIECLIP（影片剪辑）、SWF（SWF动画）、GRAPH（图形）、LOADER（加载器）、GROUP（组）、TEXT（文本）、RICHTEXT（富文本）、INPUTTEXT（输入文本）、COMPONENT（组件）、LIST（列表）、LABEL（标签）、BUTTON（按钮）、COMBOBOX（下拉框）、PROGRESSBAR（进度条）、SLIDER（滑块）、SCROLLBAR（滚动条）、TREE（树）、LOADER3D（3D加载器）。</description>
-	<tutorials />
 	<methods>
 	</methods>
 	<members>

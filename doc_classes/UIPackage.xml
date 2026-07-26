@@ -2,7 +2,6 @@
 <class name="UIPackage" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 中的 UI 包管理类。</brief_description>
 	<description>UIPackage 负责加载和管理 FairyGUI 编辑器导出的 UI 包文件。通过 addPackage() 加载包，通过 createObject() 创建包内的 UI 对象。</description>
-	<tutorials />
 	<methods>
 		<method name="getId">
 			<return type="Variant" />

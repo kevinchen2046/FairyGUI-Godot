@@ -2,7 +2,6 @@
 <class name="GEnumKey" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>键盘按键枚举常量类。</brief_description>
 	<description>定义常用的键盘按键码：含字母A-Z、数字0-9、功能键F1-F12、方向键、Enter、Esc、Tab、Space等。</description>
-	<tutorials />
 	<methods>
 	</methods>
 	<members>

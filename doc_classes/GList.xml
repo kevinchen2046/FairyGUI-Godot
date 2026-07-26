@@ -2,7 +2,6 @@
 <class name="GList" inherits="GComponent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 中的列表组件。</brief_description>
 	<description>GList 支持多种布局模式（单列、单行、横向流动、纵向流动、分页），可设置为虚拟列表以支持大量项目。支持单选/多选模式，内置对象池（GObjectPool）以优化性能。</description>
-	<tutorials />
 	<methods>
 		<method name="doRefreshVirtualListDeferred">
 			<return type="void" />

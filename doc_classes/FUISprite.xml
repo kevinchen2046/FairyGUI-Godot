@@ -2,7 +2,6 @@
 <class name="FUISprite" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 精灵显示节点。</brief_description>
 	<description>FUISprite 是 GImage / GLoader 等图片/动画组件的底层渲染节点，负责纹理的绘制和精灵动画播放。</description>
-	<tutorials />
 	<methods>
 		<method name="clearContent">
 			<return type="void" />

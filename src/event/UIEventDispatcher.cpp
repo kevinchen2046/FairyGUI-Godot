@@ -355,6 +355,26 @@ void UIEventDispatcher::gd_removeEventListener(int eventType)
     removeEventListener(eventType, EventTag::None);
 }
 
+bool UIEventDispatcher::gd_emit(int eventType, const Variant& data)
+{
+    return dispatchEvent(eventType, nullptr, data);
+}
+
+bool UIEventDispatcher::gd_emitBubble(int eventType, const Variant& data)
+{
+    return bubbleEvent(eventType, nullptr, data);
+}
+
+bool UIEventDispatcher::gd_hasEventListener(int eventType) const
+{
+    return hasEventListener(eventType, EventTag::None);
+}
+
+void UIEventDispatcher::gd_removeAllEventListeners()
+{
+    removeEventListeners();
+}
+
 void UIEventDispatcher::_bind_methods()
 {
     // EventCallback and EventTag types can't be bound via ClassDB
@@ -392,6 +412,10 @@ void UIEventDispatcher::_bind_methods()
     // Callable-based event listener for GDScript
     ClassDB::bind_method(D_METHOD("addEventListener", "type", "callable"), &UIEventDispatcher::gd_addEventListener);
     ClassDB::bind_method(D_METHOD("removeEventListener", "type"), &UIEventDispatcher::gd_removeEventListener);
+    ClassDB::bind_method(D_METHOD("emit", "type", "data"), &UIEventDispatcher::gd_emit, DEFVAL(Variant()));
+    ClassDB::bind_method(D_METHOD("emitBubble", "type", "data"), &UIEventDispatcher::gd_emitBubble, DEFVAL(Variant()));
+    ClassDB::bind_method(D_METHOD("has", "type"), &UIEventDispatcher::gd_hasEventListener);
+    ClassDB::bind_method(D_METHOD("removeAll"), &UIEventDispatcher::gd_removeAllEventListeners);
 }
 
 NS_FGUI_END

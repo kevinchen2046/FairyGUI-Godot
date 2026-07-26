@@ -2,7 +2,6 @@
 <class name="GGroup" inherits="GuiObject" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 中的组布局组件。</brief_description>
 	<description>GGroup 用于对多个子对象进行自动排列布局。支持设置列间距（columnGap）、行间距（lineGap）以及布局对齐方式。</description>
-	<tutorials />
 	<methods>
 		<method name="ensureBoundsCorrect">
 			<return type="void" />

@@ -3,7 +3,6 @@
 	<brief_description>FairyGUI 的根组件，管理所有顶层 UI。</brief_description>
 	<description>GRoot 是 FairyGUI UI 层级结构的顶层组件。它管理所有弹出窗口（Popup）、模态层（ModalLayer）、工具提示（Tooltips）和顶层显示对象。
 通过 GRoot.inst() 获取全局单例。</description>
-	<tutorials />
 	<methods>
 		<method name="showWindow">
 			<return type="void" />

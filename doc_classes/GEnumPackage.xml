@@ -2,7 +2,6 @@
 <class name="GEnumPackage" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>包项类型枚举常量类。</brief_description>
 	<description>定义 UI 包中的资源类型：IMAGE（图片）、MOVIECLIP（影片剪辑）、SOUND（声音）、COMPONENT（组件）、ATLAS（图集）、FONT（字体）、SWF（SWF动画）、MISC（其他）、UNKNOWN（未知）。</description>
-	<tutorials />
 	<methods>
 	</methods>
 	<members>

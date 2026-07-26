@@ -181,6 +181,7 @@ void GuiObject::setPosition(float xv, float yv)
 
         if (_draggingObject == this && !sUpdateInDragging)
             sGlobalRect = localToGlobal(Rect(Vector2(), _size));
+
     }
 }
 
@@ -1331,9 +1332,9 @@ void GuiObject::onTouchEnd(EventContext* context)
 
 void GuiObject::gd_addClickListener(const Callable& callable)
 {
-    addEventListener(UIEventType::Click, [callable](EventContext* ctx) {
-        callable.call();
-    });
+    // 点击快捷方法必须与 addEventListener(CLICK, ...) 使用完全相同的
+    // Callable 适配逻辑，同时支持 func() 和 func(evt) 两种签名。
+    gd_addEventListener(UIEventType::Click, callable);
 }
 
 void GuiObject::gd_removeClickListener()
@@ -1443,70 +1444,95 @@ void GuiObject::_bind_methods()
 {
     ClassDB::bind_method(D_METHOD("setX", "value"), &GuiObject::setX);
     ClassDB::bind_method(D_METHOD("getX"), &GuiObject::getX);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "x"), "setX", "getX");
 
     ClassDB::bind_method(D_METHOD("setY", "value"), &GuiObject::setY);
     ClassDB::bind_method(D_METHOD("getY"), &GuiObject::getY);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "y"), "setY", "getY");
 
     ClassDB::bind_method(D_METHOD("setPosition", "x", "y"), &GuiObject::setPosition);
     ClassDB::bind_method(D_METHOD("getPosition"), &GuiObject::getPosition);
+    ClassDB::bind_method(D_METHOD("setPositionValue", "value"), &GuiObject::gd_setPosition);
+    ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "position"), "setPositionValue", "getPosition");
 
     ClassDB::bind_method(D_METHOD("setWidth", "value"), &GuiObject::setWidth);
     ClassDB::bind_method(D_METHOD("getWidth"), &GuiObject::getWidth);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "width"), "setWidth", "getWidth");
 
     ClassDB::bind_method(D_METHOD("setHeight", "value"), &GuiObject::setHeight);
     ClassDB::bind_method(D_METHOD("getHeight"), &GuiObject::getHeight);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "height"), "setHeight", "getHeight");
 
     ClassDB::bind_method(D_METHOD("setSize", "width", "height", "ignore_pivot"), &GuiObject::setSize, DEFVAL(false));
     ClassDB::bind_method(D_METHOD("getSize"), &GuiObject::getSize);
+    ClassDB::bind_method(D_METHOD("setSizeValue", "value"), &GuiObject::gd_setSize);
+    ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "size"), "setSizeValue", "getSize");
 
     ClassDB::bind_method(D_METHOD("setPixelSnapping", "value"), &GuiObject::setPixelSnapping);
     ClassDB::bind_method(D_METHOD("isPixelSnapping"), &GuiObject::isPixelSnapping);
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "pixelSnapping"), "setPixelSnapping", "isPixelSnapping");
 
     ClassDB::bind_method(D_METHOD("setScale", "x", "y"), &GuiObject::setScale);
     ClassDB::bind_method(D_METHOD("getScale"), &GuiObject::getScale);
+    ClassDB::bind_method(D_METHOD("setScaleValue", "value"), &GuiObject::gd_setScale);
+    ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "scale"), "setScaleValue", "getScale");
     ClassDB::bind_method(D_METHOD("setScaleX", "value"), &GuiObject::setScaleX);
     ClassDB::bind_method(D_METHOD("getScaleX"), &GuiObject::getScaleX);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "scaleX"), "setScaleX", "getScaleX");
     ClassDB::bind_method(D_METHOD("setScaleY", "value"), &GuiObject::setScaleY);
     ClassDB::bind_method(D_METHOD("getScaleY"), &GuiObject::getScaleY);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "scaleY"), "setScaleY", "getScaleY");
     ClassDB::bind_method(D_METHOD("tweenScale", "end_value", "duration"), &GuiObject::gd_tweenScale);
 
     ClassDB::bind_method(D_METHOD("setSkewX", "value"), &GuiObject::setSkewX);
     ClassDB::bind_method(D_METHOD("getSkewX"), &GuiObject::getSkewX);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "skewX"), "setSkewX", "getSkewX");
     ClassDB::bind_method(D_METHOD("setSkewY", "value"), &GuiObject::setSkewY);
     ClassDB::bind_method(D_METHOD("getSkewY"), &GuiObject::getSkewY);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "skewY"), "setSkewY", "getSkewY");
 
     ClassDB::bind_method(D_METHOD("setRotation", "value"), &GuiObject::setRotation);
     ClassDB::bind_method(D_METHOD("getRotation"), &GuiObject::getRotation);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "rotation"), "setRotation", "getRotation");
 
     ClassDB::bind_method(D_METHOD("setAlpha", "value"), &GuiObject::setAlpha);
     ClassDB::bind_method(D_METHOD("getAlpha"), &GuiObject::getAlpha);
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "alpha"), "setAlpha", "getAlpha");
 
     ClassDB::bind_method(D_METHOD("setGrayed", "value"), &GuiObject::setGrayed);
     ClassDB::bind_method(D_METHOD("isGrayed"), &GuiObject::isGrayed);
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "grayed"), "setGrayed", "isGrayed");
 
     ClassDB::bind_method(D_METHOD("setVisible", "value"), &GuiObject::setVisible);
     ClassDB::bind_method(D_METHOD("isVisible"), &GuiObject::isVisible);
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "visible"), "setVisible", "isVisible");
 
     ClassDB::bind_method(D_METHOD("setTouchable", "value"), &GuiObject::setTouchable);
     ClassDB::bind_method(D_METHOD("isTouchable"), &GuiObject::isTouchable);
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "touchable"), "setTouchable", "isTouchable");
 
     ClassDB::bind_method(D_METHOD("setSortingOrder", "value"), &GuiObject::setSortingOrder);
     ClassDB::bind_method(D_METHOD("getSortingOrder"), &GuiObject::getSortingOrder);
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "sortingOrder"), "setSortingOrder", "getSortingOrder");
 
     ClassDB::bind_method(D_METHOD("center"), &GuiObject::center, DEFVAL(false));
     ClassDB::bind_method(D_METHOD("makeFullScreen"), &GuiObject::makeFullScreen);
 
     ClassDB::bind_method(D_METHOD("setText", "text"), &GuiObject::gd_setText);
     ClassDB::bind_method(D_METHOD("getText"), &GuiObject::gd_getText);
+    ADD_PROPERTY(PropertyInfo(Variant::STRING, "text"), "setText", "getText");
 
     ClassDB::bind_method(D_METHOD("setName", "name"), &GuiObject::gd_setName);
     ClassDB::bind_method(D_METHOD("getName"), &GuiObject::gd_getName);
+    ADD_PROPERTY(PropertyInfo(Variant::STRING, "name"), "setName", "getName");
 
     ClassDB::bind_method(D_METHOD("setTooltips", "text"), &GuiObject::gd_setTooltips);
     ClassDB::bind_method(D_METHOD("getTooltips"), &GuiObject::gd_getTooltips);
+    ADD_PROPERTY(PropertyInfo(Variant::STRING, "tooltips"), "setTooltips", "getTooltips");
 
     ClassDB::bind_method(D_METHOD("setDraggable", "value"), &GuiObject::setDraggable);
     ClassDB::bind_method(D_METHOD("isDraggable"), &GuiObject::isDraggable);
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "draggable"), "setDraggable", "isDraggable");
 
     ClassDB::bind_method(D_METHOD("startDrag", "touch_id"), &GuiObject::startDrag, DEFVAL(-1));
     ClassDB::bind_method(D_METHOD("stopDrag"), &GuiObject::stopDrag);
@@ -1533,6 +1559,8 @@ void GuiObject::_bind_methods()
     ADD_PROPERTY(PropertyInfo(Variant::STRING, "icon"), "setIcon", "getIcon");
     ClassDB::bind_method(D_METHOD("setPivot", "x", "y", "as_anchor"), &GuiObject::gd_setPivot, DEFVAL(false));
     ClassDB::bind_method(D_METHOD("getPivot"), &GuiObject::gd_getPivot);
+    ClassDB::bind_method(D_METHOD("setPivotValue", "value"), &GuiObject::gd_setPivotValue);
+    ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "pivot"), "setPivotValue", "getPivot");
     ClassDB::bind_method(D_METHOD("transformRect", "rect", "target_space"), &GuiObject::gd_transformRect);
     ClassDB::bind_method(D_METHOD("setDragBounds", "bounds"), &GuiObject::gd_setDragBounds);
     ClassDB::bind_method(D_METHOD("getParent"), &GuiObject::gd_getParent);
@@ -1550,6 +1578,11 @@ void GuiObject::_bind_methods()
 
 void GuiObject::gd_setText(const String& text) { setText(text.utf8().get_data()); }
 String GuiObject::gd_getText() const { return toGodotStr(getText()); }
+
+void GuiObject::gd_setPosition(const Vector2& value) { setPosition(value.x, value.y); }
+void GuiObject::gd_setSize(const Vector2& value) { setSize(value.x, value.y); }
+void GuiObject::gd_setScale(const Vector2& value) { setScale(value.x, value.y); }
+void GuiObject::gd_setPivotValue(const Vector2& value) { setPivot(value.x, value.y, false); }
 
 void GuiObject::gd_setName(const String& v) { name = v.utf8().get_data(); }
 String GuiObject::gd_getName() const { return toGodotStr(name); }

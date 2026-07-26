@@ -1760,12 +1760,14 @@ void GComponent::_bind_methods()
     ClassDB::bind_method(D_METHOD("swapChildren", "child1", "child2"), &GComponent::swapChildren);
     ClassDB::bind_method(D_METHOD("swapChildrenAt", "index1", "index2"), &GComponent::swapChildrenAt);
     ClassDB::bind_method(D_METHOD("numChildren"), &GComponent::numChildren);
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "numChildren", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR | PROPERTY_USAGE_READ_ONLY), "", "numChildren");
 
     ClassDB::bind_method(D_METHOD("addController", "controller"), &GComponent::addController);
     ClassDB::bind_method(D_METHOD("getControllerAt", "index"), &GComponent::gd_getControllerAt);
     ClassDB::bind_method(D_METHOD("getController", "name"), &GComponent::gd_getController);
     ClassDB::bind_method(D_METHOD("removeController", "controller"), &GComponent::gd_removeController);
     ClassDB::bind_method(D_METHOD("numControllers"), &GComponent::numControllers);
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "numControllers", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR | PROPERTY_USAGE_READ_ONLY), "", "numControllers");
     ClassDB::bind_method(D_METHOD("applyController", "controller"), &GComponent::applyController);
     ClassDB::bind_method(D_METHOD("applyAllControllers"), &GComponent::applyAllControllers);
 
@@ -1791,6 +1793,7 @@ void GComponent::_bind_methods()
     ClassDB::bind_method(D_METHOD("getTransition", "name"), &GComponent::gd_getTransition);
     ClassDB::bind_method(D_METHOD("getTransitionAt", "index"), &GComponent::gd_getTransitionAt);
     ClassDB::bind_method(D_METHOD("numTransitions"), &GComponent::numTransitions);
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "numTransitions", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR | PROPERTY_USAGE_READ_ONLY), "", "numTransitions");
     ClassDB::bind_method(D_METHOD("getScrollPane"), &GComponent::gd_getScrollPane);
     ClassDB::bind_method(D_METHOD("ensureBoundsCorrect"), &GComponent::ensureBoundsCorrect);
     ClassDB::bind_method(D_METHOD("doUpdateBounds"), &GComponent::doUpdateBounds);

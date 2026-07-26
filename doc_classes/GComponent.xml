@@ -3,7 +3,6 @@
 	<brief_description>FairyGUI 中的组件类，是所有容器的基类。</brief_description>
 	<description>GComponent 是 FairyGUI 中最重要的类之一。它可以包含子对象（children），管理控制器（controllers），控制过渡动画（transitions），支持滚动面板（scrollPane），设置遮罩（mask）和点击区域（hitArea）。
 GComponent 的不透明度（opaque）属性决定其是否参与点击测试：关闭时点击穿透到下层对象。</description>
-	<tutorials />
 	<methods>
 		<method name="getChild">
 			<return type="Variant" />

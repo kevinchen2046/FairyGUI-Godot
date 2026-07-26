@@ -3,7 +3,6 @@
 	<brief_description>FairyGUI 事件分发器基类。</brief_description>
 	<description>UIEventDispatcher 是 FairyGUI 事件系统的基础，提供 addEventListener / removeEventListener / dispatchEvent / bubbleEvent 等核心事件功能。
 所有 UI 对象都继承此类，支持 CLICK（点击）、ROLLOVER（悬停进入）、ROLLOUT（悬停离开）等多种事件类型。</description>
-	<tutorials />
 	<methods>
 		<method name="addEventListener">
 			<return type="void" />
@@ -15,6 +14,27 @@
 			<return type="void" />
 			<param index="0" name="type" type="Variant" />
 			<description>移除指定类型的事件监听器。</description>
+		</method>
+		<method name="emit">
+			<return type="void" />
+			<param index="0" name="type" type="Variant" />
+			<param index="1" name="data" type="Variant" />
+			<description></description>
+		</method>
+		<method name="emitBubble">
+			<return type="void" />
+			<param index="0" name="type" type="Variant" />
+			<param index="1" name="data" type="Variant" />
+			<description></description>
+		</method>
+		<method name="has">
+			<return type="Variant" />
+			<param index="0" name="type" type="Variant" />
+			<description></description>
+		</method>
+		<method name="removeAll">
+			<return type="void" />
+			<description></description>
 		</method>
 	</methods>
 	<members>

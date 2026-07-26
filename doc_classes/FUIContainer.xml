@@ -2,7 +2,6 @@
 <class name="FUIContainer" inherits="Control" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 的 UI 容器节点。</brief_description>
 	<description>FUIContainer 是 FairyGUI 在 Godot 场景树中的显示节点基类。所有 FairyGUI 对象在底层都由 FUIContainer 或子类渲染。继承自 Control。</description>
-	<tutorials />
 	<methods>
 		<method name="setClippingEnabled">
 			<return type="void" />

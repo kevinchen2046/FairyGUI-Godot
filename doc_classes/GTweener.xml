@@ -2,7 +2,6 @@
 <class name="GTweener" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 缓动动画实例。</brief_description>
 	<description>GTweener 封装了单个缓动动画的配置和执行。支持设置延迟（delay）、持续时间（duration）、缓动类型（ease）、重复次数（repeat）、回调函数等。</description>
-	<tutorials />
 	<methods>
 		<method name="setDelay">
 			<return type="void" />

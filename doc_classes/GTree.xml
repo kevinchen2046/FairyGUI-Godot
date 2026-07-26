@@ -2,7 +2,6 @@
 <class name="GTree" inherits="GComponent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 中的树形组件。</brief_description>
 	<description>GTree 继承自 GComponent，用于显示层次结构数据。每个节点由 GTreeNode 表示，支持展开/折叠操作。</description>
-	<tutorials />
 	<methods>
 		<method name="getRootNode">
 			<return type="Variant" />

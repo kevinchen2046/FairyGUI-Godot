@@ -2,7 +2,6 @@
 <class name="GGraph" inherits="GuiObject" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 中的图形组件。</brief_description>
 	<description>GGraph 用于绘制基本图形，包括矩形（drawRect）、椭圆（drawEllipse）、多边形（drawPolygon）和正多边形（drawRegularPolygon）。</description>
-	<tutorials />
 	<methods>
 		<method name="drawRect">
 			<return type="void" />

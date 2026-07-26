@@ -2,7 +2,6 @@
 <class name="GImage" inherits="GuiObject" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 中的图片组件。</brief_description>
 	<description>GImage 用于显示图片资源。支持翻转（水平/垂直）、颜色调制、填充方式（FillMethod）和填充量（fillAmount）等属性。</description>
-	<tutorials />
 	<methods>
 		<method name="setFlip">
 			<return type="void" />

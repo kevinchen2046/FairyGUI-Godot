@@ -2,7 +2,6 @@
 <class name="GLoader" inherits="GuiObject" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 中的加载器组件，用于加载外部资源。</brief_description>
 	<description>GLoader 支持从 URL 加载图片或组件资源，支持多种填充模式（等比例缩放、拉伸等），可以设置对齐方式。加载完成后会触发相应的事件。</description>
-	<tutorials />
 	<methods>
 		<method name="setURL">
 			<return type="void" />

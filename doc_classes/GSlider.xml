@@ -2,7 +2,6 @@
 <class name="GSlider" inherits="GComponent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 中的滑块组件。</brief_description>
 	<description>GSlider 支持设置 value、max 和 slideStep，用于实现连续的数值选择。可以关联标题和图标来显示当前值。</description>
-	<tutorials />
 	<methods>
 		<method name="setMin">
 			<return type="void" />

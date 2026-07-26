@@ -2,7 +2,6 @@
 <class name="GPopupMenu" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 中的弹出菜单组件。</brief_description>
 	<description>GPopupMenu 用于显示右键菜单或下拉菜单。通过 addItem() 添加菜单项，支持分隔线和子菜单。</description>
-	<tutorials />
 	<methods>
 		<method name="addItem">
 			<return type="void" />

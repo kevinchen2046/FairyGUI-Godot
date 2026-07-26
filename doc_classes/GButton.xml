@@ -2,7 +2,6 @@
 <class name="GButton" inherits="GComponent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 中的按钮组件。</brief_description>
 	<description>GButton 支持三种按钮模式：普通按钮（Common）、复选按钮（Check）和单选按钮（Radio）。具有上下左右四种状态（UP/DOWN/OVER/SELECTED），每种状态可以设置不同的标题和图标。通过 relatedController 可以实现页面切换控制。</description>
-	<tutorials />
 	<methods>
 		<method name="setTitle">
 			<return type="void" />

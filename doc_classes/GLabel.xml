@@ -2,7 +2,6 @@
 <class name="GLabel" inherits="GComponent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 中的标签组件。</brief_description>
 	<description>GLabel 继承自 GComponent，包含一个标题文本（title）和一个图标（icon），同时可设置标题颜色和字体大小。常被用作按钮的扩展或带图标的标签。</description>
-	<tutorials />
 	<methods>
 		<method name="setTitle">
 			<return type="void" />

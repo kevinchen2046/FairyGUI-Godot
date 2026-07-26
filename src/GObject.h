@@ -459,6 +459,10 @@ protected:
     void gd_removeClickListener();
     void gd_setIcon(const String& icon);
     String gd_getIcon() const;
+    void gd_setPosition(const Vector2& value);
+    void gd_setSize(const Vector2& value);
+    void gd_setScale(const Vector2& value);
+    void gd_setPivotValue(const Vector2& value);
     void gd_setPivot(float xv, float yv, bool asAnchor);
     Vector2 gd_getPivot() const;
     Rect2 gd_transformRect(const Rect2& rect, GObject* target_space);

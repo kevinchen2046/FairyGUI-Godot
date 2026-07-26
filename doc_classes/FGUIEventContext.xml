@@ -2,7 +2,6 @@
 <class name="FGUIEventContext" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 事件上下文。</brief_description>
 	<description>FGUIEventContext 封装了事件的详细信息，包括事件类型、目标对象、发送者、鼠标位置、键盘按键等。在事件回调中通过此对象获取事件的上下文数据。</description>
-	<tutorials />
 	<methods>
 		<method name="preventDefault">
 			<return type="void" />

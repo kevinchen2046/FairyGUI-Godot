@@ -2,7 +2,6 @@
 <class name="ScrollPane" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 中的滚动面板。</brief_description>
 	<description>ScrollPane 提供惯性滚动、弹性回弹、分页模式、下拉刷新等功能。支持垂直和水平方向的滚动控制，可通过 scrollStep 设置每次滚动的步长。</description>
-	<tutorials />
 	<methods>
 		<method name="getPosX">
 			<return type="Variant" />

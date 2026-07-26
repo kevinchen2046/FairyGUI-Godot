@@ -2,7 +2,6 @@
 <class name="GComboBox" inherits="GComponent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 中的下拉框组件。</brief_description>
 	<description>GComboBox 提供下拉选择功能，包含标题文本、图标和下拉列表。通过 dropdownList 和 visibleItemCount 控制样式和行为。</description>
-	<tutorials />
 	<methods>
 		<method name="setTitle">
 			<return type="void" />

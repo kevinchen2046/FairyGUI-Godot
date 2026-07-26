@@ -2,7 +2,6 @@
 <class name="GEnumMouse" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>鼠标按键枚举常量类。</brief_description>
 	<description>定义鼠标按键类型：NONE（无）、LEFT（左键）、RIGHT（右键）、MIDDLE（中键）。</description>
-	<tutorials />
 	<methods>
 	</methods>
 	<members>

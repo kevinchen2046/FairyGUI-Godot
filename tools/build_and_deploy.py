@@ -1,286 +1,253 @@
 #!/usr/bin/env python3
-"""FairyGUI-Godot 一键编译部署脚本。
+"""构建、生成文档并部署 FairyGUI-Godot。
 
-流程:
-  1. 更新文档 (python tools/update_docs.py)
-  2. 编译 editor + template_debug (scons)
-  3. 将 DLL 复制到配置的目标项目 (tools/deploy_config.json)
-
-用法:
-  python tools/build_and_deploy.py              # 完整流程（增量：无变化则跳过）
-  python tools/build_and_deploy.py --force      # 强制全部重新构建
-  python tools/build_and_deploy.py --no-docs    # 跳过文档更新
-  python tools/build_and_deploy.py --no-deploy  # 跳过部署
-  python tools/build_and_deploy.py --deploy-only  # 仅部署
-  python tools/build_and_deploy.py --target editor  # 只编译 editor
+默认构建 Windows editor 和 template_release 两个变体，并把插件文件复制到
+``tools/deploy_config.json`` 中列出的 Godot 项目。部署采用临时文件 + 原子替换，
+目标 DLL 被 Godot 锁定时不会删除旧文件，也不会卡在 input() 等待输入。
 """
 
-import datetime
+from __future__ import annotations
+
+import argparse
+import datetime as dt
+import hashlib
 import json
 import os
 import shutil
 import subprocess
 import sys
+import time
 from pathlib import Path
 
-ROOT = Path(__file__).parent.parent
+ROOT = Path(__file__).resolve().parent.parent
+TOOLS_DIR = ROOT / "tools"
 SRC_DIR = ROOT / "src"
+DOC_DIR = ROOT / "doc_classes"
 BIN_DIR = ROOT / "examples" / "addons" / "fairygui" / "bin"
-CONFIG_PATH = Path(__file__).parent / "deploy_config.json"
-CACHE_PATH = Path(__file__).parent / ".build_cache.json"
+DESCRIPTOR = ROOT / "examples" / "addons" / "fairygui" / "fairygui.gdextension"
+CONFIG_PATH = TOOLS_DIR / "deploy_config.json"
+CACHE_PATH = TOOLS_DIR / ".build_cache.json"
 
-TARGETS = ["editor", "template_debug"]
-
-# 需监控的构建配置文件（改动任一个触发重编译）
-BUILD_CONFIG_FILES = ["SConstruct", "SCsub", "config.py"]
-
-# target → DLL 文件名映射
-DLL_SUFFIX_MAP = {
+TARGETS = ("editor", "template_release")
+ARTIFACTS = {
     "editor": "libfairygui.windows.editor.x86_64.dll",
-    "template_debug": "libfairygui.windows.template_debug.x86_64.dll",
+    "template_release": "libfairygui.windows.template_release.x86_64.dll",
 }
+BUILD_CONFIG_FILES = ("SConstruct", "gdextension_build_profile.json", "tools/update_docs.py", "tools/build_and_deploy.py")
+OBSOLETE_ARTIFACTS = (
+    "libfairygui.windows.template_debug.x86_64.dll",
+    "libfairygui.windows.editor.dev.x86_64.dll",
+)
 
 
-def run(cmd: list, desc: str, cwd=None) -> bool:
-    """运行命令并打印输出"""
-    print(f"\n{'='*60}")
-    print(f"  {desc}")
-    print(f"  {' '.join(cmd)}")
-    print(f"{'='*60}")
-    result = subprocess.run(cmd, cwd=cwd or ROOT, text=True)
-    if result.returncode != 0:
-        print(f"\n  [ERROR] 失败，退出码: {result.returncode}")
+def cleanup_build_sidecars() -> None:
+    """删除 SCons 生成但插件运行不需要的导入库/中间产物。"""
+    for path in BIN_DIR.glob("*.a"):
+        try:
+            path.unlink()
+        except OSError as exc:
+            print(f"  [WARN] 无法清理构建副产物 {path.name}: {exc}")
+
+
+def run(cmd: list[str], desc: str, cwd: Path = ROOT) -> bool:
+    print(f"\n{'=' * 72}\n  {desc}\n  {' '.join(cmd)}\n{'=' * 72}")
+    try:
+        result = subprocess.run(cmd, cwd=cwd, check=False)
+    except OSError as exc:
+        print(f"  [ERROR] 无法启动命令: {exc}")
         return False
-    print(f"  [OK] 完成")
+    if result.returncode:
+        print(f"  [ERROR] 失败，退出码: {result.returncode}")
+        return False
+    print("  [OK] 完成")
     return True
 
 
-def load_config() -> list:
-    """加载部署目标配置"""
+def load_config() -> list[Path]:
     if not CONFIG_PATH.exists():
         print(f"  [WARN] 配置文件不存在: {CONFIG_PATH}")
-        print(f"  请创建 {CONFIG_PATH}，格式:\n  {{\"target_projects\": [\"F:/path/to/project\"]}}")
         return []
-    with open(CONFIG_PATH, "r", encoding="utf-8") as f:
-        cfg = json.load(f)
-    return cfg.get("target_projects", [])
+    try:
+        data = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        print(f"  [ERROR] 无法读取部署配置: {exc}")
+        return []
+    result = []
+    for value in data.get("target_projects", []):
+        path = Path(os.path.expandvars(os.path.expanduser(str(value))))
+        if not path.is_absolute():
+            path = (CONFIG_PATH.parent / path).resolve()
+        else:
+            path = path.resolve()
+        if path.is_dir():
+            result.append(path)
+        else:
+            print(f"  [WARN] 部署目标不存在，跳过: {path}")
+    return result
 
 
-# ─── 增量缓存 ───────────────────────────────────────────────
-
-def _newest_mtime(files: list, dirs: list, extensions: tuple) -> float:
-    """扫描文件列表和目录，返回所有匹配文件的最新 mtime。"""
+def _newest_mtime(files: tuple[str, ...], dirs: tuple[Path, ...], extensions: tuple[str, ...]) -> float:
     newest = 0.0
-    for f in files:
-        p = ROOT / f
-        if p.exists():
-            newest = max(newest, p.stat().st_mtime)
-    for d in dirs:
-        if not d.exists():
-            continue
-        for root, _, filenames in os.walk(d):
-            for fn in filenames:
-                if fn.endswith(extensions):
-                    newest = max(newest, os.path.getmtime(os.path.join(root, fn)))
+    for name in files:
+        path = ROOT / name
+        if path.is_file():
+            newest = max(newest, path.stat().st_mtime)
+    for directory in dirs:
+        if directory.is_dir():
+            for path in directory.rglob("*"):
+                if path.is_file() and path.suffix in extensions:
+                    newest = max(newest, path.stat().st_mtime)
     return newest
 
 
 def _load_cache() -> dict:
-    if CACHE_PATH.exists():
-        with open(CACHE_PATH, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return {}
+    try:
+        return json.loads(CACHE_PATH.read_text(encoding="utf-8")) if CACHE_PATH.exists() else {}
+    except (OSError, json.JSONDecodeError):
+        return {}
 
 
-def _save_cache(cache: dict):
-    CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with open(CACHE_PATH, "w", encoding="utf-8") as f:
-        json.dump(cache, f, indent=2)
+def _save_cache(cache: dict) -> None:
+    CACHE_PATH.write_text(json.dumps(cache, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def _source_mtime() -> float:
+    return _newest_mtime(BUILD_CONFIG_FILES, (SRC_DIR,), (".h", ".hpp", ".cpp", ".py", ".json"))
+
+
+def _docs_mtime() -> float:
+    return _newest_mtime(("tools/update_docs.py",), (SRC_DIR,), (".h", ".hpp", ".cpp", ".py"))
 
 
 def is_build_stale() -> bool:
-    """源文件或构建配置是否有变化（需要重编译）。
-    同时检查输出 DLL 是否存在，防止缓存有效但 DLL 被误删的情况。"""
     cache = _load_cache()
-    last = cache.get("build", {}).get("newest_mtime", 0)
-    current = _newest_mtime(BUILD_CONFIG_FILES, [SRC_DIR], (".h", ".cpp"))
-    if current > last or last == 0:
+    if _source_mtime() > cache.get("build", {}).get("newest_mtime", 0):
         return True
-    # 缓存说源文件没变化，但也要确认 DLL 确实还在
-    for dll_name in DLL_SUFFIX_MAP.values():
-        if not (BIN_DIR / dll_name).exists():
-            return True
-    return False
+    return any(not (BIN_DIR / name).is_file() for name in ARTIFACTS.values())
 
 
 def is_docs_stale() -> bool:
-    """头文件是否有变化（需要重新生成文档）。"""
-    cache = _load_cache()
-    last = cache.get("docs", {}).get("newest_mtime", 0)
-    current = _newest_mtime([], [SRC_DIR], (".h",))
-    return current > last or last == 0
+    return _docs_mtime() > _load_cache().get("docs", {}).get("newest_mtime", 0) or not any(DOC_DIR.glob("*.xml"))
 
 
-def mark_build_done():
-    """编译成功后更新缓存时间戳。"""
+def mark_done(kind: str, mtime: float) -> None:
     cache = _load_cache()
-    cache["build"] = {
-        "newest_mtime": _newest_mtime(BUILD_CONFIG_FILES, [SRC_DIR], (".h", ".cpp")),
-        "last_run": datetime.datetime.now().isoformat(),
-    }
+    cache[kind] = {"newest_mtime": mtime, "last_run": dt.datetime.now().isoformat(timespec="seconds")}
     _save_cache(cache)
 
 
-def mark_docs_done():
-    """文档生成成功后更新缓存时间戳。"""
-    cache = _load_cache()
-    cache["docs"] = {
-        "newest_mtime": _newest_mtime([], [SRC_DIR], (".h",)),
-        "last_run": datetime.datetime.now().isoformat(),
-    }
-    _save_cache(cache)
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
-# ─── 部署 ───────────────────────────────────────────────────
-
-def copy_with_retry(src: Path, dest: Path, retries=5) -> bool:
-    """复制文件，目标被锁定时阻塞等待用户关闭占用进程后重试。"""
+def copy_atomic(src: Path, dest: Path, retries: int = 8, delay: float = 1.5) -> bool:
+    """复制并校验文件；目标被 Godot 锁定时自动重试且保留旧文件。"""
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    expected = sha256(src)
     for attempt in range(1, retries + 1):
+        temporary = dest.with_name(f".{dest.name}.{os.getpid()}.tmp")
         try:
-            # 先删除目标文件，有时即使文件被"残留锁定"，
-            # delete 比 overwrite 更容易成功（Windows 特有的共享删除语义）
-            if dest.exists():
-                try:
-                    dest.unlink()
-                except OSError:
-                    pass  # 删不掉没关系，让 copy2 自己去报错
-            shutil.copy2(src, dest)
+            shutil.copy2(src, temporary)
+            os.replace(temporary, dest)
+            if sha256(dest) != expected:
+                raise OSError("部署后校验失败（SHA-256 不一致）")
             return True
-        except OSError as e:
-            # OSError 覆盖 PermissionError 及其他 Windows 文件错误
+        except OSError as exc:
+            try:
+                temporary.unlink(missing_ok=True)
+            except OSError:
+                pass
             if attempt < retries:
-                print(f"  [RETRY {attempt}/{retries}] 复制失败: {e}")
-                print(f"         源: {src}")
-                print(f"         目标: {dest}")
-                locked = "[WinError 32]" in str(e)
-                if locked:
-                    print(f"         请确认 Godot 编辑器/游戏已关闭，然后按回车重试...")
-                else:
-                    print(f"         请检查目标路径权限后按回车重试...")
-                input()
+                print(f"  [RETRY {attempt}/{retries}] {dest.name}: {exc}; {delay:g}s 后重试")
+                time.sleep(delay)
             else:
-                print(f"  [ERROR] {retries} 次重试后仍失败: {e}")
-                print(f"         源: {src}")
-                print(f"         目标: {dest}")
-                return False
+                print(f"  [ERROR] 部署失败: {src} -> {dest}\n         {exc}")
     return False
 
 
-def deploy(targets: list, dll_names: list):
-    """将 BIN_DIR 中的 DLL 复制到所有目标项目。"""
-    if not targets:
-        print("\n  [SKIP] 没有配置部署目标，请在 tools/deploy_config.json 中添加。")
-        return
-
-    # 先检查哪些 DLL 可用
-    available = []
-    missing = []
-    for dll_name in dll_names:
-        src = BIN_DIR / dll_name
-        if src.exists():
-            available.append((dll_name, src))
-        else:
-            missing.append(dll_name)
-
+def deploy(projects: list[Path], target_names: list[str]) -> bool:
+    if not projects:
+        print("  [SKIP] 没有有效部署目标")
+        return True
+    files = [BIN_DIR / ARTIFACTS[name] for name in target_names if name in ARTIFACTS]
+    files.append(DESCRIPTOR)
+    missing = [path for path in files if not path.is_file()]
     if missing:
-        print(f"  [WARN] 以下 DLL 未编译，跳过: {missing}")
-    if not available:
-        print(f"  [ERROR] BIN_DIR 中没有任何 DLL，请先执行构建。")
-        print(f"         BIN_DIR = {BIN_DIR}")
-        return
-
-    print(f"  待部署: {[name for name, _ in available]}")
-    print(f"  目标项目: {len(targets)} 个")
-
-    for dll_name, src in available:
-        for project_path in targets:
-            dest_root = Path(project_path).expanduser().resolve()
-            dest = dest_root / "addons" / "fairygui" / "bin" / dll_name
-            # 源和目标相同时跳过（理论上不会出现，除非配置了项目自身路径）
-            if src.resolve() == dest:
-                print(f"  跳过（同路径）: {dll_name}")
+        print("  [ERROR] 缺少部署文件:")
+        for path in missing:
+            print(f"         {path}")
+        return False
+    success = True
+    for project in projects:
+        plugin_dir = project / "addons" / "fairygui"
+        for src in files:
+            dest = (plugin_dir / "bin" / src.name) if src.parent == BIN_DIR else (plugin_dir / src.name)
+            if src.resolve() == dest.resolve():
                 continue
-            dest.parent.mkdir(parents=True, exist_ok=True)
-            if copy_with_retry(src, dest):
-                print(f"  {dll_name} -> {dest_root.name}/addons/fairygui/bin/")
+            print(f"  {src.name} -> {project.name}/addons/fairygui/")
+            success = copy_atomic(src, dest) and success
+        for old_name in OBSOLETE_ARTIFACTS:
+            old = plugin_dir / "bin" / old_name
+            if old.exists():
+                try:
+                    old.unlink()
+                    print(f"  清理旧产物: {old.name}")
+                except OSError as exc:
+                    print(f"  [WARN] 无法清理旧产物 {old}: {exc}")
+    return success
 
 
-def main():
-    deploy_only = "--deploy-only" in sys.argv
-    force = "--force" in sys.argv
-    skip_docs = "--no-docs" in sys.argv or deploy_only
-    skip_deploy = "--no-deploy" in sys.argv
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--force", action="store_true", help="忽略缓存并重新生成、编译")
+    parser.add_argument("--no-docs", action="store_true")
+    parser.add_argument("--no-deploy", action="store_true")
+    parser.add_argument("--deploy-only", action="store_true")
+    parser.add_argument("--target", choices=TARGETS, action="append", help="只构建指定 target，可重复")
+    parser.add_argument("--jobs", type=int, default=4, help="SCons 并行任务数")
+    return parser.parse_args()
 
-    # 支持 --target 仅编译单个目标
-    custom_target = None
-    for i, arg in enumerate(sys.argv):
-        if arg == "--target" and i + 1 < len(sys.argv):
-            custom_target = sys.argv[i + 1]
 
-    build_targets = [custom_target] if custom_target else TARGETS
-
-    if force:
-        print("\n  [FORCE] 强制模式：忽略增量缓存，全部重新构建")
-        _save_cache({})  # 清空缓存
-
-    # --deploy-only 模式：跳过文档和编译
-    if deploy_only:
-        print("\n  [DEPLOY-ONLY] 跳过文档更新和编译，直接部署 bin/ 中已有 DLL")
+def main() -> int:
+    args = parse_args()
+    targets = args.target or list(TARGETS)
+    if args.deploy_only:
+        build_targets = []
+    elif args.force or is_build_stale():
+        build_targets = targets
     else:
-        # 第1步：更新文档
-        if not skip_docs:
-            if not force and not is_docs_stale():
-                print("\n  [SKIP] 头文件无变化，跳过文档更新")
-            else:
-                if not run([sys.executable, "tools/update_docs.py"], "步骤 1/3: 更新类文档"):
-                    print("文档更新失败，是否继续编译？(不会自动继续，请检查错误后重试)")
-                else:
-                    mark_docs_done()
-        else:
-            print("\n  [SKIP] 跳过文档更新 (--no-docs)")
+        print("[SKIP] 源文件未变化且所有 DLL 均存在，跳过编译")
+        build_targets = []
 
-        # 第2步：编译
-        if not force and not is_build_stale():
-            print("\n  [SKIP] 源文件无变化且 DLL 存在，跳过编译")
-            build_targets = []
-        for i, target in enumerate(build_targets, start=2 if skip_docs else 3):
-            total_steps = len(build_targets) + (1 if not skip_deploy else 0) + (1 if not skip_docs else 0)
-            step_label = f"步骤 {i}/{total_steps}"
-            if not run(["scons", "-j8", f"target={target}"], f"{step_label}: 编译 target={target}"):
-                print(f"\n  [ERROR] 编译 {target} 失败，中止。")
-                sys.exit(1)
-        if build_targets:
-            mark_build_done()
-
-    # 第3步：部署
-    if not skip_deploy:
-        config = load_config()
-        if config:
-            all_build_targets = [custom_target] if custom_target else TARGETS
-            dlls = [DLL_SUFFIX_MAP[t] for t in all_build_targets if t in DLL_SUFFIX_MAP]
-            print(f"\n{'='*60}")
-            print(f"  {'步骤 4/4' if deploy_only else '步骤 3/3'}: 部署到目标项目")
-            print(f"{'='*60}")
-            deploy(config, dlls)
+    if not args.deploy_only and not args.no_docs:
+        if args.force or is_docs_stale():
+            if not run([sys.executable, str(TOOLS_DIR / "update_docs.py")], "步骤 1: 生成中文类文档"):
+                return 1
+            mark_done("docs", _docs_mtime())
         else:
-            print("\n  [SKIP] 无部署目标")
+            print("[SKIP] 文档未变化，跳过文档生成")
+
+    for target in build_targets:
+        cmd = ["scons", "platform=windows", f"target={target}", "dev_build=no", "debug_symbols=no", f"-j{max(1, args.jobs)}"]
+        if not run(cmd, f"编译 target={target}"):
+            return 1
+    cleanup_build_sidecars()
+    if build_targets:
+        mark_done("build", _source_mtime())
+
+    if not args.no_deploy:
+        if not deploy(load_config(), targets or list(TARGETS)):
+            print("\n[ERROR] 部署未完成：请关闭占用插件 DLL 的 Godot 编辑器/运行中的游戏后重试 --deploy-only")
+            return 1
     else:
-        print("\n  [SKIP] 跳过部署 (--no-deploy)")
-
-    print(f"\n{'='*60}")
-    print(f"  全部完成!")
-    print(f"{'='*60}")
+        print("[SKIP] 跳过部署 (--no-deploy)")
+    print("\n全部完成！")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

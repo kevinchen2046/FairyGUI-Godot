@@ -2,7 +2,6 @@
 <class name="GProgressBar" inherits="GComponent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 中的进度条组件。</brief_description>
 	<description>GProgressBar 通过设置 value 和 max 来控制进度，支持正向（LEFT_TO_RIGHT）和反向（RIGHT_TO_LEFT）两种方向模式。</description>
-	<tutorials />
 	<methods>
 		<method name="setMin">
 			<return type="void" />

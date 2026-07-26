@@ -2,7 +2,6 @@
 <class name="GTextField" inherits="GuiObject" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 中文本字段的抽象基类。</brief_description>
 	<description>GTextField 是所有文本显示组件的基类，提供文本渲染的基础功能。子类包括 GBasicTextField、GRichTextField 和 GTextInput。</description>
-	<tutorials />
 	<methods>
 		<method name="setColor">
 			<return type="void" />

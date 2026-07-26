@@ -2,7 +2,6 @@
 <class name="GController" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 中的控制器。</brief_description>
 	<description>GController 管理一组页面，支持页面切换和选择。通过 selectedIndex 或 selectedPage 控制当前显示的页面，可用于切换组件状态。切换时可触发预定义的动作（ControllerAction）。</description>
-	<tutorials />
 	<methods>
 		<method name="setSelectedIndex">
 			<return type="void" />

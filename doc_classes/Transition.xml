@@ -2,7 +2,6 @@
 <class name="Transition" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 中的过渡动画。</brief_description>
 	<description>Transition 管理组件内多个属性（位置、大小、透明度、颜色等）随时间变化的动画。支持多种播放模式（Play/Stop/Pause/Reverse），可设置时间缩放、自动播放等。</description>
-	<tutorials />
 	<methods>
 		<method name="play">
 			<return type="void" />

@@ -2,7 +2,6 @@
 <class name="GEnumRelation" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>关联类型枚举常量类。</brief_description>
 	<description>定义 FairyGUI 组件的关联类型（RelationType），包括左对齐（LEFT_LEFT, LEFT_CENTER, LEFT_RIGHT）、居中对齐（CENTER_CENTER）、右对齐（RIGHT_LEFT, RIGHT_CENTER, RIGHT_RIGHT）、顶部对齐（TOP_TOP, TOP_MIDDLE, TOP_BOTTOM）、中间对齐（MIDDLE_MIDDLE）、底部对齐（BOTTOM_TOP, BOTTOM_MIDDLE, BOTTOM_BOTTOM），以及宽度关联（WIDTH）、高度关联（HEIGHT）和扩展对齐等。</description>
-	<tutorials />
 	<methods>
 	</methods>
 	<members>

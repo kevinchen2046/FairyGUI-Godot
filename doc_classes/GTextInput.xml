@@ -2,7 +2,6 @@
 <class name="GTextInput" inherits="GBasicTextField" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 中的文本输入组件。</brief_description>
 	<description>GTextInput 支持密码模式（password）、占位符文本（placeholder）、键盘类型设置、输入字符限制（restrict）等功能。</description>
-	<tutorials />
 	<methods>
 		<method name="setPrompt">
 			<return type="void" />

@@ -2,7 +2,6 @@
 <class name="GLoader3D" inherits="GuiObject" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 中的 3D 加载器组件。</brief_description>
 	<description>GLoader3D 用于加载和显示 3D 模型资源，支持动画、材质设置等 3D 场景功能。</description>
-	<tutorials />
 	<methods>
 		<method name="setURL">
 			<return type="void" />

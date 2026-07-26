@@ -2,7 +2,6 @@
 <class name="GScrollBar" inherits="GComponent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 中的滚动条组件。</brief_description>
 	<description>GScrollBar 继承自 GComponent，用于控制滚动面板的滚动位置。支持垂直和水平方向。</description>
-	<tutorials />
 	<methods>
 		<method name="setDisplayPerc">
 			<return type="void" />

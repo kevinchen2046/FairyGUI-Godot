@@ -2,7 +2,6 @@
 <class name="FUILabel" inherits="Control" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 文本标签显示节点。</brief_description>
 	<description>FUILabel 是 GBasicTextField / GRichTextField 使用的底层显示节点，负责文本的渲染和显示。</description>
-	<tutorials />
 	<methods>
 		<method name="setText">
 			<return type="void" />

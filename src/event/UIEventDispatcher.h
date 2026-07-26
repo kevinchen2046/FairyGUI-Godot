@@ -111,6 +111,14 @@ public:
     void gd_addEventListener(int eventType, const Callable& callable);
     /** GDScript：移除事件监听器。 */
     void gd_removeEventListener(int eventType);
+    /** GDScript：直接发送事件，不冒泡。data 会通过 FGUIEventContext.getData() 获取。 */
+    bool gd_emit(int eventType, const Variant& data = Variant());
+    /** GDScript：发送并沿父级链冒泡事件。 */
+    bool gd_emitBubble(int eventType, const Variant& data = Variant());
+    /** GDScript：判断指定事件是否存在监听器。 */
+    bool gd_hasEventListener(int eventType) const;
+    /** GDScript：移除当前对象的全部 FairyGUI 事件监听器。 */
+    void gd_removeAllEventListeners();
 
 private:
     void doDispatch(int eventType, EventContext* context);

@@ -2,7 +2,6 @@
 <class name="GTreeNode" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 中的树节点。</brief_description>
 	<description>GTreeNode 表示 GTree 中的一个节点。支持设置是否为文件夹（isFolder）、展开状态（expanded）、节点文本（text）和图标（icon）。通过 parent、children 管理层次关系。</description>
-	<tutorials />
 	<methods>
 		<method name="setText">
 			<return type="void" />

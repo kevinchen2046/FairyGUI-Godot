@@ -2,7 +2,6 @@
 <class name="DragDropManagerHelper" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 拖放管理器辅助类。</brief_description>
 	<description>DragDropManagerHelper 提供拖放操作的管理接口，用于启动、控制和监听拖放行为。</description>
-	<tutorials />
 	<methods>
 		<method name="startDrag">
 			<return type="void" />

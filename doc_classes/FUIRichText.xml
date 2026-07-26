@@ -2,7 +2,6 @@
 <class name="FUIRichText" inherits="Control" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>FairyGUI 富文本显示节点。</brief_description>
 	<description>FUIRichText 是用于富文本渲染的底层显示节点，支持 BBCode 样式和图文混排。</description>
-	<tutorials />
 	<methods>
 		<method name="setDimensions">
 			<return type="void" />
