@@ -340,7 +340,7 @@ bool InputProcessor::onTouchBegin(const Vector2& screenPos, int touchId)
     if (!(_owner->isTouchable() && _owner->isVisible()))
         return false;
 
-    Vector2 pt = GRoot::getInstance()->worldToRoot(screenPos);
+    Vector2 pt = static_cast<GRoot*>(_owner)->worldToRoot(screenPos);
     GObject* target = normalize_input_target(_owner->hitTest(pt, nullptr), _owner);
 
     TouchInfo* ti = getTouch(touchId);
@@ -369,7 +369,7 @@ bool InputProcessor::onTouchBegin(const Vector2& screenPos, int touchId)
 
 void InputProcessor::onTouchMove(const Vector2& screenPos, int touchId)
 {
-    Vector2 pt = GRoot::getInstance()->worldToRoot(screenPos);
+    Vector2 pt = static_cast<GRoot*>(_owner)->worldToRoot(screenPos);
     GObject* target = normalize_input_target(_owner->hitTest(pt, nullptr), _owner);
 
     TouchInfo* ti = getTouch(touchId);
@@ -413,7 +413,7 @@ void InputProcessor::onTouchEnd(const Vector2& screenPos, int touchId)
     TouchInfo* ti = getTouch(touchId, false);
     if (!ti) return;
 
-    Vector2 pt = GRoot::getInstance()->worldToRoot(screenPos);
+    Vector2 pt = static_cast<GRoot*>(_owner)->worldToRoot(screenPos);
     GObject* target = normalize_input_target(_owner->hitTest(pt, nullptr), _owner);
 
     ti->pos = pt;
@@ -473,7 +473,7 @@ void InputProcessor::onTouchCancel(const Vector2& screenPos, int touchId)
     TouchInfo* ti = getTouch(touchId, false);
     if (!ti) return;
 
-    Vector2 pt = GRoot::getInstance()->worldToRoot(screenPos);
+    Vector2 pt = static_cast<GRoot*>(_owner)->worldToRoot(screenPos);
     GObject* target = normalize_input_target(_owner->hitTest(pt, nullptr), _owner);
 
     ti->pos = pt;
@@ -496,7 +496,7 @@ bool InputProcessor::onMouseDown(const Vector2& screenPos, int button)
     if (!(_owner->isTouchable() && _owner->isVisible()))
         return false;
 
-    Vector2 pt = GRoot::getInstance()->worldToRoot(screenPos);
+    Vector2 pt = static_cast<GRoot*>(_owner)->worldToRoot(screenPos);
     GObject* target = normalize_input_target(_owner->hitTest(pt, nullptr), _owner);
 
     TouchInfo* ti = getTouch(-1);
@@ -522,7 +522,7 @@ bool InputProcessor::onMouseDown(const Vector2& screenPos, int button)
 void InputProcessor::onMouseUp(const Vector2& screenPos, int button)
 {
     TouchInfo* ti = getTouch(-1);
-    Vector2 pt = GRoot::getInstance()->worldToRoot(screenPos);
+    Vector2 pt = static_cast<GRoot*>(_owner)->worldToRoot(screenPos);
     GObject* target = normalize_input_target(_owner->hitTest(pt, nullptr), _owner);
 
     ti->pos = pt;
@@ -547,7 +547,7 @@ void InputProcessor::onMouseUp(const Vector2& screenPos, int button)
 
 void InputProcessor::onMouseMove(const Vector2& screenPos)
 {
-    Vector2 pt = GRoot::getInstance()->worldToRoot(screenPos);
+    Vector2 pt = static_cast<GRoot*>(_owner)->worldToRoot(screenPos);
     TouchInfo* ti = getTouch(-1, false);
     if (!ti)
     {
@@ -587,7 +587,7 @@ void InputProcessor::resetRollOver()
 void InputProcessor::onMouseScroll(const Vector2& screenPos, int delta)
 {
     TouchInfo* ti = getTouch(-1);
-    Vector2 pt = GRoot::getInstance()->worldToRoot(screenPos);
+    Vector2 pt = static_cast<GRoot*>(_owner)->worldToRoot(screenPos);
     GObject* target = normalize_input_target(_owner->hitTest(pt, nullptr), _owner);
 
     ti->pos = pt;

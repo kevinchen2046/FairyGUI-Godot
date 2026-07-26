@@ -1060,12 +1060,11 @@ void GRoot::onInitWithParent(Node* parent, int zOrder, bool deferAdd)
     if (fc)
     {
         fc->set_process(true);
-        fc->_processCallback = [](float dt) {
+        fc->_processCallback = [this](float dt) {
             TweenManager::update(dt);
             ScrollPane::updateAllTweens(dt);
-            GRoot* root = GRoot::getInstance();
-            if (root && root->getInputProcessor())
-                root->getInputProcessor()->onFrameUpdate();
+            if (this->getInputProcessor())
+                this->getInputProcessor()->onFrameUpdate();
         };
     }
 

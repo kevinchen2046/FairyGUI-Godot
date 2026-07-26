@@ -71,7 +71,7 @@ bool ChildHitArea::hitTestCanvas(GComponent* obj, const Vector2& canvasPoint)
         return false;
 
     // Same logical space as GGraph::hitTest / globalToLocal (handles pivot offset).
-    Vector2 logical = _child->globalToLocal(GRoot::getInstance()->worldToRoot(canvasPoint));
+    Vector2 logical = _child->globalToLocal(_child->getRoot()->worldToRoot(canvasPoint));
 
     if (GGraph* graph = dynamic_cast<GGraph*>(_child))
         return graph->hitTestShape(logical);

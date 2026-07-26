@@ -104,7 +104,7 @@ FUIInnerContainer* GComponent::getDisplayContainerFor(GObject* child) const
 
     // Overlay containers are for popup/window mount only (direct children of GRoot).
     // Nested components use sortingOrder for local z-order within their own _container.
-    const GRoot* root = GRoot::getInstance();
+    const GRoot* root = getRoot();
     if (this == root && child->getParent() == this)
     {
         if (FUIInnerContainer* overlay = getOverlayContainer())
@@ -128,7 +128,7 @@ GComponent* GComponent::findPopupMountScope(GObject* obj)
 {
     if (GWindow* win = findWindowOf(obj))
         return win;
-    return GRoot::getInstance();
+    return obj != nullptr ? obj->getRoot() : GRoot::getInstance();
 }
 
 int GComponent::getDisplaySiblingIndex(GObject* child) const
@@ -1152,7 +1152,7 @@ GObject* GComponent::hitTest(const Vector2& worldPoint, const Camera2D* camera)
     if (_touchDisabled || !_touchable || !((CanvasItem*)_displayObject)->is_visible() || !_displayObject->get_parent())
         return nullptr;
 
-    Vector2 canvasPoint = GRoot::getInstance()->rootToWorld(worldPoint);
+    Vector2 canvasPoint = getRoot()->rootToWorld(worldPoint);
 
     GObject* target = nullptr;
     if (_maskOwner)

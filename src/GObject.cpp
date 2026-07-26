@@ -292,7 +292,7 @@ void GuiObject::center(bool restraint /*= false*/)
     if (_parent != nullptr)
         r = _parent;
     else
-        r = GRoot::getInstance();
+        r = getRoot();
 
     setPosition((int)((r->_size.width - _size.width) / 2), (int)((r->_size.height - _size.height) / 2));
     if (restraint)
@@ -304,7 +304,7 @@ void GuiObject::center(bool restraint /*= false*/)
 
 void GuiObject::makeFullScreen()
 {
-    setSize(GRoot::getInstance()->getWidth(), GRoot::getInstance()->getHeight());
+    setSize(getRoot()->getWidth(), getRoot()->getHeight());
 }
 
 void GuiObject::setPivot(float xv, float yv, bool asAnchor)
@@ -564,7 +564,7 @@ std::string GuiObject::getResourceURL() const
 
 Vector2 GuiObject::localToGlobal(const Vector2& pt)
 {
-    return GRoot::getInstance()->worldToRoot(localPointToCanvas(pt));
+    return getRoot()->worldToRoot(localPointToCanvas(pt));
 }
 
 Rect2 GuiObject::localToGlobal(const Rect2& rect)
@@ -591,7 +591,7 @@ Vector2 GuiObject::localPointToCanvas(const Vector2& pt) const
 
 Vector2 GuiObject::globalToLocal(const Vector2& pt)
 {
-    Vector2 pt2 = GRoot::getInstance()->rootToWorld(pt);
+    Vector2 pt2 = getRoot()->rootToWorld(pt);
     pt2 = ((CanvasItem*)_displayObject)->get_global_transform_with_canvas().affine_inverse().xform(pt2);
     return displayLocalToLogical(pt2);
 }
@@ -1237,12 +1237,12 @@ void GuiObject::dragBegin(int touchId)
         tmp->dispatchEvent(UIEventType::DragEnd);
     }
 
-    sGlobalDragStart = GRoot::getInstance()->getTouchPosition(touchId);
+    sGlobalDragStart = getRoot()->getTouchPosition(touchId);
     sGlobalRect = localToGlobal(Rect(Vector2(), _size));
 
     _draggingObject = this;
     _dragTesting = true;
-    GRoot::getInstance()->getInputProcessor()->addTouchMonitor(touchId, this);
+    getRoot()->getInputProcessor()->addTouchMonitor(touchId, this);
 
     addEventListener(UIEventType::TouchMove, [this](EventContext* ctx) { GuiObject::onTouchMove(ctx); }, EventTag(this));
     addEventListener(UIEventType::TouchEnd, [this](EventContext* ctx) { GuiObject::onTouchEnd(ctx); }, EventTag(this));
