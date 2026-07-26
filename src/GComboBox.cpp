@@ -199,7 +199,7 @@ void GComboBox::showDropdown()
     _dropdown->setWidth(_size.width);
     _list->ensureBoundsCorrect();
 
-    GRoot::getInstance()->togglePopup(_dropdown, this, popupDirection);
+    getRoot()->togglePopup(_dropdown, this, popupDirection);
     if (_dropdown->getParent() != nullptr)
     {
         setState(GButton::DOWN);
@@ -402,7 +402,7 @@ void GComboBox::setup_afterAdd(ByteBuffer* buffer, int beginPos)
 void GComboBox::onClickItem(EventContext* context)
 {
     if (_dropdown->getParent() != nullptr)
-        GRoot::getInstance()->hidePopup(_dropdown);
+        getRoot()->hidePopup(_dropdown);
     _selectedIndex = INT_MIN;
     setSelectedIndex(_list->getChildIndex((GObject*)context->getData()));
 
@@ -439,7 +439,7 @@ void GComboBox::onTouchBegin(EventContext* context)
 
     if (_dropdown != nullptr)
     {
-        GRoot* root = GRoot::getInstance();
+        GRoot* root = getRoot();
         if (root->wasPopupJustClosed(_dropdown))
             return;
         showDropdown();
@@ -505,5 +505,4 @@ Ref<GComponent> GComboBox::gd_getDropdown() const
 }
 
 NS_FGUI_END
-
 

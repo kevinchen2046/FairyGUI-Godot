@@ -1330,7 +1330,7 @@ void Transition::applyValue(TransitionItem* item)
         {
             TValue_Sound* value = (TValue_Sound*)item->value;
             if (!value->sound.empty())
-                GRoot::getInstance()->playSound(value->sound, value->volume);
+                getOwner()->getRoot()->playSound(value->sound, value->volume);
             break;
         }
 

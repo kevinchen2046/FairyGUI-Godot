@@ -452,7 +452,7 @@ void GButton::onTouchEnd(EventContext* context)
 void GButton::onClick(EventContext* context)
 {
     if (!_sound.empty())
-        GRoot::getInstance()->playSound(_sound, _soundVolumeScale);
+        getRoot()->playSound(_sound, _soundVolumeScale);
 
     if (_mode == ButtonMode::CHECK)
     {
@@ -540,5 +540,4 @@ void GButton::gd_setSelectedIcon(const String& value) { setSelectedIcon(value.ut
 String GButton::gd_getSelectedIcon() const { return GObject::toGodotStr(getSelectedIcon()); }
 
 NS_FGUI_END
-
 

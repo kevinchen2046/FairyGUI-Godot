@@ -336,7 +336,7 @@ void GWindow::show()
     if (!_displayObject)
         init();
     const bool wasShowing = isShowing();
-    GRoot::getInstance()->showWindow(this);
+    getRoot()->showWindow(this);
     // Hide tween may finish without removing the window (e.g. onComplete not fired).
     // Re-show in that case won't trigger _enter_tree, so replay show animation here.
     if (wasShowing && _inited)
@@ -351,7 +351,7 @@ void GWindow::hide()
 
 void GWindow::hideImmediately()
 {
-    GRoot::getInstance()->hideWindowImmediately(this);
+    getRoot()->hideWindowImmediately(this);
 }
 
 void GWindow::toggleStatus()
@@ -364,7 +364,7 @@ void GWindow::toggleStatus()
 
 void GWindow::bringToFront()
 {
-    GRoot::getInstance()->bringToFront(this);
+    getRoot()->bringToFront(this);
 }
 
 bool GWindow::isTop() const
