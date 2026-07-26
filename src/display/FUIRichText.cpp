@@ -329,7 +329,16 @@ const char* FUIRichText::hitTestLink(const Vector2& worldPoint)
 {
     if (!_clipContainer)
         return nullptr;
-    Vector2 pt2 = GRoot::getInstance()->rootToWorld(worldPoint);
+    GRoot* root = nullptr;
+    for (Node* node = this; node != nullptr && root == nullptr; node = node->get_parent())
+    {
+        if (FUIContainer* container = Object::cast_to<FUIContainer>(node))
+        {
+            if (container->gOwner)
+                root = container->gOwner->getRoot();
+        }
+    }
+    Vector2 pt2 = root != nullptr ? root->rootToWorld(worldPoint) : GRoot::getInstance()->rootToWorld(worldPoint);
     Vector2 localPt = get_global_transform_with_canvas().affine_inverse().xform(pt2);
     for (int i = 0; i < _clipContainer->get_child_count(); i++)
     {
