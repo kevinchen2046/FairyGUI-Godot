@@ -449,7 +449,10 @@ void InputProcessor::onTouchEnd(const Vector2& screenPos, int touchId)
         target = wptr.ptr();
     }
 
-    handleRollOver(ti, nullptr);
+    // Mouse release must not unconditionally clear hover state. Re-evaluate
+    // the pointer position so release-inside keeps the rollover state while
+    // release-outside correctly emits RollOut.
+    handleRollOver(ti, target);
 
     GObject* clickTarget = clickTest(ti, target);
     if (clickTarget)
