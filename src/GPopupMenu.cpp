@@ -212,15 +212,6 @@ void GPopupMenu::resetListItemStates()
 
 void GPopupMenu::show(GObject * target, PopupDirection dir)
 {
-    if (_list != nullptr)
-    {
-        resetListItemStates();
-        _list->resizeToFit(INT_MAX, 10);
-        _list->setSelectedIndex(-1);
-    }
-    if (_contentPane != nullptr)
-        _contentPane->setVisible(true);
-
     GRoot* r = target != nullptr ? target->getRoot() : GRoot::getInstance();
     showInRoot(r, target, dir);
 }
@@ -229,6 +220,14 @@ void GPopupMenu::showInRoot(GRoot* r, GObject* target, PopupDirection dir)
 {
     if (r == nullptr)
         return;
+    if (_list != nullptr)
+    {
+        resetListItemStates();
+        _list->resizeToFit(INT_MAX, 10);
+        _list->setSelectedIndex(-1);
+    }
+    if (_contentPane != nullptr)
+        _contentPane->setVisible(true);
     r->showPopup(_contentPane, dynamic_cast<GRoot*>(target) ? nullptr : target, dir);
 }
 
