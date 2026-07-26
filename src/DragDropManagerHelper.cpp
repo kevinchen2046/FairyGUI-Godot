@@ -1,5 +1,6 @@
 #include "DragDropManagerHelper.h"
 #include "DragDropManager.h"
+#include "GRoot.h"
 
 NS_FGUI_BEGIN
 
@@ -25,6 +26,11 @@ void DragDropManagerHelper::startDrag(const String& icon, const Variant& sourceD
     DragDropManager::getInstance()->startDrag(icon.utf8().get_data(), sourceData, touchPointID);
 }
 
+void DragDropManagerHelper::startDragInRoot(GRoot* root, const String& icon, const Variant& sourceData, int touchPointID)
+{
+    DragDropManager::getInstance()->startDrag(root, icon.utf8().get_data(), sourceData, touchPointID);
+}
+
 void DragDropManagerHelper::cancel()
 {
     DragDropManager::getInstance()->cancel();
@@ -39,6 +45,7 @@ void DragDropManagerHelper::_bind_methods()
 {
     ClassDB::bind_static_method(get_class_static(), D_METHOD("getInstance"), &DragDropManagerHelper::gd_getInstance);
     ClassDB::bind_method(D_METHOD("startDrag", "icon", "source_data", "touch_point_id"), &DragDropManagerHelper::startDrag, DEFVAL(Variant()), DEFVAL(-1));
+    ClassDB::bind_method(D_METHOD("startDragInRoot", "root", "icon", "source_data", "touch_point_id"), &DragDropManagerHelper::startDragInRoot, DEFVAL(Variant()), DEFVAL(-1));
     ClassDB::bind_method(D_METHOD("cancel"), &DragDropManagerHelper::cancel);
     ClassDB::bind_method(D_METHOD("isDragging"), &DragDropManagerHelper::isDragging);
 }

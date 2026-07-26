@@ -6,6 +6,8 @@
 
 NS_FGUI_BEGIN
 
+class GRoot;
+
 /// @brief 拖放管理器，管理 FairyGUI 的拖放操作。
 ///
 /// DragDropManager 负责：
@@ -33,6 +35,7 @@ public:
     /// @param sourceData 拖拽源数据（可选）
     /// @param touchPointID 触摸点 ID（-1 表示自动）
     void startDrag(const std::string& icon, const Variant& sourceData = Variant(), int touchPointID = -1);
+    void startDrag(GRoot* root, const std::string& icon, const Variant& sourceData = Variant(), int touchPointID = -1);
 
     /// @brief 取消拖拽
     void cancel();
@@ -49,6 +52,7 @@ private:
 
     /// @brief 拖拽源数据
     Variant _sourceData;
+    GRoot* _root = nullptr;
 };
 
 NS_FGUI_END

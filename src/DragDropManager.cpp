@@ -34,13 +34,19 @@ DragDropManager* DragDropManager::getInstance()
 
 void DragDropManager::startDrag(const std::string& icon, const Variant& sourceData, int touchPointID)
 {
-    if (_agent->getParent() != nullptr)
+    startDrag(GRoot::getInstance(), icon, sourceData, touchPointID);
+}
+
+void DragDropManager::startDrag(GRoot* root, const std::string& icon, const Variant& sourceData, int touchPointID)
+{
+    if (_agent->getParent() != nullptr || root == nullptr)
         return;
 
+    _root = root;
     _sourceData = sourceData;
     _agent->setURL(icon);
-    GRoot::getInstance()->addChild(Ref<GObject>(_agent.ptr()));
-    Vector2 pt = GRoot::getInstance()->globalToLocal(GRoot::getInstance()->getTouchPosition(touchPointID));
+    _root->addChild(Ref<GObject>(_agent.ptr()));
+    Vector2 pt = _root->globalToLocal(_root->getTouchPosition(touchPointID));
     _agent->setPosition(pt.x, pt.y);
     _agent->startDrag(touchPointID);
 }
@@ -50,8 +56,10 @@ void DragDropManager::cancel()
     if (_agent->getParent() != nullptr)
     {
         _agent->stopDrag();
-        GRoot::getInstance()->removeChild(_agent.ptr());
+        if (_root)
+            _root->removeChild(_agent.ptr());
         _sourceData = Variant();
+        _root = nullptr;
     }
 }
 
@@ -60,9 +68,10 @@ void DragDropManager::onDragEnd(EventContext * context)
     if (_agent->getParent() == nullptr) //cancelled
         return;
 
-    GRoot::getInstance()->removeChild(_agent.ptr());
+    if (_root)
+        _root->removeChild(_agent.ptr());
 
-    GObject* obj = GRoot::getInstance()->getTouchTarget();
+    GObject* obj = _root ? _root->getTouchTarget() : nullptr;
     while (obj != nullptr)
     {
         if (dynamic_cast<GComponent*>(obj))
@@ -71,12 +80,14 @@ void DragDropManager::onDragEnd(EventContext * context)
             {
                 //obj->requestFocus();
                 obj->dispatchEvent(UIEventType::Drop, nullptr, _sourceData);
+                _root = nullptr;
                 return;
             }
         }
 
         obj = obj->getParent();
     }
+    _root = nullptr;
 }
 
 NS_FGUI_END

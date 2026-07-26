@@ -5,6 +5,8 @@
 
 NS_FGUI_BEGIN
 
+class GRoot;
+
 /// @brief DragDropManager 的 Godot 脚本桥接层。
 ///
 /// 将 DragDropManager 的 C++ API 包装为 GDScript 可调用的 RefCounted 接口，
@@ -23,6 +25,7 @@ public:
     /// @param sourceData 拖拽源数据
     /// @param touchPointID 触摸点 ID
     void startDrag(const String& icon, const Variant& sourceData, int touchPointID);
+    void startDragInRoot(GRoot* root, const String& icon, const Variant& sourceData, int touchPointID);
 
     /// @brief 取消拖拽
     void cancel();
