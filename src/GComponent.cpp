@@ -21,28 +21,21 @@
 NS_FGUI_BEGIN
 using namespace std;
 
-static int sorting_order_to_canvas_z(int sortingOrder, int siblingIndex)
-{
-    const int z = sortingOrder != 0 ? sortingOrder : siblingIndex;
-#ifdef FGUI_GDEXTENSION
-    return CLAMP(z, RenderingServer::CANVAS_ITEM_Z_MIN, RenderingServer::CANVAS_ITEM_Z_MAX);
-#else
-    return CLAMP(z, RS::CANVAS_ITEM_Z_MIN, RS::CANVAS_ITEM_Z_MAX);
-#endif
-}
-
-static int get_display_child_z_order(GObject* child, int siblingIndex)
-{
-    if (child->getSortingOrder() != 0)
-        return sorting_order_to_canvas_z(child->getSortingOrder(), siblingIndex);
-    return sorting_order_to_canvas_z(0, siblingIndex);
-}
-
 static void set_display_child_z_order(GObject* child, int siblingIndex)
 {
+    (void)siblingIndex;
     Node* display = child->displayObject();
     if (display != nullptr && display->get_parent() != nullptr)
-        Object::cast_to<CanvasItem>(display)->set_z_index(get_display_child_z_order(child, siblingIndex));
+    {
+        // FairyGUI already encodes draw order in _children and mirrors it to the
+        // Godot scene-tree sibling order. Giving every child its sibling index as
+        // a relative z_index makes nested values accumulate, so descendants of an
+        // earlier component can render above a later sibling. Keep ordinary UI
+        // nodes at local z=0 and let tree order provide subtree-stable ordering.
+        CanvasItem* canvasItem = Object::cast_to<CanvasItem>(display);
+        canvasItem->set_z_as_relative(true);
+        canvasItem->set_z_index(0);
+    }
 }
 
 static void sync_container_tree_order(FUIInnerContainer* container, const std::vector<Node*>& ordered)
@@ -488,31 +481,7 @@ int GComponent::moveChild(GObject* child, int oldIndex, int index)
         _children.insert(_children.begin() + index, tmp);
     if (child->_displayObject->get_parent() != nullptr)
     {
-        if (_childrenRenderOrder == ChildrenRenderOrder::ASCENT)
-        {
-            int fromIndex = std::min(index, oldIndex);
-            int toIndex = std::min(std::max(index, oldIndex), cnt - 1);
-            for (int i = fromIndex; i <= toIndex; i++)
-            {
-                GObject* g = _children.at(i).ptr();
-                if (g->_displayObject->get_parent() != nullptr)
-                    set_display_child_z_order(g, i);
-            }
-        }
-        else if (_childrenRenderOrder == ChildrenRenderOrder::DESCENT)
-        {
-            int fromIndex = std::min(index, oldIndex);
-            int toIndex = std::min(std::max(index, oldIndex), cnt - 1);
-            for (int i = fromIndex; i <= toIndex; i++)
-            {
-                GObject* g = _children.at(i).ptr();
-                if (g->_displayObject->get_parent() != nullptr)
-                    set_display_child_z_order(g, cnt - 1 - i);
-            }
-        }
-        else
-            CALL_LATER(GComponent, buildNativeDisplayList);
-
+        buildNativeDisplayList();
         setBoundsChangedFlag();
     }
 
@@ -945,19 +914,7 @@ void GComponent::childStateChanged(GObject* child)
 
 void GComponent::syncNativeChildrenZOrder()
 {
-    if ((int)_children.size() == 0)
-        return;
-
-    switch (_childrenRenderOrder)
-    {
-    case ChildrenRenderOrder::ASCENT:
-    case ChildrenRenderOrder::DESCENT:
-        refreshDisplayChildrenZOrder();
-        break;
-    case ChildrenRenderOrder::ARCH:
-        CALL_LATER(GComponent, buildNativeDisplayList);
-        break;
-    }
+    buildNativeDisplayList();
 }
 
 void GComponent::refreshDisplayList()
@@ -1030,7 +987,7 @@ void GComponent::buildNativeDisplayList()
     case ChildrenRenderOrder::DESCENT:
     {
         std::unordered_map<FUIInnerContainer*, std::vector<Node*>> treeOrders;
-        for (int i = 0; i < cnt; i++)
+        for (int i = cnt - 1; i >= 0; i--)
         {
             GObject* child = _children.at(i).ptr();
             if (child->_displayObject != nullptr && child != _maskOwner && child->internalVisible())

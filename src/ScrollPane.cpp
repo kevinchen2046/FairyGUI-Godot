@@ -321,13 +321,11 @@ void ScrollPane::syncOverlayZOrder()
     if (!ownerDisplay)
         return;
 
-    const int kContentZ = 0;
-    const int kOverlayZ = 100;
-
     if (_maskContainer && _maskContainer->get_parent() == ownerDisplay)
     {
         ownerDisplay->move_child(_maskContainer, 0);
-        _maskContainer->set_z_index(kContentZ);
+        _maskContainer->set_z_as_relative(true);
+        _maskContainer->set_z_index(0);
     }
 
     auto raiseOverlay = [&](GObject* obj) {
@@ -338,7 +336,12 @@ void ScrollPane::syncOverlayZOrder()
             return;
         ownerDisplay->move_child(node, ownerDisplay->get_child_count() - 1);
         if (CanvasItem* ci = Object::cast_to<CanvasItem>(node))
-            ci->set_z_index(kOverlayZ);
+        {
+            // Keep the complete ScrollPane subtree in its parent's draw slot.
+            // A relative z=100 here can escape above later sibling components.
+            ci->set_z_as_relative(true);
+            ci->set_z_index(0);
+        }
     };
 
     raiseOverlay(_header.ptr());
