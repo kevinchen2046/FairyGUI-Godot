@@ -511,6 +511,7 @@ void GLoader::updateLayout()
 
     float nx;
     float ny;
+    const Vector2 pivotOffset = computeContentPivotOffset();
     if (_align == AlignType::CENTER)
         nx = floor((_size.width - contentSize.width) / 2);
     else if (_align == AlignType::RIGHT)
@@ -528,7 +529,7 @@ void GLoader::updateLayout()
         else
             ny = 0;
 
-        ((Node2D*)_content2->displayObject())->set_position(Vector2(nx, ny));
+        ((Node2D*)_content2->displayObject())->set_position(Vector2(nx, ny) + pivotOffset);
     }
     else
     {
@@ -539,7 +540,7 @@ void GLoader::updateLayout()
         else
             ny = 0;
 
-        _content->set_position(Vector2(nx, ny));
+        _content->set_position(Vector2(nx, ny) + pivotOffset);
     }
 
     if (_content)
@@ -774,5 +775,4 @@ void GLoader::setTexture(const Ref<Texture2D>& value)
 }
 
 NS_FGUI_END
-
 

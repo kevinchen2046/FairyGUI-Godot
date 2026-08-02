@@ -574,6 +574,7 @@ void GLoader3D::updateLayout()
 
     float nx;
     float ny;
+    const Vector2 pivotOffset = computeContentPivotOffset();
     if (_align == AlignType::CENTER)
         nx = floor((_size.width - contentSize.width) / 2);
     else if (_align == AlignType::RIGHT)
@@ -588,7 +589,7 @@ void GLoader3D::updateLayout()
     else
         ny = 0;
 
-    _container->set_position(Vector2(nx, ny));
+    _container->set_position(Vector2(nx, ny) + pivotOffset);
 }
 
 void GLoader3D::setErrorState()
