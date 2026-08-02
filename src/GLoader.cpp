@@ -424,12 +424,12 @@ void GLoader::updateLayout()
             if (_content2 != nullptr)
             {
                 _content2->setScale(1, 1);
-                ((Node2D*)_content2->displayObject())->set_position(Vector2());
+                ((Node2D*)_content2->displayObject())->set_position(computeContentPivotOffset());
             }
             else
             {
                 _content->set_scale(Vector2(1, 1));
-                _content->set_position(Vector2());
+                _content->set_position(computeContentPivotOffset());
             }
             if (_content)
                 _content->setGrayed(_finalGrayed);
@@ -775,4 +775,3 @@ void GLoader::setTexture(const Ref<Texture2D>& value)
 }
 
 NS_FGUI_END
-
