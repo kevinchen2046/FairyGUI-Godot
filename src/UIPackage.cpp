@@ -454,13 +454,13 @@ bool UIPackage::loadPackage(ByteBuffer* buffer)
             else if (scaleOption == 2)
                 pi->scaleByTile = true;
 
-            buffer->readBool(); //smoothing
+            pi->smoothing = buffer->readBool();
             break;
         }
 
         case PackageItemType::MOVIECLIP:
         {
-            buffer->readBool(); //smoothing
+            pi->smoothing = buffer->readBool();
             pi->objectType = ObjectType::MOVIECLIP;
             pi->rawData = buffer->readBuffer();
             break;

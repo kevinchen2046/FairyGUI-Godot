@@ -154,6 +154,9 @@ public:
     /// @brief 九宫格数据是否有效
     bool hasScale9Grid;
 
+    /// @brief 是否使用平滑（线性）纹理过滤
+    bool smoothing;
+
     /// @brief 图像帧数据
     ImageFrame imageFrame;
 

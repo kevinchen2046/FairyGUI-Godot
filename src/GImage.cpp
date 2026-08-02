@@ -161,6 +161,7 @@ void GImage::constructFromResource()
     ((FUISprite*)_content)->setRotated(contentItem->imageFrame.rotated);
     ((FUISprite*)_content)->setImageFrameInfo(contentItem->imageFrame.originalSize, contentItem->imageFrame.offset);
     _content->set_content_size(sourceSize);
+    ((FUISprite*)_content)->setSmoothing(contentItem->smoothing);
     _content->setTexture(contentItem->texture);
 
     if (contentItem->hasScale9Grid)
@@ -258,4 +259,3 @@ void GImage::setTexture(const Ref<Texture2D>& value)
 }
 
 NS_FGUI_END
-

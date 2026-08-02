@@ -45,6 +45,12 @@ public:
     /// @brief 是否使用平铺模式缩放
     bool isScaleByTile() const { return _scaleByTile; }
 
+    /// @brief 设置纹理是否使用平滑（线性）过滤
+    void setSmoothing(bool value);
+
+    /// @brief 是否使用平滑（线性）纹理过滤
+    bool isSmoothing() const { return _smoothing; }
+
     /// @brief 设置为灰度显示
     void setGrayed(bool value);
 
@@ -171,6 +177,7 @@ private:
     float _fillAmount;
     bool _fillClockwise;
     bool _scaleByTile;
+    bool _smoothing;
     bool _grayed;
     bool _rotated;
     Color _tintColor;

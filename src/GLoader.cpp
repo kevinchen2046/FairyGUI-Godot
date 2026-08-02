@@ -260,6 +260,7 @@ void GLoader::loadFromPackage()
             ((FUISprite*)_content)->setRotated(_contentItem->imageFrame.rotated);
             ((FUISprite*)_content)->setImageFrameInfo(_contentItem->imageFrame.originalSize, _contentItem->imageFrame.offset);
             _content->set_content_size(_sourceSize);
+            _content->setSmoothing(_contentItem->smoothing);
             _content->setTexture(_contentItem->texture);
             if (_contentItem->hasScale9Grid)
                 _content->setScale9Grid(_contentItem->scale9Grid);
@@ -268,6 +269,7 @@ void GLoader::loadFromPackage()
         else if (_contentItem->type == PackageItemType::MOVIECLIP)
         {
             _contentStatus = 2;
+            _content->setSmoothing(_contentItem->smoothing);
             if (_playAction == nullptr)
             {
                 _playAction = ActionMovieClip::create(_contentItem->movieclip, _contentItem->repeatDelay, _contentItem->swing);
@@ -424,12 +426,12 @@ void GLoader::updateLayout()
             if (_content2 != nullptr)
             {
                 _content2->setScale(1, 1);
-                ((Node2D*)_content2->displayObject())->set_position(computeContentPivotOffset());
+                ((Node2D*)_content2->displayObject())->set_position(Vector2());
             }
             else
             {
                 _content->set_scale(Vector2(1, 1));
-                _content->set_position(computeContentPivotOffset());
+                _content->set_position(Vector2());
             }
             if (_content)
                 _content->setGrayed(_finalGrayed);

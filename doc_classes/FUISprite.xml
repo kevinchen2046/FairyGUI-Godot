@@ -21,6 +21,15 @@
 			<return type="Variant" />
 			<description>是否使用平铺模式缩放</description>
 		</method>
+		<method name="setSmoothing">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置纹理是否使用平滑（线性）过滤</description>
+		</method>
+		<method name="isSmoothing">
+			<return type="Variant" />
+			<description>是否使用平滑（线性）纹理过滤</description>
+		</method>
 		<method name="setGrayed">
 			<return type="void" />
 			<param index="0" name="value" type="Variant" />
@@ -123,6 +132,7 @@
 	</methods>
 	<members>
 		<member name="scaleByTile" type="bool" setter="setScaleByTile" getter="isScaleByTile"></member>
+		<member name="smoothing" type="bool" setter="setSmoothing" getter="isSmoothing"></member>
 		<member name="grayed" type="bool" setter="setGrayed" getter="isGrayed"></member>
 		<member name="flippedH" type="bool" setter="setFlippedH" getter="isFlippedH"></member>
 		<member name="flippedV" type="bool" setter="setFlippedV" getter="isFlippedV"></member>

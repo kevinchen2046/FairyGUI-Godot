@@ -83,6 +83,13 @@
 			<param index="1" name="dir" type="Variant" />
 			<description></description>
 		</method>
+		<method name="showMenuInRoot">
+			<return type="void" />
+			<param index="0" name="root" type="Variant" />
+			<param index="1" name="target" type="Variant" />
+			<param index="2" name="dir" type="Variant" />
+			<description></description>
+		</method>
 	</methods>
 	<members>
 	</members>

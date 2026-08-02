@@ -526,7 +526,7 @@ void GLoader3D::updateLayout()
         if (_size == contentSize)
         {
             _container->set_scale(Vector2(1, 1));
-            _container->set_position(computeContentPivotOffset());
+            _container->set_position(Vector2());
             return;
         }
     }

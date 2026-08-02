@@ -207,6 +207,9 @@ void GMovieClip::constructFromResource()
     contentItem = contentItem->getHighResolution();
     contentItem->load();
 
+    if (_content)
+        ((FUISprite*)_content)->setSmoothing(contentItem->smoothing);
+
     if (_playAction)
         _playAction->setAnimation(contentItem->movieclip, contentItem->repeatDelay, contentItem->swing);
 

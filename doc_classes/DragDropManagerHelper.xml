@@ -10,6 +10,14 @@
 			<param index="2" name="touch_point_id" type="Variant" />
 			<description>开始拖拽</description>
 		</method>
+		<method name="startDragInRoot">
+			<return type="void" />
+			<param index="0" name="root" type="Variant" />
+			<param index="1" name="icon" type="Variant" />
+			<param index="2" name="source_data" type="Variant" />
+			<param index="3" name="touch_point_id" type="Variant" />
+			<description></description>
+		</method>
 		<method name="cancel">
 			<return type="Variant" />
 			<description>取消拖拽</description>

@@ -170,9 +170,12 @@ GComponent 的不透明度（opaque）属性决定其是否参与点击测试：
 		</method>
 	</methods>
 	<members>
+		<member name="numChildren" type="int" setter="" getter="numChildren"></member>
+		<member name="numControllers" type="int" setter="" getter="numControllers"></member>
 		<member name="opaque" type="bool" setter="setOpaque" getter="getOpaque"></member>
 		<member name="viewWidth" type="float" setter="setViewWidth" getter="getViewWidth"></member>
 		<member name="viewHeight" type="float" setter="setViewHeight" getter="getViewHeight"></member>
+		<member name="numTransitions" type="int" setter="" getter="numTransitions"></member>
 	</members>
 	<signals>
 	</signals>

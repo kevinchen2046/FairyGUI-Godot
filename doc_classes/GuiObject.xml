@@ -32,6 +32,11 @@
 			<return type="Variant" />
 			<description>获取当前位置。</description>
 		</method>
+		<method name="setPositionValue">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
 		<method name="setWidth">
 			<return type="void" />
 			<param index="0" name="value" type="Variant" />
@@ -61,6 +66,11 @@
 			<return type="Variant" />
 			<description>获取当前大小。</description>
 		</method>
+		<method name="setSizeValue">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
 		<method name="setPixelSnapping">
 			<return type="void" />
 			<param index="0" name="value" type="Variant" />
@@ -79,6 +89,11 @@
 		<method name="getScale">
 			<return type="Variant" />
 			<description>获取缩放值。</description>
+		</method>
+		<method name="setScaleValue">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
 		</method>
 		<method name="setScaleX">
 			<return type="void" />
@@ -233,6 +248,10 @@
 			<return type="Variant" />
 			<description>获取对象在 UI 包中的资源 URL。格式：ui://包名/资源名</description>
 		</method>
+		<method name="getDisplayObject">
+			<return type="Variant" />
+			<description></description>
+		</method>
 		<method name="removeFromParent">
 			<return type="void" />
 			<description>从父组件中移除。</description>
@@ -294,6 +313,20 @@
 			<return type="Variant" />
 			<description>获取轴心坐标（归一化值，默认为 (0,0) 即左上角）。</description>
 		</method>
+		<method name="setPivotValue">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="setPivotAsAnchor">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description></description>
+		</method>
+		<method name="isPivotAsAnchor">
+			<return type="Variant" />
+			<description>轴心是否作为锚点使用。</description>
+		</method>
 		<method name="transformRect">
 			<return type="void" />
 			<param index="0" name="rect" type="Variant" />
@@ -346,7 +379,31 @@
 		</method>
 	</methods>
 	<members>
+		<member name="x" type="float" setter="setX" getter="getX"></member>
+		<member name="y" type="float" setter="setY" getter="getY"></member>
+		<member name="position" type="Vector2" setter="setPositionValue" getter="getPosition"></member>
+		<member name="width" type="float" setter="setWidth" getter="getWidth"></member>
+		<member name="height" type="float" setter="setHeight" getter="getHeight"></member>
+		<member name="size" type="Vector2" setter="setSizeValue" getter="getSize"></member>
+		<member name="pixelSnapping" type="bool" setter="setPixelSnapping" getter="isPixelSnapping"></member>
+		<member name="scale" type="Vector2" setter="setScaleValue" getter="getScale"></member>
+		<member name="scaleX" type="float" setter="setScaleX" getter="getScaleX"></member>
+		<member name="scaleY" type="float" setter="setScaleY" getter="getScaleY"></member>
+		<member name="skewX" type="float" setter="setSkewX" getter="getSkewX"></member>
+		<member name="skewY" type="float" setter="setSkewY" getter="getSkewY"></member>
+		<member name="rotation" type="float" setter="setRotation" getter="getRotation"></member>
+		<member name="alpha" type="float" setter="setAlpha" getter="getAlpha"></member>
+		<member name="grayed" type="bool" setter="setGrayed" getter="isGrayed"></member>
+		<member name="visible" type="bool" setter="setVisible" getter="isVisible"></member>
+		<member name="touchable" type="bool" setter="setTouchable" getter="isTouchable"></member>
+		<member name="sortingOrder" type="int" setter="setSortingOrder" getter="getSortingOrder"></member>
+		<member name="text" type="String" setter="setText" getter="getText"></member>
+		<member name="name" type="String" setter="setName" getter="getName"></member>
+		<member name="tooltips" type="String" setter="setTooltips" getter="getTooltips"></member>
+		<member name="draggable" type="bool" setter="setDraggable" getter="isDraggable"></member>
 		<member name="icon" type="String" setter="setIcon" getter="getIcon"></member>
+		<member name="pivot" type="Vector2" setter="setPivotValue" getter="getPivot"></member>
+		<member name="pivotAsAnchor" type="bool" setter="setPivotAsAnchor" getter="isPivotAsAnchor"></member>
 		<member name="group" type="Object" setter="setGroup" getter="getGroup"></member>
 	</members>
 	<signals>

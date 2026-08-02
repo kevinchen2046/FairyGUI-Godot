@@ -57,6 +57,7 @@ FUISprite::FUISprite() :
     _fillAmount(0),
     _fillClockwise(false),
     _scaleByTile(false),
+    _smoothing(true),
     _grayed(false),
     _rotated(false),
     _tintColor(1, 1, 1, 1),
@@ -65,6 +66,7 @@ FUISprite::FUISprite() :
     _tileDisplaySize(0, 0)
 {
     set_centered(false); // FairyGUI uses top-left origin, NOT center origin
+    set_texture_filter(CanvasItem::TEXTURE_FILTER_LINEAR);
 #ifndef FGUI_GDEXTENSION
     item_rect_changed(); // enable NOTIFICATION_DRAW for Node2D
 #endif
@@ -95,6 +97,10 @@ void FUISprite::_bind_methods()
     ClassDB::bind_method(D_METHOD("setScaleByTile", "value"), &FUISprite::setScaleByTile);
     ClassDB::bind_method(D_METHOD("isScaleByTile"), &FUISprite::isScaleByTile);
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "scaleByTile"), "setScaleByTile", "isScaleByTile");
+
+    ClassDB::bind_method(D_METHOD("setSmoothing", "value"), &FUISprite::setSmoothing);
+    ClassDB::bind_method(D_METHOD("isSmoothing"), &FUISprite::isSmoothing);
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "smoothing"), "setSmoothing", "isSmoothing");
 
     ClassDB::bind_method(D_METHOD("setGrayed", "value"), &FUISprite::setGrayed);
     ClassDB::bind_method(D_METHOD("isGrayed"), &FUISprite::isGrayed);
@@ -260,6 +266,12 @@ void FUISprite::setScaleByTile(bool value)
     else
         set_texture_repeat(CanvasItem::TEXTURE_REPEAT_DISABLED);
     queue_redraw();
+}
+
+void FUISprite::setSmoothing(bool value)
+{
+    _smoothing = value;
+    set_texture_filter(value ? CanvasItem::TEXTURE_FILTER_LINEAR : CanvasItem::TEXTURE_FILTER_NEAREST);
 }
 
 void FUISprite::setFlippedH(bool v)
