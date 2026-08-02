@@ -1563,6 +1563,9 @@ void GuiObject::_bind_methods()
     ClassDB::bind_method(D_METHOD("getPivot"), &GuiObject::gd_getPivot);
     ClassDB::bind_method(D_METHOD("setPivotValue", "value"), &GuiObject::gd_setPivotValue);
     ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "pivot"), "setPivotValue", "getPivot");
+    ClassDB::bind_method(D_METHOD("setPivotAsAnchor", "value"), &GuiObject::gd_setPivotAsAnchor);
+    ClassDB::bind_method(D_METHOD("isPivotAsAnchor"), &GuiObject::isPivotAsAnchor);
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "pivotAsAnchor"), "setPivotAsAnchor", "isPivotAsAnchor");
     ClassDB::bind_method(D_METHOD("transformRect", "rect", "target_space"), &GuiObject::gd_transformRect);
     ClassDB::bind_method(D_METHOD("setDragBounds", "bounds"), &GuiObject::gd_setDragBounds);
     ClassDB::bind_method(D_METHOD("getParent"), &GuiObject::gd_getParent);
@@ -1584,7 +1587,7 @@ String GuiObject::gd_getText() const { return toGodotStr(getText()); }
 void GuiObject::gd_setPosition(const Vector2& value) { setPosition(value.x, value.y); }
 void GuiObject::gd_setSize(const Vector2& value) { setSize(value.x, value.y); }
 void GuiObject::gd_setScale(const Vector2& value) { setScale(value.x, value.y); }
-void GuiObject::gd_setPivotValue(const Vector2& value) { setPivot(value.x, value.y, false); }
+void GuiObject::gd_setPivotValue(const Vector2& value) { setPivot(value.x, value.y, _pivotAsAnchor); }
 
 void GuiObject::gd_setName(const String& v) { name = v.utf8().get_data(); }
 String GuiObject::gd_getName() const { return toGodotStr(name); }

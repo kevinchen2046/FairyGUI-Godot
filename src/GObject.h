@@ -111,6 +111,7 @@ public:
     void setPivot(float xv, float yv, bool asAnchor = false);
     /** 轴心是否作为锚点使用。 */
     bool isPivotAsAnchor() const { return _pivotAsAnchor; }
+    void gd_setPivotAsAnchor(bool value) { setPivot(_pivot.x, _pivot.y, value); }
 
     // ===== 缩放属性 =====
 
