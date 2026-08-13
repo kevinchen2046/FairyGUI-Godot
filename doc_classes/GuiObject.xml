@@ -182,6 +182,15 @@
 			<return type="Variant" />
 			<description>是否可触摸。</description>
 		</method>
+		<method name="setEnabled">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置启用状态。禁用时同时变灰并关闭触摸，启用时恢复二者。</description>
+		</method>
+		<method name="isEnabled">
+			<return type="Variant" />
+			<description>是否启用。等价于未变灰且可触摸。</description>
+		</method>
 		<method name="setSortingOrder">
 			<return type="void" />
 			<param index="0" name="value" type="Variant" />
@@ -396,6 +405,7 @@
 		<member name="grayed" type="bool" setter="setGrayed" getter="isGrayed"></member>
 		<member name="visible" type="bool" setter="setVisible" getter="isVisible"></member>
 		<member name="touchable" type="bool" setter="setTouchable" getter="isTouchable"></member>
+		<member name="enabled" type="bool" setter="setEnabled" getter="isEnabled"></member>
 		<member name="sortingOrder" type="int" setter="setSortingOrder" getter="getSortingOrder"></member>
 		<member name="text" type="String" setter="setText" getter="getText"></member>
 		<member name="name" type="String" setter="setName" getter="getName"></member>

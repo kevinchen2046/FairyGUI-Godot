@@ -30,6 +30,7 @@
 NS_FGUI_BEGIN
 
 GRoot* GRoot::_inst = nullptr;
+std::vector<GRoot*> GRoot::_instances;
 bool GRoot::_soundEnabled = true;
 float GRoot::_soundVolumeScale = 1.0f;
 int GRoot::contentScaleLevel = 0;
@@ -77,7 +78,7 @@ void GRoot::cleanup()
     old->closeAllWindows();
     old->removeChildren();
 
-    _inst = nullptr;
+    unregisterInstance(old);
 
     Node* displayNode = old->displayObject();
     if (displayNode != nullptr)
@@ -112,6 +113,7 @@ GRoot::GRoot()
 
 GRoot::~GRoot()
 {
+    unregisterInstance(this);
     delete _inputProcessor;
 
     if (_modalWaitPane.is_valid())
@@ -984,7 +986,7 @@ void GRoot::handleSizeChanged()
 void GRoot::_enter_tree()
 {
     GComponent::_enter_tree();
-    _inst = this;
+    registerInstance(this);
 
     if (_displayObject && _displayObject->is_inside_tree())
     {
@@ -1034,8 +1036,6 @@ void GRoot::_exit_tree()
     TweenManager::clean();
 
     GComponent::_exit_tree();
-    if (_inst == this)
-        _inst = nullptr;
 }
 
 bool GRoot::initWithParent(Node* parent, int zOrder)
@@ -1043,8 +1043,7 @@ bool GRoot::initWithParent(Node* parent, int zOrder)
     if (!GComponent::init())
         return false;
 
-    if (_inst == nullptr)
-        _inst = this;
+    registerInstance(this);
 
     _inputProcessor = new InputProcessor(this);
     _inputProcessor->setCaptureCallback([this](int eventType) {
@@ -1052,6 +1051,26 @@ bool GRoot::initWithParent(Node* parent, int zOrder)
     });
 
     return true;
+}
+
+void GRoot::registerInstance(GRoot* instance)
+{
+    if (instance == nullptr)
+        return;
+
+    if (std::find(_instances.begin(), _instances.end(), instance) == _instances.end())
+        _instances.push_back(instance);
+
+    _inst = _instances.empty() ? nullptr : _instances.front();
+}
+
+void GRoot::unregisterInstance(GRoot* instance)
+{
+    auto it = std::find(_instances.begin(), _instances.end(), instance);
+    if (it != _instances.end())
+        _instances.erase(it);
+
+    _inst = _instances.empty() ? nullptr : _instances.front();
 }
 
 void GRoot::onInitWithParent(Node* parent, int zOrder, bool deferAdd)

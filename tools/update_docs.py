@@ -122,6 +122,12 @@ _FUNC_RE = re.compile(r'\b(\w+)\s*\(')
 
 def _extract_func_name(line: str):
     """快速提取 C++ 函数声明中的函数名。"""
+    # Godot virtual declarations use GDVIRTUAL0(_method) rather than a normal
+    # C++ function declaration. The documented method is the macro argument.
+    virtual = re.search(r'GDVIRTUAL\d*\s*\(\s*(\w+)', line)
+    if virtual:
+        return virtual.group(1)
+
     # 去掉行尾的 { ; // 之后的内容
     for ch in ('{', ';', '//'):
         idx = line.find(ch)
@@ -166,7 +172,13 @@ def parse_bind_methods(body: str) -> dict:
     ):
         name = m.group(1)
         params = [pm.group(1) for pm in re.finditer(r'"([^"]*)"', m.group(2))]
-        methods.append({"name": name, "params": params})
+        methods.append({"name": name, "params": params, "virtual": False})
+
+    # GDScript/C# overridable virtual methods.
+    for m in re.finditer(r'GDVIRTUAL_BIND\s*\(\s*(\w+)\s*\)', clean_body):
+        name = m.group(1)
+        if not any(method["name"] == name for method in methods):
+            methods.append({"name": name, "params": [], "virtual": True})
 
     # ADD_PROPERTY
     for m in re.finditer(
@@ -601,8 +613,9 @@ def generate_xml(class_name: str, parsed: dict, existing_descs: dict, h_data: di
         )
         ret = _guess_return_type(mname)
         desc = xml_escape(_resolve_method_desc(mname, class_name, existing_descs, h_methods))
+        qualifiers = ' qualifiers="virtual"' if method.get("virtual") else ''
         methods_xml += (
-            f'\t\t<method name="{mname}">\n'
+            f'\t\t<method name="{mname}"{qualifiers}>\n'
             f'\t\t\t<return type="{ret}" />\n'
             f'{params_xml}'
             f'\t\t\t<description>{desc}</description>\n'

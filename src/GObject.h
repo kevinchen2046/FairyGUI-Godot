@@ -177,6 +177,17 @@ public:
     /** 设置是否可触摸。 */
     void setTouchable(bool value);
 
+    // ===== 启用状态 =====
+
+    /** 是否启用。等价于未变灰且可触摸。 */
+    bool isEnabled() const { return !_grayed && _touchable; }
+    /** 设置启用状态。禁用时同时变灰并关闭触摸，启用时恢复二者。 */
+    void setEnabled(bool value)
+    {
+        setGrayed(!value);
+        setTouchable(value);
+    }
+
     // ===== 渲染排序 =====
 
     /** 获取渲染层级（值越大渲染越靠前）。 */

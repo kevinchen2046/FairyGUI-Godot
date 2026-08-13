@@ -277,6 +277,10 @@ protected:
     virtual void onConstruct();
     /** 构建完成后回调（GDScript/C# 可覆写此虚方法，在 XML 构建完成后被调用，可安全访问子节点）。 */
     GDVIRTUAL0(_on_construct);
+    /** 显示节点进入 SceneTree 后回调。父级整体加入节点树时也会触发。 */
+    GDVIRTUAL0(_on_added);
+    /** 显示节点离开 SceneTree 时回调。父级整体移出节点树时也会触发。 */
+    GDVIRTUAL0(_on_removed);
     virtual void setup_afterAdd(ByteBuffer* buffer, int beginPos) override;
     virtual void handleInit() override;
     virtual void handleSizeChanged() override;

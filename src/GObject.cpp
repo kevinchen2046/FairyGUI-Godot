@@ -1512,6 +1512,10 @@ void GuiObject::_bind_methods()
     ClassDB::bind_method(D_METHOD("isTouchable"), &GuiObject::isTouchable);
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "touchable"), "setTouchable", "isTouchable");
 
+    ClassDB::bind_method(D_METHOD("setEnabled", "value"), &GuiObject::setEnabled);
+    ClassDB::bind_method(D_METHOD("isEnabled"), &GuiObject::isEnabled);
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "enabled"), "setEnabled", "isEnabled");
+
     ClassDB::bind_method(D_METHOD("setSortingOrder", "value"), &GuiObject::setSortingOrder);
     ClassDB::bind_method(D_METHOD("getSortingOrder"), &GuiObject::getSortingOrder);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "sortingOrder"), "setSortingOrder", "getSortingOrder");

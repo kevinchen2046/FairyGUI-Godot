@@ -1411,10 +1411,18 @@ void GComponent::_enter_tree()
         for (auto& trans : _transitions)
             trans->onOwnerAddedToStage();
     }
+
+    // Follow the actual Godot SceneTree lifecycle. This also fires when an
+    // ancestor is attached, rather than only when FairyGUI addChild is called.
+    GDVIRTUAL_CALL(_on_added);
 }
 
 void GComponent::_exit_tree()
 {
+    // tree_exiting is emitted while the node still belongs to the tree, so the
+    // script can safely inspect its hierarchy during the callback.
+    GDVIRTUAL_CALL(_on_removed);
+
     if (_scrollPane.is_valid())
         _scrollPane->onOwnerStageChanged(false);
 
@@ -1768,6 +1776,9 @@ void GComponent::_bind_methods()
 
     // 构建完成虚方法，GDScript/C# 覆写 _on_construct() 在 XML 构建完成后安全访问子节点
     GDVIRTUAL_BIND(_on_construct);
+    // SceneTree 生命周期虚方法；父级整体进出节点树时子组件同样会收到回调。
+    GDVIRTUAL_BIND(_on_added);
+    GDVIRTUAL_BIND(_on_removed);
 }
 
 void GComponent::gd_removeChildAt(int index) { removeChildAt(index); }

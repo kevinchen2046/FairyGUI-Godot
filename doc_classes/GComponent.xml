@@ -168,6 +168,18 @@ GComponent 的不透明度（opaque）属性决定其是否参与点击测试：
 			<param index="0" name="obj" type="Variant" />
 			<description>判断指定对象是否是本组件的祖先（向上递归检查）。</description>
 		</method>
+		<method name="_on_construct" qualifiers="virtual">
+			<return type="void" />
+			<description>构建完成后回调（GDScript/C# 可覆写此虚方法，在 XML 构建完成后被调用，可安全访问子节点）。</description>
+		</method>
+		<method name="_on_added" qualifiers="virtual">
+			<return type="void" />
+			<description>显示节点进入 SceneTree 后回调。父级整体加入节点树时也会触发。</description>
+		</method>
+		<method name="_on_removed" qualifiers="virtual">
+			<return type="void" />
+			<description>显示节点离开 SceneTree 时回调。父级整体移出节点树时也会触发。</description>
+		</method>
 	</methods>
 	<members>
 		<member name="numChildren" type="int" setter="" getter="numChildren"></member>

@@ -311,6 +311,11 @@ private:
 
     /// @brief 全局唯一 GRoot 实例（静态）
     static GRoot* _inst;
+    /// 按创建顺序登记的 GRoot；单例始终指向最早仍有效的实例。
+    static std::vector<GRoot*> _instances;
+
+    static void registerInstance(GRoot* instance);
+    static void unregisterInstance(GRoot* instance);
 
     /// @brief 内容层 CanvasLayer Z 序
     static const int kGRootContentCanvasLayer = 0;
