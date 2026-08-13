@@ -16,6 +16,44 @@
 			<return type="Variant" />
 			<description>获取页面总数。</description>
 		</method>
+		<method name="hasPage">
+			<return type="Variant" />
+			<param index="0" name="page_name" type="Variant" />
+			<description>是否存在指定名称的页面。</description>
+		</method>
+		<method name="hasPageId">
+			<return type="Variant" />
+			<param index="0" name="page_id" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getPageIndexById">
+			<return type="Variant" />
+			<param index="0" name="page_id" type="Variant" />
+			<description>通过页面 ID 获取索引。</description>
+		</method>
+		<method name="getPageNameById">
+			<return type="Variant" />
+			<param index="0" name="page_id" type="Variant" />
+			<description>通过页面 ID 获取名称。</description>
+		</method>
+		<method name="getPageId">
+			<return type="Variant" />
+			<param index="0" name="index" type="Variant" />
+			<description>通过索引获取页面 ID。</description>
+		</method>
+		<method name="getPageName">
+			<return type="Variant" />
+			<param index="0" name="index" type="Variant" />
+			<description>通过索引获取页面名称。索引无效时返回空字符串。</description>
+		</method>
+		<method name="getPageIds">
+			<return type="Variant" />
+			<description></description>
+		</method>
+		<method name="getPageNames">
+			<return type="Variant" />
+			<description></description>
+		</method>
 		<method name="getPreviousPage">
 			<return type="Variant" />
 			<description>获取上一个选中页面的名称。</description>
@@ -63,6 +101,9 @@
 	</methods>
 	<members>
 		<member name="selectedIndex" type="int" setter="setSelectedIndex" getter="getSelectedIndex"></member>
+		<member name="pageCount" type="int" setter="" getter="getPageCount"></member>
+		<member name="pageIds" type="Variant" setter="" getter="getPageIds"></member>
+		<member name="pageNames" type="Variant" setter="" getter="getPageNames"></member>
 		<member name="name" type="String" setter="setName" getter="getName"></member>
 	</members>
 	<signals>

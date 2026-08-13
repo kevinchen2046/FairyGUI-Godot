@@ -4,6 +4,9 @@
 #include "FairyGUIMacros.h"
 // cocos2d.h removed - see godot_types.h
 #include "event/UIEventDispatcher.h"
+#ifdef FGUI_GDEXTENSION
+#include <godot_cpp/variant/packed_string_array.hpp>
+#endif
 
 NS_FGUI_BEGIN
 
@@ -82,6 +85,18 @@ public:
     const std::string& getPageNameById(const std::string& value) const;
     /** 通过索引获取页面 ID。 */
     const std::string& getPageId(int index) const;
+    /** 通过索引获取页面名称。索引无效时返回空字符串。 */
+    const std::string& getPageName(int index) const;
+
+    // GDScript 页面查询接口。
+    bool gd_hasPage(const String& pageName) const;
+    bool gd_hasPageId(const String& pageId) const;
+    int gd_getPageIndexById(const String& pageId) const;
+    String gd_getPageNameById(const String& pageId) const;
+    String gd_getPageId(int index) const;
+    String gd_getPageName(int index) const;
+    PackedStringArray gd_getPageIds() const;
+    PackedStringArray gd_getPageNames() const;
     /** 设置反向页面 ID（用于切换回）。 */
     void setOppositePageId(const std::string& value);
     /** 执行所有关联的动作。 */
