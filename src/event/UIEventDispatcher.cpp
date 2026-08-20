@@ -213,6 +213,7 @@ bool UIEventDispatcher::dispatchEvent(int eventType, void* data, const Variant& 
 
     EventContext context;
     context._sender = this;
+    context._target = this;
     context._type = eventType;
     if (InputProcessor::_activeProcessor)
         context._inputEvent = InputProcessor::_activeProcessor->getRecentInput();
@@ -227,6 +228,7 @@ bool UIEventDispatcher::dispatchEvent(int eventType, void* data, const Variant& 
 bool UIEventDispatcher::bubbleEvent(int eventType, void* data, const Variant& dataValue)
 {
     EventContext context;
+    context._target = this;
     if (InputProcessor::_activeProcessor)
         context._inputEvent = InputProcessor::_activeProcessor->getRecentInput();
     context._type = eventType;

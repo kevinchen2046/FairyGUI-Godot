@@ -210,9 +210,10 @@ void GController::setup(ByteBuffer* buffer)
 
 void GController::_bind_methods()
 {
-    ClassDB::bind_method(D_METHOD("setSelectedIndex", "index"), &GController::gd_setSelectedIndex);
+    ClassDB::bind_method(D_METHOD("setSelectedIndex", "index", "trigger_event"), &GController::gd_setSelectedIndex, DEFVAL(true));
+    ClassDB::bind_method(D_METHOD("_setSelectedIndexProperty", "index"), &GController::gd_setSelectedIndexProperty);
     ClassDB::bind_method(D_METHOD("getSelectedIndex"), &GController::getSelectedIndex);
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "selectedIndex"), "setSelectedIndex", "getSelectedIndex");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "selectedIndex"), "_setSelectedIndexProperty", "getSelectedIndex");
 
     ClassDB::bind_method(D_METHOD("getPageCount"), &GController::getPageCount);
     ADD_PROPERTY(PropertyInfo(Variant::INT, "pageCount", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR | PROPERTY_USAGE_READ_ONLY), "", "getPageCount");

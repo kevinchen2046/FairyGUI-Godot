@@ -63,12 +63,14 @@ void GProgressBar::setValue(double value)
 
         _value = value;
         update(_value);
+        dispatchEvent(UIEventType::Changed);
     }
 }
 
 void GProgressBar::tweenValue(double value, float duration)
 {
     double oldValule;
+    const bool valueChanged = _value != value;
 
     GTweener* tweener = GTween::getTween(this, TweenPropType::Progress);
     if (tweener != nullptr)
@@ -83,6 +85,9 @@ void GProgressBar::tweenValue(double value, float duration)
     GTween::toDouble(oldValule, _value, duration)
         ->setEase(EaseType::Linear)
         ->setTarget(this, TweenPropType::Progress);
+
+    if (valueChanged)
+        dispatchEvent(UIEventType::Changed);
 }
 
 void GProgressBar::update(double newValue)
@@ -255,4 +260,3 @@ void GProgressBar::_bind_methods()
 }
 
 NS_FGUI_END
-

@@ -6,6 +6,7 @@ NS_FGUI_BEGIN
 
 EventContext::EventContext() :
     _sender(nullptr),
+    _target(nullptr),
     _inputEvent(nullptr),
     _data(nullptr),
     _isStopped(false),
@@ -24,6 +25,21 @@ void FGUIEventContext::preventDefault()
 {
     if (_context != nullptr)
         _context->preventDefault();
+}
+
+int FGUIEventContext::getType() const
+{
+    return _context != nullptr ? _context->getType() : 0;
+}
+
+Ref<RefCounted> FGUIEventContext::getSender() const
+{
+    return _context != nullptr ? Ref<RefCounted>(_context->getSender()) : Ref<RefCounted>();
+}
+
+Ref<RefCounted> FGUIEventContext::getTarget() const
+{
+    return _context != nullptr ? Ref<RefCounted>(_context->getTarget()) : Ref<RefCounted>();
 }
 
 Variant FGUIEventContext::getData() const
@@ -75,6 +91,9 @@ int FGUIEventContext::getTouchId() const
 void FGUIEventContext::_bind_methods()
 {
     ClassDB::bind_method(D_METHOD("preventDefault"), &FGUIEventContext::preventDefault);
+    ClassDB::bind_method(D_METHOD("getType"), &FGUIEventContext::getType);
+    ClassDB::bind_method(D_METHOD("getSender"), &FGUIEventContext::getSender);
+    ClassDB::bind_method(D_METHOD("getTarget"), &FGUIEventContext::getTarget);
     ClassDB::bind_method(D_METHOD("getData"), &FGUIEventContext::getData);
     ClassDB::bind_method(D_METHOD("getItemText"), &FGUIEventContext::getItemText);
     ClassDB::bind_method(D_METHOD("getTouchId"), &FGUIEventContext::getTouchId);

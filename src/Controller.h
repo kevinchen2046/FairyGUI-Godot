@@ -46,7 +46,10 @@ public:
      * @param triggerEvent 是否触发 Changed 事件。
      */
     void setSelectedIndex(int value, bool triggerEvent = true);
-    void gd_setSelectedIndex(int value) { setSelectedIndex(value); }
+    /** GDScript 方法：可选择是否派发 Changed 事件。 */
+    void gd_setSelectedIndex(int value, bool triggerEvent = true) { setSelectedIndex(value, triggerEvent); }
+    /** selectedIndex 属性专用 setter；属性赋值始终派发 Changed 事件。 */
+    void gd_setSelectedIndexProperty(int value) { setSelectedIndex(value, true); }
 
     /** 获取当前选中页面的名称。 */
     const std::string& getSelectedPage() const;

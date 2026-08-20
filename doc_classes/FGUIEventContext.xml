@@ -7,6 +7,18 @@
 			<return type="void" />
 			<description>例如在右键点击事件中阻止浏览器默认菜单。</description>
 		</method>
+		<method name="getType">
+			<return type="Variant" />
+			<description>获取事件类型（UIEventDispatcher 常量值）。</description>
+		</method>
+		<method name="getSender">
+			<return type="Variant" />
+			<description>获取当前处理事件的对象；冒泡时会随处理层级变化。</description>
+		</method>
+		<method name="getTarget">
+			<return type="Variant" />
+			<description>获取最初派发事件的对象；冒泡过程中保持不变。</description>
+		</method>
 		<method name="getData">
 			<return type="Variant" />
 			<description>获取事件携带的数据。</description>

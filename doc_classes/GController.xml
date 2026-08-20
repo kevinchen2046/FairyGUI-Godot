@@ -6,7 +6,13 @@
 		<method name="setSelectedIndex">
 			<return type="void" />
 			<param index="0" name="index" type="Variant" />
+			<param index="1" name="trigger_event" type="Variant" />
 			<description>设置当前选中的页面索引。</description>
+		</method>
+		<method name="_setSelectedIndexProperty">
+			<return type="void" />
+			<param index="0" name="index" type="Variant" />
+			<description></description>
 		</method>
 		<method name="getSelectedIndex">
 			<return type="Variant" />
@@ -100,7 +106,7 @@
 		</method>
 	</methods>
 	<members>
-		<member name="selectedIndex" type="int" setter="setSelectedIndex" getter="getSelectedIndex"></member>
+		<member name="selectedIndex" type="int" setter="_setSelectedIndexProperty" getter="getSelectedIndex"></member>
 		<member name="pageCount" type="int" setter="" getter="getPageCount"></member>
 		<member name="pageIds" type="Variant" setter="" getter="getPageIds"></member>
 		<member name="pageNames" type="Variant" setter="" getter="getPageNames"></member>
