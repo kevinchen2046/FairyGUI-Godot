@@ -12,3 +12,22 @@ linux.debug.x86_64 = "res://addons/fairygui/bin/libfairygui.linux.editor.x86_64.
 linux.release.x86_64 = "res://addons/fairygui/bin/libfairygui.linux.template_release.x86_64.so"
 macos.debug = "res://addons/fairygui/bin/libfairygui.macos.editor.framework"
 macos.release = "res://addons/fairygui/bin/libfairygui.macos.template_release.framework"
+android.debug.arm64 = "res://addons/fairygui/bin/libfairygui.android.template_debug.arm64.so"
+android.release.arm64 = "res://addons/fairygui/bin/libfairygui.android.template_release.arm64.so"
+android.debug.x86_64 = "res://addons/fairygui/bin/libfairygui.android.template_debug.x86_64.so"
+android.release.x86_64 = "res://addons/fairygui/bin/libfairygui.android.template_release.x86_64.so"
+ios.debug = "res://addons/fairygui/bin/libfairygui.ios.template_debug.xcframework"
+ios.release = "res://addons/fairygui/bin/libfairygui.ios.template_release.xcframework"
+web.debug.threads.wasm32 = "res://addons/fairygui/bin/libfairygui.web.template_debug.wasm32.wasm"
+web.release.threads.wasm32 = "res://addons/fairygui/bin/libfairygui.web.template_release.wasm32.wasm"
+web.debug.wasm32 = "res://addons/fairygui/bin/libfairygui.web.template_debug.wasm32.nothreads.wasm"
+web.release.wasm32 = "res://addons/fairygui/bin/libfairygui.web.template_release.wasm32.nothreads.wasm"
+
+[dependencies]
+
+ios.debug = {
+  "res://addons/fairygui/bin/libgodot-cpp.ios.template_debug.xcframework": ""
+}
+ios.release = {
+  "res://addons/fairygui/bin/libgodot-cpp.ios.template_release.xcframework": ""
+}
