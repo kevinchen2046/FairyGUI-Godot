@@ -37,8 +37,24 @@ if env["target"] in ["editor", "template_debug", "template_release"]:
         print("Not including class reference as we're targeting a pre-4.3 baseline.")
 
 suffix = env["suffix"]
-library = env.SharedLibrary(
-    "examples/addons/fairygui/bin/libfairygui" + suffix + env["SHLIBSUFFIX"],
-    source=sources,
-)
+if env["platform"] == "macos":
+    library = env.SharedLibrary(
+        "examples/addons/fairygui/bin/libfairygui.{}.{}.framework/libfairygui.{}.{}".format(
+            env["platform"], env["target"], env["platform"], env["target"]
+        ),
+        source=sources,
+    )
+elif env["platform"] == "ios":
+    ios_variant = ".simulator" if env["ios_simulator"] else ""
+    library = env.StaticLibrary(
+        "examples/addons/fairygui/bin/libfairygui.{}.{}{}.a".format(
+            env["platform"], env["target"], ios_variant
+        ),
+        source=sources,
+    )
+else:
+    library = env.SharedLibrary(
+        "examples/addons/fairygui/bin/libfairygui" + suffix + env["SHLIBSUFFIX"],
+        source=sources,
+    )
 Default(library)
