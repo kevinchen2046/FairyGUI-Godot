@@ -66,7 +66,7 @@ public:
     bool isWrapEnabled() const { return _wrapEnabled; }
 
     /// @brief 获取文本渲染尺寸
-    Vector2 getTextSize() const { return Vector2(getTextWidth(), getTextHeight()); }
+    Vector2 getTextSize() const;
 
     /// @brief 设置内容尺寸
     void setContentSize(const Vector2& size) { _contentSize = size; }

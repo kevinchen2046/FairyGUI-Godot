@@ -198,7 +198,7 @@ HtmlElement *FUIRichText::getRendererElement(Node *p_node) const
 Vector2 FUIRichText::measureRendererNode(Node *p_node) const
 {
     if (FUILabel *label = Object::cast_to<FUILabel>(p_node))
-        return Vector2(label->getTextWidth(), label->getTextHeight());
+        return label->getTextSize();
     if (HtmlElement *element = getRendererElement(p_node))
     {
         if (element->obj != nullptr)
@@ -368,7 +368,10 @@ void FUIRichText::applyGrayedToLabels(bool grayed)
 
 void FUIRichText::setDimensions(float width, float height)
 {
-    if ((_numLines > 1 && width != _dimensionsX) || width < _contentWidth)
+    const bool widthChanged = width != _dimensionsX;
+    const bool heightChanged = height != _dimensionsY;
+    if ((_overflow != 0 && widthChanged)
+            || ((_overflow == 1 || _overflow == 2) && heightChanged && _textFormat.verticalAlign != 0))
         _dirty = true;
     _dimensionsX = width;
     _dimensionsY = height;
@@ -425,7 +428,10 @@ void FUIRichText::setText(const std::string& value)
     _numLines = 0;
 
     if (_clipContainer)
+    {
+        setNodePosition(_clipContainer, Vector2());
         resetRendererChildren();
+    }
 
     if (value.empty())
     {
@@ -513,7 +519,6 @@ void FUIRichText::formatText()
             const std::string& text = element->text;
             String textStr = GObject::toGodotStr(text);
             int startPos = 0;
-            bool first = true;
             while (startPos < textStr.length())
             {
                 int endPos = textStr.find("\n", startPos);
@@ -521,14 +526,14 @@ void FUIRichText::formatText()
                 String segment = hasNewline
                     ? textStr.substr(startPos, endPos - startPos)
                     : textStr.substr(startPos);
-                if (!first && hasNewline)
-                    addNewLine();
                 if (!segment.is_empty())
                     handleTextRenderer(element, godotStrToStd(segment));
-                first = false;
 
                 if (hasNewline)
+                {
+                    addNewLine();
                     startPos = endPos + 1;
+                }
                 else
                     startPos = textStr.length();
             }
@@ -793,7 +798,10 @@ void FUIRichText::formarRenderers()
     if (delta != 0)
     {
         if (_clipContainer)
-            offsetNodePosition(_clipContainer, Vector2(0, delta));
+        {
+            for (int i = 0; i < _clipContainer->get_child_count(); i++)
+                offsetNodePosition(_clipContainer->get_child(i), Vector2(0, delta));
+        }
         else
         {
             for (int i = 0; i < get_child_count(); i++)

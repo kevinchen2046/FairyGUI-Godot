@@ -279,7 +279,8 @@ std::string GTextField::parseTemplate(const char* text)
 
 GBasicTextField::GBasicTextField() : _label(nullptr),
                                      _richText(nullptr),
-                                     _updatingSize(false)
+                                     _updatingSize(false),
+                                     _singleLine(false)
 {
     _touchDisabled = true;
 }
@@ -307,7 +308,46 @@ void GBasicTextField::syncRichTextSettings()
 
     _richText->getTextFormat()->setFormat(*_label->getTextFormat());
     configureRichTextAutoSize(_autoSize);
-    _richText->setDimensions(_size.width, _size.height);
+    syncTextDimensions();
+}
+
+void GBasicTextField::syncTextDimensions()
+{
+    if (!_label)
+        return;
+
+    Vector2 dimensions;
+    if (_autoSize == AutoSizeType::BOTH)
+        dimensions = Vector2(0, 0);
+    else if (_autoSize == AutoSizeType::HEIGHT)
+        dimensions = Vector2(_size.width, 0);
+    else
+        dimensions = Vector2(_size.width, _size.height);
+
+    _label->setContentSize(dimensions);
+    if (_richText)
+        _richText->setDimensions(_size.width, _size.height);
+}
+
+void GBasicTextField::updateShrink()
+{
+    if (!_label)
+        return;
+
+    _label->setDrawFontSize(0);
+    if (_ubbEnabled || _autoSize != AutoSizeType::SHRINK || _text.empty()
+            || _size.width <= 0 || _size.height <= 0)
+        return;
+
+    int fontSize = (int)getTextFormat()->fontSize;
+    while (fontSize > 1)
+    {
+        _label->setDrawFontSize(fontSize);
+        Vector2 sz = _label->getTextSize();
+        if (sz.x <= _size.width && sz.y <= _size.height)
+            break;
+        fontSize--;
+    }
 }
 
 void GBasicTextField::updateDisplayMode()
@@ -369,15 +409,10 @@ void GBasicTextField::setAutoSize(AutoSizeType value)
 {
     _autoSize = value;
     if (_label)
-    {
-        // BOTH 模式按 FairyGUI 语义单行扩展；其余模式在固定宽度内换行。
-        _label->setWrapEnabled(!isSingleLine() && value != AutoSizeType::BOTH);
-        _label->_contentSize = Vector2(_size.width, _size.height);
-    }
+        _label->setWrapEnabled(!_singleLine);
 
     configureRichTextAutoSize(value);
-    if (_richText)
-        _richText->setDimensions(_size.width, _size.height);
+    syncTextDimensions();
 
     if (!_underConstruct)
         updateSize();
@@ -385,9 +420,15 @@ void GBasicTextField::setAutoSize(AutoSizeType value)
 
 void GBasicTextField::setSingleLine(bool value)
 {
-    _label->setWrapEnabled(!value && _autoSize != AutoSizeType::BOTH);
+    if (_singleLine == value)
+        return;
+
+    _singleLine = value;
+    _label->setWrapEnabled(!_singleLine);
     if (!_underConstruct)
     {
+        if (_ubbEnabled)
+            setTextFieldText();
         updateSize();
         _label->queue_redraw();
     }
@@ -429,13 +470,17 @@ void GBasicTextField::updateSize()
 
     _updatingSize = true;
 
+    syncTextDimensions();
     Vector2 sz = _ubbEnabled ? _richText->get_content_size() : _label->getTextSize();
     if (_autoSize == AutoSizeType::BOTH)
         setSize(sz.x, sz.y);
     else if (_autoSize == AutoSizeType::HEIGHT)
         setHeight(sz.y);
+    else if (_autoSize == AutoSizeType::SHRINK)
+        updateShrink();
 
     _updatingSize = false;
+    syncTextDimensions();
 }
 
 void GBasicTextField::handleSizeChanged()
@@ -443,26 +488,8 @@ void GBasicTextField::handleSizeChanged()
     if (_updatingSize)
         return;
 
-    _label->_contentSize = Vector2(_size.width, _size.height);
-    if (_richText)
-        _richText->setDimensions(_size.width, _size.height);
-
-    if (!_ubbEnabled && _autoSize == AutoSizeType::SHRINK && !_text.empty() && _size.width > 0 && _size.height > 0)
-    {
-        int fontSize = (int)getTextFormat()->fontSize;
-        while (fontSize > 1)
-        {
-            _label->setDrawFontSize(fontSize);
-            Vector2 sz = _label->getTextSize();
-            if (sz.x <= _size.width && sz.y <= _size.height)
-                break;
-            fontSize--;
-        }
-    }
-    else
-    {
-        _label->setDrawFontSize(0);
-    }
+    syncTextDimensions();
+    updateShrink();
 
     _label->queue_redraw();
 
@@ -474,6 +501,7 @@ void GBasicTextField::handleSizeChanged()
             {
                 float height = _ubbEnabled ? _richText->get_content_size().y : _label->getTextSize().y;
                 setSizeDirectly(_size.width, height);
+                syncTextDimensions();
             }
         }
     }
@@ -496,6 +524,13 @@ void GBasicTextField::_bind_methods()
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "singleLine"), "setSingleLine", "isSingleLine");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "autoSize"), "setAutoSize", "getAutoSize");
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "ubbEnabled"), "setUBBEnabled", "isUBBEnabled");
+}
+
+Vector2 GBasicTextField::getTextSize()
+{
+    if (_ubbEnabled)
+        return _richText ? _richText->get_content_size() : Vector2();
+    return _label ? _label->getTextSize() : Vector2();
 }
 
 Vector2 GTextField::getTextSize()
@@ -540,5 +575,3 @@ void GTextField::gd_setTemplateVars(const Dictionary& vars) {
 }
 
 NS_FGUI_END
-
-

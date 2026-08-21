@@ -46,9 +46,9 @@ static Vector2 fui_measure_text(const Ref<Font>& font, const String& text, int f
     if (wrap)
         return font->get_multiline_string_size(sanitized, fui_text_h_align(align), maxWidth, fontSize,
                 -1, TextServer::BREAK_MANDATORY | TextServer::BREAK_WORD_BOUND, TextServer::JUSTIFICATION_NONE,
-                TextServer::DIRECTION_LTR);
+                TextServer::DIRECTION_AUTO);
     return font->get_string_size(sanitized, HORIZONTAL_ALIGNMENT_LEFT, -1, fontSize,
-            TextServer::JUSTIFICATION_NONE, TextServer::DIRECTION_LTR);
+            TextServer::JUSTIFICATION_NONE, TextServer::DIRECTION_AUTO);
 }
 
 static void fui_draw_text(CanvasItem* item, const Ref<Font>& font, const Vector2& pos, const String& text,
@@ -62,12 +62,12 @@ static void fui_draw_text(CanvasItem* item, const Ref<Font>& font, const Vector2
     {
         item->draw_multiline_string(font, pos, sanitized, fui_text_h_align(align), drawWidth, fontSize, -1, color,
                 TextServer::BREAK_MANDATORY | TextServer::BREAK_WORD_BOUND, TextServer::JUSTIFICATION_NONE,
-                TextServer::DIRECTION_LTR);
+                TextServer::DIRECTION_AUTO);
     }
     else
     {
         item->draw_string(font, pos, sanitized, hAlign, drawWidth, fontSize, color,
-                TextServer::JUSTIFICATION_NONE, TextServer::DIRECTION_LTR);
+                TextServer::JUSTIFICATION_NONE, TextServer::DIRECTION_AUTO);
     }
 }
 
@@ -335,34 +335,34 @@ static float fui_font_style_extra_width(const Ref<Font>& font, const TextFormat*
     return extra;
 }
 
-float FUILabel::getTextWidth() const
+Vector2 FUILabel::getTextSize() const
 {
-    if (_text.empty()) return 0;
+    if (_text.empty())
+        return Vector2();
+
     Ref<Font> font = _drawFont.is_valid() ? _drawFont : _bmFont;
     if (font.is_valid())
     {
         int fontSize = getDrawFontSize();
-        bool wrap = _wrapEnabled && _contentSize.x > 0;
-        float maxWidth = wrap ? _contentSize.x : -1;
-        Vector2 measured = fui_measure_text(font, GObject::toGodotStr(_text), fontSize, wrap, maxWidth, _textFormat->align);
-        float width = measured.x + fui_font_style_extra_width(font, _textFormat, fontSize, measured.y);
-        return Math::ceil(width);
+        const bool multiline = _wrapEnabled;
+        const float maxWidth = multiline && _contentSize.x > 0 ? _contentSize.x : -1;
+        Vector2 measured = fui_measure_text(font, GObject::toGodotStr(_text), fontSize,
+                multiline, maxWidth, _textFormat->align);
+        measured.x = Math::ceil(measured.x
+                + fui_font_style_extra_width(font, _textFormat, fontSize, measured.y));
+        return measured;
     }
-    return 0;
+    return Vector2(0, getDrawFontSize());
+}
+
+float FUILabel::getTextWidth() const
+{
+    return getTextSize().x;
 }
 
 float FUILabel::getTextHeight() const
 {
-    if (_text.empty()) return 0;
-    Ref<Font> font = _drawFont.is_valid() ? _drawFont : _bmFont;
-    if (font.is_valid())
-    {
-        int fontSize = getDrawFontSize();
-        bool wrap = _wrapEnabled && _contentSize.x > 0;
-        float maxWidth = wrap ? _contentSize.x : -1;
-        return fui_measure_text(font, GObject::toGodotStr(_text), fontSize, wrap, maxWidth, _textFormat->align).y;
-    }
-    return getDrawFontSize();
+    return getTextSize().y;
 }
 
 void FUILabel::updateText()
@@ -402,7 +402,7 @@ void FUILabel::_draw()
 
     Color textColor = _grayed ? toGrayed(_textFormat->color) : _textFormat->color;
     int fontSize = getDrawFontSize();
-    bool wrap = _wrapEnabled && _contentSize.x > 0;
+    bool wrap = _wrapEnabled;
     const float boxWidth = _contentSize.x > 0 ? _contentSize.x : -1;
     const bool manualHAlignOffset = !wrap && boxWidth > 0;
     String godotText = fui_sanitize_text(GObject::toGodotStr(_text));
@@ -412,8 +412,9 @@ void FUILabel::_draw()
     float fontAscent = font.is_valid() ? font->get_ascent(fontSize) : fontSize * 0.8f;
     if (_contentSize.x > 0 || _contentSize.y > 0)
     {
-        float textW = getTextWidth();
-        float textH = getTextHeight();
+        Vector2 textSize = getTextSize();
+        float textW = textSize.x;
+        float textH = textSize.y;
         if (manualHAlignOffset)
         {
             if (_textFormat->align == 1)      offset.x = (_contentSize.x - textW) * 0.5f;

@@ -113,11 +113,12 @@ public:
     virtual void setAutoSize(AutoSizeType value) override;
     virtual void setUBBEnabled(bool value) override;
 
-    virtual bool isSingleLine() const override { return _label ? !_label->isWrapEnabled() : false; }
+    virtual bool isSingleLine() const override { return _singleLine; }
     virtual void setSingleLine(bool value) override;
 
     virtual TextFormat* getTextFormat() const override { return _label ? _label->getTextFormat() : nullptr; }
     virtual void applyTextFormat() override;
+    virtual Vector2 getTextSize() override;
 
 protected:
     virtual void handleInit() override;
@@ -129,12 +130,15 @@ protected:
 
 private:
     void syncRichTextSettings();
+    void syncTextDimensions();
+    void updateShrink();
     void updateDisplayMode();
     void configureRichTextAutoSize(AutoSizeType value);
 
     FUILabel* _label;          ///< 纯文本渲染节点。
     FUIRichText* _richText;    ///< 富文本渲染节点。
     bool _updatingSize;
+    bool _singleLine;
 };
 
 NS_FGUI_END
