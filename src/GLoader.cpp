@@ -37,7 +37,9 @@ GLoader::GLoader()
     _content(nullptr),
     _content2(nullptr),
     _playAction(nullptr),
-    _externalFrame(nullptr)
+    _externalFrame(nullptr),
+    _textureFilter(CanvasItem::TEXTURE_FILTER_LINEAR),
+    _textureFilterOverride(false)
 {
 	_touchable = false; // icon, not independently interactive
 }
@@ -260,7 +262,13 @@ void GLoader::loadFromPackage()
             ((FUISprite*)_content)->setRotated(_contentItem->imageFrame.rotated);
             ((FUISprite*)_content)->setImageFrameInfo(_contentItem->imageFrame.originalSize, _contentItem->imageFrame.offset);
             _content->set_content_size(_sourceSize);
-            _content->setSmoothing(_contentItem->smoothing);
+            if (!_textureFilterOverride)
+            {
+                _content->setSmoothing(_contentItem->smoothing);
+                _textureFilter = _contentItem->smoothing
+                    ? CanvasItem::TEXTURE_FILTER_LINEAR
+                    : CanvasItem::TEXTURE_FILTER_NEAREST;
+            }
             _content->setTexture(_contentItem->texture);
             if (_contentItem->hasScale9Grid)
                 _content->setScale9Grid(_contentItem->scale9Grid);
@@ -269,7 +277,13 @@ void GLoader::loadFromPackage()
         else if (_contentItem->type == PackageItemType::MOVIECLIP)
         {
             _contentStatus = 2;
-            _content->setSmoothing(_contentItem->smoothing);
+            if (!_textureFilterOverride)
+            {
+                _content->setSmoothing(_contentItem->smoothing);
+                _textureFilter = _contentItem->smoothing
+                    ? CanvasItem::TEXTURE_FILTER_LINEAR
+                    : CanvasItem::TEXTURE_FILTER_NEAREST;
+            }
             if (_playAction == nullptr)
             {
                 _playAction = ActionMovieClip::create(_contentItem->movieclip, _contentItem->repeatDelay, _contentItem->swing);
@@ -691,6 +705,14 @@ void GLoader::_bind_methods()
     ClassDB::bind_integer_constant(get_class_static(), "LoaderFillType", "SCALE_FREE", static_cast<int64_t>(LoaderFillType::SCALE_FREE));
     ClassDB::bind_integer_constant(get_class_static(), "LoaderFillType", "SCALE_NO_BORDER", static_cast<int64_t>(LoaderFillType::SCALE_NO_BORDER));
 
+    ClassDB::bind_integer_constant(get_class_static(), "TextureFilter", "PARENT_NODE", CanvasItem::TEXTURE_FILTER_PARENT_NODE);
+    ClassDB::bind_integer_constant(get_class_static(), "TextureFilter", "NEAREST", CanvasItem::TEXTURE_FILTER_NEAREST);
+    ClassDB::bind_integer_constant(get_class_static(), "TextureFilter", "LINEAR", CanvasItem::TEXTURE_FILTER_LINEAR);
+    ClassDB::bind_integer_constant(get_class_static(), "TextureFilter", "NEAREST_WITH_MIPMAPS", CanvasItem::TEXTURE_FILTER_NEAREST_WITH_MIPMAPS);
+    ClassDB::bind_integer_constant(get_class_static(), "TextureFilter", "LINEAR_WITH_MIPMAPS", CanvasItem::TEXTURE_FILTER_LINEAR_WITH_MIPMAPS);
+    ClassDB::bind_integer_constant(get_class_static(), "TextureFilter", "NEAREST_WITH_MIPMAPS_ANISOTROPIC", CanvasItem::TEXTURE_FILTER_NEAREST_WITH_MIPMAPS_ANISOTROPIC);
+    ClassDB::bind_integer_constant(get_class_static(), "TextureFilter", "LINEAR_WITH_MIPMAPS_ANISOTROPIC", CanvasItem::TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC);
+
     ClassDB::bind_method(D_METHOD("setURL", "url"), &GLoader::gd_setURL);
     ClassDB::bind_method(D_METHOD("getURL"), &GLoader::gd_getURL);
 
@@ -743,6 +765,13 @@ void GLoader::_bind_methods()
     ClassDB::bind_method(D_METHOD("setTexture", "texture"), &GLoader::setTexture);
     ClassDB::bind_method(D_METHOD("getTexture"), &GLoader::getTexture);
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "texture", PROPERTY_HINT_RESOURCE_TYPE, "Texture2D"), "setTexture", "getTexture");
+
+    ClassDB::bind_method(D_METHOD("setTextureFilter", "filter"), &GLoader::setTextureFilter);
+    ClassDB::bind_method(D_METHOD("getTextureFilter"), &GLoader::getTextureFilter);
+    ClassDB::bind_method(D_METHOD("resetTextureFilter"), &GLoader::resetTextureFilter);
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "textureFilter", PROPERTY_HINT_ENUM,
+        "Parent Node,Nearest,Linear,Nearest Mipmap,Linear Mipmap,Nearest Mipmap Anisotropic,Linear Mipmap Anisotropic"),
+        "setTextureFilter", "getTextureFilter");
 }
 
 void GLoader::gd_setURL(const String& value) { setURL(value.utf8().get_data()); }
@@ -774,6 +803,34 @@ void GLoader::setTexture(const Ref<Texture2D>& value)
     _contentStatus = 4; // external
     _url.clear();
     updateLayout();
+}
+
+int GLoader::getTextureFilter() const
+{
+    return _textureFilter;
+}
+
+void GLoader::setTextureFilter(int value)
+{
+    if (value < CanvasItem::TEXTURE_FILTER_PARENT_NODE || value >= CanvasItem::TEXTURE_FILTER_MAX)
+    {
+        print_line("FairyGUI: invalid GLoader texture filter: ", value);
+        return;
+    }
+
+    _textureFilter = value;
+    _textureFilterOverride = true;
+    if (_content != nullptr)
+        _content->set_texture_filter(static_cast<CanvasItem::TextureFilter>(value));
+}
+
+void GLoader::resetTextureFilter()
+{
+    _textureFilterOverride = false;
+    const bool smoothing = _contentItem == nullptr || _contentItem->smoothing;
+    _textureFilter = smoothing ? CanvasItem::TEXTURE_FILTER_LINEAR : CanvasItem::TEXTURE_FILTER_NEAREST;
+    if (_content != nullptr)
+        _content->setSmoothing(smoothing);
 }
 
 NS_FGUI_END

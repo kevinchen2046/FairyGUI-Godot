@@ -124,6 +124,19 @@
 			<return type="Variant" />
 			<description>直接设置/获取纹理（绕过 URL 加载机制）。</description>
 		</method>
+		<method name="setTextureFilter">
+			<return type="void" />
+			<param index="0" name="filter" type="Variant" />
+			<description>显式设置后优先于包资源的“平滑”属性，更换 URL 后仍然生效。</description>
+		</method>
+		<method name="getTextureFilter">
+			<return type="Variant" />
+			<description>获取纹理过滤模式，对应 Godot CanvasItem.TextureFilter。</description>
+		</method>
+		<method name="resetTextureFilter">
+			<return type="void" />
+			<description>清除显式设置，重新使用包资源的“平滑”属性。</description>
+		</method>
 	</methods>
 	<members>
 		<member name="align" type="int" setter="setAlign" getter="getAlign"></member>
@@ -138,6 +151,7 @@
 		<member name="fillAmount" type="float" setter="setFillAmount" getter="getFillAmount"></member>
 		<member name="imageColor" type="Color" setter="setColor" getter="getColor"></member>
 		<member name="texture" type="Object" setter="setTexture" getter="getTexture"></member>
+		<member name="textureFilter" type="int" setter="setTextureFilter" getter="getTextureFilter"></member>
 	</members>
 	<signals>
 	</signals>
@@ -148,5 +162,12 @@
 		<constant name="LoaderFillType_SCALE_MATCH_WIDTH" value="0"></constant>
 		<constant name="LoaderFillType_SCALE_FREE" value="0"></constant>
 		<constant name="LoaderFillType_SCALE_NO_BORDER" value="0"></constant>
+		<constant name="TextureFilter_PARENT_NODE" value="0"></constant>
+		<constant name="TextureFilter_NEAREST" value="0"></constant>
+		<constant name="TextureFilter_LINEAR" value="0"></constant>
+		<constant name="TextureFilter_NEAREST_WITH_MIPMAPS" value="0"></constant>
+		<constant name="TextureFilter_LINEAR_WITH_MIPMAPS" value="0"></constant>
+		<constant name="TextureFilter_NEAREST_WITH_MIPMAPS_ANISOTROPIC" value="0"></constant>
+		<constant name="TextureFilter_LINEAR_WITH_MIPMAPS_ANISOTROPIC" value="0"></constant>
 	</constants>
 </class>

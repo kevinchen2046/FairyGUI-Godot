@@ -33,6 +33,7 @@ std::string UIConfig::popupMenu = "";
 std::string UIConfig::popupMenu_seperator = "";
 
 std::unordered_map<std::string, UIConfig::FontNameItem> UIConfig::_fontNames;
+std::unordered_map<std::string, Ref<Font>> UIConfig::_loadedFonts;
 
 bool UIConfig::isFontFilePath(const std::string& path)
 {
@@ -108,6 +109,12 @@ const std::string& UIConfig::getRealFontName(const std::string& aliasName, bool*
 
 Ref<Font> UIConfig::loadFont(const std::string& resolvedName, bool is_file)
 {
+    const std::string cacheKey = (is_file ? "file:" : "system:") + resolvedName;
+    auto cached = _loadedFonts.find(cacheKey);
+    if (cached != _loadedFonts.end())
+        return cached->second;
+
+    Ref<Font> result;
     if (!is_file)
     {
         Ref<SystemFont> sysFont;
@@ -119,27 +126,37 @@ Ref<Font> UIConfig::loadFont(const std::string& resolvedName, bool is_file)
         Vector<String> names = String(resolvedName.c_str()).split(",");
         sysFont->set_font_names(PackedStringArray(names));
 #endif
-        return sysFont;
+        result = sysFont;
     }
-
-    const String path = String::utf8(resolvedName.c_str());
-    if (path.begins_with("res://") || path.begins_with("user://"))
+    else
     {
+        const String path = String::utf8(resolvedName.c_str());
+        if (path.begins_with("res://") || path.begins_with("user://"))
+        {
 #ifdef FGUI_GDEXTENSION
-        Ref<Font> loaded = ResourceLoader::get_singleton()->load(path);
+            result = ResourceLoader::get_singleton()->load(path);
 #else
-        Ref<Font> loaded = ResourceLoader::load(path);
+            result = ResourceLoader::load(path);
 #endif
-        if (loaded.is_valid())
-            return loaded;
+        }
+
+        if (result.is_null())
+        {
+            Ref<FontFile> fontFile;
+            fontFile.instantiate();
+            if (fontFile->load_dynamic_font(path) == OK)
+                result = fontFile;
+        }
     }
 
-    Ref<FontFile> fontFile;
-    fontFile.instantiate();
-    if (fontFile->load_dynamic_font(path) == OK)
-        return fontFile;
+    if (result.is_valid())
+        _loadedFonts[cacheKey] = result;
+    return result;
+}
 
-    return Ref<Font>();
+void UIConfig::clearFontCache()
+{
+    _loadedFonts.clear();
 }
 
 NS_FGUI_END

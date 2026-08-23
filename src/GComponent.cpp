@@ -13,6 +13,7 @@
 #include "event/HitTest.h"
 #include "utils/ByteBuffer.h"
 #include "utils/ToolSet.h"
+#include <chrono>
 #include <cfloat>
 #include <unordered_map>
 #include <vector>
@@ -1442,6 +1443,23 @@ void GComponent::constructFromResource()
 
 void GComponent::constructFromResource(std::vector<GObject*>* objectPool, int poolIndex)
 {
+    const auto constructionStartedAt = std::chrono::steady_clock::now();
+    auto phaseStartedAt = constructionStartedAt;
+    auto finishPhaseMs = [&phaseStartedAt]() -> double {
+        const auto now = std::chrono::steady_clock::now();
+        const double elapsed = std::chrono::duration<double, std::milli>(now - phaseStartedAt).count();
+        phaseStartedAt = now;
+        return elapsed;
+    };
+    double headerMs = 0.0;
+    double controllersMs = 0.0;
+    double childrenMs = 0.0;
+    double relationsMs = 0.0;
+    double afterAddMs = 0.0;
+    double setupMs = 0.0;
+    double firstDisplayBuildMs = 0.0;
+    double extensionMs = 0.0;
+    double finalDisplayBuildMs = 0.0;
     PackageItem* contentItem = _packageItem->getBranch();
 
     if (!contentItem->translated)
@@ -1499,6 +1517,7 @@ void GComponent::constructFromResource(std::vector<GObject*>* objectPool, int po
         buffer->skip(8);
 
     _buildingDisplayList = true;
+    headerMs = finishPhaseMs();
 
     buffer->seek(0, 1);
 
@@ -1514,6 +1533,7 @@ void GComponent::constructFromResource(std::vector<GObject*>* objectPool, int po
         controller->setup(buffer);
         buffer->setPos(nextPos);
     }
+    controllersMs = finishPhaseMs();
 
     buffer->seek(0, 2);
 
@@ -1566,6 +1586,7 @@ void GComponent::constructFromResource(std::vector<GObject*>* objectPool, int po
 
         buffer->setPos(curPos + dataLen);
     }
+    childrenMs = finishPhaseMs();
 
     buffer->seek(0, 3);
     _relations->setup(buffer, true);
@@ -1583,6 +1604,7 @@ void GComponent::constructFromResource(std::vector<GObject*>* objectPool, int po
 
         buffer->setPos(nextPos);
     }
+    relationsMs = finishPhaseMs();
 
     buffer->seek(0, 2);
     buffer->skip(2);
@@ -1598,6 +1620,7 @@ void GComponent::constructFromResource(std::vector<GObject*>* objectPool, int po
 
         buffer->setPos(nextPos);
     }
+    afterAddMs = finishPhaseMs();
 
     buffer->seek(0, 4);
 
@@ -1649,14 +1672,17 @@ void GComponent::constructFromResource(std::vector<GObject*>* objectPool, int po
     }
 
     applyAllControllers();
+    setupMs = finishPhaseMs();
 
     _buildingDisplayList = false;
     _underConstruct = false;
 
     buildNativeDisplayList();
+    firstDisplayBuildMs = finishPhaseMs();
 
     if (contentItem->objectType != ObjectType::COMPONENT)
         constructExtension(buffer);
+    extensionMs = finishPhaseMs();
 
     // GButton::setState etc. may change gearDisplay visibility after the first build.
     buildNativeDisplayList();
@@ -1665,8 +1691,37 @@ void GComponent::constructFromResource(std::vector<GObject*>* objectPool, int po
 
     // C++ vtable 分发：GButton / GSlider 等子类覆写
     onConstruct();
+    finalDisplayBuildMs = finishPhaseMs();
+    const auto nativeConstructionMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::steady_clock::now() - constructionStartedAt).count();
+    if (nativeConstructionMs >= 50)
+    {
+        const char* packageName = contentItem->owner != nullptr ? contentItem->owner->getName().c_str() : "<unknown>";
+        print_line("FairyGUI performance: native construction for '", packageName, "/",
+            contentItem->name.c_str(), "' took ", nativeConstructionMs,
+            " ms [header=", headerMs,
+            ", controllers=", controllersMs,
+            ", children=", childrenMs,
+            ", relations=", relationsMs,
+            ", after_add=", afterAddMs,
+            ", setup=", setupMs,
+            ", display_1=", firstDisplayBuildMs,
+            ", extension=", extensionMs,
+            ", display_2_bounds=", finalDisplayBuildMs,
+            "] (children includes nested component callbacks and first-use assets).");
+    }
     // GDScript/C# 虚方法分发：用户可在 _on_construct() 中安全访问子节点
+    const auto scriptCallbackStartedAt = std::chrono::steady_clock::now();
     GDVIRTUAL_CALL(_on_construct);
+    const auto scriptCallbackMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::steady_clock::now() - scriptCallbackStartedAt).count();
+    if (scriptCallbackMs >= 50)
+    {
+        const char* packageName = contentItem->owner != nullptr ? contentItem->owner->getName().c_str() : "<unknown>";
+        print_line("FairyGUI performance: _on_construct for '", packageName, "/",
+            contentItem->name.c_str(), "' took ", scriptCallbackMs,
+            " ms. This time is spent in the attached GDScript/C# callback.");
+    }
 }
 
 void GComponent::constructExtension(ByteBuffer* buffer)

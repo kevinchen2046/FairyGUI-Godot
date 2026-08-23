@@ -104,6 +104,9 @@ public:
     /// @return Godot Font 引用
     static Ref<Font> loadFont(const std::string& resolvedName, bool is_file);
 
+    /// @brief 释放字体缓存（GDExtension 卸载时调用）。
+    static void clearFontCache();
+
 private:
     /// @brief 判断路径是否为字体文件
     static bool isFontFilePath(const std::string& path);
@@ -117,6 +120,9 @@ private:
 
     /// @brief 注册的字体映射表
     static std::unordered_map<std::string, FontNameItem> _fontNames;
+
+    /// @brief 已加载的 Godot 字体。多个文本节点必须共享同一个 Font，避免重复解析系统字体。
+    static std::unordered_map<std::string, Ref<Font>> _loadedFonts;
 };
 
 NS_FGUI_END

@@ -115,6 +115,13 @@ public:
     Ref<Texture2D> getTexture() const;
     void setTexture(const Ref<Texture2D>& value);
 
+    /** 获取纹理过滤模式，对应 Godot CanvasItem.TextureFilter。 */
+    int getTextureFilter() const;
+    /** 显式设置后优先于包资源的“平滑”属性，更换 URL 后仍然生效。 */
+    void setTextureFilter(int value);
+    /** 清除显式设置，重新使用包资源的“平滑”属性。 */
+    void resetTextureFilter();
+
     virtual Variant getProp(ObjectPropID propId) override;
     virtual void setProp(ObjectPropID propId, const Variant& value) override;
 
@@ -158,6 +165,8 @@ private:
     ActionMovieClip* _playAction; ///< 动画播放控制器。
     ImageFrame* _externalFrame;   ///< 外部加载的帧数据。
     Vector2 _sourceSize;          ///< 源素材尺寸。
+    int _textureFilter;           ///< Godot CanvasItem.TextureFilter。
+    bool _textureFilterOverride;  ///< 是否由脚本显式指定过滤模式。
 };
 
 NS_FGUI_END

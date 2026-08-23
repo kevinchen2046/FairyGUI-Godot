@@ -6,6 +6,7 @@
 #include "event/HitTest.h"
 #include "utils/ByteBuffer.h"
 #include "utils/ToolSet.h"
+#include <chrono>
 #ifdef FGUI_GDEXTENSION
 #include <godot_cpp/classes/image.hpp>
 #include <godot_cpp/classes/image_texture.hpp>
@@ -181,9 +182,21 @@ void UIPackage::removeAllPackages()
 
 Ref<GObject> UIPackage::createObject(const string& pkgName, const string& resName)
 {
+    const auto startedAt = std::chrono::steady_clock::now();
     UIPackage* pkg = UIPackage::getByName(pkgName);
     if (pkg)
-        return pkg->createObject(resName);
+    {
+        Ref<GObject> result = pkg->createObject(resName);
+        const auto elapsedMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::steady_clock::now() - startedAt).count();
+        if (elapsedMs >= 100)
+        {
+            print_line("FairyGUI performance: UIPackage.createObject('", pkgName.c_str(),
+                "', '", resName.c_str(), "') took ", elapsedMs,
+                " ms. Slow _on_construct callbacks are reported separately; otherwise this is usually synchronous first-use resource loading or native component construction.");
+        }
+        return result;
+    }
     else
     {
         print_line("FairyGUI: package not found - ", pkgName.c_str());
@@ -640,6 +653,7 @@ void* UIPackage::getItemAsset(PackageItem* item)
 
 void UIPackage::loadAtlas(PackageItem* item)
 {
+    const auto startedAt = std::chrono::steady_clock::now();
     // 通过 Godot 导入系统加载为 Texture2D，再提取 Image
 #ifdef FGUI_GDEXTENSION
     Ref<Texture2D> tex2d = ResourceLoader::get_singleton()->load(GObject::toGodotStr(item->file), "Texture2D");
@@ -650,14 +664,6 @@ void UIPackage::loadAtlas(PackageItem* item)
     {
         item->texture = _emptyTexture;
         print_line("FairyGUI: texture '", item->file.c_str(), "' not found in ", _name.c_str());
-        return;
-    }
-
-    Ref<Image> image = tex2d->get_image();
-    if (image.is_null())
-    {
-        item->texture = _emptyTexture;
-        print_line("FairyGUI: texture '", item->file.c_str(), "' has no image data in ", _name.c_str());
         return;
     }
 
@@ -675,20 +681,29 @@ void UIPackage::loadAtlas(PackageItem* item)
         alphaFilePath = item->file + "!a";
     }
 
-    if (ToolSet::isFileExist(alphaFilePath))
+    if (!ToolSet::isFileExist(alphaFilePath))
+    {
+        // Godot already owns and caches this imported texture. Reusing it avoids
+        // a GPU/CPU readback and a second full-size texture upload.
+        item->texture = tex2d;
+    }
+    else
     {
 #ifdef FGUI_GDEXTENSION
         Ref<Texture2D> alphaTex2d = ResourceLoader::get_singleton()->load(GObject::toGodotStr(alphaFilePath), "Texture2D");
 #else
         Ref<Texture2D> alphaTex2d = ResourceLoader::load(GObject::toGodotStr(alphaFilePath), "Texture2D");
 #endif
-        if (alphaTex2d.is_valid())
+        Ref<Image> image = tex2d->get_image();
+        Ref<Image> alphaImg = alphaTex2d.is_valid() ? alphaTex2d->get_image() : Ref<Image>();
+        if (image.is_valid() && alphaImg.is_valid())
         {
-            Ref<Image> alphaImg = alphaTex2d->get_image();
-            if (alphaImg.is_valid())
-            {
+            if (image->get_format() != Image::FORMAT_RGBA8)
+                image->convert(Image::FORMAT_RGBA8);
+            if (alphaImg->get_format() != Image::FORMAT_RGBA8)
+                alphaImg->convert(Image::FORMAT_RGBA8);
+
             // Combine RGB from main image, alpha from alpha image
-            // Get pixel data from both images
             int width = image->get_width();
             int height = image->get_height();
             PackedByteArray mainData = image->get_data();
@@ -697,31 +712,41 @@ void UIPackage::loadAtlas(PackageItem* item)
             int alphaW = alphaImg->get_width();
             int alphaH = alphaImg->get_height();
 
-            // Copy alpha channel from alpha image to main image
-            for (int y = 0; y < height && y < alphaH; y++)
+            // Direct pointer access avoids millions of checked set() calls on a
+            // large atlas, which previously could block createObject for seconds.
+            uint8_t* mainBytes = mainData.ptrw();
+            const uint8_t* alphaBytes = alphaData.ptr();
+            const int copyWidth = std::min(width, alphaW);
+            const int copyHeight = std::min(height, alphaH);
+            for (int y = 0; y < copyHeight; y++)
             {
-                for (int x = 0; x < width && x < alphaW; x++)
+                for (int x = 0; x < copyWidth; x++)
                 {
                     int mainIdx = (y * width + x) * 4;
                     int alphaIdx = (y * alphaW + x) * 4;
-
-                    if (mainIdx + 3 < mainData.size() && alphaIdx < alphaData.size())
-                    {
-                        // Use red channel of alpha image as the alpha of main image
-                        mainData.set(mainIdx + 3, alphaData[alphaIdx]);
-                    }
+                    mainBytes[mainIdx + 3] = alphaBytes[alphaIdx];
                 }
             }
 
             image->set_data(width, height, false, Image::FORMAT_RGBA8, mainData);
-            }  // if alphaImg
-        }  // if alphaTex2d
-    }  // if isFileExist
 
-    Ref<ImageTexture> tex;
-    tex.instantiate();
-    tex->set_image(image);
-    item->texture = tex;
+            Ref<ImageTexture> combinedTexture;
+            combinedTexture.instantiate();
+            combinedTexture->set_image(image);
+            item->texture = combinedTexture;
+        }
+        else
+        {
+            item->texture = tex2d;
+            print_line("FairyGUI: separate alpha texture '", alphaFilePath.c_str(),
+                "' could not be read; using the main atlas texture.");
+        }
+    }
+
+    const auto elapsedMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::steady_clock::now() - startedAt).count();
+    if (elapsedMs >= 50)
+        print_line("FairyGUI performance: loading atlas '", item->file.c_str(), "' took ", elapsedMs, " ms.");
 }
 
 AtlasSprite* UIPackage::getSprite(const std::string& spriteId)

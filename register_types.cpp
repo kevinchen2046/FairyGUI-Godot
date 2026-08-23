@@ -48,6 +48,7 @@ using namespace godot;
 
 // Config / Helpers
 #include "src/UIConfigHelper.h"
+#include "src/UIConfig.h"
 #include "src/UIObjectFactoryHelper.h"
 #include "src/DragDropManagerHelper.h"
 
@@ -150,6 +151,7 @@ void uninitialize_fairygui_module(ModuleInitializationLevel p_level)
         // Clear static Ref<Texture2D> to avoid exit crash (Godot resource cleanup before C++ static destructors)
         fairygui::FUISprite::clearStaticRefs();
         fairygui::UIPackage::clearStaticRefs();
+        fairygui::UIConfig::clearFontCache();
 
         // Clear GRoot singleton to release FairyGUI node tree before Godot shutdown
         fairygui::GRoot::cleanup();
