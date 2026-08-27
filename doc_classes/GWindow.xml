@@ -3,6 +3,10 @@
 	<brief_description>FairyGUI 中的窗口组件。</brief_description>
 	<description>GWindow 提供模态和非模态窗口功能。支持拖拽标题栏移动、点击关闭按钮关闭、显示/隐藏模态层等。通过 Show() 和 Hide() 控制显示。</description>
 	<methods>
+		<method name="create" qualifiers="static">
+			<return type="void" />
+			<description></description>
+		</method>
 		<method name="show">
 			<return type="void" />
 			<description></description>

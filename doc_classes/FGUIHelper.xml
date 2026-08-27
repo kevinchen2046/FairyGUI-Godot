@@ -3,6 +3,10 @@
 	<brief_description>FairyGUI 辅助工具类。</brief_description>
 	<description>FGUIHelper 提供 FairyGUI 的通用辅助功能。</description>
 	<methods>
+		<method name="getInstance" qualifiers="static">
+			<return type="Variant" />
+			<description>获取全局单例</description>
+		</method>
 		<method name="getGRoot">
 			<return type="Variant" />
 			<description></description>

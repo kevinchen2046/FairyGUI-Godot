@@ -3,6 +3,10 @@
 	<brief_description>FairyGUI UI 配置辅助类。</brief_description>
 	<description>UIConfigHelper 用于配置 FairyGUI 的全局设置，包括默认字体、按钮声音、滚动设置、全局颜色等。</description>
 	<methods>
+		<method name="getInstance" qualifiers="static">
+			<return type="Variant" />
+			<description>获取全局单例</description>
+		</method>
 		<method name="setDefaultFont">
 			<return type="void" />
 			<param index="0" name="value" type="Variant" />

@@ -35,6 +35,94 @@ std::vector<UIPackage*> UIPackage::_packageList;
 
 Ref<Texture2D> UIPackage::_emptyTexture;
 
+static PackedStringArray fui_string_vector_to_packed(const std::vector<std::string>* values)
+{
+    PackedStringArray result;
+    if (values == nullptr)
+        return result;
+    for (const std::string& value : *values)
+        result.push_back(String::utf8(value.c_str()));
+    return result;
+}
+
+static Dictionary fui_image_frame_to_dictionary(const ImageFrame& frame)
+{
+    Dictionary result;
+    result["texture"] = frame.texture;
+    result["region"] = frame.region;
+    result["rotated"] = frame.rotated;
+    result["offset"] = frame.offset;
+    result["original_size"] = frame.originalSize;
+    result["original_size_in_pixels"] = frame.originalSizeInPixels;
+    return result;
+}
+
+static Dictionary fui_package_item_to_dictionary(PackageItem* item)
+{
+    Dictionary result;
+    if (item == nullptr)
+        return result;
+
+    result["id"] = String::utf8(item->id.c_str());
+    result["name"] = String::utf8(item->name.c_str());
+    result["type"] = static_cast<int>(item->type);
+    result["object_type"] = static_cast<int>(item->objectType);
+    result["width"] = item->width;
+    result["height"] = item->height;
+    result["file"] = String::utf8(item->file.c_str());
+    result["owner"] = Ref<UIPackage>(item->owner);
+    result["url"] = item->owner != nullptr
+        ? String::utf8((UIPackage::URL_PREFIX + item->owner->getId() + item->id).c_str())
+        : String();
+    result["branches"] = fui_string_vector_to_packed(item->branches);
+    result["high_resolution"] = fui_string_vector_to_packed(item->highResolution);
+    result["smoothing"] = item->smoothing;
+    result["scale_by_tile"] = item->scaleByTile;
+    result["has_scale9_grid"] = item->hasScale9Grid;
+    result["scale9_grid"] = item->scale9Grid;
+    result["tile_grid_indice"] = item->tileGridIndice;
+    result["has_skeleton_anchor"] = item->hasSkeletonAnchor;
+    result["skeleton_anchor"] = item->skeletonAnchor;
+    return result;
+}
+
+static Variant fui_package_item_asset_to_variant(PackageItem* item)
+{
+    if (item == nullptr || item->owner == nullptr)
+        return Variant();
+
+    item->owner->getItemAsset(item);
+    switch (item->type)
+    {
+    case PackageItemType::IMAGE:
+        return fui_image_frame_to_dictionary(item->imageFrame);
+    case PackageItemType::ATLAS:
+        return item->texture;
+    case PackageItemType::FONT:
+        return item->bitmapFont != nullptr ? Variant(item->bitmapFont->getFont()) : Variant();
+    case PackageItemType::MOVIECLIP:
+    {
+        if (item->movieclip == nullptr)
+            return Variant();
+        Dictionary result;
+        result["interval"] = item->movieclip->interval;
+        result["repeat_delay"] = item->movieclip->repeatDelay;
+        result["swing"] = item->movieclip->swing;
+        Array frames;
+        for (const MovieClipFrameData& frame : item->movieclip->frames)
+        {
+            Dictionary frameInfo = fui_image_frame_to_dictionary(frame.imageData);
+            frameInfo["add_delay"] = frame.addDelay;
+            frames.push_back(frameInfo);
+        }
+        result["frames"] = frames;
+        return result;
+    }
+    default:
+        return Variant();
+    }
+}
+
 UIPackage::UIPackage()
     : _branchIndex(-1)
 {
@@ -1009,6 +1097,14 @@ void UIPackage::_bind_methods()
 {
     ClassDB::bind_method(D_METHOD("getId"), &UIPackage::gd_getId);
     ClassDB::bind_method(D_METHOD("getName"), &UIPackage::gd_getName);
+    ADD_PROPERTY(PropertyInfo(Variant::STRING, "id", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR | PROPERTY_USAGE_READ_ONLY), "", "getId");
+    ADD_PROPERTY(PropertyInfo(Variant::STRING, "name", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR | PROPERTY_USAGE_READ_ONLY), "", "getName");
+
+    ClassDB::bind_method(D_METHOD("getItem", "item_id"), &UIPackage::gd_getItem);
+    ClassDB::bind_method(D_METHOD("getItemByName", "item_name"), &UIPackage::gd_getItemByName);
+    ClassDB::bind_method(D_METHOD("getItemAssetById", "item_id"), &UIPackage::gd_getItemAssetById);
+    ClassDB::bind_method(D_METHOD("getItems"), &UIPackage::gd_getItems);
+    ClassDB::bind_method(D_METHOD("getDependencies"), &UIPackage::gd_getDependencies);
 
     ClassDB::bind_static_method(get_class_static(), D_METHOD("getById", "id"), &UIPackage::gd_getById);
     ClassDB::bind_static_method(get_class_static(), D_METHOD("getByName", "name"), &UIPackage::gd_getByName);
@@ -1020,6 +1116,16 @@ void UIPackage::_bind_methods()
     ClassDB::bind_static_method(get_class_static(), D_METHOD("createObject", "pkg_name", "res_name"), &UIPackage::gd_createObject);
     ClassDB::bind_static_method(get_class_static(), D_METHOD("createObjectFromURL", "url"), &UIPackage::gd_createObjectFromURL);
     ClassDB::bind_static_method(get_class_static(), D_METHOD("getItemURL", "pkg_name", "res_name"), &UIPackage::gd_getItemURL);
+    ClassDB::bind_static_method(get_class_static(), D_METHOD("getItemByURL", "url"), &UIPackage::gd_getItemByURL);
+    ClassDB::bind_static_method(get_class_static(), D_METHOD("normalizeURL", "url"), &UIPackage::gd_normalizeURL);
+    ClassDB::bind_static_method(get_class_static(), D_METHOD("getItemAsset", "pkg_name", "res_name", "type"), &UIPackage::gd_getItemAsset, DEFVAL(static_cast<int>(PackageItemType::UNKNOWN)));
+    ClassDB::bind_static_method(get_class_static(), D_METHOD("getItemAssetByURL", "url", "type"), &UIPackage::gd_getItemAssetByURL, DEFVAL(static_cast<int>(PackageItemType::UNKNOWN)));
+    ClassDB::bind_static_method(get_class_static(), D_METHOD("getEmptyTexture"), &UIPackage::gd_getEmptyTexture);
+
+    ClassDB::bind_static_method(get_class_static(), D_METHOD("getBranch"), &UIPackage::gd_getBranch);
+    ClassDB::bind_static_method(get_class_static(), D_METHOD("setBranch", "value"), &UIPackage::gd_setBranch);
+    ClassDB::bind_static_method(get_class_static(), D_METHOD("getVar", "key"), &UIPackage::gd_getVar);
+    ClassDB::bind_static_method(get_class_static(), D_METHOD("setVar", "key", "value"), &UIPackage::gd_setVar);
 
     ClassDB::bind_static_method(get_class_static(), D_METHOD("registerFont", "alias_name", "real_name"), &UIPackage::gd_registerFont);
     ClassDB::bind_static_method(get_class_static(), D_METHOD("setDefaultFont", "font_name"), &UIPackage::gd_setDefaultFont);
@@ -1027,6 +1133,30 @@ void UIPackage::_bind_methods()
 
 String UIPackage::gd_getId() const { return String(getId().c_str()); }
 String UIPackage::gd_getName() const { return String(getName().c_str()); }
+Dictionary UIPackage::gd_getItem(const String& itemId) { return fui_package_item_to_dictionary(getItem(itemId.utf8().get_data())); }
+Dictionary UIPackage::gd_getItemByName(const String& itemName) { return fui_package_item_to_dictionary(getItemByName(itemName.utf8().get_data())); }
+Variant UIPackage::gd_getItemAssetById(const String& itemId) { return fui_package_item_asset_to_variant(getItem(itemId.utf8().get_data())); }
+Array UIPackage::gd_getItems() const
+{
+    Array result;
+    for (PackageItem* item : _items)
+        result.push_back(fui_package_item_to_dictionary(item));
+    return result;
+}
+Array UIPackage::gd_getDependencies() const
+{
+    Array result;
+    for (const auto& dependency : _dependencies)
+    {
+        Dictionary info;
+        auto id = dependency.find("id");
+        auto name = dependency.find("name");
+        info["id"] = id != dependency.end() ? String::utf8(id->second.c_str()) : String();
+        info["name"] = name != dependency.end() ? String::utf8(name->second.c_str()) : String();
+        result.push_back(info);
+    }
+    return result;
+}
 Ref<UIPackage> UIPackage::gd_getById(const String& id) { return Ref<UIPackage>(getById(id.utf8().get_data())); }
 Ref<UIPackage> UIPackage::gd_getByName(const String& name) { return Ref<UIPackage>(getByName(name.utf8().get_data())); }
 Ref<UIPackage> UIPackage::gd_addPackage(const String& descFilePath) { return Ref<UIPackage>(addPackage(descFilePath.utf8().get_data())); }
@@ -1040,6 +1170,28 @@ Ref<GObject> UIPackage::gd_createObjectFromURL(const String& url)
     return createObjectFromURL(url.utf8().get_data());
 }
 String UIPackage::gd_getItemURL(const String& pkgName, const String& resName) { return String(getItemURL(pkgName.utf8().get_data(), resName.utf8().get_data()).c_str()); }
+Dictionary UIPackage::gd_getItemByURL(const String& url) { return fui_package_item_to_dictionary(getItemByURL(url.utf8().get_data())); }
+String UIPackage::gd_normalizeURL(const String& url) { return String::utf8(normalizeURL(url.utf8().get_data()).c_str()); }
+Variant UIPackage::gd_getItemAsset(const String& pkgName, const String& resName, int type)
+{
+    UIPackage* package = getByName(pkgName.utf8().get_data());
+    PackageItem* item = package != nullptr ? package->getItemByName(resName.utf8().get_data()) : nullptr;
+    if (item == nullptr || (type != static_cast<int>(PackageItemType::UNKNOWN) && type != static_cast<int>(item->type)))
+        return Variant();
+    return fui_package_item_asset_to_variant(item);
+}
+Variant UIPackage::gd_getItemAssetByURL(const String& url, int type)
+{
+    PackageItem* item = getItemByURL(url.utf8().get_data());
+    if (item == nullptr || (type != static_cast<int>(PackageItemType::UNKNOWN) && type != static_cast<int>(item->type)))
+        return Variant();
+    return fui_package_item_asset_to_variant(item);
+}
+Ref<Texture2D> UIPackage::gd_getEmptyTexture() { return getEmptyTexture(); }
+String UIPackage::gd_getBranch() { return String::utf8(getBranch().c_str()); }
+void UIPackage::gd_setBranch(const String& value) { setBranch(value.utf8().get_data()); }
+String UIPackage::gd_getVar(const String& key) { return String::utf8(getVar(key.utf8().get_data()).c_str()); }
+void UIPackage::gd_setVar(const String& key, const String& value) { setVar(key.utf8().get_data(), value.utf8().get_data()); }
 
 void UIPackage::gd_registerFont(const String& aliasName, const String& realName) { UIConfig::registerFont(aliasName.utf8().get_data(), realName.utf8().get_data()); }
 void UIPackage::gd_setDefaultFont(const String& fontName) { UIConfig::defaultFont = fontName.utf8().get_data(); }

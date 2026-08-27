@@ -3,6 +3,10 @@
 	<brief_description>FairyGUI UI 对象工厂辅助类。</brief_description>
 	<description>UIObjectFactoryHelper 提供扩展 UI 对象类型的注册功能，允许用户注册自定义的 UI 组件类型。</description>
 	<methods>
+		<method name="getInstance" qualifiers="static">
+			<return type="Variant" />
+			<description>获取全局单例</description>
+		</method>
 		<method name="setPackageItemExtension">
 			<return type="void" />
 			<param index="0" name="url" type="Variant" />

@@ -3,6 +3,10 @@
 	<brief_description>FairyGUI 缓动动画辅助工具。</brief_description>
 	<description>GTweenHelper 提供创建和启动缓动动画的静态方法，简化 GTweener 的使用。</description>
 	<methods>
+		<method name="getInstance" qualifiers="static">
+			<return type="Variant" />
+			<description>获取全局单例</description>
+		</method>
 		<method name="toFloat">
 			<return type="void" />
 			<param index="0" name="start" type="Variant" />

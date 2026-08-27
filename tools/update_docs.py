@@ -165,14 +165,15 @@ def parse_bind_methods(body: str) -> dict:
     # 移除行注释
     clean_body = re.sub(r'//[^\n]*', '', body)
 
-    # D_METHOD("name", "param1", ...)
+    # D_METHOD("name", "param1", ...), including static ClassDB methods.
     for m in re.finditer(
-        r'ClassDB::bind_method\s*\(\s*D_METHOD\s*\(\s*"([^"]+)"((?:\s*,\s*"[^"]*")*)\s*\)',
+        r'ClassDB::bind_(static_)?method\s*\([^D]*D_METHOD\s*\(\s*"([^"]+)"((?:\s*,\s*"[^"]*")*)\s*\)',
         clean_body,
     ):
-        name = m.group(1)
-        params = [pm.group(1) for pm in re.finditer(r'"([^"]*)"', m.group(2))]
-        methods.append({"name": name, "params": params, "virtual": False})
+        is_static = bool(m.group(1))
+        name = m.group(2)
+        params = [pm.group(1) for pm in re.finditer(r'"([^"]*)"', m.group(3))]
+        methods.append({"name": name, "params": params, "virtual": False, "static": is_static})
 
     # GDScript/C# overridable virtual methods.
     for m in re.finditer(r'GDVIRTUAL_BIND\s*\(\s*(\w+)\s*\)', clean_body):
@@ -555,8 +556,32 @@ CLASS_DESCRIPTIONS = {
 #  5. XML 生成
 # ═══════════════════════════════════════════════════════════════
 
-def _guess_return_type(method_name: str) -> str:
+def _guess_return_type(method_name: str, class_name: str = "") -> str:
     """根据方法名猜测返回类型"""
+    known = {
+        ("UIPackage", "getId"): "String",
+        ("UIPackage", "getName"): "String",
+        ("UIPackage", "getById"): "UIPackage",
+        ("UIPackage", "getByName"): "UIPackage",
+        ("UIPackage", "addPackage"): "UIPackage",
+        ("UIPackage", "createObject"): "GuiObject",
+        ("UIPackage", "createObjectFromURL"): "GuiObject",
+        ("UIPackage", "getItemURL"): "String",
+        ("UIPackage", "getItemByURL"): "Dictionary",
+        ("UIPackage", "normalizeURL"): "String",
+        ("UIPackage", "getItemAsset"): "Variant",
+        ("UIPackage", "getItemAssetByURL"): "Variant",
+        ("UIPackage", "getEmptyTexture"): "Texture2D",
+        ("UIPackage", "getBranch"): "String",
+        ("UIPackage", "getVar"): "String",
+        ("UIPackage", "getItem"): "Dictionary",
+        ("UIPackage", "getItemByName"): "Dictionary",
+        ("UIPackage", "getItemAssetById"): "Variant",
+        ("UIPackage", "getItems"): "Array",
+        ("UIPackage", "getDependencies"): "Array",
+    }
+    if (class_name, method_name) in known:
+        return known[(class_name, method_name)]
     if method_name.startswith(("get", "is", "has", "can", "should")):
         return "Variant"
     return "void"
@@ -611,9 +636,14 @@ def generate_xml(class_name: str, parsed: dict, existing_descs: dict, h_data: di
             f'\t\t\t<param index="{i}" name="{p}" type="Variant" />\n'
             for i, p in enumerate(method["params"])
         )
-        ret = _guess_return_type(mname)
+        ret = _guess_return_type(mname, class_name)
         desc = xml_escape(_resolve_method_desc(mname, class_name, existing_descs, h_methods))
-        qualifiers = ' qualifiers="virtual"' if method.get("virtual") else ''
+        qualifier_values = []
+        if method.get("virtual"):
+            qualifier_values.append("virtual")
+        if method.get("static"):
+            qualifier_values.append("static")
+        qualifiers = f' qualifiers="{" ".join(qualifier_values)}"' if qualifier_values else ''
         methods_xml += (
             f'\t\t<method name="{mname}"{qualifiers}>\n'
             f'\t\t\t<return type="{ret}" />\n'

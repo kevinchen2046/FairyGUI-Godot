@@ -92,6 +92,15 @@ public:
     static Ref<GObject> gd_createObject(const String& pkgName, const String& resName);
     static Ref<GObject> gd_createObjectFromURL(const String& url);
     static String gd_getItemURL(const String& pkgName, const String& resName);
+    static Dictionary gd_getItemByURL(const String& url);
+    static String gd_normalizeURL(const String& url);
+    static Variant gd_getItemAsset(const String& pkgName, const String& resName, int type = static_cast<int>(PackageItemType::UNKNOWN));
+    static Variant gd_getItemAssetByURL(const String& url, int type = static_cast<int>(PackageItemType::UNKNOWN));
+    static Ref<Texture2D> gd_getEmptyTexture();
+    static String gd_getBranch();
+    static void gd_setBranch(const String& value);
+    static String gd_getVar(const String& key);
+    static void gd_setVar(const String& key, const String& value);
 
     /// @brief GDScript 绑定：注册字体别名
     static void gd_registerFont(const String& aliasName, const String& realName);
@@ -130,6 +139,11 @@ public:
 
     String gd_getId() const;
     String gd_getName() const;
+    Dictionary gd_getItem(const String& itemId);
+    Dictionary gd_getItemByName(const String& itemName);
+    Variant gd_getItemAssetById(const String& itemId);
+    Array gd_getItems() const;
+    Array gd_getDependencies() const;
 
     /// @brief 获取包名称
     const std::string& getName() const { return _name; }

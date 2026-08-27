@@ -3,6 +3,10 @@
 	<brief_description>FairyGUI 拖放管理器辅助类。</brief_description>
 	<description>DragDropManagerHelper 提供拖放操作的管理接口，用于启动、控制和监听拖放行为。</description>
 	<methods>
+		<method name="getInstance" qualifiers="static">
+			<return type="Variant" />
+			<description>获取全局单例</description>
+		</method>
 		<method name="startDrag">
 			<return type="void" />
 			<param index="0" name="icon" type="Variant" />

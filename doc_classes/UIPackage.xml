@@ -4,15 +4,139 @@
 	<description>UIPackage 负责加载和管理 FairyGUI 编辑器导出的 UI 包文件。通过 addPackage() 加载包，通过 createObject() 创建包内的 UI 对象。</description>
 	<methods>
 		<method name="getId">
-			<return type="Variant" />
+			<return type="String" />
 			<description>获取包 ID</description>
 		</method>
 		<method name="getName">
-			<return type="Variant" />
+			<return type="String" />
 			<description>获取包名称</description>
+		</method>
+		<method name="getItem">
+			<return type="Dictionary" />
+			<param index="0" name="item_id" type="Variant" />
+			<description>获取包内的资源项</description>
+		</method>
+		<method name="getItemByName">
+			<return type="Dictionary" />
+			<param index="0" name="item_name" type="Variant" />
+			<description>通过名称获取包内的资源项</description>
+		</method>
+		<method name="getItemAssetById">
+			<return type="Variant" />
+			<param index="0" name="item_id" type="Variant" />
+			<description></description>
+		</method>
+		<method name="getItems">
+			<return type="Array" />
+			<description></description>
+		</method>
+		<method name="getDependencies">
+			<return type="Array" />
+			<description></description>
+		</method>
+		<method name="getById" qualifiers="static">
+			<return type="UIPackage" />
+			<param index="0" name="id" type="Variant" />
+			<description>通过 ID 获取 UI 包</description>
+		</method>
+		<method name="getByName" qualifiers="static">
+			<return type="UIPackage" />
+			<param index="0" name="name" type="Variant" />
+			<description>通过名称获取 UI 包</description>
+		</method>
+		<method name="addPackage" qualifiers="static">
+			<return type="UIPackage" />
+			<param index="0" name="asset_path" type="Variant" />
+			<description>加载 UI 包</description>
+		</method>
+		<method name="removePackage" qualifiers="static">
+			<return type="void" />
+			<param index="0" name="package_id_or_name" type="Variant" />
+			<description>移除 UI 包</description>
+		</method>
+		<method name="removeAllPackages" qualifiers="static">
+			<return type="void" />
+			<description>移除所有已加载的 UI 包</description>
+		</method>
+		<method name="createObject" qualifiers="static">
+			<return type="GuiObject" />
+			<param index="0" name="pkg_name" type="Variant" />
+			<param index="1" name="res_name" type="Variant" />
+			<description>通过 PackageItem 创建 UI 对象</description>
+		</method>
+		<method name="createObjectFromURL" qualifiers="static">
+			<return type="GuiObject" />
+			<param index="0" name="url" type="Variant" />
+			<description>通过 URL 创建 UI 对象（URL 格式：ui://包名/资源名）</description>
+		</method>
+		<method name="getItemURL" qualifiers="static">
+			<return type="String" />
+			<param index="0" name="pkg_name" type="Variant" />
+			<param index="1" name="res_name" type="Variant" />
+			<description>获取 UI 资源的完整 URL</description>
+		</method>
+		<method name="getItemByURL" qualifiers="static">
+			<return type="Dictionary" />
+			<param index="0" name="url" type="Variant" />
+			<description>通过 URL 获取 PackageItem</description>
+		</method>
+		<method name="normalizeURL" qualifiers="static">
+			<return type="String" />
+			<param index="0" name="url" type="Variant" />
+			<description>标准化 URL 格式</description>
+		</method>
+		<method name="getItemAsset" qualifiers="static">
+			<return type="Variant" />
+			<param index="0" name="pkg_name" type="Variant" />
+			<param index="1" name="res_name" type="Variant" />
+			<param index="2" name="type" type="Variant" />
+			<description>获取资源项的资产数据</description>
+		</method>
+		<method name="getItemAssetByURL" qualifiers="static">
+			<return type="Variant" />
+			<param index="0" name="url" type="Variant" />
+			<param index="1" name="type" type="Variant" />
+			<description>按 URL 获取资源</description>
+		</method>
+		<method name="getEmptyTexture" qualifiers="static">
+			<return type="Texture2D" />
+			<description>获取空白占位纹理（静态）</description>
+		</method>
+		<method name="getBranch" qualifiers="static">
+			<return type="String" />
+			<description>获取当前分支名称（静态）</description>
+		</method>
+		<method name="setBranch" qualifiers="static">
+			<return type="void" />
+			<param index="0" name="value" type="Variant" />
+			<description>设置当前分支名称（用于多语言/多平台资源切换）</description>
+		</method>
+		<method name="getVar" qualifiers="static">
+			<return type="String" />
+			<param index="0" name="key" type="Variant" />
+			<description>获取全局变量</description>
+		</method>
+		<method name="setVar" qualifiers="static">
+			<return type="void" />
+			<param index="0" name="key" type="Variant" />
+			<param index="1" name="value" type="Variant" />
+			<description>设置全局变量</description>
+		</method>
+		<method name="registerFont" qualifiers="static">
+			<return type="void" />
+			<param index="0" name="alias_name" type="Variant" />
+			<param index="1" name="real_name" type="Variant" />
+			<description></description>
+		</method>
+		<method name="setDefaultFont" qualifiers="static">
+			<return type="void" />
+			<param index="0" name="font_name" type="Variant" />
+			<description></description>
 		</method>
 	</methods>
 	<members>
+		<member name="id" type="String" setter="" getter="getId"></member>
+		<member name="name" type="String" setter="" getter="getName"></member>
 	</members>
 	<signals>
 	</signals>

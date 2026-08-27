@@ -4,6 +4,26 @@
 	<description>GRoot 是 FairyGUI UI 层级结构的顶层组件。它管理所有弹出窗口（Popup）、模态层（ModalLayer）、工具提示（Tooltips）和顶层显示对象。
 通过 GRoot.inst() 获取全局单例。</description>
 	<methods>
+		<method name="create" qualifiers="static">
+			<return type="void" />
+			<param index="0" name="parent" type="Variant" />
+			<param index="1" name="z_order" type="Variant" />
+			<description>创建并添加 GRoot 到场景中</description>
+		</method>
+		<method name="createDeferred" qualifiers="static">
+			<return type="void" />
+			<param index="0" name="parent" type="Variant" />
+			<param index="1" name="z_order" type="Variant" />
+			<description>延迟创建 GRoot（在下一帧加入场景树）</description>
+		</method>
+		<method name="getInstance" qualifiers="static">
+			<return type="Variant" />
+			<description>获取全局唯一 GRoot 实例</description>
+		</method>
+		<method name="cleanup" qualifiers="static">
+			<return type="void" />
+			<description>清理全局实例</description>
+		</method>
 		<method name="showWindow">
 			<return type="void" />
 			<param index="0" name="win" type="Variant" />
