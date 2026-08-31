@@ -53,6 +53,16 @@
 			<param index="0" name="vars" type="Variant" />
 			<description>设置模板变量表。</description>
 		</method>
+		<method name="setVar">
+			<return type="void" />
+			<param index="0" name="name" type="Variant" />
+			<param index="1" name="value" type="Variant" />
+			<description>设置单个模板变量并返回当前文本字段，调用 flushVars 后刷新显示。</description>
+		</method>
+		<method name="flushVars">
+			<return type="void" />
+			<description>将模板变量刷新到显示文本。</description>
+		</method>
 		<method name="getTextSize">
 			<return type="Variant" />
 			<description>获取渲染后的文本尺寸。</description>

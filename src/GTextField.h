@@ -31,6 +31,7 @@ public:
 
     /** 通过字典设置模板变量（批量替换 {字段名} 格式的占位符）。 */
     void gd_setTemplateVars(const Dictionary& vars);
+    Ref<GTextField> gd_setVar(const String& name, const Variant& value);
 
     /** 是否启用 UBB 语法解析。 */
     bool isUBBEnabled() const { return _ubbEnabled; }

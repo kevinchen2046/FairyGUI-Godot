@@ -565,13 +565,26 @@ void GTextField::_bind_methods()
     ClassDB::bind_method(D_METHOD("isUBBEnabled"), &GTextField::isUBBEnabled);
 
     ClassDB::bind_method(D_METHOD("setTemplateVars", "vars"), &GTextField::gd_setTemplateVars);
+    ClassDB::bind_method(D_METHOD("setVar", "name", "value"), &GTextField::gd_setVar);
+    ClassDB::bind_method(D_METHOD("flushVars"), &GTextField::flushVars);
     ClassDB::bind_method(D_METHOD("getTextSize"), &GTextField::getTextSize);
 }
 
 void GTextField::gd_setTemplateVars(const Dictionary& vars) {
-    if (_templateVars)
-        delete static_cast<std::unordered_map<std::string, Variant>*>(_templateVars);
-    _templateVars = nullptr;
+    std::unordered_map<std::string, Variant> templateVars;
+    Array keys = vars.keys();
+    for (int i = 0; i < keys.size(); ++i)
+    {
+        String key = keys[i];
+        templateVars[key.utf8().get_data()] = vars.get(key, Variant());
+    }
+    setTemplateVars(&templateVars);
+}
+
+Ref<GTextField> GTextField::gd_setVar(const String& name, const Variant& value)
+{
+    setVar(name.utf8().get_data(), value);
+    return Ref<GTextField>(this);
 }
 
 NS_FGUI_END
