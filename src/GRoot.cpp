@@ -98,6 +98,7 @@ GRoot::GRoot()
       _modalWaitPane(nullptr),
       _tooltipWin(nullptr),
       _defaultTooltipWin(nullptr),
+      _tooltipsWinMissingWarned(false),
       _soundPlayerCount(0),
       _soundPoolIndex(0),
       _hasDesignResolution(false),
@@ -824,7 +825,11 @@ void GRoot::showTooltips(const std::string& msg)
         const std::string& resourceURL = UIConfig::tooltipsWin;
         if (resourceURL.empty())
         {
-            print_line("FairyGUI: UIConfig.tooltipsWin not defined");
+            if (!_tooltipsWinMissingWarned)
+            {
+                print_line("FairyGUI: UIConfig.tooltipsWin not defined");
+                _tooltipsWinMissingWarned = true;
+            }
             return;
         }
 

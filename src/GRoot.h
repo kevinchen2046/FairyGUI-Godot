@@ -281,6 +281,7 @@ private:
 
     /// @brief 默认提示窗口
     GObject* _defaultTooltipWin;
+    bool _tooltipsWinMissingWarned;
 
     /// @brief 全局声音是否启用（静态）
     static bool _soundEnabled;
