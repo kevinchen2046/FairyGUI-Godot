@@ -62,9 +62,6 @@ void GTextField::setOutlineColor(const Color& value)
     if (tf->outlineColor != value)
     {
         tf->outlineColor = value;
-        if (tf->outlineSize <= 0.f)
-            tf->outlineSize = 1.f;
-        tf->enableEffect(TextFormat::OUTLINE);
         applyTextFormat();
     }
 }
