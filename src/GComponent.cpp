@@ -1692,13 +1692,13 @@ void GComponent::constructFromResource(std::vector<GObject*>* objectPool, int po
     // C++ vtable 分发：GButton / GSlider 等子类覆写
     onConstruct();
     finalDisplayBuildMs = finishPhaseMs();
-    const auto nativeConstructionMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+    const int64_t nativeConstructionMs = std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::steady_clock::now() - constructionStartedAt).count();
     if (nativeConstructionMs >= 50)
     {
         const char* packageName = contentItem->owner != nullptr ? contentItem->owner->getName().c_str() : "<unknown>";
         print_line("FairyGUI performance: native construction for '", packageName, "/",
-            contentItem->name.c_str(), "' took ", nativeConstructionMs,
+            contentItem->name.c_str(), "' took ", int64_t(nativeConstructionMs),
             " ms [header=", headerMs,
             ", controllers=", controllersMs,
             ", children=", childrenMs,
@@ -1713,13 +1713,13 @@ void GComponent::constructFromResource(std::vector<GObject*>* objectPool, int po
     // GDScript/C# 虚方法分发：用户可在 _on_construct() 中安全访问子节点
     const auto scriptCallbackStartedAt = std::chrono::steady_clock::now();
     GDVIRTUAL_CALL(_on_construct);
-    const auto scriptCallbackMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+    const int64_t scriptCallbackMs = std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::steady_clock::now() - scriptCallbackStartedAt).count();
     if (scriptCallbackMs >= 50)
     {
         const char* packageName = contentItem->owner != nullptr ? contentItem->owner->getName().c_str() : "<unknown>";
         print_line("FairyGUI performance: _on_construct for '", packageName, "/",
-            contentItem->name.c_str(), "' took ", scriptCallbackMs,
+            contentItem->name.c_str(), "' took ", int64_t(scriptCallbackMs),
             " ms. This time is spent in the attached GDScript/C# callback.");
     }
 }

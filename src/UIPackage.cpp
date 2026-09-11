@@ -275,12 +275,12 @@ Ref<GObject> UIPackage::createObject(const string& pkgName, const string& resNam
     if (pkg)
     {
         Ref<GObject> result = pkg->createObject(resName);
-        const auto elapsedMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+        const int64_t elapsedMs = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::steady_clock::now() - startedAt).count();
         if (elapsedMs >= 100)
         {
             print_line("FairyGUI performance: UIPackage.createObject('", pkgName.c_str(),
-                "', '", resName.c_str(), "') took ", elapsedMs,
+                "', '", resName.c_str(), "') took ", int64_t(elapsedMs),
                 " ms. Slow _on_construct callbacks are reported separately; otherwise this is usually synchronous first-use resource loading or native component construction.");
         }
         return result;
@@ -831,10 +831,10 @@ void UIPackage::loadAtlas(PackageItem* item)
         }
     }
 
-    const auto elapsedMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+    const int64_t elapsedMs = std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::steady_clock::now() - startedAt).count();
     if (elapsedMs >= 50)
-        print_line("FairyGUI performance: loading atlas '", item->file.c_str(), "' took ", elapsedMs, " ms.");
+        print_line("FairyGUI performance: loading atlas '", item->file.c_str(), "' took ", int64_t(elapsedMs), " ms.");
 }
 
 AtlasSprite* UIPackage::getSprite(const std::string& spriteId)
