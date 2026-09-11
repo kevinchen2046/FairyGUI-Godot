@@ -96,7 +96,7 @@ public:
     void setTexture(const Ref<Texture2D>& t);
 
     /// @brief 获取纹理
-    Ref<Texture2D> getTexture() const { return get_texture(); }
+    Ref<Texture2D> getTexture() const { return _realTexture; }
 
     /// @brief 获取真实纹理（内部存储）
     Ref<Texture2D> getRealTexture() const { return _realTexture; }
