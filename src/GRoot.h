@@ -7,6 +7,7 @@
 #include "Window.h"
 #include "godot_types.h"
 #include "event/InputProcessor.h"
+#include <algorithm>
 #ifdef FGUI_GDEXTENSION
 #include <godot_cpp/classes/audio_stream_player.hpp>
 #include <godot_cpp/classes/canvas_layer.hpp>
@@ -41,12 +42,19 @@ public:
     static GRoot* createDeferred(Node* parent, int zOrder = 1000);
 
     /// @brief 获取全局唯一 GRoot 实例
-    static GRoot* getInstance() { return _inst; }
+    static GRoot* getInstance()
+    {
+        if (_inst == nullptr)
+            return nullptr;
+        if (std::find(_instances.begin(), _instances.end(), _inst) == _instances.end())
+            _inst = _instances.empty() ? nullptr : _instances.front();
+        return _inst;
+    }
 
     // --- GDScript 绑定方法 ---
     static Ref<GRoot> gd_create(Node* parent, int zOrder = 1000) { return Ref<GRoot>(create(parent, zOrder)); }
     static Ref<GRoot> gd_createDeferred(Node* parent, int zOrder = 1000) { return Ref<GRoot>(createDeferred(parent, zOrder)); }
-    static Ref<GRoot> gd_getInstance() { return Ref<GRoot>(_inst); }
+    static Ref<GRoot> gd_getInstance() { return Ref<GRoot>(getInstance()); }
 
     /// @brief 清理全局实例
     static void cleanup();

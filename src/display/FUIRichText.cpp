@@ -243,16 +243,6 @@ Rect2 FUIRichText::get_anchorable_rect() const
 FUIRichText::~FUIRichText()
 {
     _rendererElements.clear();
-    if (_clipContainer)
-    {
-        for (int i = _clipContainer->get_child_count() - 1; i >= 0; i--)
-        {
-            Node *child = _clipContainer->get_child(i);
-            _clipContainer->remove_child(child);
-            if (Object::cast_to<FUILabel>(child))
-                memdelete(child);
-        }
-    }
     if (_parser)
         delete _parser;
     for (auto &obj : _objects)

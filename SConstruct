@@ -15,7 +15,7 @@ env = SConscript(
     exports={"env": env},
 )
 
-env.Append(CPPDEFINES=["FGUI_GDEXTENSION", "SPINE_GODOT_DISABLED"])
+env.Append(CPPDEFINES=["FGUI_GDEXTENSION", "SPINE_GODOT_DISABLED", "TYPED_METHOD_BIND"])
 env.Append(CPPPATH=[
     ".", "src", "src/event", "src/display", "src/gears", "src/tween",
     "src/utils", "src/utils/html", "src/controller_action",

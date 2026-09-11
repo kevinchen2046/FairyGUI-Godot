@@ -78,7 +78,10 @@ void GRoot::cleanup()
     old->closeAllWindows();
     old->removeChildren();
 
+    // Ensure the singleton pointer is cleared before any teardown/ref-count work
+    // so later calls cannot observe a dangling root pointer.
     unregisterInstance(old);
+    _inst = nullptr;
 
     Node* displayNode = old->displayObject();
     if (displayNode != nullptr)
@@ -1066,7 +1069,8 @@ void GRoot::registerInstance(GRoot* instance)
     if (std::find(_instances.begin(), _instances.end(), instance) == _instances.end())
         _instances.push_back(instance);
 
-    _inst = _instances.empty() ? nullptr : _instances.front();
+    if (_inst == nullptr || std::find(_instances.begin(), _instances.end(), _inst) == _instances.end())
+        _inst = _instances.empty() ? nullptr : _instances.front();
 }
 
 void GRoot::unregisterInstance(GRoot* instance)
@@ -1075,7 +1079,8 @@ void GRoot::unregisterInstance(GRoot* instance)
     if (it != _instances.end())
         _instances.erase(it);
 
-    _inst = _instances.empty() ? nullptr : _instances.front();
+    if (_inst == instance || _inst == nullptr || std::find(_instances.begin(), _instances.end(), _inst) == _instances.end())
+        _inst = _instances.empty() ? nullptr : _instances.front();
 }
 
 void GRoot::onInitWithParent(Node* parent, int zOrder, bool deferAdd)
