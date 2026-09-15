@@ -86,7 +86,8 @@ void TouchInfo::reset()
 
 InputProcessor::InputProcessor(GComponent* owner) :
     _keyModifiers(0),
-    _touchListenerEnabled(true)
+    _touchListenerEnabled(true),
+    _mouseInsideWindow(true)
 {
     _owner = owner;
     _recentInput._inputProcessor = this;
@@ -550,6 +551,11 @@ void InputProcessor::onMouseUp(const Vector2& screenPos, int button)
 
 void InputProcessor::onMouseMove(const Vector2& screenPos)
 {
+    // Godot may deliver one final mouse-motion event after Window::mouse_exited.
+    // Do not rebuild the hover chain until Window::mouse_entered is received.
+    if (!_mouseInsideWindow)
+        return;
+
     Vector2 pt = static_cast<GRoot*>(_owner)->worldToRoot(screenPos);
     TouchInfo* ti = getTouch(-1, false);
     if (!ti)
@@ -570,6 +576,8 @@ void InputProcessor::onMouseMove(const Vector2& screenPos)
 
 void InputProcessor::resetRollOver()
 {
+    _mouseInsideWindow = false;
+
     TouchInfo* ti = getTouch(-1, false);
     if (!ti)
         return;

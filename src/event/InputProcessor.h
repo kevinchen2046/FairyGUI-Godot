@@ -76,6 +76,8 @@ public:
     void onMouseMove(const Vector2& screenPos);
     /** 窗口离开时清除当前悬停链，确保触发 RollOut 并允许重新进入触发 RollOver。 */
     void resetRollOver();
+    /** 更新鼠标是否位于宿主窗口内。 */
+    void setMouseInsideWindow(bool value) { _mouseInsideWindow = value; }
     /** 处理鼠标滚轮事件。 */
     void onMouseScroll(const Vector2& screenPos, int delta);
 
@@ -103,6 +105,7 @@ private:
     InputEvent _recentInput;                ///< 最近输入事件缓存。
     uint16_t _keyModifiers;                 ///< 当前修饰键状态。
     bool _touchListenerEnabled;             ///< 触摸监听是否启用。
+    bool _mouseInsideWindow;                ///< 鼠标是否位于宿主窗口内。
 
     static bool _touchOnUI;                 ///< 标记触摸是否在 UI 上。
     static unsigned int _touchOnUIFlagFrameId; ///< 触摸在 UI 上的帧标记。

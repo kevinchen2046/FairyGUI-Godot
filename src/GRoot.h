@@ -262,6 +262,7 @@ private:
     void closePopup(GObject* target);
     void checkPopups();
     void onTouchEvent(int eventType);
+    void onWindowMouseEntered();
     void onWindowMouseExited();
     void updateContentScaleLevel();
     void applyContentScale();

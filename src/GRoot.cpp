@@ -1008,6 +1008,7 @@ void GRoot::_enter_tree()
         {
             if (Node* window = _displayObject->get_window())
             {
+                window->connect("mouse_entered", callable_mp(this, &GRoot::onWindowMouseEntered));
                 window->connect("mouse_exited", callable_mp(this, &GRoot::onWindowMouseExited));
                 _windowMouseSignalsConnected = true;
             }
@@ -1030,7 +1031,10 @@ void GRoot::_exit_tree()
         if (_windowMouseSignalsConnected)
         {
             if (Node* window = _displayObject->get_window())
+            {
+                window->disconnect("mouse_entered", callable_mp(this, &GRoot::onWindowMouseEntered));
                 window->disconnect("mouse_exited", callable_mp(this, &GRoot::onWindowMouseExited));
+            }
             _windowMouseSignalsConnected = false;
         }
     }
@@ -1109,6 +1113,12 @@ void GRoot::onInitWithParent(Node* parent, int zOrder, bool deferAdd)
                 parent->move_child(_displayObject, zOrder);
         }
     }
+}
+
+void GRoot::onWindowMouseEntered()
+{
+    if (_inputProcessor)
+        _inputProcessor->setMouseInsideWindow(true);
 }
 
 void GRoot::onWindowMouseExited()
