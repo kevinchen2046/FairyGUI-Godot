@@ -47,6 +47,7 @@ public:
     virtual ~FUIContainer();
 
     static FUIContainer* create();
+    static void clearStaticRefs();
 
     /// @brief 是否启用矩形裁剪
     bool isClippingEnabled() const;

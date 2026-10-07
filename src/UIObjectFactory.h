@@ -19,6 +19,7 @@ NS_FGUI_BEGIN
 class UIObjectFactory
 {
 public:
+    static void clearStaticRefs();
     /// @brief GComponent 工厂函数类型
     typedef std::function<Ref<GComponent>()> GComponentCreator;
 

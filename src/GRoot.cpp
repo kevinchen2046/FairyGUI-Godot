@@ -68,31 +68,30 @@ GRoot* GRoot::createDeferred(Node* parent, int zOrder)
 
 void GRoot::cleanup()
 {
-    GRoot* old = _inst;
-    if (old == nullptr)
-        return;
-
-    old->hideTooltips();
-    old->hidePopup();
-    old->closeModalWait();
-    old->closeAllWindows();
-    old->removeChildren();
-
-    // Ensure the singleton pointer is cleared before any teardown/ref-count work
-    // so later calls cannot observe a dangling root pointer.
-    unregisterInstance(old);
+    // Snapshot strong references to cover every window and tolerate re-entry.
+    std::vector<Ref<GRoot>> roots;
+    for (GRoot* root : _instances)
+        roots.emplace_back(root);
+    _instances.clear();
     _inst = nullptr;
-
-    Node* displayNode = old->displayObject();
-    if (displayNode != nullptr)
+    for (const Ref<GRoot>& root : roots)
     {
-        Node* parent = displayNode->get_parent();
-        if (parent != nullptr)
-            parent->remove_child(displayNode);
+        GRoot* old = root.ptr();
+        Node* displayNode = old->displayObject();
+        if (displayNode != nullptr)
+        {
+            old->hideTooltips();
+            old->hidePopup();
+            old->closeModalWait();
+            old->closeAllWindows();
+            old->removeChildren();
+            Node* parent = displayNode->get_parent();
+            if (parent != nullptr)
+                parent->remove_child(displayNode);
+        }
+        // Balance create()'s keep-alive; the local Ref performs final deletion.
+        old->unreference();
     }
-
-    // Matches reference() in create(); frees stale GRoot/InputProcessor after scene teardown.
-    old->unreference();
 }
 
 GRoot::GRoot()
@@ -126,7 +125,7 @@ GRoot::~GRoot()
     }
     if (_defaultTooltipWin)
     {
-        if (!_defaultTooltipWin->displayObject()->is_inside_tree())
+        if (_defaultTooltipWin->displayObject() != nullptr && !_defaultTooltipWin->displayObject()->is_inside_tree())
             memdelete(_defaultTooltipWin);
         _defaultTooltipWin = nullptr;
     }

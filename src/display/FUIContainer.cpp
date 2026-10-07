@@ -79,6 +79,11 @@ static void _queue_redraw_all(Node* node) {
 
 static Ref<Shader> _mask_shader;
 
+void FUIContainer::clearStaticRefs()
+{
+    _mask_shader.unref();
+}
+
 static Ref<Shader> get_mask_shader()
 {
     if (_mask_shader.is_null())
@@ -180,8 +185,8 @@ void FUIContainer::_notification(int p_what)
     }
     if (p_what == NOTIFICATION_PREDELETE)
     {
-        while (get_child_count() > 0)
-            remove_child(get_child(0));
+        // Let Node own and destroy its children. Detaching them here leaked
+        // CanvasLayers and UI nodes during SceneTree shutdown.
         return;
     }
     if (p_what == NOTIFICATION_ENTER_TREE)

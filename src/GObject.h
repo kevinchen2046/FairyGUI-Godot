@@ -329,9 +329,9 @@ public:
     /** 查找顶层的 GObject 父对象（可能穿透非 GObject 节点）。 */
     GObject* findParent() const;
     /** 获取引擎显示节点。 */
-    Node* displayObject() const { return _displayObject; }
+    Node* displayObject() const;
     /** 获取对应的 Godot 显示节点（GDScript/C#）。 */
-    Node* gd_getDisplayObject() const { return _displayObject; }
+    Node* gd_getDisplayObject() const { return displayObject(); }
     /** 获取根节点 (GRoot)。 */
     GRoot* getRoot() const;
     /** 是否已添加到舞台（显示列表）中。 */
@@ -392,6 +392,7 @@ public:
 protected:
     GComponent* _parent;          ///< 父组件指针。
     Node* _displayObject;         ///< 引擎显示节点。
+    uint64_t _displayObjectId = 0;
     PackageItem* _packageItem;    ///< UI 包资源项。
     int _sizeImplType;            ///< 尺寸实现类型。
     bool _touchDisabled;          ///< 是否禁用触摸。

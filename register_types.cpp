@@ -16,6 +16,7 @@ using namespace godot;
 #include "src/GObject.h"
 #include "src/GComponent.h"
 #include "src/GRoot.h"
+#include "src/UIObjectFactory.h"
 
 // Widgets
 #include "src/GImage.h"
@@ -148,12 +149,13 @@ void uninitialize_fairygui_module(ModuleInitializationLevel p_level)
 {
     if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE)
     {
-        // Clear static Ref<Texture2D> to avoid exit crash (Godot resource cleanup before C++ static destructors)
-        fairygui::FUISprite::clearStaticRefs();
-        fairygui::UIPackage::clearStaticRefs();
-        fairygui::UIConfig::clearFontCache();
-
-        // Clear GRoot singleton to release FairyGUI node tree before Godot shutdown
+        // Release UI owners before package/font/texture dependencies.
         fairygui::GRoot::cleanup();
+        // Clear static Ref<Texture2D> before renderer shutdown.
+        fairygui::FUISprite::clearStaticRefs();
+        fairygui::FUIContainer::clearStaticRefs();
+        fairygui::UIPackage::clearStaticRefs();
+        fairygui::UIObjectFactory::clearStaticRefs();
+        fairygui::UIConfig::clearFontCache();
     }
 }

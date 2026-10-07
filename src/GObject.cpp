@@ -102,6 +102,8 @@ GuiObject::GuiObject() : _underConstruct(false),
 
 GuiObject::~GuiObject()
 {
+    // SceneTree may destroy the Node before the last script/Ref owner.
+    _displayObject = displayObject();
     unregister_live_gobject(this);
     GTween::kill(this, false);
     removeFromParent();
@@ -131,10 +133,18 @@ bool GuiObject::init()
 
     if (_displayObject != nullptr)
     {
+        _displayObjectId = _displayObject->get_instance_id();
         _displayObject->connect("tree_entered", callable_mp(this, &GuiObject::onDisplayTreeEntered), CONNECT_REFERENCE_COUNTED);
         _displayObject->connect("tree_exiting", callable_mp(this, &GuiObject::onDisplayTreeExiting), CONNECT_REFERENCE_COUNTED);
     }
     return true;
+}
+
+Node* GuiObject::displayObject() const
+{
+    if (_displayObjectId == 0)
+        return nullptr;
+    return Object::cast_to<Node>(ObjectDB::get_instance(_displayObjectId));
 }
 
 void GuiObject::_notification(int p_what)

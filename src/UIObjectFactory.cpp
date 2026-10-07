@@ -27,6 +27,14 @@ using namespace std;
 unordered_map<string, UIObjectFactory::GComponentCreator> UIObjectFactory::_packageItemExtensions;
 UIObjectFactory::GLoaderCreator UIObjectFactory::_loaderCreator;
 
+void UIObjectFactory::clearStaticRefs()
+{
+    // Factory lambdas retain Script/Callable references. Release them while
+    // Godot's object bindings still exist, not in C++ process-exit destructors.
+    _packageItemExtensions.clear();
+    _loaderCreator = nullptr;
+}
+
 void UIObjectFactory::setPackageItemExtension(const string& url, GComponentCreator creator)
 {
     if (url.size() == 0)
