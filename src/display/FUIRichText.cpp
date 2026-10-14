@@ -558,6 +558,9 @@ void FUIRichText::handleTextRenderer(HtmlElement* element, const std::string& te
 {
     FUILabel* textRenderer = memnew(FUILabel);
     textRenderer->getTextFormat()->setFormat(element->format);
+    // Alignment belongs to the complete line/block, never to an individual run.
+    textRenderer->getTextFormat()->align = 0;
+    textRenderer->getTextFormat()->verticalAlign = 0;
     textRenderer->applyTextFormat();
     if (_parseOptions.linkColor.a > 0.0f)
         textRenderer->setUnderlineColor(_parseOptions.linkColor);
@@ -565,18 +568,6 @@ void FUIRichText::handleTextRenderer(HtmlElement* element, const std::string& te
     bindRendererElement(textRenderer, element);
 
     float textRendererWidth = textRenderer->getTextWidth();
-
-    float rowUsedWidth = 0.0f;
-    for (Node* node : _renderers.back())
-        rowUsedWidth += measureRendererNode(node).x;
-    if (!_renderers.back().empty()
-            && rowUsedWidth + textRendererWidth > _textRectWidth - LINE_WIDTH_FUDGE)
-    {
-        textRenderer->queue_free();
-        addNewLine();
-        handleTextRenderer(element, text);
-        return;
-    }
 
     _leftSpaceWidth -= textRendererWidth;
     if (_leftSpaceWidth >= LINE_WIDTH_FUDGE)
@@ -586,6 +577,13 @@ void FUIRichText::handleTextRenderer(HtmlElement* element, const std::string& te
     }
 
     int leftLength = findSplitPositionForWord(textRenderer, text);
+    if (leftLength == 0 && !_renderers.back().empty())
+    {
+        textRenderer->queue_free();
+        addNewLine();
+        handleTextRenderer(element, text);
+        return;
+    }
     if (leftLength == 0)
         leftLength = 1;
     String textStr = GObject::toGodotStr(text);
@@ -599,6 +597,8 @@ void FUIRichText::handleTextRenderer(HtmlElement* element, const std::string& te
     {
         FUILabel* leftRenderer = memnew(FUILabel);
         leftRenderer->getTextFormat()->setFormat(element->format);
+        leftRenderer->getTextFormat()->align = 0;
+        leftRenderer->getTextFormat()->verticalAlign = 0;
         leftRenderer->applyTextFormat();
         if (_parseOptions.linkColor.a > 0.0f)
             leftRenderer->setUnderlineColor(_parseOptions.linkColor);

@@ -129,7 +129,13 @@ void HtmlParser::startElement(void* /*ctx*/, const char *elementName, const char
         Variant colorVal = fgui_dictionary_get(attrMap, String("color"));
         if (colorVal.get_type() != Variant::NIL)
         {
-            _format.color = (Color)ToolSet::hexToColor(std::string((const char*)colorVal.stringify().utf8().ptr()).c_str());
+            // Attributes are strings, not serialized Variant expressions.
+            String colorText = colorVal;
+            colorText = colorText.strip_edges();
+            if (colorText.begins_with("#") && colorText.length() == 9)
+                _format.color = ToolSet::hexToColor(colorText.utf8().get_data()); // FairyGUI #AARRGGBB
+            else
+                _format.color = Color::from_string(colorText, _format.color);
             _format._hasColor = true;
         }
     }
@@ -282,7 +288,8 @@ int HtmlParser::attributeInt(const Dictionary& valueMap, const std::string& key,
 {
     Variant result = fgui_dictionary_get(valueMap, String(key.c_str()));
     if (result.get_type() != Variant::NIL) {
-        string str = std::string((const char*)result.stringify().utf8().ptr());
+        String attribute = result;
+        string str = attribute.utf8().get_data();
         if (!str.empty() && str.back() == '%')
             return (int)ceil(atoi(str.substr(0, str.size() - 1).c_str()) / 100.0f * defaultValue);
         else
@@ -290,6 +297,47 @@ int HtmlParser::attributeInt(const Dictionary& valueMap, const std::string& key,
     }
     else
         return defaultValue;
+}
+
+// XMLParser skips whitespace-only text nodes, including the newline between
+// </font> and <font>. An entity keeps that node readable and decodes back to LF.
+// Only normalize text: whitespace inside tag attributes must remain untouched.
+static std::string preserveTextNewlines(const std::string& source)
+{
+    std::string result;
+    result.reserve(source.size());
+    bool inTag = false;
+    char quote = 0;
+    for (size_t i = 0; i < source.size(); ++i)
+    {
+        char c = source[i];
+        if (inTag)
+        {
+            if (quote != 0)
+            {
+                if (c == quote)
+                    quote = 0;
+            }
+            else if (c == '\'' || c == '"')
+                quote = c;
+            else if (c == '>')
+                inTag = false;
+            result += c;
+        }
+        else if (c == '\r' || c == '\n')
+        {
+            if (c == '\r' && i + 1 < source.size() && source[i + 1] == '\n')
+                ++i;
+            result += "&#10;";
+        }
+        else
+        {
+            if (c == '<')
+                inTag = true;
+            result += c;
+        }
+    }
+    return result;
 }
 
 void HtmlParser::parse(const std::string& source, const TextFormat& format, std::vector<HtmlElement*>& elements, const HtmlParseOptions& parseOptions)
@@ -309,7 +357,7 @@ void HtmlParser::parse(const std::string& source, const TextFormat& format, std:
         return;
 
     // Keep raw UTF-8 bytes (same as Cocos SAXParser); do not round-trip through String.
-    const std::string xmlText = std::string("<dummy>") + source + "</dummy>";
+    const std::string xmlText = std::string("<dummy>") + preserveTextNewlines(source) + "</dummy>";
 #ifdef FGUI_GDEXTENSION
     PackedByteArray xmlBuf;
 #else

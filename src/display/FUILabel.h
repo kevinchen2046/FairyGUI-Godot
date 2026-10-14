@@ -69,7 +69,7 @@ public:
     Vector2 getTextSize() const;
 
     /// @brief 设置内容尺寸
-    void setContentSize(const Vector2& size) { _contentSize = size; }
+    void setContentSize(const Vector2& size) { if (_contentSize != size) { _contentSize = size; queue_redraw(); } }
 
     /// @brief 内容尺寸
     Vector2 _contentSize;

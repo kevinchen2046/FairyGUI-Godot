@@ -56,11 +56,13 @@ static void fui_draw_text(CanvasItem* item, const Ref<Font>& font, const Vector2
 {
     const String sanitized = fui_sanitize_text(text);
     const float drawWidth = boxWidth > 0 ? boxWidth : -1;
-    const HorizontalAlignment hAlign = manualHAlignOffset ? HORIZONTAL_ALIGNMENT_LEFT : fui_text_h_align(align);
+    // Unbounded labels are rich-text runs: their parent already positions each run.
+    const HorizontalAlignment hAlign = manualHAlignOffset || boxWidth <= 0
+        ? HORIZONTAL_ALIGNMENT_LEFT : fui_text_h_align(align);
 
     if (wrap)
     {
-        item->draw_multiline_string(font, pos, sanitized, fui_text_h_align(align), drawWidth, fontSize, -1, color,
+        item->draw_multiline_string(font, pos, sanitized, hAlign, drawWidth, fontSize, -1, color,
                 TextServer::BREAK_MANDATORY | TextServer::BREAK_WORD_BOUND, TextServer::JUSTIFICATION_NONE,
                 TextServer::DIRECTION_AUTO);
     }
@@ -197,7 +199,7 @@ void FUILabel::applyTextFormat()
     else
     {
         // TTF/system font: keep modulate neutral so fill/outline colors are not multiplied twice.
-        set_modulate(_grayed ? Color(1, 1, 1, toGrayed(_textFormat->color).a) : Color(1, 1, 1, _textFormat->color.a));
+        set_modulate(Color(1, 1, 1, 1));
     }
 
     updateDrawFont();

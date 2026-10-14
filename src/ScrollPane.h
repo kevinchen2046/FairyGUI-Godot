@@ -397,6 +397,7 @@ private:
 
     GComponent* _fguiOwner;
     FUIClipContainer* _maskContainer;
+    FUIInnerContainer* _alignmentContainer;
     FUIInnerContainer* _container;
     Ref<GScrollBar> _hzScrollBar;
     Ref<GScrollBar> _vtScrollBar;

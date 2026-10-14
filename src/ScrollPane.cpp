@@ -103,6 +103,7 @@ ScrollPane::ScrollPane()
     _tweening(0),
     _owner(nullptr),
     _maskContainer(nullptr),
+    _alignmentContainer(nullptr),
     _container(nullptr),
     _hzScrollBar(nullptr),
     _vtScrollBar(nullptr),
@@ -153,6 +154,9 @@ ScrollPane::ScrollPane(GComponent* owner)
 
     _maskContainer = memnew(FUIClipContainer);
     _owner->displayObject()->add_child(_maskContainer);
+    // The viewport stays fixed; alignment and scrolling affect content only.
+    _alignmentContainer = memnew(FUIInnerContainer);
+    _maskContainer->add_child(_alignmentContainer);
 
     // Use the container already created in GComponent::handleInit()
     _container = _owner->_container;
@@ -162,7 +166,7 @@ ScrollPane::ScrollPane(GComponent* owner)
         _container->set_position(Vector2(0, 0));
         if (_container->get_parent())
             _container->get_parent()->remove_child(_container);
-        _maskContainer->add_child(_container);
+        _alignmentContainer->add_child(_container);
     }
 
     _owner->addEventListener(UIEventType::MouseWheel, [this](EventContext* ctx) { onMouseWheel(ctx); });
@@ -748,10 +752,20 @@ void ScrollPane::adjustMaskContainer()
     else
         mx = floor(_owner->_margin.left);
     my = floor(_owner->_margin.top);
-    mx += _owner->_alignOffset.x;
-    my += _owner->_alignOffset.y;
-
-    _maskContainer->applyClipRect(Vector2(mx, my), Vector2(_viewSize.width, _viewSize.height));
+    const Vector2 contentOrigin(mx, my);
+    Rect2 maskRect(contentOrigin, _viewSize);
+    if (_vScrollNone && _vtScrollBar != nullptr)
+        maskRect.size.x += _vtScrollBar->getWidth();
+    if (_hScrollNone && _hzScrollBar != nullptr)
+        maskRect.size.y += _hzScrollBar->getHeight();
+    if (_dontClipMargin)
+    {
+        maskRect.position -= Vector2(_owner->_margin.left, _owner->_margin.top);
+        maskRect.size += Vector2(_owner->_margin.left + _owner->_margin.right,
+            _owner->_margin.top + _owner->_margin.bottom);
+    }
+    _maskContainer->applyClipRect(maskRect.position, maskRect.size);
+    _alignmentContainer->set_position(contentOrigin - maskRect.position + _owner->_alignOffset);
 }
 
 void ScrollPane::onOwnerSizeChanged()
@@ -899,35 +913,7 @@ void ScrollPane::handleSizeChanged()
 
     updateScrollBarVisible();
 
-    // Viewport origin in owner space (Y-down). Cocos adjustMaskContainer used a Y-up flip;
-    // Godot places the mask directly at margin + alignOffset.
-    float mx, my;
-    if (_displayOnLeft && _vtScrollBar != nullptr && !_floating)
-        mx = floor(_owner->_margin.left + _vtScrollBar->getWidth());
-    else
-        mx = floor(_owner->_margin.left);
-    my = floor(_owner->_margin.top);
-    mx += _owner->_alignOffset.x;
-    my += _owner->_alignOffset.y;
-
-    // _viewSize already has scrollbar widths and margins subtracted in setSize().
-    // Re-add scrollbar size when scrollNone (not subtracted from _viewSize) and
-    // margin when dontClipMargin is set.
-    Rect2 maskRect(mx, my, _viewSize.width, _viewSize.height);
-    if (_vScrollNone && _vtScrollBar != nullptr)
-        maskRect.size.x += _vtScrollBar->getWidth();
-    if (_hScrollNone && _hzScrollBar != nullptr)
-        maskRect.size.y += _hzScrollBar->getHeight();
-    if (_dontClipMargin)
-    {
-        maskRect.position.x -= _owner->_margin.left;
-        maskRect.size.x += _owner->_margin.left + _owner->_margin.right;
-        maskRect.position.y -= _owner->_margin.top;
-        maskRect.size.y += _owner->_margin.top + _owner->_margin.bottom;
-    }
-    // MaskContainer is a Control with clip_contents=true.
-    // The clip region is the Control's rect (position + size).
-    _maskContainer->applyClipRect(maskRect.position, maskRect.size);
+    adjustMaskContainer();
 
     if (_vtScrollBar.is_valid())
         _vtScrollBar->handlePositionChanged();
@@ -1046,17 +1032,8 @@ GObject* ScrollPane::hitTest(const Vector2& pt, const Camera2D* camera)
     }
     if (_maskContainer->is_clipping_contents())
     {
-        float mx, my;
-        if (_displayOnLeft && _vtScrollBar.is_valid() && !_floating)
-            mx = floor(_owner->_margin.left + _vtScrollBar->getWidth());
-        else
-            mx = floor(_owner->_margin.left);
-        my = floor(_owner->_margin.top);
-        mx += _owner->_alignOffset.x;
-        my += _owner->_alignOffset.y;
-
         const Vector2 localPt = _owner->globalToLocal(pt);
-        const Rect2 viewRect(mx, my, _viewSize.width, _viewSize.height);
+        const Rect2 viewRect(_maskContainer->get_position(), _maskContainer->get_size());
         if (!viewRect.has_point(localPt))
             return nullptr;
     }

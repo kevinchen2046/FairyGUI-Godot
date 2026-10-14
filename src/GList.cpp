@@ -2231,7 +2231,7 @@ void GList::handleAlign(float contentWidth, float contentHeight)
         if (_scrollPane.is_valid())
             _scrollPane->adjustMaskContainer();
         else
-            _container->set_position(-_alignOffset);
+            applyPivotOffset();
     }
 }
 
